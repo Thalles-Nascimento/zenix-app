@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>cloud.zenixapp.test</groupId>
-	<artifactId>atendimento</artifactId>
+	<artifactId>zenix</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>atendimento</name>
+	<name>zenix</name>
 	<description>Realizar o CRUD do sistema</description>
 	<url/>
 	<licenses>

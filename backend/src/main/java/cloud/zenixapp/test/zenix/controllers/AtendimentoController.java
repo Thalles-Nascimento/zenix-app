@@ -1,7 +1,7 @@
-package cloud.zenixapp.test.atendimento.controllers;
+package cloud.zenixapp.test.zenix.controllers;
 
-import cloud.zenixapp.test.atendimento.entities.Atendimento;
-import cloud.zenixapp.test.atendimento.services.AtendimentoService;
+import cloud.zenixapp.test.zenix.entities.Atendimento;
+import cloud.zenixapp.test.zenix.services.AtendimentoService;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/atendimento")
+@RequestMapping(value = "/zenix")
 public class AtendimentoController {
 
     @Autowired
     private AtendimentoService atendimentoService;
 
     /*
-    *Endpoint para inserção de um atendimento no Banco de Dados
+    *Endpoint para inserção de um zenix no Banco de Dados
     *
     */
     @PostMapping

@@ -1,14 +1,13 @@
-package cloud.zenixapp.test.atendimento.entities;
+package cloud.zenixapp.test.zenix.entities;
 
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 @Entity
-@Table(name = "atendimento")
+@Table(name = "zenix")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

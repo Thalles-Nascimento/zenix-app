@@ -1,7 +1,7 @@
-package cloud.zenixapp.test.atendimento.services;
+package cloud.zenixapp.test.zenix.services;
 
-import cloud.zenixapp.test.atendimento.entities.Atendimento;
-import cloud.zenixapp.test.atendimento.repositories.AtendimentoRepository;
+import cloud.zenixapp.test.zenix.entities.Atendimento;
+import cloud.zenixapp.test.zenix.repositories.AtendimentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
