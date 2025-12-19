@@ -17,7 +17,6 @@ public class Atendimento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "atendimento_id")
-    @NonNull
     private Long id;
 
     @Column(name = "atendimento_descricao")
