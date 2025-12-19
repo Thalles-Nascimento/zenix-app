@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 @Entity
 @Table(name = "atendimento")
@@ -16,16 +17,20 @@ public class Atendimento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "atendimento_id")
-    private int id;
+    @NonNull
+    private Long id;
 
     @Column(name = "atendimento_descricao")
+    @NonNull
     private String descricao;
 
     @Column(name = "atendimento_servico")
+    @NonNull
     private String servico;
 
     @Column(name = "atendimento_valor")
-    private double valor;
+    @NonNull
+    private Double valor;
 
 
 }
