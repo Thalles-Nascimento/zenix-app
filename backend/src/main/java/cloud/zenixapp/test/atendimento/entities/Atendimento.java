@@ -20,15 +20,12 @@ public class Atendimento {
     private Long id;
 
     @Column(name = "atendimento_descricao")
-    @NonNull
     private String descricao;
 
     @Column(name = "atendimento_servico")
-    @NonNull
     private String servico;
 
     @Column(name = "atendimento_valor")
-    @NonNull
     private Double valor;
 
 

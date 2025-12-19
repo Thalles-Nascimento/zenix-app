@@ -4,5 +4,5 @@ import cloud.zenixapp.test.atendimento.entities.Atendimento;
 import lombok.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AtendimentoRepository extends JpaRepository<@NonNull Atendimento, @NonNull Long> {
+public interface AtendimentoRepository extends JpaRepository<Atendimento, @NonNull Long> {
 }

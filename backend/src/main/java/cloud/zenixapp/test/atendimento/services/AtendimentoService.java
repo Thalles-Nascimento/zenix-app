@@ -5,6 +5,8 @@ import cloud.zenixapp.test.atendimento.repositories.AtendimentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class AtendimentoService {
 
@@ -14,6 +16,10 @@ public class AtendimentoService {
 
     public Atendimento save(Atendimento atendimento){
         return atendimentoRepository.save(atendimento);
+    }
+
+    public List<Atendimento> findAll(){
+        return atendimentoRepository.findAll();
     }
 
 }
