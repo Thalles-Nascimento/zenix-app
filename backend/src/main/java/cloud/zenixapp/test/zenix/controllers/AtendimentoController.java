@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/zenix")
+@RequestMapping(value = "/atendimento")
 public class AtendimentoController {
 
     @Autowired
     private AtendimentoService atendimentoService;
 
     /*
-    *Endpoint para inserção de um zenix no Banco de Dados
+    *Endpoint para inserção de um atendimento no Banco de Dados
     *
     */
     @PostMapping
