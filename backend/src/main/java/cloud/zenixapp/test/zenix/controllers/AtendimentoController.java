@@ -35,5 +35,10 @@ public class AtendimentoController {
         return ResponseEntity.ok().body(atendimentoService.findAll());
     }
 
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<String> deleteAtendimento(@PathVariable Long id){
+        return ResponseEntity.ok().body(atendimentoService.delete(id));
+    }
+
 
 }
