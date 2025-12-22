@@ -35,9 +35,22 @@ public class AtendimentoController {
         return ResponseEntity.ok().body(atendimentoService.findAll());
     }
 
+    /*
+     * Endpoint para deletar um atendimento do Banco de Dados pelo ID
+     *
+     */
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<String> deleteAtendimento(@PathVariable Long id){
         return ResponseEntity.ok().body(atendimentoService.delete(id));
+    }
+
+    /*
+     * Endpoint para buscar um atendimento do Banco de Dados pelo ID
+     *
+     */
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<Atendimento> findById(@PathVariable Long id){
+        return ResponseEntity.ok().body(atendimentoService.findById(id));
     }
 
 
