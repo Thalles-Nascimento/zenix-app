@@ -1,6 +1,7 @@
 package cloud.zenixapp.test.zenix.services;
 
 import cloud.zenixapp.test.zenix.entities.Atendimento;
+import cloud.zenixapp.test.zenix.exceptions.AtendimentoException;
 import cloud.zenixapp.test.zenix.repositories.AtendimentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,12 +24,15 @@ public class AtendimentoService {
         return atendimentoRepository.findAll();
     }
 
-    public Atendimento findById(Long id){
+    public Atendimento findById(Long id) throws AtendimentoException {
         Optional<Atendimento> atendimento = atendimentoRepository.findById(id);
-        return atendimento.orElseThrow();
+        atendimento.orElseThrow(() -> {
+            return new AtendimentoException("Atendimento não existe");
+        });
+        return atendimento.get();
     }
 
-    public String delete(Long id){
+    public String delete(Long id) throws AtendimentoException {
         atendimentoRepository.delete(this.findById(id));
         return "Atendimento excluido";
     }

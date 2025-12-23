@@ -1,6 +1,7 @@
 package cloud.zenixapp.test.zenix.controllers;
 
 import cloud.zenixapp.test.zenix.entities.Atendimento;
+import cloud.zenixapp.test.zenix.exceptions.AtendimentoException;
 import cloud.zenixapp.test.zenix.services.AtendimentoService;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class AtendimentoController {
      *
      */
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<String> deleteAtendimento(@PathVariable Long id){
+    public ResponseEntity<String> deleteAtendimento(@PathVariable Long id) throws AtendimentoException {
         return ResponseEntity.ok().body(atendimentoService.delete(id));
     }
 
@@ -49,7 +50,7 @@ public class AtendimentoController {
      *
      */
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Atendimento> findById(@PathVariable Long id){
+    public ResponseEntity<Atendimento> findById(@PathVariable Long id) throws AtendimentoException {
         return ResponseEntity.ok().body(atendimentoService.findById(id));
     }
 
