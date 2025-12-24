@@ -3,6 +3,7 @@ package cloud.zenixapp.test.zenix.controllers;
 import cloud.zenixapp.test.zenix.entities.Atendimento;
 import cloud.zenixapp.test.zenix.exceptions.AtendimentoException;
 import cloud.zenixapp.test.zenix.services.AtendimentoService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ public class AtendimentoController {
     *
     */
     @PostMapping
+    @Operation(summary = "Adicionar atendimento", description = "Adiciona um novo atendimento")
     public ResponseEntity<@NonNull Atendimento> save(@RequestBody Atendimento atendimento){
         Atendimento atd = atendimentoService.save(atendimento);
         return ResponseEntity.ok().body(atd);
@@ -32,6 +34,7 @@ public class AtendimentoController {
     *
     */
     @GetMapping
+    @Operation(summary = "Listar atendimentos", description = "Listar todos os atendimentos")
     public ResponseEntity<@NonNull List<Atendimento>> findAll(){
         return ResponseEntity.ok().body(atendimentoService.findAll());
     }
@@ -41,6 +44,7 @@ public class AtendimentoController {
      *
      */
     @DeleteMapping(value = "/{id}")
+    @Operation(summary = "Deletar atendimento", description = "Deletar um atendimento")
     public ResponseEntity<String> deleteAtendimento(@PathVariable Long id) throws AtendimentoException {
         try {
             atendimentoService.delete(id);
@@ -57,6 +61,7 @@ public class AtendimentoController {
      *
      */
     @GetMapping(value = "/{id}")
+    @Operation(summary = "Listar atendimento por ID", description = "Lista um atendimento por ID")
     public ResponseEntity<Atendimento> findById(@PathVariable Long id) throws AtendimentoException {
         return ResponseEntity.ok().body(atendimentoService.findById(id));
     }
