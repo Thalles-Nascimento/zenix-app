@@ -20,16 +20,16 @@ public class AtendimentoService {
     @Autowired
     private AtendimentoMapper atendimentoMapper;
 
-    public Atendimento save(AtendimentoDTO atendimentoDTO){
+    public Atendimento inserirAtendimento(AtendimentoDTO atendimentoDTO){
         Atendimento atendimento = atendimentoMapper.insertAtendimento(atendimentoDTO);
         return atendimentoRepository.save(atendimento);
     }
 
-    public List<Atendimento> findAll(){
+    public List<Atendimento> listarAtendimentos(){
         return atendimentoRepository.findAll();
     }
 
-    public Atendimento findById(Long id) throws AtendimentoException {
+    public Atendimento listarAtendimentoPorId(Long id) throws AtendimentoException {
         Optional<Atendimento> atendimento = atendimentoRepository.findById(id);
         atendimento.orElseThrow(() -> {
             return new AtendimentoException("Atendimento não existe");
@@ -37,11 +37,11 @@ public class AtendimentoService {
         return atendimento.get();
     }
 
-    public void delete(Long id) throws AtendimentoException {
+    public void deletarAtendimento(Long id) throws AtendimentoException {
         atendimentoRepository.delete(this.findById(id));
     }
 
-    public Atendimento update(Long id, AtendimentoDTO atendimentoDTO) throws AtendimentoException {
+    public Atendimento atualizarAtendimento(Long id, AtendimentoDTO atendimentoDTO) throws AtendimentoException {
         return atendimentoRepository.findById(id)
                 .map(atendimento -> {
                     atendimentoMapper.updateFromDTO(atendimento, atendimentoDTO);

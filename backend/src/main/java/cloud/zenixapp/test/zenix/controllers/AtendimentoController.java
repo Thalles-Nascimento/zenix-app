@@ -26,7 +26,7 @@ public class AtendimentoController {
     @PostMapping
     @Operation(summary = "Adicionar atendimento", description = "Adiciona um novo atendimento")
     public ResponseEntity<Atendimento> save(@RequestBody AtendimentoDTO atendimentoDTO){
-        return ResponseEntity.ok().body(atendimentoService.save(atendimentoDTO));
+        return ResponseEntity.ok().body(atendimentoService.inserirAtendimento(atendimentoDTO));
     }
 
     /*
@@ -36,7 +36,7 @@ public class AtendimentoController {
     @GetMapping
     @Operation(summary = "Listar atendimentos", description = "Listar todos os atendimentos")
     public ResponseEntity<@NonNull List<Atendimento>> findAll(){
-        return ResponseEntity.ok().body(atendimentoService.findAll());
+        return ResponseEntity.ok().body(atendimentoService.listarAtendimentos());
     }
 
     /*
@@ -47,7 +47,7 @@ public class AtendimentoController {
     @Operation(summary = "Deletar atendimento", description = "Deletar um atendimento")
     public ResponseEntity<String> deleteAtendimento(@PathVariable Long id) throws AtendimentoException {
         try {
-            atendimentoService.delete(id);
+            atendimentoService.deletarAtendimento(id);
             return ResponseEntity.ok().body("Atendimento Excluído!");
 
         } catch (AtendimentoException e) {
@@ -63,7 +63,7 @@ public class AtendimentoController {
     @GetMapping(value = "/{id}")
     @Operation(summary = "Listar atendimento por ID", description = "Lista um atendimento por ID")
     public ResponseEntity<Atendimento> findById(@PathVariable Long id) throws AtendimentoException {
-        return ResponseEntity.ok().body(atendimentoService.findById(id));
+        return ResponseEntity.ok().body(atendimentoService.listarAtendimentoPorId(id));
     }
 
     /*
@@ -73,7 +73,7 @@ public class AtendimentoController {
     @PutMapping(value = "/{id}")
     @Operation(summary = "Atualizar atendimento por ID", description = "Atualiza um atendimento por ID")
     public ResponseEntity<Atendimento> update(@PathVariable Long id, @RequestBody AtendimentoDTO atendimentoDTO) throws AtendimentoException {
-        return ResponseEntity.ok().body(atendimentoService.update(id, atendimentoDTO));
+        return ResponseEntity.ok().body(atendimentoService.atualizarAtendimento(id, atendimentoDTO));
     }
 
 }
