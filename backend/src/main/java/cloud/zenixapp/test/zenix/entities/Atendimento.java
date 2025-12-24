@@ -17,7 +17,7 @@ import java.io.Serializable;
 public class Atendimento implements Serializable {
 
     @Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -632158690661873289L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
