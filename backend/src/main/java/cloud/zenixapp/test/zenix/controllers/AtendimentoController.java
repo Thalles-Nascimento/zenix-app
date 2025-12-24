@@ -24,7 +24,7 @@ public class AtendimentoController {
     *
     */
     @PostMapping
-    @Operation(summary = "Adicionar atendimento", description = "Adiciona um novo atendimento")
+    @Operation(summary = "Adicionar atendimento", description = "Endpoint para adiciona um novo atendimento")
     public ResponseEntity<Atendimento> save(@RequestBody AtendimentoDTO atendimentoDTO){
         return ResponseEntity.ok().body(atendimentoService.inserirAtendimento(atendimentoDTO));
     }
@@ -34,7 +34,7 @@ public class AtendimentoController {
     *
     */
     @GetMapping
-    @Operation(summary = "Listar atendimentos", description = "Listar todos os atendimentos")
+    @Operation(summary = "Listar atendimentos", description = "Endpoint para listar todos os atendimentos")
     public ResponseEntity<@NonNull List<Atendimento>> findAll(){
         return ResponseEntity.ok().body(atendimentoService.listarAtendimentos());
     }
@@ -44,15 +44,12 @@ public class AtendimentoController {
      *
      */
     @DeleteMapping(value = "/{id}")
-    @Operation(summary = "Deletar atendimento", description = "Deletar um atendimento")
-    public ResponseEntity<String> deleteAtendimento(@PathVariable Long id) throws AtendimentoException {
-        try {
-            atendimentoService.deletarAtendimento(id);
+    @Operation(summary = "Deletar atendimento", description = "Endpoint para deletar um atendimento")
+    public ResponseEntity<String> deleteAtendimento(@PathVariable Long id){
+        if (atendimentoService.deletarAtendimento(id)){
             return ResponseEntity.ok().body("Atendimento Excluído!");
-
-        } catch (AtendimentoException e) {
-            return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.notFound().build();
 
     }
 
@@ -61,7 +58,7 @@ public class AtendimentoController {
      *
      */
     @GetMapping(value = "/{id}")
-    @Operation(summary = "Listar atendimento por ID", description = "Lista um atendimento por ID")
+    @Operation(summary = "Listar atendimento por ID", description = "Endpoint para lista um atendimento por ID")
     public ResponseEntity<Atendimento> findById(@PathVariable Long id) throws AtendimentoException {
         return ResponseEntity.ok().body(atendimentoService.listarAtendimentoPorId(id));
     }
@@ -71,7 +68,7 @@ public class AtendimentoController {
      *
      */
     @PutMapping(value = "/{id}")
-    @Operation(summary = "Atualizar atendimento por ID", description = "Atualiza um atendimento por ID")
+    @Operation(summary = "Atualizar atendimento por ID", description = "Endpoint para atualiza um atendimento por ID")
     public ResponseEntity<Atendimento> update(@PathVariable Long id, @RequestBody AtendimentoDTO atendimentoDTO) throws AtendimentoException {
         return ResponseEntity.ok().body(atendimentoService.atualizarAtendimento(id, atendimentoDTO));
     }

@@ -11,10 +11,10 @@ import java.util.Optional;
 
 public interface AtendimentoRepository extends JpaRepository<Atendimento, Long> {
 
-//    @Modifying
-//    @Transactional
-//    @Query("DELETE FROM Atendimento a WHERE a.id = :id")
-//    int deleteAtendimento(@Param("id") Long id);
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE Atendimento SET status = -1 WHERE id = :id")
+    void deleteLogico(@Param("id") Long id);
 
 
 }

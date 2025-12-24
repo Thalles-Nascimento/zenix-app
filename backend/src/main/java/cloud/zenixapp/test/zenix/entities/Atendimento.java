@@ -33,5 +33,8 @@ public class Atendimento implements Serializable {
     @Column(name = "atendimento_valor")
     private Double valor;
 
+    @Column(name = "atendimento_status")
+    private Integer status = 1;
+
 
 }

@@ -31,14 +31,20 @@ public class AtendimentoService {
 
     public Atendimento listarAtendimentoPorId(Long id) throws AtendimentoException {
         Optional<Atendimento> atendimento = atendimentoRepository.findById(id);
-        atendimento.orElseThrow(() -> {
-            return new AtendimentoException("Atendimento não existe");
-        });
+        atendimento.orElseThrow(() -> new AtendimentoException("Atendimento não existe"));
         return atendimento.get();
     }
 
-    public void deletarAtendimento(Long id) throws AtendimentoException {
-        atendimentoRepository.delete(this.listarAtendimentoPorId(id));
+    public boolean deletarAtendimento(Long id) {
+        try {
+            this.listarAtendimentoPorId(id);
+            atendimentoRepository.deleteLogico(id);
+            return true;
+
+        } catch (AtendimentoException e) {
+            return false;
+        }
+
     }
 
     public Atendimento atualizarAtendimento(Long id, AtendimentoDTO atendimentoDTO) throws AtendimentoException {
