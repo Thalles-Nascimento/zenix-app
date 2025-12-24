@@ -38,7 +38,7 @@ public class AtendimentoService {
     }
 
     public void deletarAtendimento(Long id) throws AtendimentoException {
-        atendimentoRepository.delete(this.findById(id));
+        atendimentoRepository.delete(this.listarAtendimentoPorId(id));
     }
 
     public Atendimento atualizarAtendimento(Long id, AtendimentoDTO atendimentoDTO) throws AtendimentoException {
