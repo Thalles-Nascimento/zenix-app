@@ -25,9 +25,8 @@ public class AtendimentoController {
     */
     @PostMapping
     @Operation(summary = "Adicionar atendimento", description = "Adiciona um novo atendimento")
-    public ResponseEntity<@NonNull Atendimento> save(@RequestBody Atendimento atendimento){
-        Atendimento atd = atendimentoService.save(atendimento);
-        return ResponseEntity.ok().body(atd);
+    public ResponseEntity<Atendimento> save(@RequestBody AtendimentoDTO atendimentoDTO){
+        return ResponseEntity.ok().body(atendimentoService.save(atendimentoDTO));
     }
 
     /*

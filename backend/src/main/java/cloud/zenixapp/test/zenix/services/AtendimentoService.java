@@ -20,7 +20,8 @@ public class AtendimentoService {
     @Autowired
     private AtendimentoMapper atendimentoMapper;
 
-    public Atendimento save(Atendimento atendimento){
+    public Atendimento save(AtendimentoDTO atendimentoDTO){
+        Atendimento atendimento = atendimentoMapper.insertAtendimento(atendimentoDTO);
         return atendimentoRepository.save(atendimento);
     }
 
