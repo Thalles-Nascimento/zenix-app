@@ -42,7 +42,14 @@ public class AtendimentoController {
      */
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<String> deleteAtendimento(@PathVariable Long id) throws AtendimentoException {
-        return ResponseEntity.ok().body(atendimentoService.delete(id));
+        try {
+            atendimentoService.delete(id);
+            return ResponseEntity.ok().body("Atendimento Excluído!");
+
+        } catch (AtendimentoException e) {
+            return ResponseEntity.notFound().build();
+        }
+
     }
 
     /*

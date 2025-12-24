@@ -15,7 +15,6 @@ public class AtendimentoService {
     @Autowired
     private AtendimentoRepository atendimentoRepository;
 
-
     public Atendimento save(Atendimento atendimento){
         return atendimentoRepository.save(atendimento);
     }
@@ -32,9 +31,8 @@ public class AtendimentoService {
         return atendimento.get();
     }
 
-    public String delete(Long id) throws AtendimentoException {
+    public void delete(Long id) throws AtendimentoException {
         atendimentoRepository.delete(this.findById(id));
-        return "Atendimento excluido";
     }
 
 }
