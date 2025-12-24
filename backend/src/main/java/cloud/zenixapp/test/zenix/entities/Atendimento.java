@@ -13,6 +13,7 @@ import java.io.Serializable;
 @Table(name = "atendimento")
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class Atendimento implements Serializable {
 
     @Serial

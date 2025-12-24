@@ -1,5 +1,6 @@
 package cloud.zenixapp.test.zenix.controllers;
 
+import cloud.zenixapp.test.zenix.dtos.AtendimentoDTO;
 import cloud.zenixapp.test.zenix.entities.Atendimento;
 import cloud.zenixapp.test.zenix.exceptions.AtendimentoException;
 import cloud.zenixapp.test.zenix.services.AtendimentoService;
@@ -66,5 +67,14 @@ public class AtendimentoController {
         return ResponseEntity.ok().body(atendimentoService.findById(id));
     }
 
+    /*
+     * Endpoint para atualizar um atendimento do Banco de Dados pelo ID
+     *
+     */
+    @PutMapping(value = "/{id}")
+    @Operation(summary = "Atualizar atendimento por ID", description = "Atualiza um atendimento por ID")
+    public ResponseEntity<Atendimento> update(@PathVariable Long id, @RequestBody AtendimentoDTO atendimentoDTO) throws AtendimentoException {
+        return ResponseEntity.ok().body(atendimentoService.update(id, atendimentoDTO));
+    }
 
 }
