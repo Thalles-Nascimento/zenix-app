@@ -37,7 +37,11 @@ public class AtendimentoService {
 
     public boolean deletarAtendimento(Long id) {
         try {
-            this.listarAtendimentoPorId(id);
+            Atendimento atendimento = this.listarAtendimentoPorId(id);
+
+            if(atendimento.getStatus() == -1){
+                return false;
+            }
             atendimentoRepository.deleteLogico(id);
             return true;
 
