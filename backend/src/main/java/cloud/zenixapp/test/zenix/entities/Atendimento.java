@@ -12,7 +12,6 @@ import java.io.Serializable;
 @Entity
 @Table(name = "atendimento")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class Atendimento implements Serializable {
 
