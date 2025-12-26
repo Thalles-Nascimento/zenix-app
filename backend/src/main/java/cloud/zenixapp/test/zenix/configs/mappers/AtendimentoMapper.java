@@ -11,12 +11,11 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 public interface AtendimentoMapper {
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "status", ignore = true)
     void updateFromDTO(@MappingTarget Atendimento atendimento, AtendimentoDTO atendimentoDTO);
 
-//    @Mapping(target = "id", ignore = true)
-    @Mapping(source = "descricao", target = "descricao")
-    @Mapping(source = "servico", target = "servico")
-    @Mapping(source = "valor", target = "valor")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "status", ignore = true)
     Atendimento insertAtendimento(AtendimentoDTO atendimentoDTO);
 
 }

@@ -5,6 +5,7 @@ import cloud.zenixapp.test.zenix.entities.Atendimento;
 import cloud.zenixapp.test.zenix.exceptions.AtendimentoException;
 import cloud.zenixapp.test.zenix.services.AtendimentoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/atendimento")
+@Tag(name = "Atendimento", description = "Endpoints do serviço de Atendimento")
 public class AtendimentoController {
 
     @Autowired
