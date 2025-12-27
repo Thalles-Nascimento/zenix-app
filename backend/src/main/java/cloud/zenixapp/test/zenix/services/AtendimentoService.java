@@ -1,13 +1,15 @@
 package cloud.zenixapp.test.zenix.services;
 
 import cloud.zenixapp.test.zenix.configs.mappers.AtendimentoMapper;
-import cloud.zenixapp.test.zenix.dtos.AtendimentoDTO;
+import cloud.zenixapp.test.zenix.dtos.AtendimentoRequestDTO;
+import cloud.zenixapp.test.zenix.dtos.AtendimentoResponseDTO;
 import cloud.zenixapp.test.zenix.entities.Atendimento;
 import cloud.zenixapp.test.zenix.exceptions.AtendimentoException;
 import cloud.zenixapp.test.zenix.repositories.AtendimentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,13 +22,13 @@ public class AtendimentoService {
     @Autowired
     private AtendimentoMapper atendimentoMapper;
 
-    public Atendimento inserirAtendimento(AtendimentoDTO atendimentoDTO){
+    public AtendimentoResponseDTO inserirAtendimento(AtendimentoRequestDTO atendimentoDTO){
         Atendimento atendimento = atendimentoMapper.insertAtendimento(atendimentoDTO);
-        return atendimentoRepository.save(atendimento);
+        return atendimentoMapper.paraDTO(atendimentoRepository.save(atendimento));
     }
 
-    public List<Atendimento> listarAtendimentos(){
-        return atendimentoRepository.findAll();
+    public List<AtendimentoResponseDTO> listarAtendimentos(){
+        return atendimentoMapper.listParaDTO(atendimentoRepository.findAll());
     }
 
     public Atendimento listarAtendimentoPorId(Long id) throws AtendimentoException {
@@ -51,10 +53,10 @@ public class AtendimentoService {
 
     }
 
-    public Atendimento atualizarAtendimento(Long id, AtendimentoDTO atendimentoDTO) throws AtendimentoException {
+    public Atendimento atualizarAtendimento(Long id, AtendimentoRequestDTO atendimentoDTO) throws AtendimentoException {
         return atendimentoRepository.findById(id)
                 .map(atendimento -> {
-                    atendimentoMapper.updateFromDTO(atendimento, atendimentoDTO);
+                    atendimentoMapper.atualizarAtendimento(atendimento, atendimentoDTO);
                     return atendimentoRepository.save(atendimento);
                 })
                 .orElseThrow(() -> new AtendimentoException("Não foi possível atualizar!"));

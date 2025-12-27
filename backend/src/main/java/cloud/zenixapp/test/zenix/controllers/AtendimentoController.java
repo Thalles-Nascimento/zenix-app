@@ -1,6 +1,7 @@
 package cloud.zenixapp.test.zenix.controllers;
 
-import cloud.zenixapp.test.zenix.dtos.AtendimentoDTO;
+import cloud.zenixapp.test.zenix.dtos.AtendimentoRequestDTO;
+import cloud.zenixapp.test.zenix.dtos.AtendimentoResponseDTO;
 import cloud.zenixapp.test.zenix.entities.Atendimento;
 import cloud.zenixapp.test.zenix.exceptions.AtendimentoException;
 import cloud.zenixapp.test.zenix.services.AtendimentoService;
@@ -27,7 +28,7 @@ public class AtendimentoController {
     */
     @PostMapping
     @Operation(summary = "Adicionar atendimento", description = "Endpoint para adiciona um novo atendimento")
-    public ResponseEntity<Atendimento> save(@RequestBody AtendimentoDTO atendimentoDTO){
+    public ResponseEntity<AtendimentoResponseDTO> save(@RequestBody AtendimentoRequestDTO atendimentoDTO){
         return ResponseEntity.ok().body(atendimentoService.inserirAtendimento(atendimentoDTO));
     }
 
@@ -37,7 +38,7 @@ public class AtendimentoController {
     */
     @GetMapping
     @Operation(summary = "Listar atendimentos", description = "Endpoint para listar todos os atendimentos")
-    public ResponseEntity<@NonNull List<Atendimento>> findAll(){
+    public ResponseEntity<@NonNull List<AtendimentoResponseDTO>> findAll(){
         return ResponseEntity.ok().body(atendimentoService.listarAtendimentos());
     }
 
@@ -71,8 +72,8 @@ public class AtendimentoController {
      */
     @PutMapping(value = "/{id}")
     @Operation(summary = "Atualizar atendimento por ID", description = "Endpoint para atualiza um atendimento por ID")
-    public ResponseEntity<Atendimento> update(@PathVariable Long id, @RequestBody AtendimentoDTO atendimentoDTO) throws AtendimentoException {
-        return ResponseEntity.ok().body(atendimentoService.atualizarAtendimento(id, atendimentoDTO));
+    public ResponseEntity<Atendimento> update(@PathVariable Long id, @RequestBody AtendimentoRequestDTO atendimentoRequestDTO) throws AtendimentoException {
+        return ResponseEntity.ok().body(atendimentoService.atualizarAtendimento(id, atendimentoRequestDTO));
     }
 
 }
