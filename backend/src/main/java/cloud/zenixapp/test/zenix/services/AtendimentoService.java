@@ -9,7 +9,6 @@ import cloud.zenixapp.test.zenix.repositories.AtendimentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,11 +23,11 @@ public class AtendimentoService {
 
     public AtendimentoResponseDTO inserirAtendimento(AtendimentoRequestDTO atendimentoDTO){
         Atendimento atendimento = atendimentoMapper.insertAtendimento(atendimentoDTO);
-        return atendimentoMapper.paraDTO(atendimentoRepository.save(atendimento));
+        return atendimentoMapper.responseDTO(atendimentoRepository.save(atendimento));
     }
 
     public List<AtendimentoResponseDTO> listarAtendimentos(){
-        return atendimentoMapper.listParaDTO(atendimentoRepository.findAll());
+        return atendimentoMapper.listResponseDTO(atendimentoRepository.findAll());
     }
 
     public Atendimento listarAtendimentoPorId(Long id) throws AtendimentoException {

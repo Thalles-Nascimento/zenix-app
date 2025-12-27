@@ -21,8 +21,8 @@ public interface AtendimentoMapper {
     @Mapping(target = "status", ignore = true)
     Atendimento insertAtendimento(AtendimentoRequestDTO atendimentoRequestDTO);
 
-    AtendimentoResponseDTO paraDTO(Atendimento atendimento);
+    AtendimentoResponseDTO responseDTO(Atendimento atendimento);
 
-    List<AtendimentoResponseDTO> listParaDTO(List<Atendimento> atendimentosList);
+    List<AtendimentoResponseDTO> listResponseDTO(List<Atendimento> atendimentosList);
 
 }
