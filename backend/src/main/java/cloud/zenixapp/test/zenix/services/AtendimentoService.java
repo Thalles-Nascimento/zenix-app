@@ -21,13 +21,13 @@ public class AtendimentoService {
     @Autowired
     private AtendimentoMapper atendimentoMapper;
 
-    public AtendimentoResponseDTO inserirAtendimento(AtendimentoRequestDTO atendimentoDTO){
+    public Atendimento inserirAtendimento(AtendimentoRequestDTO atendimentoDTO){
         Atendimento atendimento = atendimentoMapper.insertAtendimento(atendimentoDTO);
-        return atendimentoMapper.responseDTO(atendimentoRepository.save(atendimento));
+        return atendimentoRepository.save(atendimento);
     }
 
-    public List<AtendimentoResponseDTO> listarAtendimentos(){
-        return atendimentoMapper.listResponseDTO(atendimentoRepository.findAll());
+    public List<Atendimento> listarAtendimentos(){
+        return atendimentoRepository.findAll();
     }
 
     public Atendimento listarAtendimentoPorId(Long id) throws AtendimentoException {

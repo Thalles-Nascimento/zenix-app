@@ -1,5 +1,6 @@
 package cloud.zenixapp.test.zenix.controllers;
 
+import cloud.zenixapp.test.zenix.configs.mappers.AtendimentoMapper;
 import cloud.zenixapp.test.zenix.dtos.AtendimentoRequestDTO;
 import cloud.zenixapp.test.zenix.dtos.AtendimentoResponseDTO;
 import cloud.zenixapp.test.zenix.entities.Atendimento;
@@ -22,6 +23,9 @@ public class AtendimentoController {
     @Autowired
     private AtendimentoService atendimentoService;
 
+    @Autowired
+    private AtendimentoMapper atendimentoMapper;
+
     /*
     *Endpoint para inserção de um atendimento no Banco de Dados
     *
@@ -29,7 +33,7 @@ public class AtendimentoController {
     @PostMapping
     @Operation(summary = "Adicionar atendimento", description = "Endpoint para adiciona um novo atendimento")
     public ResponseEntity<AtendimentoResponseDTO> save(@RequestBody AtendimentoRequestDTO atendimentoDTO){
-        return ResponseEntity.ok().body(atendimentoService.inserirAtendimento(atendimentoDTO));
+        return ResponseEntity.ok().body(atendimentoMapper.responseDTO(atendimentoService.inserirAtendimento(atendimentoDTO)));
     }
 
     /*
@@ -39,7 +43,7 @@ public class AtendimentoController {
     @GetMapping
     @Operation(summary = "Listar atendimentos", description = "Endpoint para listar todos os atendimentos")
     public ResponseEntity<@NonNull List<AtendimentoResponseDTO>> findAll(){
-        return ResponseEntity.ok().body(atendimentoService.listarAtendimentos());
+        return ResponseEntity.ok().body(atendimentoMapper.listResponseDTO(atendimentoService.listarAtendimentos()));
     }
 
     /*
