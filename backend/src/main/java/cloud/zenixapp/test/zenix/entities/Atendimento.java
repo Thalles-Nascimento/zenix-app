@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "atendimento")
@@ -24,14 +25,17 @@ public class Atendimento implements Serializable {
     @Column(name = "atendimento_id")
     private Long id;
 
-    @Column(name = "atendimento_descricao")
+    @Column(name = "atendimento_descricao", length = 120)
     private String descricao;
 
-    @Column(name = "atendimento_servico")
+    @Column(name = "atendimento_servico", length = 100)
     private String servico;
 
-    @Column(name = "atendimento_valor")
+    @Column(name = "atendimento_valor", length = 25)
     private Double valor;
+
+    @Column(name = "atendimento_data")
+    private LocalDateTime date = LocalDateTime.now();
 
     @Column(name = "atendimento_status")
     private Integer status = 1;
