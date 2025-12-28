@@ -12,9 +12,7 @@ import java.util.Optional;
 public interface AtendimentoRepository extends JpaRepository<Atendimento, Long> {
 
     @Modifying
-    @Transactional
     @Query(value = "UPDATE Atendimento SET status = -1 WHERE id = :id")
     void deleteLogico(@Param("id") Long id);
-
 
 }

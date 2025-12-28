@@ -8,6 +8,7 @@ import cloud.zenixapp.test.zenix.exceptions.AtendimentoException;
 import cloud.zenixapp.test.zenix.repositories.AtendimentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,37 +22,37 @@ public class AtendimentoService {
     @Autowired
     private AtendimentoMapper atendimentoMapper;
 
-    public Atendimento inserirAtendimento(AtendimentoRequestDTO atendimentoDTO){
+    @Transactional
+    public AtendimentoResponseDTO inserirAtendimento(AtendimentoRequestDTO atendimentoDTO){
         Atendimento atendimento = atendimentoMapper.insertAtendimento(atendimentoDTO);
-        return atendimentoRepository.save(atendimento);
+        return atendimentoMapper.responseDTO(atendimentoRepository.save(atendimento));
     }
 
     public List<Atendimento> listarAtendimentos(){
         return atendimentoRepository.findAll();
     }
 
-    public Atendimento listarAtendimentoPorId(Long id) throws AtendimentoException {
-        Optional<Atendimento> atendimento = atendimentoRepository.findById(id);
-        atendimento.orElseThrow(() -> new AtendimentoException("Atendimento não existe"));
-        return atendimento.get();
+    public Optional<AtendimentoResponseDTO> listarAtendimentoPorId(Long id){
+        return atendimentoRepository.findById(id)
+                .map((atendimento -> atendimentoMapper.responseDTO(atendimento)));
     }
 
+    @Transactional
     public boolean deletarAtendimento(Long id) {
-        try {
-            Atendimento atendimento = this.listarAtendimentoPorId(id);
+        return atendimentoRepository.findById(id)
+                .map(atendimento -> {
+                    if (atendimento.getStatus() == -1) {
+                        return false;
+                    }
+                    atendimentoRepository.deleteLogico(id);
+                    return true;
+                })
+                .orElse(false);
 
-            if(atendimento.getStatus() == -1){
-                return false;
-            }
-            atendimentoRepository.deleteLogico(id);
-            return true;
-
-        } catch (AtendimentoException e) {
-            return false;
-        }
 
     }
 
+    @Transactional
     public Atendimento atualizarAtendimento(Long id, AtendimentoRequestDTO atendimentoDTO) throws AtendimentoException {
         return atendimentoRepository.findById(id)
                 .map(atendimento -> {

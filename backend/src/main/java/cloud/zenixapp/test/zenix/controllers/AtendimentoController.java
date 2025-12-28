@@ -10,10 +10,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/atendimento")
@@ -33,7 +35,8 @@ public class AtendimentoController {
     @PostMapping
     @Operation(summary = "Adicionar atendimento", description = "Endpoint para adiciona um novo atendimento")
     public ResponseEntity<AtendimentoResponseDTO> save(@RequestBody AtendimentoRequestDTO atendimentoDTO){
-        return ResponseEntity.ok().body(atendimentoMapper.responseDTO(atendimentoService.inserirAtendimento(atendimentoDTO)));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(atendimentoService.inserirAtendimento(atendimentoDTO));
     }
 
     /*
@@ -54,9 +57,9 @@ public class AtendimentoController {
     @Operation(summary = "Deletar atendimento", description = "Endpoint para deletar um atendimento")
     public ResponseEntity<String> deleteAtendimento(@PathVariable Long id){
         if (atendimentoService.deletarAtendimento(id)){
-            return ResponseEntity.ok().body("Atendimento Excluído!");
+            return ResponseEntity.ok().body("Atendimento Excluido");
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi possivel excluir!");
 
     }
 
@@ -66,8 +69,15 @@ public class AtendimentoController {
      */
     @GetMapping(value = "/{id}")
     @Operation(summary = "Listar atendimento por ID", description = "Endpoint para lista um atendimento por ID")
-    public ResponseEntity<Atendimento> findById(@PathVariable Long id) throws AtendimentoException {
-        return ResponseEntity.ok().body(atendimentoService.listarAtendimentoPorId(id));
+    public ResponseEntity<Optional<AtendimentoResponseDTO>> findById(@PathVariable Long id) {
+        Optional<AtendimentoResponseDTO> atendimentoResponseDTO = atendimentoService.listarAtendimentoPorId(id);
+
+        if (atendimentoResponseDTO.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(atendimentoResponseDTO);
+        }
+
+        return ResponseEntity.ok().body(atendimentoResponseDTO);
     }
 
     /*
