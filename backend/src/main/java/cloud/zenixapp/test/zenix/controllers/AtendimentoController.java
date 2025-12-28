@@ -86,7 +86,7 @@ public class AtendimentoController {
      */
     @PutMapping(value = "/{id}")
     @Operation(summary = "Atualizar atendimento por ID", description = "Endpoint para atualiza um atendimento por ID")
-    public ResponseEntity<Atendimento> update(@PathVariable Long id, @RequestBody AtendimentoRequestDTO atendimentoRequestDTO) throws AtendimentoException {
+    public ResponseEntity<AtendimentoResponseDTO> update(@PathVariable Long id, @RequestBody AtendimentoRequestDTO atendimentoRequestDTO) throws AtendimentoException {
         return ResponseEntity.ok().body(atendimentoService.atualizarAtendimento(id, atendimentoRequestDTO));
     }
 

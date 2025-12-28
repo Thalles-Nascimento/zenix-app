@@ -21,7 +21,7 @@ public class Atendimento implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "atendimento_id")
+    @Column(name = "atendimento_id", nullable = false)
     private Long id;
 
     @Column(name = "atendimento_descricao", length = 120)

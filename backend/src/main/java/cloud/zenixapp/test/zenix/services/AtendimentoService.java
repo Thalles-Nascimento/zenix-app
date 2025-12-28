@@ -54,13 +54,13 @@ public class AtendimentoService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public Atendimento atualizarAtendimento(Long id, AtendimentoRequestDTO atendimentoDTO) throws AtendimentoException {
+    public AtendimentoResponseDTO atualizarAtendimento(Long id, AtendimentoRequestDTO atendimentoDTO) throws AtendimentoException {
         return atendimentoRepository.findById(id)
                 .map(atendimento -> {
                     atendimentoMapper.atualizarAtendimento(atendimento, atendimentoDTO);
-                    return atendimentoRepository.save(atendimento);
+                    return atendimentoMapper.responseDTO(atendimentoRepository.save(atendimento));
                 })
-                .orElseThrow(() -> new AtendimentoException("Não foi possível atualizar!"));
+                .orElseThrow(() -> new AtendimentoException("Não foi possível atualizar"));
     }
 
 }
