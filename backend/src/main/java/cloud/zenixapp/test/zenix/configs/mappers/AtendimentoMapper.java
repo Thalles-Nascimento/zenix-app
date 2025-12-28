@@ -13,13 +13,15 @@ import java.util.List;
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface AtendimentoMapper {
 
+    @Mapping(target = "date", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "status", ignore = true)
     void atualizarAtendimento(@MappingTarget Atendimento atendimento, AtendimentoRequestDTO atendimentoRequestDTO);
 
+    @Mapping(target = "date", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "status", ignore = true)
-    Atendimento insertAtendimento(AtendimentoRequestDTO atendimentoRequestDTO);
+    Atendimento paraEntity(AtendimentoRequestDTO atendimentoRequestDTO);
 
     AtendimentoResponseDTO responseDTO(Atendimento atendimento);
 

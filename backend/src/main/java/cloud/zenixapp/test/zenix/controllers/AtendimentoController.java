@@ -46,7 +46,7 @@ public class AtendimentoController {
     @GetMapping
     @Operation(summary = "Listar atendimentos", description = "Endpoint para listar todos os atendimentos")
     public ResponseEntity<@NonNull List<AtendimentoResponseDTO>> findAll(){
-        return ResponseEntity.ok().body(atendimentoMapper.listResponseDTO(atendimentoService.listarAtendimentos()));
+        return ResponseEntity.ok().body(atendimentoService.listarAtendimentos());
     }
 
     /*
@@ -55,7 +55,7 @@ public class AtendimentoController {
      */
     @DeleteMapping(value = "/{id}")
     @Operation(summary = "Deletar atendimento", description = "Endpoint para deletar um atendimento")
-    public ResponseEntity<String> deleteAtendimento(@PathVariable Long id){
+    public ResponseEntity<String> deleteAtendimento(@PathVariable Long id) throws AtendimentoException {
         if (atendimentoService.deletarAtendimento(id)){
             return ResponseEntity.ok().body("Atendimento Excluido");
         }

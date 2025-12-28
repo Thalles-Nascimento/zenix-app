@@ -8,6 +8,8 @@ import cloud.zenixapp.test.zenix.exceptions.AtendimentoException;
 import cloud.zenixapp.test.zenix.repositories.AtendimentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -22,23 +24,24 @@ public class AtendimentoService {
     @Autowired
     private AtendimentoMapper atendimentoMapper;
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     public AtendimentoResponseDTO inserirAtendimento(AtendimentoRequestDTO atendimentoDTO){
-        Atendimento atendimento = atendimentoMapper.insertAtendimento(atendimentoDTO);
+        Atendimento atendimento = atendimentoMapper.paraEntity(atendimentoDTO);
         return atendimentoMapper.responseDTO(atendimentoRepository.save(atendimento));
     }
 
-    public List<Atendimento> listarAtendimentos(){
-        return atendimentoRepository.findAll();
+    public List<AtendimentoResponseDTO> listarAtendimentos(){
+        return atendimentoMapper.listResponseDTO(atendimentoRepository.findAll());
     }
 
+//  Optional sendo utilizado para evitar o NullPointerException (NPE)
     public Optional<AtendimentoResponseDTO> listarAtendimentoPorId(Long id){
         return atendimentoRepository.findById(id)
                 .map((atendimento -> atendimentoMapper.responseDTO(atendimento)));
     }
 
-    @Transactional
-    public boolean deletarAtendimento(Long id) {
+    @Transactional(propagation = Propagation.REQUIRED)
+    public boolean deletarAtendimento(Long id) throws AtendimentoException {
         return atendimentoRepository.findById(id)
                 .map(atendimento -> {
                     if (atendimento.getStatus() == -1) {
@@ -47,12 +50,10 @@ public class AtendimentoService {
                     atendimentoRepository.deleteLogico(id);
                     return true;
                 })
-                .orElse(false);
-
-
+                .orElseThrow(() -> new AtendimentoException("Não foi possível excluir atendimento!"));
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     public Atendimento atualizarAtendimento(Long id, AtendimentoRequestDTO atendimentoDTO) throws AtendimentoException {
         return atendimentoRepository.findById(id)
                 .map(atendimento -> {
