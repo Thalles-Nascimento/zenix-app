@@ -3,12 +3,11 @@ package cloud.zenixapp.test.zenix.controllers;
 import cloud.zenixapp.test.zenix.configs.mappers.AtendimentoMapper;
 import cloud.zenixapp.test.zenix.dtos.AtendimentoRequestDTO;
 import cloud.zenixapp.test.zenix.dtos.AtendimentoResponseDTO;
-import cloud.zenixapp.test.zenix.entities.Atendimento;
 import cloud.zenixapp.test.zenix.exceptions.AtendimentoException;
 import cloud.zenixapp.test.zenix.services.AtendimentoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.NonNull;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +33,7 @@ public class AtendimentoController {
     */
     @PostMapping
     @Operation(summary = "Adicionar atendimento", description = "Endpoint para adiciona um novo atendimento")
-    public ResponseEntity<AtendimentoResponseDTO> save(@RequestBody AtendimentoRequestDTO atendimentoDTO){
+    public ResponseEntity<AtendimentoResponseDTO> save(@RequestBody @Valid AtendimentoRequestDTO atendimentoDTO){
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(atendimentoService.inserirAtendimento(atendimentoDTO));
     }
@@ -45,7 +44,7 @@ public class AtendimentoController {
     */
     @GetMapping
     @Operation(summary = "Listar atendimentos", description = "Endpoint para listar todos os atendimentos")
-    public ResponseEntity<@NonNull List<AtendimentoResponseDTO>> findAll(){
+    public ResponseEntity<List<AtendimentoResponseDTO>> findAll(){
         return ResponseEntity.ok().body(atendimentoService.listarAtendimentos());
     }
 
