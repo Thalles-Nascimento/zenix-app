@@ -25,13 +25,13 @@ public class Atendimento implements Serializable {
     @Column(name = "atendimento_id", nullable = false)
     private Long id;
 
-    @Column(name = "atendimento_descricao", length = 120, nullable = false)
+    @Column(name = "atendimento_descricao", length = 120)
     private String descricao;
 
-    @Column(name = "atendimento_servico", length = 100, nullable = false)
+    @Column(name = "atendimento_servico", length = 100)
     private String servico;
 
-    @Column(name = "atendimento_valor", length = 25, nullable = false)
+    @Column(name = "atendimento_valor", length = 25)
     private Double valor;
 
     @Column(name = "atendimento_data", nullable = false)

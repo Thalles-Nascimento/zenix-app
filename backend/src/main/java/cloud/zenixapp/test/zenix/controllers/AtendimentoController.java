@@ -3,6 +3,7 @@ package cloud.zenixapp.test.zenix.controllers;
 import cloud.zenixapp.test.zenix.configs.mappers.AtendimentoMapper;
 import cloud.zenixapp.test.zenix.dtos.AtendimentoRequestDTO;
 import cloud.zenixapp.test.zenix.dtos.AtendimentoResponseDTO;
+import cloud.zenixapp.test.zenix.dtos.AtendimentoUpdateRequestDTO;
 import cloud.zenixapp.test.zenix.exceptions.AtendimentoException;
 import cloud.zenixapp.test.zenix.services.AtendimentoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -85,7 +86,7 @@ public class AtendimentoController {
      */
     @PutMapping(value = "/{id}")
     @Operation(summary = "Atualizar atendimento por ID", description = "Endpoint para atualiza um atendimento por ID")
-    public ResponseEntity<AtendimentoResponseDTO> update(@PathVariable Long id, @RequestBody AtendimentoRequestDTO atendimentoRequestDTO) throws AtendimentoException {
+    public ResponseEntity<AtendimentoResponseDTO> update(@PathVariable Long id, @RequestBody AtendimentoUpdateRequestDTO atendimentoRequestDTO) throws AtendimentoException {
         return ResponseEntity.ok().body(atendimentoService.atualizarAtendimento(id, atendimentoRequestDTO));
     }
 

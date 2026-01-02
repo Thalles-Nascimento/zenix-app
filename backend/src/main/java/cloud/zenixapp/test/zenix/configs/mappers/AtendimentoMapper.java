@@ -2,6 +2,7 @@ package cloud.zenixapp.test.zenix.configs.mappers;
 
 import cloud.zenixapp.test.zenix.dtos.AtendimentoRequestDTO;
 import cloud.zenixapp.test.zenix.dtos.AtendimentoResponseDTO;
+import cloud.zenixapp.test.zenix.dtos.AtendimentoUpdateRequestDTO;
 import cloud.zenixapp.test.zenix.entities.Atendimento;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -16,7 +17,7 @@ public interface AtendimentoMapper {
     @Mapping(target = "date", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "status", ignore = true)
-    void atualizarAtendimento(@MappingTarget Atendimento atendimento, AtendimentoRequestDTO atendimentoRequestDTO);
+    void atualizarAtendimento(@MappingTarget Atendimento atendimento, AtendimentoUpdateRequestDTO atendimentoRequestDTO);
 
     @Mapping(target = "date", ignore = true)
     @Mapping(target = "id", ignore = true)
