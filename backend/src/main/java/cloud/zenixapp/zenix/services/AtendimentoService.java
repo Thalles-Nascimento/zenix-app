@@ -1,15 +1,14 @@
-package cloud.zenixapp.test.zenix.services;
+package cloud.zenixapp.zenix.services;
 
-import cloud.zenixapp.test.zenix.configs.mappers.AtendimentoMapper;
-import cloud.zenixapp.test.zenix.dtos.AtendimentoRequestDTO;
-import cloud.zenixapp.test.zenix.dtos.AtendimentoResponseDTO;
-import cloud.zenixapp.test.zenix.dtos.AtendimentoUpdateRequestDTO;
-import cloud.zenixapp.test.zenix.entities.Atendimento;
-import cloud.zenixapp.test.zenix.exceptions.AtendimentoException;
-import cloud.zenixapp.test.zenix.repositories.AtendimentoRepository;
+import cloud.zenixapp.zenix.configs.mappers.AtendimentoMapper;
+import cloud.zenixapp.zenix.dtos.AtendimentoRequestDTO;
+import cloud.zenixapp.zenix.dtos.AtendimentoResponseDTO;
+import cloud.zenixapp.zenix.dtos.AtendimentoUpdateRequestDTO;
+import cloud.zenixapp.zenix.entities.Atendimento;
+import cloud.zenixapp.zenix.exceptions.AtendimentoException;
+import cloud.zenixapp.zenix.repositories.AtendimentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 

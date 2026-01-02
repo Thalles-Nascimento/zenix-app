@@ -1,11 +1,11 @@
-package cloud.zenixapp.test.zenix.controllers;
+package cloud.zenixapp.zenix.controllers;
 
-import cloud.zenixapp.test.zenix.configs.mappers.AtendimentoMapper;
-import cloud.zenixapp.test.zenix.dtos.AtendimentoRequestDTO;
-import cloud.zenixapp.test.zenix.dtos.AtendimentoResponseDTO;
-import cloud.zenixapp.test.zenix.dtos.AtendimentoUpdateRequestDTO;
-import cloud.zenixapp.test.zenix.exceptions.AtendimentoException;
-import cloud.zenixapp.test.zenix.services.AtendimentoService;
+import cloud.zenixapp.zenix.configs.mappers.AtendimentoMapper;
+import cloud.zenixapp.zenix.dtos.AtendimentoRequestDTO;
+import cloud.zenixapp.zenix.dtos.AtendimentoResponseDTO;
+import cloud.zenixapp.zenix.dtos.AtendimentoUpdateRequestDTO;
+import cloud.zenixapp.zenix.exceptions.AtendimentoException;
+import cloud.zenixapp.zenix.services.AtendimentoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

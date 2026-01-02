@@ -1,4 +1,4 @@
-package cloud.zenixapp.test.zenix.dtos;
+package cloud.zenixapp.zenix.dtos;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

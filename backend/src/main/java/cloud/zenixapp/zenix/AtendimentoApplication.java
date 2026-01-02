@@ -1,4 +1,4 @@
-package cloud.zenixapp.test.zenix;
+package cloud.zenixapp.zenix;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
