@@ -9,12 +9,17 @@ import cloud.zenixapp.zenix.services.AtendimentoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.jackson.autoconfigure.JacksonProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -34,7 +39,17 @@ public class AtendimentoController {
     */
     @PostMapping
     @Operation(summary = "Adicionar atendimento", description = "Endpoint para adiciona um novo atendimento")
-    public ResponseEntity<AtendimentoResponseDTO> save(@RequestBody @Valid AtendimentoRequestDTO atendimentoDTO){
+    public ResponseEntity<AtendimentoResponseDTO> save(@RequestBody AtendimentoRequestDTO atendimentoDTO){
+        if (atendimentoDTO.getDescricao() == null || atendimentoDTO.getServico() == null || atendimentoDTO.getValor() == null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        boolean validacao = atendimentoDTO.validacao();
+
+        if (validacao){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(atendimentoService.inserirAtendimento(atendimentoDTO));
     }
