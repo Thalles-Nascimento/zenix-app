@@ -39,15 +39,13 @@ public class AtendimentoController {
     */
     @PostMapping
     @Operation(summary = "Adicionar atendimento", description = "Endpoint para adiciona um novo atendimento")
-    public ResponseEntity<AtendimentoResponseDTO> save(@RequestBody AtendimentoRequestDTO atendimentoDTO){
-        if (atendimentoDTO.getDescricao() != null && atendimentoDTO.getServico() != null && atendimentoDTO.getValor() != null){
-            if (!atendimentoDTO.validacao()){
-                return ResponseEntity.status(HttpStatus.CREATED)
-                        .body(atendimentoService.inserirAtendimento(atendimentoDTO));
-            }
+    public ResponseEntity<AtendimentoResponseDTO> save(@RequestBody @Valid AtendimentoRequestDTO atendimentoDTO, BindingResult result){
+        if (result.hasErrors()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(atendimentoService.inserirAtendimento(atendimentoDTO));
     }
 
     /*
