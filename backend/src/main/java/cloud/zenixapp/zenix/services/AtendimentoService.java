@@ -3,7 +3,6 @@ package cloud.zenixapp.zenix.services;
 import cloud.zenixapp.zenix.configs.mappers.AtendimentoMapper;
 import cloud.zenixapp.zenix.dtos.AtendimentoRequestDTO;
 import cloud.zenixapp.zenix.dtos.AtendimentoResponseDTO;
-import cloud.zenixapp.zenix.dtos.AtendimentoUpdateRequestDTO;
 import cloud.zenixapp.zenix.entities.Atendimento;
 import cloud.zenixapp.zenix.exceptions.AtendimentoException;
 import cloud.zenixapp.zenix.repositories.AtendimentoRepository;
@@ -11,11 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 @Service
 public class AtendimentoService {
@@ -56,7 +53,7 @@ public class AtendimentoService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public AtendimentoResponseDTO atualizarAtendimento(Long id, AtendimentoUpdateRequestDTO atendimentoDTO) throws AtendimentoException {
+    public AtendimentoResponseDTO atualizarAtendimento(Long id, AtendimentoRequestDTO atendimentoDTO) throws AtendimentoException {
         return atendimentoRepository.findById(id)
                 .map(atendimento -> {
                     atendimentoMapper.atualizarAtendimento(atendimento, atendimentoDTO);

@@ -1,5 +1,6 @@
 package cloud.zenixapp.zenix.controllers;
 
+import cloud.zenixapp.zenix.configs.error.BindingHandler;
 import cloud.zenixapp.zenix.configs.mappers.AtendimentoMapper;
 import cloud.zenixapp.zenix.dtos.AtendimentoRequestDTO;
 import cloud.zenixapp.zenix.dtos.AtendimentoResponseDTO;
@@ -18,9 +19,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import tools.jackson.databind.json.JsonMapper;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "/api/v1/atendimento")
@@ -39,9 +38,9 @@ public class AtendimentoController {
     */
     @PostMapping
     @Operation(summary = "Adicionar atendimento", description = "Endpoint para adiciona um novo atendimento")
-    public ResponseEntity<AtendimentoResponseDTO> save(@RequestBody @Valid AtendimentoRequestDTO atendimentoDTO, BindingResult result){
+    public ResponseEntity<?> save(@RequestBody @Valid AtendimentoRequestDTO atendimentoDTO, BindingResult result){
         if (result.hasErrors()){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BindingHandler.insertError(result));
         }
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -95,8 +94,34 @@ public class AtendimentoController {
      */
     @PutMapping(value = "/{id}")
     @Operation(summary = "Atualizar atendimento por ID", description = "Endpoint para atualiza um atendimento por ID")
-    public ResponseEntity<AtendimentoResponseDTO> update(@PathVariable Long id, @RequestBody AtendimentoUpdateRequestDTO atendimentoRequestDTO) throws AtendimentoException {
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid AtendimentoRequestDTO atendimentoRequestDTO, BindingResult result) throws AtendimentoException {
+//        System.out.println("Anotação do Erro: " + result.getFieldError().getCode() + "\nErro: " + result.getFieldError().getRejectedValue());
+
+        if(result.hasErrors()){
+            System.out.println(result.getFieldErrors());
+            System.out.println(BindingHandler.updateError(result));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getFieldError().getDefaultMessage());
+        }
+
         return ResponseEntity.ok().body(atendimentoService.atualizarAtendimento(id, atendimentoRequestDTO));
+
+//            if(Objects.equals(result.getFieldError().getCode(), "Pattern")) {
+//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getFieldError().getDefaultMessage());
+//            }
+//            else if (Objects.equals(result.getFieldError().getCode(), "NotBlank") || Objects.equals(result.getFieldError().getCode(), "NotNull")){
+//                Object campo = result.getFieldError().getRejectedValue();
+//                if (campo == null){
+//                    return ResponseEntity.ok().body(atendimentoService.atualizarAtendimento(id, atendimentoRequestDTO));
+//
+//                }
+//                else{
+//                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getFieldError().getDefaultMessage());
+//
+//                }
+//            }
+
+
+
     }
 
 }

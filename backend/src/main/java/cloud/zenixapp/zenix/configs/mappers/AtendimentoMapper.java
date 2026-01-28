@@ -17,7 +17,7 @@ public interface AtendimentoMapper {
     @Mapping(target = "date", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "status", ignore = true)
-    void atualizarAtendimento(@MappingTarget Atendimento atendimento, AtendimentoUpdateRequestDTO atendimentoRequestDTO);
+    void atualizarAtendimento(@MappingTarget Atendimento atendimento, AtendimentoRequestDTO atendimentoRequestDTO);
 
     @Mapping(target = "date", ignore = true)
     @Mapping(target = "id", ignore = true)

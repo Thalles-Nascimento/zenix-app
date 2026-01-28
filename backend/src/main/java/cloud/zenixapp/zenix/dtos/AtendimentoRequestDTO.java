@@ -15,15 +15,13 @@ public class AtendimentoRequestDTO {
 
     @NotBlank(message="Descrição não pode ser nula nem em branco")
     @Pattern(
-            regexp = "^[A-Za-zÀ-ÿ ]+$",
-            message = "Descrição deve conter apenas letras"
+            regexp = "^[A-Za-zÀ-ÿ ]+$"
     )
     private String descricao;
 
     @NotBlank(message="Serviço não pode ser nulo nem em branco")
     @Pattern(
-            regexp = "^[A-Za-zÀ-ÿ ]+$",
-            message = "Descrição deve conter apenas letras"
+            regexp = "^[A-Za-zÀ-ÿ ]+$"
     )
     private String servico;
 
