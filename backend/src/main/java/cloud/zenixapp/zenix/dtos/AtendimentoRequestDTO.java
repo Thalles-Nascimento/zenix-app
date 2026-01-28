@@ -1,6 +1,7 @@
 package cloud.zenixapp.zenix.dtos;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -13,13 +14,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AtendimentoRequestDTO {
 
-    @NotBlank(message="Descrição não pode ser nula nem em branco")
+    @NotEmpty(message = "Campo não pode estar vazio")
+    @NotNull(message = "Campo não pode ser nulo!")
     @Pattern(
             regexp = "^[A-Za-zÀ-ÿ ]+$"
     )
     private String descricao;
 
-    @NotBlank(message="Serviço não pode ser nulo nem em branco")
+    @NotEmpty(message = "Campo não pode estar vazio")
+    @NotNull(message = "Campo não pode ser nulo!")
     @Pattern(
             regexp = "^[A-Za-zÀ-ÿ ]+$"
     )
