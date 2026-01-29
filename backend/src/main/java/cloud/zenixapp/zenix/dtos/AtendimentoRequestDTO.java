@@ -14,17 +14,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AtendimentoRequestDTO {
 
-    @NotEmpty(message = "Campo não pode estar vazio")
     @NotNull(message = "Campo não pode ser nulo!")
     @Pattern(
-            regexp = "^[A-Za-zÀ-ÿ ]+$"
+            regexp = "^[A-Za-zÀ-ÿ ]+$",
+            message = "O valor não está respeitando o padrão"
     )
     private String descricao;
 
-    @NotEmpty(message = "Campo não pode estar vazio")
     @NotNull(message = "Campo não pode ser nulo!")
     @Pattern(
-            regexp = "^[A-Za-zÀ-ÿ ]+$"
+            regexp = "^[A-Za-zÀ-ÿ ]+$",
+            message = "O valor não está respeitando o padrão"
     )
     private String servico;
 

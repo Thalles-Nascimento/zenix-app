@@ -95,32 +95,15 @@ public class AtendimentoController {
     @PutMapping(value = "/{id}")
     @Operation(summary = "Atualizar atendimento por ID", description = "Endpoint para atualiza um atendimento por ID")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid AtendimentoRequestDTO atendimentoRequestDTO, BindingResult result) throws AtendimentoException {
-//        System.out.println("Anotação do Erro: " + result.getFieldError().getCode() + "\nErro: " + result.getFieldError().getRejectedValue());
-
         if(result.hasErrors()){
-            System.out.println(result.getFieldErrors());
-            System.out.println(BindingHandler.updateError(result));
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getFieldError().getDefaultMessage());
+            Map<String, String> erro = BindingHandler.updateError(result);
+            if (erro.isEmpty()){
+                return ResponseEntity.ok().body(atendimentoService.atualizarAtendimento(id, atendimentoRequestDTO));
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
         }
 
         return ResponseEntity.ok().body(atendimentoService.atualizarAtendimento(id, atendimentoRequestDTO));
-
-//            if(Objects.equals(result.getFieldError().getCode(), "Pattern")) {
-//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getFieldError().getDefaultMessage());
-//            }
-//            else if (Objects.equals(result.getFieldError().getCode(), "NotBlank") || Objects.equals(result.getFieldError().getCode(), "NotNull")){
-//                Object campo = result.getFieldError().getRejectedValue();
-//                if (campo == null){
-//                    return ResponseEntity.ok().body(atendimentoService.atualizarAtendimento(id, atendimentoRequestDTO));
-//
-//                }
-//                else{
-//                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getFieldError().getDefaultMessage());
-//
-//                }
-//            }
-
-
 
     }
 
