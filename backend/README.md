@@ -10,49 +10,15 @@ para se planejar para o mês seguinte, saberá quanto faturou e quanto pagou, et
 funcionalidade de agendamento, permitindo aos clientes que agendem os seus horários e isso dê mais flexibilidade aos
 barbeiros.
 
-[//]: # (## Instalação Local)
+## Como rodar localmente
+## Pré-requisitos
+### Docker instalado
 
-[//]: # ()
-[//]: # (## Pré-requisitos)
+1 - Clonar projeto
 
-[//]: # (### Utilizar a versão 17 do Java!)
+2 - Dentro da pasta do projeto, rode o comando: `docker compose up --build`
 
-[//]: # ()
-[//]: # (1 - Executar o git clone no repositório)
-
-[//]: # ()
-[//]: # (2 - Colocar o login e password do banco de dados MySQL no application.properties)
-
-[//]: # (`spring.datasource.url={DB_URL}`)
-
-[//]: # ()
-[//]: # (`spring.datasource.username={DB_USER}`)
-
-[//]: # ()
-[//]: # (`spring.datasource.password={DB_PASSWORD}`)
-
-[//]: # ()
-[//]: # (`spring.datasource.driver-class-name={DB_CLASS_NAME}`)
-
-[//]: # ()
-[//]: # (`spring.jpa.database-platform={DB_PLATAFORM}`)
-
-[//]: # ()
-[//]: # (Deixar o Hibernate criar a tabela do banco:)
-
-[//]: # (`spring.jpa.hibernate.ddl-auto=update`)
-
-[//]: # ()
-[//]: # (3 - `javac AtendimentoApplication.java` - Compilar o código)
-
-[//]: # ()
-[//]: # (4 - `java AtendimentoApplication` - Rode o programa)
-
-[//]: # ()
-[//]: # ()
-[//]: # (O projeto rodará no endereço http://localhost:8080/swagger-ui/index.html.)
-
-
+3 - Acesse na url: http://localhost:8080/swagger-ui/index.html
 
 # Ferramentas
 #### Back-end
