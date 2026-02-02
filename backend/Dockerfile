@@ -1,5 +1,5 @@
 # Definindo o Kit de desenvolvimento Java utilizado na aplicação
-FROM openjdk:17-jdk-alpine
+FROM eclipse-temurin:17-jdk-jammy
 
 # Definindo o diretório de trabalho no Container
 WORKDIR /zenixapp
