@@ -1,21 +1,23 @@
 package cloud.zenixapp.zenix.controllers;
 
+import cloud.zenixapp.zenix.configs.error.BindingHandler;
 import cloud.zenixapp.zenix.configs.mappers.AtendimentoMapper;
 import cloud.zenixapp.zenix.dtos.AtendimentoRequestDTO;
 import cloud.zenixapp.zenix.dtos.AtendimentoResponseDTO;
-import cloud.zenixapp.zenix.dtos.AtendimentoUpdateRequestDTO;
 import cloud.zenixapp.zenix.exceptions.AtendimentoException;
 import cloud.zenixapp.zenix.services.AtendimentoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "/api/v1/atendimento")
@@ -33,8 +35,16 @@ public class AtendimentoController {
     *
     */
     @PostMapping
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Atendimento inserido no banco"),
+            @ApiResponse(responseCode = "400", description = "Campos com nulos ou fora do padrão")
+    })
     @Operation(summary = "Adicionar atendimento", description = "Endpoint para adiciona um novo atendimento")
-    public ResponseEntity<AtendimentoResponseDTO> save(@RequestBody @Valid AtendimentoRequestDTO atendimentoDTO){
+    public ResponseEntity<?> save(@RequestBody @Valid AtendimentoRequestDTO atendimentoDTO, BindingResult result){
+        if (result.hasErrors()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BindingHandler.insertError(result));
+        }
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(atendimentoService.inserirAtendimento(atendimentoDTO));
     }
@@ -44,9 +54,12 @@ public class AtendimentoController {
     *
     */
     @GetMapping
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Atendimento encontrado")
+    })
     @Operation(summary = "Listar atendimentos", description = "Endpoint para listar todos os atendimentos")
     public ResponseEntity<List<AtendimentoResponseDTO>> findAll(){
-        return ResponseEntity.ok().body(atendimentoService.listarAtendimentos());
+        return ResponseEntity.status(HttpStatus.OK).body(atendimentoService.listarAtendimentos());
     }
 
     /*
@@ -54,12 +67,20 @@ public class AtendimentoController {
      *
      */
     @DeleteMapping(value = "/{id}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Atendimento excluído do banco"),
+            @ApiResponse(responseCode = "404", description = "Atendimento não encontrado")
+    })
     @Operation(summary = "Deletar atendimento", description = "Endpoint para deletar um atendimento")
-    public ResponseEntity<String> deleteAtendimento(@PathVariable Long id) throws AtendimentoException {
+    public ResponseEntity<?> deleteAtendimento(@PathVariable Long id) throws AtendimentoException {
+        Map<String, String> dict = new HashMap<>();
         if (atendimentoService.deletarAtendimento(id)){
-            return ResponseEntity.ok().body("Atendimento Excluido");
+            dict.put("Message", "Atendimento Excluido!");
+            return ResponseEntity.status(HttpStatus.OK).body(dict);
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi possivel excluir!");
+
+        dict.put("Message", "Não foi possivel excluir!");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(dict);
 
     }
 
@@ -68,16 +89,22 @@ public class AtendimentoController {
      *
      */
     @GetMapping(value = "/{id}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Atendimento encontrado"),
+            @ApiResponse(responseCode = "404", description = "Atendimento não encontrado")
+    })
     @Operation(summary = "Listar atendimento por ID", description = "Endpoint para lista um atendimento por ID")
-    public ResponseEntity<Optional<AtendimentoResponseDTO>> findById(@PathVariable Long id) {
+    public ResponseEntity<?> findById(@PathVariable Long id) {
         Optional<AtendimentoResponseDTO> atendimentoResponseDTO = atendimentoService.listarAtendimentoPorId(id);
 
         if (atendimentoResponseDTO.isEmpty()){
+            Map<String, String> empty = new HashMap<>();
+            empty.put("Message", "Não encontramos o atendimento com esse ID!");
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(atendimentoResponseDTO);
+                    .body(empty);
         }
 
-        return ResponseEntity.ok().body(atendimentoResponseDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(atendimentoResponseDTO);
     }
 
     /*
@@ -85,9 +112,22 @@ public class AtendimentoController {
      *
      */
     @PutMapping(value = "/{id}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Atendimento atualizado"),
+            @ApiResponse(responseCode = "404", description = "Atendimento não encontrado"),
+            @ApiResponse(responseCode = "400", description = "Campos com nulos ou fora do padrão")
+    })
     @Operation(summary = "Atualizar atendimento por ID", description = "Endpoint para atualiza um atendimento por ID")
-    public ResponseEntity<AtendimentoResponseDTO> update(@PathVariable Long id, @RequestBody AtendimentoUpdateRequestDTO atendimentoRequestDTO) throws AtendimentoException {
-        return ResponseEntity.ok().body(atendimentoService.atualizarAtendimento(id, atendimentoRequestDTO));
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid AtendimentoRequestDTO atendimentoRequestDTO, BindingResult result) throws AtendimentoException {
+        if(result.hasErrors()){
+            if (BindingHandler.updateError(result).isEmpty()){
+                return ResponseEntity.status(HttpStatus.OK).body(atendimentoService.atualizarAtendimento(id, atendimentoRequestDTO));
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BindingHandler.updateError(result));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(atendimentoService.atualizarAtendimento(id, atendimentoRequestDTO));
+
     }
 
 }

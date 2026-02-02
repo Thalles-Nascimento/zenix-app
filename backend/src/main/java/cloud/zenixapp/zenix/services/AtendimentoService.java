@@ -3,7 +3,6 @@ package cloud.zenixapp.zenix.services;
 import cloud.zenixapp.zenix.configs.mappers.AtendimentoMapper;
 import cloud.zenixapp.zenix.dtos.AtendimentoRequestDTO;
 import cloud.zenixapp.zenix.dtos.AtendimentoResponseDTO;
-import cloud.zenixapp.zenix.dtos.AtendimentoUpdateRequestDTO;
 import cloud.zenixapp.zenix.entities.Atendimento;
 import cloud.zenixapp.zenix.exceptions.AtendimentoException;
 import cloud.zenixapp.zenix.repositories.AtendimentoRepository;
@@ -54,7 +53,7 @@ public class AtendimentoService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public AtendimentoResponseDTO atualizarAtendimento(Long id, AtendimentoUpdateRequestDTO atendimentoDTO) throws AtendimentoException {
+    public AtendimentoResponseDTO atualizarAtendimento(Long id, AtendimentoRequestDTO atendimentoDTO) throws AtendimentoException {
         return atendimentoRepository.findById(id)
                 .map(atendimento -> {
                     atendimentoMapper.atualizarAtendimento(atendimento, atendimentoDTO);
