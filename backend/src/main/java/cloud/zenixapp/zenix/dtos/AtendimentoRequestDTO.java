@@ -15,14 +15,14 @@ public class AtendimentoRequestDTO {
 
     @NotNull(message = "Campo não pode ser nulo!")
     @Pattern(
-            regexp = "^[A-Za-zÀ-ÿ ]+$",
+            regexp = "^[A-Za-zÀ-ÿ]+$",
             message = "O valor não está respeitando o padrão"
     )
     private String descricao;
 
     @NotNull(message = "Campo não pode ser nulo!")
     @Pattern(
-            regexp = "^[A-Za-zÀ-ÿ ]+$",
+            regexp = "^[A-Za-zÀ-ÿ]+$",
             message = "O valor não está respeitando o padrão"
     )
     private String servico;
