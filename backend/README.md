@@ -10,22 +10,29 @@ para se planejar para o mês seguinte, saberá quanto faturou e quanto pagou, et
 funcionalidade de agendamento, permitindo aos clientes que agendem os seus horários e isso dê mais flexibilidade aos
 barbeiros.
 
-## Como rodar localmente
-## Pré-requisitos
-### Docker instalado
+## Instalação Local
+### Docker
+### Maven
 
-1 - Clonar projeto
+## Após instalar o Docker e o Maven, faça o passo a passo abaixo:
+### 1 - Clonar projeto
 
-2 - Dentro da pasta do projeto, rode o comando: `docker compose up --build`
+### 2 - Dentro da pasta do projeto, rode, em ordem, esses dois comandos:
 
-3 - Acesse na url: http://localhost:8080/swagger-ui/index.html
+### `mvn clean package -DskipTests`
 
-# Ferramentas
+### `docker compose up --build`
+
+### 3 - Acesse na url: http://localhost:8080/swagger-ui/index.html
+
+# Ferramentas utilizadas
 #### Back-end
 | Java
 | Spring Boot 4
 | Maven
 
+[//]: # ()
+[//]: # ()
+[//]: # (#### Front-end)
 
-#### Front-end
-Angular
+[//]: # (Angular)
