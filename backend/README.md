@@ -12,16 +12,18 @@ barbeiros.
 
 ## Instalação Local
 ### Docker
+### JDK 17
 ### Maven
 
-## Após instalar o Docker e o Maven, faça o passo a passo abaixo:
+## Após instalar o Docker, JDK 17 e o Maven, faça o passo a passo abaixo:
+
 ### 1 - Clonar projeto
 
 ### 2 - Dentro da pasta do projeto, rode, em ordem, esses dois comandos:
 
 ### `mvn clean package -DskipTests`
 
-### `docker compose up --build`
+### `docker compose up -d`
 
 ### 3 - Acesse na url: http://localhost:8080/swagger-ui/index.html
 
