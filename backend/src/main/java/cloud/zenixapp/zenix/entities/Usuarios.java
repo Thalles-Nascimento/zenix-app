@@ -28,9 +28,9 @@ public class Usuarios {
     private String cpf;
 
     @Column(name = "usuario_grupo")
-    private String grupo;
+    private String grupo = "User";
 
-    @Column(name = "usuario_senha", length = 12)
+    @Column(name = "usuario_senha")
     private String senha;
 
     @Column(name = "usuario_status")
