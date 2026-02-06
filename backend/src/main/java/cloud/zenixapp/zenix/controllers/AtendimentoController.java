@@ -37,7 +37,7 @@ public class AtendimentoController {
     @PostMapping
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Atendimento inserido no banco"),
-            @ApiResponse(responseCode = "400", description = "Campos com nulos ou fora do padrão")
+            @ApiResponse(responseCode = "422", description = "Campos com nulos ou fora do padrão")
     })
     @Operation(summary = "Adicionar atendimento", description = "Endpoint para adiciona um novo atendimento")
     public ResponseEntity<?> save(@RequestBody @Valid AtendimentoRequestDTO atendimentoDTO, BindingResult result){
@@ -115,7 +115,7 @@ public class AtendimentoController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Atendimento atualizado"),
             @ApiResponse(responseCode = "404", description = "Atendimento não encontrado"),
-            @ApiResponse(responseCode = "400", description = "Campos com nulos ou fora do padrão")
+            @ApiResponse(responseCode = "422", description = "Campos com nulos ou fora do padrão")
     })
     @Operation(summary = "Atualizar atendimento por ID", description = "Endpoint para atualiza um atendimento por ID")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid AtendimentoRequestDTO atendimentoRequestDTO, BindingResult result) throws AtendimentoException {
