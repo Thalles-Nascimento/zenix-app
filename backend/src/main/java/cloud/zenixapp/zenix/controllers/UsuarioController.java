@@ -1,11 +1,12 @@
 package cloud.zenixapp.zenix.controllers;
 
 
-import cloud.zenixapp.zenix.dtos.AuthenticationDTO;
+import cloud.zenixapp.zenix.dtos.UsuarioLoginDTO;
 import cloud.zenixapp.zenix.dtos.LoginTokenResponseDTO;
 import cloud.zenixapp.zenix.dtos.UsuarioDTO;
 import cloud.zenixapp.zenix.entities.Usuarios;
 import cloud.zenixapp.zenix.repositories.UsuarioRepository;
+import cloud.zenixapp.zenix.services.UsuarioService;
 import cloud.zenixapp.zenix.services.security.TokenService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,38 +20,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/auth")
-public class AuthenticationController {
+@RequestMapping("/api/v1/users")
+public class UsuarioController {
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private TokenService tokenService;
+    private UsuarioService usuarioService;
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody @Valid AuthenticationDTO userLogin){
-        var usernamePassword = new UsernamePasswordAuthenticationToken(userLogin.email(), userLogin.senha());
-        var auth = authenticationManager.authenticate(usernamePassword);
+    public ResponseEntity login(@RequestBody @Valid UsuarioLoginDTO userLogin){
+        return ResponseEntity.ok(usuarioService.loginUser(userLogin));
 
-        var token = tokenService.generateToken((Usuarios) auth.getPrincipal());
-
-        return ResponseEntity.ok(new LoginTokenResponseDTO(token));
     }
 
     @PostMapping("/register")
     public ResponseEntity registrer(@RequestBody @Valid UsuarioDTO usuarioDTO){
-        if(usuarioRepository.findByEmail(usuarioDTO.email()) != null){
+        if(usuarioService.registerUser(usuarioDTO) != null){
             return ResponseEntity.badRequest().build();
         }
-
-        String encryptPassword = new BCryptPasswordEncoder().encode(usuarioDTO.senha());
-        Usuarios user = new Usuarios(usuarioDTO.nome(), usuarioDTO.email(), encryptPassword, usuarioDTO.cpf(), usuarioDTO.grupo());
-
-        return ResponseEntity.ok(usuarioRepository.save(user));
+        return ResponseEntity.ok(usuarioService.registerUser(usuarioDTO));
 
     }
 
