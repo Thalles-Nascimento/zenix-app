@@ -2,9 +2,11 @@ package cloud.zenixapp.zenix.controllers;
 
 
 import cloud.zenixapp.zenix.dtos.AuthenticationDTO;
+import cloud.zenixapp.zenix.dtos.LoginTokenResponseDTO;
 import cloud.zenixapp.zenix.dtos.UsuarioDTO;
 import cloud.zenixapp.zenix.entities.Usuarios;
 import cloud.zenixapp.zenix.repositories.UsuarioRepository;
+import cloud.zenixapp.zenix.services.security.TokenService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,12 +28,17 @@ public class AuthenticationController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private TokenService tokenService;
+
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid AuthenticationDTO userLogin){
         var usernamePassword = new UsernamePasswordAuthenticationToken(userLogin.email(), userLogin.senha());
         var auth = authenticationManager.authenticate(usernamePassword);
 
-        return ResponseEntity.ok().build();
+        var token = tokenService.generateToken((Usuarios) auth.getPrincipal());
+
+        return ResponseEntity.ok(new LoginTokenResponseDTO(token));
     }
 
     @PostMapping("/register")
