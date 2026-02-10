@@ -1,8 +1,8 @@
 package cloud.zenixapp.zenix.configs.mappers;
 
-import cloud.zenixapp.zenix.dtos.AtendimentoRequestDTO;
-import cloud.zenixapp.zenix.dtos.AtendimentoResponseDTO;
-import cloud.zenixapp.zenix.entities.Atendimento;
+import cloud.zenixapp.zenix.models.dtos.AtendimentoRequestDTO;
+import cloud.zenixapp.zenix.models.dtos.AtendimentoResponseDTO;
+import cloud.zenixapp.zenix.models.entities.Atendimento;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;

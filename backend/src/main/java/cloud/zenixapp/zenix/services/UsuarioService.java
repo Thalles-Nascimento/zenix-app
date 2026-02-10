@@ -1,8 +1,8 @@
 package cloud.zenixapp.zenix.services;
 
-import cloud.zenixapp.zenix.dtos.UsuarioDTO;
-import cloud.zenixapp.zenix.dtos.UsuarioLoginDTO;
-import cloud.zenixapp.zenix.entities.Usuarios;
+import cloud.zenixapp.zenix.models.dtos.UsuarioDTO;
+import cloud.zenixapp.zenix.models.dtos.UsuarioLoginDTO;
+import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.repositories.UsuarioRepository;
 import cloud.zenixapp.zenix.services.security.TokenService;
 import jakarta.transaction.Transactional;

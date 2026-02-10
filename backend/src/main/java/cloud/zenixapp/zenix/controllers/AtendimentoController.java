@@ -2,9 +2,9 @@ package cloud.zenixapp.zenix.controllers;
 
 import cloud.zenixapp.zenix.configs.error.BindingHandler;
 import cloud.zenixapp.zenix.configs.mappers.AtendimentoMapper;
-import cloud.zenixapp.zenix.dtos.AtendimentoRequestDTO;
-import cloud.zenixapp.zenix.dtos.AtendimentoResponseDTO;
-import cloud.zenixapp.zenix.exceptions.AtendimentoException;
+import cloud.zenixapp.zenix.models.dtos.AtendimentoRequestDTO;
+import cloud.zenixapp.zenix.models.dtos.AtendimentoResponseDTO;
+import cloud.zenixapp.zenix.configs.exceptions.AtendimentoException;
 import cloud.zenixapp.zenix.services.AtendimentoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

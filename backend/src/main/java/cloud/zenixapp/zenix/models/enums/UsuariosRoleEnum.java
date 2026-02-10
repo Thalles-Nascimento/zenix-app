@@ -1,4 +1,4 @@
-package cloud.zenixapp.zenix.entities.enums;
+package cloud.zenixapp.zenix.models.enums;
 
 public enum UsuariosRoleEnum {
     

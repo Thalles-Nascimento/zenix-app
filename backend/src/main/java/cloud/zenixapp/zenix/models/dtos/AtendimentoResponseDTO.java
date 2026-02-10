@@ -1,4 +1,4 @@
-package cloud.zenixapp.zenix.dtos;
+package cloud.zenixapp.zenix.models.dtos;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 

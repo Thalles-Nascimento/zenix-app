@@ -1,4 +1,4 @@
-package cloud.zenixapp.zenix.entities;
+package cloud.zenixapp.zenix.models.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

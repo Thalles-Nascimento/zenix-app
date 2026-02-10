@@ -1,6 +1,6 @@
-package cloud.zenixapp.zenix.dtos;
+package cloud.zenixapp.zenix.models.dtos;
 
-import cloud.zenixapp.zenix.entities.enums.UsuariosRoleEnum;
+import cloud.zenixapp.zenix.models.enums.UsuariosRoleEnum;
 
 public record UsuarioDTO(
         String nome,

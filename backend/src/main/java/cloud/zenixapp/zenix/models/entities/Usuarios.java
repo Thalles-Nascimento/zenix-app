@@ -1,7 +1,7 @@
-package cloud.zenixapp.zenix.entities;
+package cloud.zenixapp.zenix.models.entities;
 
 
-import cloud.zenixapp.zenix.entities.enums.UsuariosRoleEnum;
+import cloud.zenixapp.zenix.models.enums.UsuariosRoleEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
