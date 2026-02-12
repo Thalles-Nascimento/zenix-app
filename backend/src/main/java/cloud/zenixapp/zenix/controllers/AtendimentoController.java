@@ -42,7 +42,7 @@ public class AtendimentoController {
     @Operation(summary = "Adicionar atendimento", description = "Endpoint para adiciona um novo atendimento")
     public ResponseEntity<?> save(@RequestBody @Valid AtendimentoRequestDTO atendimentoDTO, BindingResult result){
         if (result.hasErrors()){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BindingHandler.insertError(result));
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(BindingHandler.insertError(result));
         }
 
         return ResponseEntity.status(HttpStatus.CREATED)
