@@ -1,7 +1,8 @@
 package cloud.zenixapp.zenix.services;
 
-import cloud.zenixapp.zenix.configs.exceptions.UsuarioException;
+import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.mappers.UsuarioMapper;
+import cloud.zenixapp.zenix.models.dtos.SucessUsuarioResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.UsuarioRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.UsuarioLoginDTO;
 import cloud.zenixapp.zenix.models.dtos.UsuarioResponseDTO;
@@ -10,9 +11,9 @@ import cloud.zenixapp.zenix.repositories.UsuarioRepository;
 import cloud.zenixapp.zenix.services.security.TokenService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -42,15 +43,20 @@ public class UsuarioService {
     }
 
     @Transactional
-    public UserDetails registerUser(UsuarioRequestDTO userRegister){
+    public SucessUsuarioResponseDTO registerUser(UsuarioRequestDTO userRegister){
         if(usuarioRepository.findByEmail(userRegister.email()) != null){
             return null;
+
         }
-
         String encryptPassword = new BCryptPasswordEncoder().encode(userRegister.senha());
-        Usuarios user = new Usuarios(userRegister.nome(), userRegister.email(), encryptPassword, userRegister.cpf(), userRegister.grupo());
+        UsuarioResponseDTO usuario = usuarioMapper.usuarioResponseDTO(
+                usuarioRepository.save(new Usuarios(userRegister.nome(), userRegister.email(), encryptPassword, userRegister.cpf(), userRegister.grupo()))
+        );
 
-        return usuarioRepository.save(user);
+        return new SucessUsuarioResponseDTO(
+            HttpStatus.CREATED.value(),
+            "Usuário registrado com sucesso",
+            usuario);
     }
 
     public List<UsuarioResponseDTO> buscarUsuarios(){
@@ -58,17 +64,19 @@ public class UsuarioService {
     }
 
     @Transactional
-    public UsuarioResponseDTO atualizarUsuario(Long id, UsuarioRequestDTO userDTO) throws UsuarioException {
+    public SucessUsuarioResponseDTO atualizarUsuario(Long id, UsuarioRequestDTO userDTO) throws NotFoundException {
         return usuarioRepository.findById(id)
-                .map(
-                        user -> {
-                            System.out.println("Usuário: " + user);
+                .map(user -> {
                             usuarioMapper.atualizarUsuario(user, userDTO);
                             if (userDTO.senha() != null && !userDTO.senha().isBlank()) {user.setSenha(new BCryptPasswordEncoder().encode(userDTO.senha()));}
+                            UsuarioResponseDTO usuario = usuarioMapper.usuarioResponseDTO(usuarioRepository.save(user));
 
-                            return usuarioMapper.usuarioResponseDTO(usuarioRepository.save(user));
+                            return new SucessUsuarioResponseDTO(
+                            HttpStatus.OK.value(),
+                            "Usuário atualizado com sucesso",
+                            usuario);
                         }
-                ).orElseThrow(() -> new UsuarioException("Não foi possível encontrar o usuário"));
+                ).orElseThrow(() -> new NotFoundException("Não foi possível encontrar o usuário"));
     }
 
 }

@@ -1,5 +1,6 @@
 package cloud.zenixapp.zenix.services.security;
 
+import cloud.zenixapp.zenix.configs.exceptions.TokenCreateException;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -29,7 +30,7 @@ public class TokenService {
             return token;
         }
         catch(JWTCreationException exception){
-            throw new RuntimeException("Erro na geração do Token");
+            throw new TokenCreateException(exception.getMessage());
         }
     }
 
@@ -43,7 +44,7 @@ public class TokenService {
                     .getSubject();
 
         }catch(JWTCreationException exception){
-            return "";
+            throw new TokenCreateException(exception.getMessage());
         }
     }
 

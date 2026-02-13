@@ -1,6 +1,6 @@
 package cloud.zenixapp.zenix.models.dtos;
 
-public record SucessResponseDTO(
+public record SucessUsuarioResponseDTO(
         int status,
         String message,
         UsuarioResponseDTO usuario
