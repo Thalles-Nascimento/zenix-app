@@ -12,6 +12,9 @@ public interface UsuarioRepository extends JpaRepository<Usuarios, Long> {
 
     UserDetails findByEmail(String email);
 
+    @Query(value = "SELECT status FROM Usuarios WHERE email = :email")
+    int findByEmailEntities(@Param("email") String email);
+
     @Modifying
     @Query(value = "UPDATE Usuarios SET status = -1 WHERE id = :id")
     void deleteLogico(@Param("id") Long id);

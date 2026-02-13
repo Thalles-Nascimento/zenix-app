@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +38,10 @@ public class UsuarioService {
 
 
     public String loginUser(UsuarioLoginDTO user){
+        if (usuarioRepository.findByEmailEntities(user.email()) == -1){
+            throw new UsuarioExcluidoException("Usuário foi excluído!");
+
+        }
         var usernamePassword = new UsernamePasswordAuthenticationToken(user.email(), user.senha());
         var auth = authenticationManager.authenticate(usernamePassword);
 
