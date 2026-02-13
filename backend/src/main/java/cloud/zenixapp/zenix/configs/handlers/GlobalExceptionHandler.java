@@ -3,6 +3,7 @@ package cloud.zenixapp.zenix.configs.handlers;
 import cloud.zenixapp.zenix.configs.exceptions.AtendimentoExcluidoException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.exceptions.TokenCreateException;
+import cloud.zenixapp.zenix.configs.exceptions.UsuarioExcluidoException;
 import cloud.zenixapp.zenix.models.dtos.ErrorResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = {AtendimentoExcluidoException.class})
     public ResponseEntity<ErrorResponseDTO> handleAtendimentoExcluidoException(Exception ex) {
+        ErrorResponseDTO errorResponse = new ErrorResponseDTO(
+                HttpStatus.GONE.value(),
+                ex.getMessage(),
+                LocalDateTime.now().toInstant(ZoneOffset.of("-03:00"))
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.GONE);
+    }
+
+    @ExceptionHandler(value = {UsuarioExcluidoException.class})
+    public ResponseEntity<ErrorResponseDTO> handleUsuarioExcluidoException(Exception ex) {
         ErrorResponseDTO errorResponse = new ErrorResponseDTO(
                 HttpStatus.GONE.value(),
                 ex.getMessage(),
