@@ -78,7 +78,7 @@ public class AtendimentoController {
             @ApiResponse(responseCode = "404", description = "Atendimento não encontrado")
     })
     @Operation(summary = "Deletar atendimento", description = "Endpoint para deletar um atendimento")
-    public ResponseEntity<?> deleteAtendimento(@PathVariable Long id) throws NotFoundException {
+    public ResponseEntity<?> deleteAtendimento(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.deletarAtendimento(id));
 

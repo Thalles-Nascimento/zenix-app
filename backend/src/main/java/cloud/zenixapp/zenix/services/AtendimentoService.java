@@ -87,7 +87,7 @@ public class AtendimentoService {
                     );
 
                 })
-                .orElseThrow(() -> new NotFoundException("Não foi possível atualizar"));
+                .orElseThrow(() -> new NotFoundException("Atendimento não encontrado!"));
     }
 
 }
