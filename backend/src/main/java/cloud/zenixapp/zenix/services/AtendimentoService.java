@@ -7,9 +7,14 @@ import cloud.zenixapp.zenix.models.dtos.AtendimentoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.AtendimentoResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.SucessAtendimentoResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Atendimento;
+import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.repositories.AtendimentoRepository;
+import cloud.zenixapp.zenix.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,10 +29,15 @@ public class AtendimentoService {
     private AtendimentoRepository atendimentoRepository;
 
     @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
     private AtendimentoMapper atendimentoMapper;
 
     @Transactional(propagation = Propagation.REQUIRED)
     public SucessAtendimentoResponseDTO inserirAtendimento(AtendimentoRequestDTO atendimentoDTO){
+        
+
         atendimentoRepository.save(atendimentoMapper.paraEntity(atendimentoDTO));
 
         return new SucessAtendimentoResponseDTO(

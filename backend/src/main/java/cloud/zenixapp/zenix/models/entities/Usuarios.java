@@ -41,6 +41,9 @@ public class Usuarios implements UserDetails {
     @Column(name = "usuario_grupo")
     private UsuariosRoleEnum grupo;
 
+    @OneToMany(mappedBy = "usuarios")
+    private List<Atendimento> atendimentos;
+
     @Column(name = "usuario_status")
     private int status = 1;
 

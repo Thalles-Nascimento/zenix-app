@@ -35,6 +35,10 @@ public class Atendimento implements Serializable {
     @Column(name = "atendimento_data", nullable = false)
     private LocalDateTime date = LocalDateTime.now();
 
+    @ManyToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuarios usuarios;
+
     @Column(name = "atendimento_status", nullable = false)
     private Integer status = 1;
 
