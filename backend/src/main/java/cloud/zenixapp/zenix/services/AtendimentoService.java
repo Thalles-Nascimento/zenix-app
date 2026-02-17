@@ -36,9 +36,16 @@ public class AtendimentoService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public SucessAtendimentoResponseDTO inserirAtendimento(AtendimentoRequestDTO atendimentoDTO){
-        
+        Usuarios userAuth = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Usuarios user = usuarioRepository.getReferenceById(userAuth.getId());
+        Atendimento atendimento = new Atendimento();
 
-        atendimentoRepository.save(atendimentoMapper.paraEntity(atendimentoDTO));
+        atendimento.setDescricao(atendimentoDTO.descricao());
+        atendimento.setServico(atendimentoDTO.servico());
+        atendimento.setValor(atendimentoDTO.valor());
+        atendimento.setUsuarios(user);
+
+        atendimentoRepository.save(atendimento);
 
         return new SucessAtendimentoResponseDTO(
                 HttpStatus.CREATED.value(),

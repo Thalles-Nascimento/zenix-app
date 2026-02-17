@@ -2,10 +2,13 @@ package cloud.zenixapp.zenix.models.dtos;
 
 import cloud.zenixapp.zenix.models.enums.UsuariosRoleEnum;
 
+import java.util.List;
+
 public record UsuarioResponseDTO(
         String nome,
         String email,
         String cpf,
-        UsuariosRoleEnum grupo
+        UsuariosRoleEnum grupo,
+        List<AtendimentoResponseDTO> atendimentos
 ) {
 }

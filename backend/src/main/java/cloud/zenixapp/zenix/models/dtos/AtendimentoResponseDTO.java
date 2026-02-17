@@ -1,5 +1,6 @@
 package cloud.zenixapp.zenix.models.dtos;
 
+import cloud.zenixapp.zenix.models.entities.Usuarios;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDateTime;
