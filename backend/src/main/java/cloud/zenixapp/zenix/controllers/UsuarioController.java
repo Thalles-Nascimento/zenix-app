@@ -34,11 +34,8 @@ public class UsuarioController {
     public ResponseEntity<?> login(@RequestBody @Valid UsuarioLoginDTO userLogin, BindingResult result){
         if (result.hasErrors()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BindingHandler.insertError(result));
 
-        Map<String, String> token = new HashMap<>();
-        token.put("token", usuarioService.loginUser(userLogin));
-
         return ResponseEntity.status(HttpStatus.OK)
-                .body(token);
+                .body(usuarioService.loginUser(userLogin));
 
     }
 

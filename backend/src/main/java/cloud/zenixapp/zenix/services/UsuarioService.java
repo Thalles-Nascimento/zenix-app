@@ -11,6 +11,7 @@ import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.repositories.UsuarioRepository;
 import cloud.zenixapp.zenix.services.security.TokenService;
 import jakarta.transaction.Transactional;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,7 +19,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UsuarioService {
@@ -36,16 +39,23 @@ public class UsuarioService {
     private UsuarioMapper usuarioMapper;
 
 
-    public String loginUser(UsuarioLoginDTO user){
+    public Map<String, String> loginUser(@NonNull UsuarioLoginDTO user){
 //        TODO Revisar o login de usuários - Resolver o Nulo, quando usuário não existe
         if (usuarioRepository.querieStatusUser(user.email()) == -1){
             throw new UsuarioExcluidoException("Usuário foi excluído!");
 
         }
+
+        Map<String, String> access = new HashMap<>();
+
         var usernamePassword = new UsernamePasswordAuthenticationToken(user.email(), user.senha());
         var auth = authenticationManager.authenticate(usernamePassword);
 
-        return tokenService.generateToken((Usuarios) auth.getPrincipal());
+        Usuarios usuario = (Usuarios) usuarioRepository.findByEmail(user.email());
+        access.put("token", tokenService.generateToken((Usuarios) auth.getPrincipal()));
+        access.put("username", usuario.getNome());
+
+        return access;
     }
 
     @Transactional
