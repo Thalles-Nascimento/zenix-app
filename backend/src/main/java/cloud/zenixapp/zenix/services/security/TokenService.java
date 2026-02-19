@@ -21,13 +21,12 @@ public class TokenService {
     public String generateToken(Usuarios user){
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
-            String token = JWT.create()
+
+            return JWT.create()
                     .withIssuer("zenixapp")
                     .withSubject(user.getEmail())
                     .withExpiresAt(this.expiratedToken())
                     .sign(algorithm);
-
-            return token;
         }
         catch(JWTCreationException exception){
             throw new TokenCreateException(exception.getMessage());
