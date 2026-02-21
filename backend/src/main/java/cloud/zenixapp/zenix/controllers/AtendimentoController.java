@@ -99,6 +99,12 @@ public class AtendimentoController {
                 .body(atendimentoService.listarAtendimentoPorId(id));
     }
 
+    @GetMapping(value = "/sum")
+    public ResponseEntity<?> sumAtendimentos(){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(atendimentoService.sum());
+    }
+
     /*
      * Endpoint para atualizar um atendimento do Banco de Dados pelo ID
      *

@@ -47,6 +47,8 @@ public class Usuarios implements UserDetails {
     @Column(name = "usuario_status")
     private int status = 1;
 
+    private boolean enabled = true;
+
 
     public Usuarios(String nome, String email, String senha, String cpf, UsuariosRoleEnum grupo) {
         this.nome = nome;
@@ -90,6 +92,9 @@ public class Usuarios implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        if (enabled){
+            return true;
+        }
+        return false;
     }
 }

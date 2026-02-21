@@ -6,21 +6,19 @@ import cloud.zenixapp.zenix.configs.mappers.AtendimentoMapper;
 import cloud.zenixapp.zenix.models.dtos.AtendimentoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.AtendimentoResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.SucessAtendimentoResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.SumAtendimentoResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Atendimento;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.repositories.AtendimentoRepository;
 import cloud.zenixapp.zenix.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AtendimentoService {
@@ -108,6 +106,14 @@ public class AtendimentoService {
 
                 })
                 .orElseThrow(() -> new NotFoundException("Atendimento não encontrado!"));
+    }
+
+    public SumAtendimentoResponseDTO sum(){
+        Usuarios user = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return new SumAtendimentoResponseDTO(
+                HttpStatus.OK.value(),
+                atendimentoRepository.sumAtendimentos(user.getId()));
+
     }
 
 }
