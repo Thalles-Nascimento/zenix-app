@@ -20,6 +20,13 @@ public record AtendimentoRequestDTO (
         )
         String servico,
 
+        @NotNull(message = "Campo não pode ser nulo!")
+        @Pattern(
+                regexp = "^[A-Za-zÀ-ÿ ]+$",
+                message = "O valor não está respeitando o padrão"
+        )
+        String formaPagamento,
+
         @NotNull(message="Valor não pode ser nulo")
         Double valor
 ){

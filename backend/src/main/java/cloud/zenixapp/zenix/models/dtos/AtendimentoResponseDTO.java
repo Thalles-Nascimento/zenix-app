@@ -13,6 +13,8 @@ public record AtendimentoResponseDTO(
 
         Double valor,
 
+        String formaPagamento,
+
         String date,
 
         int status

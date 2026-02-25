@@ -12,6 +12,7 @@ import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.repositories.AtendimentoRepository;
 import cloud.zenixapp.zenix.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,7 @@ public class AtendimentoService {
         atendimento.setDescricao(atendimentoDTO.descricao());
         atendimento.setServico(atendimentoDTO.servico());
         atendimento.setValor(atendimentoDTO.valor());
+        atendimento.setFormaPagamento(atendimentoDTO.formaPagamento());
         atendimento.setDate(LocalDateTime.now().format(current_date));
         atendimento.setUsuarios(user);
 

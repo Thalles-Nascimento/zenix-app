@@ -35,6 +35,9 @@ public class Atendimento implements Serializable {
     @Column(name = "atendimento_data", nullable = false)
     private String date;
 
+    @Column(name = "atendimento_pagamento", nullable = false)
+    private String formaPagamento;
+
     @ManyToOne
     @JoinColumn(name = "usuario_id")
     private Usuarios usuarios;
