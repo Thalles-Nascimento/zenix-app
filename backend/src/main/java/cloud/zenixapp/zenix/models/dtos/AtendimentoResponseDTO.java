@@ -13,8 +13,7 @@ public record AtendimentoResponseDTO(
 
         Double valor,
 
-        @JsonFormat(pattern = "dd-MM-yyyy")
-        LocalDateTime date,
+        String date,
 
         int status
 ){

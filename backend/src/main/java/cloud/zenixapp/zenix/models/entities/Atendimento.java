@@ -33,7 +33,7 @@ public class Atendimento implements Serializable {
     private Double valor;
 
     @Column(name = "atendimento_data", nullable = false)
-    private LocalDateTime date = LocalDateTime.now();
+    private String date;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id")

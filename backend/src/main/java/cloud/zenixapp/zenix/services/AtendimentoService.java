@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -25,6 +27,9 @@ public class AtendimentoService {
 
     @Autowired
     private AtendimentoRepository atendimentoRepository;
+
+    private final DateTimeFormatter
+            current_date = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -41,6 +46,7 @@ public class AtendimentoService {
         atendimento.setDescricao(atendimentoDTO.descricao());
         atendimento.setServico(atendimentoDTO.servico());
         atendimento.setValor(atendimentoDTO.valor());
+        atendimento.setDate(LocalDateTime.now().format(current_date));
         atendimento.setUsuarios(user);
 
         atendimentoRepository.save(atendimento);
@@ -53,7 +59,8 @@ public class AtendimentoService {
 
     public List<AtendimentoResponseDTO> listarAtendimentos(){
         Usuarios user = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return atendimentoMapper.listResponseDTO(atendimentoRepository.findByUser(user.getId()));
+//        LocalDateTime date = LocalDateTime.now();
+        return atendimentoMapper.listResponseDTO(atendimentoRepository.findByUserDate(user.getId(), LocalDateTime.now().format(current_date)));
     }
 
     public AtendimentoResponseDTO listarAtendimentoPorId(Long id){
