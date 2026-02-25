@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class AtendimentoApplication {
+public class ZenixApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(AtendimentoApplication.class, args);
+		SpringApplication.run(ZenixApplication.class, args);
 	}
 
 }

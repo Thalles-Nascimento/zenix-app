@@ -1,5 +1,6 @@
-package cloud.zenixapp.zenix.configs.error;
+package cloud.zenixapp.zenix.configs.handlers;
 
+import cloud.zenixapp.zenix.models.dtos.ErrorResponseDTO;
 import org.springframework.validation.BindingResult;
 
 import java.util.*;
@@ -26,5 +27,9 @@ public final class BindingHandler {
                         }
                 );
         return erros;
+    }
+
+    public static boolean isErrorNull(BindingResult result){
+        return updateError(result).isEmpty();
     }
 }

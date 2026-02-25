@@ -1,5 +1,5 @@
 # Definindo o Kit de desenvolvimento Java utilizado na aplicação
-FROM eclipse-temurin:17-jdk-jammy
+FROM eclipse-temurin:21-jre-jammy
 
 # Definindo o diretório de trabalho no Container
 WORKDIR /zenixapp

@@ -1,4 +1,4 @@
-package cloud.zenixapp.zenix.entities;
+package cloud.zenixapp.zenix.models.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -33,7 +33,14 @@ public class Atendimento implements Serializable {
     private Double valor;
 
     @Column(name = "atendimento_data", nullable = false)
-    private LocalDateTime date = LocalDateTime.now();
+    private String date;
+
+    @Column(name = "atendimento_pagamento", nullable = false)
+    private String formaPagamento;
+
+    @ManyToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuarios usuarios;
 
     @Column(name = "atendimento_status", nullable = false)
     private Integer status = 1;

@@ -19,11 +19,9 @@ barbeiros.
 
 ### 1 - Clonar projeto
 
-### 2 - Dentro da pasta do projeto, rode, em ordem, esses dois comandos:
-
-### `mvn clean package -DskipTests`
-
-### `docker compose up -d`
+### 2 - Dentro da pasta do projeto, rode este comando:
+### Linux `bash build.sh`
+### Windows PowerShell `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` e `.\build.ps1`
 
 ### 3 - Acesse na url: http://localhost:8080/swagger-ui/index.html
 
