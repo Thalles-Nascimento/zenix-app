@@ -9,4 +9,4 @@ echo "Build completo!"
 echo "Iniciando containirização"
 docker compose up --build -d
 
-echo "Container criado! Aplicação rodando: http://localhost:8080/swagger-ui/index.html "
+echo "Container criado! Aplicação rodando: http://54.94.134.219:8080/swagger-ui/index.html "
