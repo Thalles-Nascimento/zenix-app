@@ -29,8 +29,7 @@ public class AtendimentoService {
     @Autowired
     private AtendimentoRepository atendimentoRepository;
 
-    private final DateTimeFormatter
-            current_date = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private final DateTimeFormatter current_date = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     @Autowired
     private UsuarioRepository usuarioRepository;
