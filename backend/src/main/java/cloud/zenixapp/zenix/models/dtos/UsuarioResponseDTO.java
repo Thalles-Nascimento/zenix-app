@@ -10,6 +10,7 @@ public record UsuarioResponseDTO(
         String email,
         String cpf,
         UsuariosRoleEnum grupo,
+        int status,
         List<AtendimentoResponseDTO> atendimentos
 ) {
 }

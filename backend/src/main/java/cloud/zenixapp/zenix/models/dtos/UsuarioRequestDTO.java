@@ -22,7 +22,9 @@ public record UsuarioRequestDTO(
         String senha,
 
         @NotNull(message = "O campo não pode ser nulo")
-        UsuariosRoleEnum grupo
+        UsuariosRoleEnum grupo,
+
+        int status
 ) {
 
 }

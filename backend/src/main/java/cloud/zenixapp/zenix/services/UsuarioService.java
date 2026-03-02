@@ -122,4 +122,24 @@ public class UsuarioService {
                 .orElseThrow(() -> new NotFoundException("Usuário não encontrado!"));
     }
 
+    @Transactional
+    public SucessUsuarioResponseDTO ativarUsuario(Long id){
+        return usuarioRepository.findById(id)
+                .map(user -> {
+                    if(user.getStatus() == -1){
+                        throw new UsuarioExcluidoException("Usuário já está ativo!");
+
+                    }
+                    usuarioRepository.ativarUsuario(id);
+                    return new SucessUsuarioResponseDTO(
+                            HttpStatus.OK.value(),
+                            "Usuário ativado com sucesso",
+                            usuarioMapper.usuarioResponseDTO(user)
+                    );
+                })
+                .orElseThrow(() -> new NotFoundException("Usuário não encontrado!"));
+    }
+
+
+
 }

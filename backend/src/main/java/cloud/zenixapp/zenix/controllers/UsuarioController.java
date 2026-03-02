@@ -98,4 +98,11 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(usuarioService.deletarUsuario(id));
     }
+
+    @PatchMapping("/{id}")
+    @Operation(summary = "Ativar usuário", description = "Endpoint para ativar um usuário do sistema")
+    public ResponseEntity<?> ativarUsuario(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(usuarioService.ativarUsuario(id));
+    }
 }
