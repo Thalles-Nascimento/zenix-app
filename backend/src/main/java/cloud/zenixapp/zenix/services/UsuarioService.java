@@ -54,6 +54,7 @@ public class UsuarioService {
         Usuarios usuario = (Usuarios) usuarioRepository.findByEmail(user.email());
         access.put("token", tokenService.generateToken((Usuarios) auth.getPrincipal()));
         access.put("username", usuario.getNome());
+        access.put("permissoes", usuario.getGrupo().toString());
 
         return access;
     }

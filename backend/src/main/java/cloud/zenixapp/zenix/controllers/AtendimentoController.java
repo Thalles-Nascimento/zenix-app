@@ -3,10 +3,8 @@ package cloud.zenixapp.zenix.controllers;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.handlers.BindingHandler;
 import cloud.zenixapp.zenix.configs.mappers.AtendimentoMapper;
-import cloud.zenixapp.zenix.models.dtos.AtendimentoRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.AtendimentoResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.ErrorResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.SucessAtendimentoResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.*;
+import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.services.AtendimentoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,6 +14,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,6 +53,14 @@ public class AtendimentoController {
                 .body(atendimentoService.inserirAtendimento(atendimentoDTO));
     }
 
+    @GetMapping("/historico")
+    public ResponseEntity<List<AtendimentoResponseDTO>> findHistorico(){
+        Usuarios user = (Usuarios) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(atendimentoService.listarHistorico(user.getId()));
+    }
+
     /*
     * Endpoint para buscar todos os atendimentos do Banco de Dados
     *
@@ -66,6 +73,13 @@ public class AtendimentoController {
     public ResponseEntity<List<AtendimentoResponseDTO>> findAll(){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.listarAtendimentos());
+    }
+
+    @GetMapping("/admin")
+    @Operation(summary = "Listar todos os atendimentos", description = "Endpoint para ADMIN listar todos os atendimentos do dia")
+    public ResponseEntity<List<AtendimentoAdminResponseDTO>> findAllAdmin(){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(atendimentoService.listarTodosAtendimentos());
     }
 
     /*

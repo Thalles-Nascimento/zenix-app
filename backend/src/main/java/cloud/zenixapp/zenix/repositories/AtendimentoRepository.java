@@ -17,6 +17,9 @@ public interface AtendimentoRepository extends JpaRepository<Atendimento, Long> 
     @Query(value = "UPDATE Atendimento SET status = -1 WHERE id = :id")
     void deleteLogico(@Param("id") Long id);
 
+    @Query("SELECT a FROM Atendimento a WHERE a.date = :date")
+    List<Atendimento> findAllByDate(@Param("date") String date);
+
     @Query(value = "SELECT * FROM atendimento WHERE usuario_id = :id", nativeQuery = true)
     List<Atendimento> findByUser(@Param("id") Long id);
 

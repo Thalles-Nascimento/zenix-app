@@ -3,10 +3,7 @@ package cloud.zenixapp.zenix.services;
 import cloud.zenixapp.zenix.configs.exceptions.AtendimentoExcluidoException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.mappers.AtendimentoMapper;
-import cloud.zenixapp.zenix.models.dtos.AtendimentoRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.AtendimentoResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.SucessAtendimentoResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.SumAtendimentoResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.*;
 import cloud.zenixapp.zenix.models.entities.Atendimento;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.repositories.AtendimentoRepository;
@@ -65,6 +62,23 @@ public class AtendimentoService {
         return atendimentoMapper.listResponseDTO(atendimentoRepository.findByUserDate(user.getId(), LocalDateTime.now().format(current_date)));
     }
 
+    public List<AtendimentoAdminResponseDTO> listarTodosAtendimentos(){
+        return atendimentoRepository
+                .findAllByDate(LocalDateTime.now().format(current_date))
+                .stream()
+                .map(a -> new AtendimentoAdminResponseDTO(
+                        a.getId(),
+                        a.getDescricao(),
+                        a.getServico(),
+                        a.getValor(),
+                        a.getFormaPagamento(),
+                        a.getDate(),
+                        a.getStatus(),
+                        a.getUsuarios().getNome()  // ← pega o nome do barbeiro
+                ))
+                .toList();
+    }
+
     public AtendimentoResponseDTO listarAtendimentoPorId(Long id){
         Usuarios user = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return atendimentoRepository.findByUserById(user.getId(), id)
@@ -77,6 +91,12 @@ public class AtendimentoService {
 
                 }))
                 .orElseThrow(() -> new NotFoundException("Atendimento não encontrado!"));
+    }
+
+    public List<AtendimentoResponseDTO> listarHistorico(Long userId){
+        return atendimentoMapper.listResponseDTO(
+                atendimentoRepository.findByUser(userId)
+        );
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
