@@ -126,7 +126,7 @@ public class UsuarioService {
     public SucessUsuarioResponseDTO ativarUsuario(Long id){
         return usuarioRepository.findById(id)
                 .map(user -> {
-                    if(user.getStatus() == -1){
+                    if(user.getStatus() != -1){
                         throw new UsuarioExcluidoException("Usuário já está ativo!");
 
                     }
