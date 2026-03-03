@@ -137,12 +137,4 @@ public class AtendimentoService {
                 .orElseThrow(() -> new NotFoundException("Atendimento não encontrado!"));
     }
 
-    public SumAtendimentoResponseDTO sum(){
-        Usuarios user = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return new SumAtendimentoResponseDTO(
-                HttpStatus.OK.value(),
-                atendimentoRepository.sumAtendimentos(user.getId()));
-
-    }
-
 }
