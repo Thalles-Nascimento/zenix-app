@@ -11,6 +11,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
@@ -19,7 +21,10 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name="usuarios")
 @Entity
-public class Usuarios implements UserDetails {
+public class Usuarios implements UserDetails, Serializable {
+
+    @Serial
+    private static final long serialVersionUID = -6321586946159484859L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,6 +48,9 @@ public class Usuarios implements UserDetails {
 
     @OneToMany(mappedBy = "usuarios")
     private List<Atendimento> atendimentos;
+
+    @OneToMany(mappedBy = "usuario")
+    private List<Fila> filaClientes;
 
     @Column(name = "usuario_status")
     private int status = 1;

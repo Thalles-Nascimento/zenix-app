@@ -3,10 +3,10 @@ package cloud.zenixapp.zenix.services;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.exceptions.UsuarioExcluidoException;
 import cloud.zenixapp.zenix.configs.mappers.UsuarioMapper;
-import cloud.zenixapp.zenix.models.dtos.SucessUsuarioResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.UsuarioRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.UsuarioLoginDTO;
-import cloud.zenixapp.zenix.models.dtos.UsuarioResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.SucessUsuarioResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.requests.UsuarioRequestDTO;
+import cloud.zenixapp.zenix.models.dtos.requests.UsuarioLoginDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.UsuarioResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.repositories.UsuarioRepository;
 import cloud.zenixapp.zenix.services.security.TokenService;
@@ -140,6 +140,17 @@ public class UsuarioService {
                 .orElseThrow(() -> new NotFoundException("Usuário não encontrado!"));
     }
 
+    public Usuarios getUsuarioID(Long id){
+        return usuarioRepository.findById(id)
+                .map(user -> {
+                    if(user.getStatus() == -1){
+                        throw new UsuarioExcluidoException("Usuário foi excluído!");
 
+                    }
+                    return user;
+                })
+                .orElseThrow(() -> new NotFoundException("Usuário não encontrado!"));
+
+    }
 
 }

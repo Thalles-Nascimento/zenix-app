@@ -4,7 +4,7 @@ import cloud.zenixapp.zenix.configs.exceptions.AtendimentoExcluidoException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.exceptions.TokenCreateException;
 import cloud.zenixapp.zenix.configs.exceptions.UsuarioExcluidoException;
-import cloud.zenixapp.zenix.models.dtos.ErrorResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

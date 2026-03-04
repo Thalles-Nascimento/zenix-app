@@ -1,4 +1,4 @@
-package cloud.zenixapp.zenix.models.dtos;
+package cloud.zenixapp.zenix.models.dtos.responses;
 
 import cloud.zenixapp.zenix.models.enums.UsuariosRoleEnum;
 

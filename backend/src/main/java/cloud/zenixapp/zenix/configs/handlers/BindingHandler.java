@@ -1,6 +1,5 @@
 package cloud.zenixapp.zenix.configs.handlers;
 
-import cloud.zenixapp.zenix.models.dtos.ErrorResponseDTO;
 import org.springframework.validation.BindingResult;
 
 import java.util.*;

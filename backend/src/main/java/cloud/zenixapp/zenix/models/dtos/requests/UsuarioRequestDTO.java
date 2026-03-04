@@ -1,8 +1,7 @@
-package cloud.zenixapp.zenix.models.dtos;
+package cloud.zenixapp.zenix.models.dtos.requests;
 
 import cloud.zenixapp.zenix.models.enums.UsuariosRoleEnum;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
@@ -22,9 +21,8 @@ public record UsuarioRequestDTO(
         String senha,
 
         @NotNull(message = "O campo não pode ser nulo")
-        UsuariosRoleEnum grupo,
+        UsuariosRoleEnum grupo
 
-        int status
 ) {
 
 }
