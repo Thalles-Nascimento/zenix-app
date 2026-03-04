@@ -108,4 +108,10 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(usuarioService.ativarUsuario(id));
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> buscarMeUser(){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(usuarioService.getUsuarioID());
+    }
 }

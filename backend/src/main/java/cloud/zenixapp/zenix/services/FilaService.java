@@ -33,7 +33,7 @@ public class FilaService {
     @Transactional
     public SucessFilaResponseDTO inserirAtendimentoFila(FilaRequestDTO filaDTO){
         Fila fila = new Fila();
-        Usuarios user = usuarioService.getUsuarioID(filaDTO.idBarbeiro());
+        Usuarios user = usuarioService.getUsuarioById(filaDTO.idBarbeiro());
 
         fila.setNomeCliente(filaDTO.nomeCliente());
         fila.setServico(filaDTO.servico());

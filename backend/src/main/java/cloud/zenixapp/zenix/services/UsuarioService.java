@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -140,7 +141,21 @@ public class UsuarioService {
                 .orElseThrow(() -> new NotFoundException("Usuário não encontrado!"));
     }
 
-    public Usuarios getUsuarioID(Long id){
+    public UsuarioResponseDTO getUsuarioID(){
+        Usuarios userAuth = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return usuarioRepository.findById(userAuth.getId())
+                .map(user -> {
+                    if(user.getStatus() == -1){
+                        throw new UsuarioExcluidoException("Usuário foi excluído!");
+
+                    }
+                    return usuarioMapper.usuarioResponseDTO(user);
+                })
+                .orElseThrow(() -> new NotFoundException("Usuário não encontrado!"));
+
+    }
+
+    public Usuarios getUsuarioById(Long id){
         return usuarioRepository.findById(id)
                 .map(user -> {
                     if(user.getStatus() == -1){
