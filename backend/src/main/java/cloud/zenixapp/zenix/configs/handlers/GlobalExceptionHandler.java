@@ -1,10 +1,8 @@
 package cloud.zenixapp.zenix.configs.handlers;
 
-import cloud.zenixapp.zenix.configs.exceptions.AtendimentoExcluidoException;
-import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
-import cloud.zenixapp.zenix.configs.exceptions.TokenCreateException;
-import cloud.zenixapp.zenix.configs.exceptions.UsuarioExcluidoException;
+import cloud.zenixapp.zenix.configs.exceptions.*;
 import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -54,6 +52,17 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now().toInstant(ZoneOffset.of("-03:00"))
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.GONE);
+    }
+
+    @ExceptionHandler(value = {FilaException.class})
+    public ResponseEntity<ErrorResponseDTO> handleFilaException(Exception ex){
+        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(
+                HttpStatus.CONFLICT.value(),
+                ex.getMessage(),
+                LocalDateTime.now().toInstant(ZoneOffset.of("-03:00"))
+        );
+
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.CONFLICT);
     }
 
 }

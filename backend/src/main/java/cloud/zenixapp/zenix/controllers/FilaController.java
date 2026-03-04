@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/api/v1/fila")
-@Tag(name = "Fila", description = "Endpoints do serviço de Fila")
+@Tag(name = "Fila", description = "API do serviço de Fila")
 public class FilaController {
 
     @Autowired
@@ -32,9 +32,22 @@ public class FilaController {
     }
 
     @GetMapping
-    public ResponseEntity<?> buscarAtendimentosFila(){
+    public ResponseEntity<?> buscarClientesFila(){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(filaService.getFilasByUser());
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> atualizarClienteFila(@PathVariable Long id){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(filaService.atualizarAtendimentoFila(id));
+    }
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> finalizarAtendimentoFila(@PathVariable Long id){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(filaService.finalizarAtendimento(id));
     }
 
 }
