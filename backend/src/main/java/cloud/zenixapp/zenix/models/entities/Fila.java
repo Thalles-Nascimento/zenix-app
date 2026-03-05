@@ -12,7 +12,7 @@ import java.time.LocalTime;
 
 
 @Entity
-@Table(name = "fila-atendimentos")
+@Table(name = "fila_atendimentos")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,8 +32,11 @@ public class Fila implements Serializable {
     @Column(name = "fila_servico", length = 100)
     private String servico;
 
-    @Column(name = "fila_pagamento", length = 25)
+    @Column(name = "fila_pagamento")
     private String formaPagamento;
+
+    @Column(name = "fila_telefone", unique = true)
+    private String telefoneCliente;
 
     @Column(name = "fila_horario", nullable = false)
     private LocalTime horario = LocalTime.now();
@@ -41,6 +44,12 @@ public class Fila implements Serializable {
     @ManyToOne
     @JoinColumn(name = "fila_usuario_id")
     private Usuarios usuario;
+
+    @Column(name = "fila_inicio_atendimento")
+    private LocalTime inicioAtendimento;
+
+    @Column(name = "fila_final_atendimento")
+    private LocalTime fimAtendimento;
 
     @Column(name = "fila_status", nullable = false)
     private StatusFilaEnum status = StatusFilaEnum.AGUARDANDO;

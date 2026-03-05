@@ -1,5 +1,6 @@
 package cloud.zenixapp.zenix.models.dtos.requests;
 
+import cloud.zenixapp.zenix.models.entities.Unidades;
 import cloud.zenixapp.zenix.models.enums.UsuariosRoleEnum;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -16,6 +17,9 @@ public record UsuarioRequestDTO(
 
         @NotNull(message = "O campo não pode ser nulo")
         String cpf,
+
+        @NotNull(message = "O campo não pode ser nulo")
+        Long unidade,
 
         @NotNull(message = "O campo não pode ser nulo")
         String senha,

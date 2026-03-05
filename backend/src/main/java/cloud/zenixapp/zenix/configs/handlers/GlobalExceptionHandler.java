@@ -65,4 +65,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(value = {UnidadeExcluidoException.class})
+    public ResponseEntity<ErrorResponseDTO> handlerUnidadeExcluidoException(Exception ex) {
+        ErrorResponseDTO errorResponse = new ErrorResponseDTO(
+                HttpStatus.GONE.value(),
+                ex.getMessage(),
+                LocalDateTime.now().toInstant(ZoneOffset.of("-03:00"))
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.GONE);
+    }
+
 }

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
 import java.util.List;
 
 import static cloud.zenixapp.zenix.models.enums.StatusFilaEnum.AGUARDANDO;
@@ -38,6 +39,7 @@ public class FilaService {
         fila.setNomeCliente(filaDTO.nomeCliente());
         fila.setServico(filaDTO.servico());
         fila.setFormaPagamento(filaDTO.formaPagamento());
+        fila.setTelefoneCliente(filaDTO.telefoneCliente());
         fila.setUsuario(user);
 
         filaRepository.save(fila);
@@ -64,6 +66,7 @@ public class FilaService {
                     }
 
                     filaRepository.paraAtendimento(id);
+                    filaRepository.marcarHoraInicio(id, LocalTime.now());
 
                     return new SucessFilaResponseDTO(
                             atendimentoFila.getId(),
@@ -83,6 +86,7 @@ public class FilaService {
                         throw new FilaException("Cliente já Finalizado ou está Aguardando");
                     }
                     filaRepository.finalizarAtendimentoFila(id);
+                    filaRepository.marcarHoraFinal(id, LocalTime.now());
 
                     return new SucessFilaResponseDTO(
                             atendimentoFila.getId(),

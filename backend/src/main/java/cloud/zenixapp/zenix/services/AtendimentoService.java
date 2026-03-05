@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -48,7 +49,7 @@ public class AtendimentoService {
         atendimento.setServico(atendimentoDTO.servico());
         atendimento.setValor(atendimentoDTO.valor());
         atendimento.setFormaPagamento(atendimentoDTO.formaPagamento());
-        atendimento.setDate(LocalDateTime.now().format(current_date));
+        atendimento.setDate(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")).format(current_date));
         atendimento.setUsuarios(user);
 
         atendimentoRepository.save(atendimento);
@@ -61,7 +62,6 @@ public class AtendimentoService {
 
     public List<AtendimentoResponseDTO> listarAtendimentos(){
         Usuarios user = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        LocalDateTime date = LocalDateTime.now();
         return atendimentoMapper.listResponseDTO(atendimentoRepository.findByUserDate(user.getId(), LocalDateTime.now().format(current_date)));
     }
 
@@ -77,7 +77,7 @@ public class AtendimentoService {
                         a.getFormaPagamento(),
                         a.getDate(),
                         a.getStatus(),
-                        a.getUsuarios().getNome()  // ← pega o nome do barbeiro
+                        a.getUsuarios().getNome()
                 ))
                 .toList();
     }

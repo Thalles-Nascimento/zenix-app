@@ -21,6 +21,7 @@ public interface UsuarioMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "senha", ignore = true)
+    @Mapping(target = "unidade", ignore = true)
     void atualizarUsuario(@MappingTarget Usuarios user, UsuarioRequestDTO usuarioRequestDTO);
 
 
