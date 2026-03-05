@@ -7,6 +7,7 @@ import cloud.zenixapp.zenix.configs.mappers.UnidadeMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.UnidadeRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.*;
 import cloud.zenixapp.zenix.models.entities.Unidades;
+import cloud.zenixapp.zenix.models.enums.UsuariosRoleEnum;
 import cloud.zenixapp.zenix.repositories.UnidadeRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,31 @@ public class UnidadeService {
 
                 })
                 .orElseThrow(() -> new NotFoundException("Unidade não encontrada!"));
+    }
+
+    public UnidadeUserResponseDTO listarUnidadesByIdUsuario(Long id){
+        Unidades unidade = unidadeRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Unidade não encontrada!"));
+
+        List<UsuarioSimplesResponseDTO> usuarios = unidade.getUsuarios()
+                .stream()
+                .filter(u -> u.getGrupo() == UsuariosRoleEnum.USER)
+                .map(u -> new UsuarioSimplesResponseDTO(
+                        u.getId(),
+                        u.getNome(),
+                        u.getEmail(),
+                        u.getGrupo(),
+                        u.getStatus()
+                ))
+                .toList();
+
+        return new UnidadeUserResponseDTO(
+                unidade.getId(),
+                unidade.getNomeUnidade(),
+                unidade.getEndereco(),
+                unidade.getStatus(),
+                usuarios
+        );
     }
 
     public Unidades listarUnidadeByIdCompleto(Long id){

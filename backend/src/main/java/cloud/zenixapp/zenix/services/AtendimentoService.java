@@ -67,7 +67,7 @@ public class AtendimentoService {
 
     public List<AtendimentoAdminResponseDTO> listarTodosAtendimentos(){
         return atendimentoRepository
-                .findAllByDate(LocalDateTime.now().format(current_date))
+                .findAll()
                 .stream()
                 .map(a -> new AtendimentoAdminResponseDTO(
                         a.getId(),

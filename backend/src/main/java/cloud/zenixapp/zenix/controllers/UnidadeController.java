@@ -5,10 +5,7 @@ import cloud.zenixapp.zenix.configs.handlers.BindingHandler;
 import cloud.zenixapp.zenix.configs.mappers.AtendimentoMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.AtendimentoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.UnidadeRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.AtendimentoAdminResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.AtendimentoResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.UnidadeResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.*;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.services.AtendimentoService;
 import cloud.zenixapp.zenix.services.UnidadeService;
@@ -69,6 +66,17 @@ public class UnidadeController {
     public ResponseEntity<List<UnidadeResponseDTO>> findAll(){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(unidadeService.listarUnidades());
+    }
+
+    /*
+     * Endpoint para buscar os usuários por unidade do Banco de Dados
+     *
+     */
+    @GetMapping("/user/{id}")
+    @Operation(summary = "Listar Usuarios por Unidade", description = "Endpoint para listar os usuários por unidade")
+    public ResponseEntity<UnidadeUserResponseDTO> findAllWithUser(@PathVariable Long id){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(unidadeService.listarUnidadesByIdUsuario(id));
     }
 
 
