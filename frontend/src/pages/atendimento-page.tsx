@@ -35,10 +35,10 @@ export default function Atendimentos(){
         <div className="flex flex-col gap-4">
             <Toaster richColors position="top-center"/>
 
-            {/* Topbar */}
-            <div className="flex justify-between items-center mx-9">
+            {/* Topbar — empilha no mobile */}
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 px-4 sm:mx-9">
                 <h1 className="text-white text-xl font-bold">Atendimentos</h1>
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
                     <div className="flex gap-2">
                         <button
                             onClick={() => setPeriodo('hoje')}
@@ -65,66 +65,62 @@ export default function Atendimentos(){
                 </div>
             </div>
         </div>
-        <div className="bg-gray-950 p-6">
-                <div className="relative overflow-x-auto rounded-xl border border-gray-700">
-                    <table className="w-full text-sm text-left text-gray-300">
-                        <thead className="text-xs text-gray-400 uppercase bg-gray-800 border-b border-gray-700">
-                            <tr>
-                                <th scope="col" className="px-6 py-3 font-medium">
-                                    CLIENTE
-                                </th>
-                                <th scope="col" className="px-6 py-3 font-medium">
-                                    SERVIÇO
-                                </th>
-                                <th scope="col" className="px-6 py-3 font-medium">
-                                    VALOR
-                                </th>
-                                <th scope="col" className="px-6 py-3 font-medium">
-                                    FORMA DE PAGAMENTO
-                                </th>
-                                <th scope="col" className="px-6 py-3 font-medium">
-                                    DATA
-                                </th>
-                                <th scope="col" className="px-6 py-3 font-medium">
-                                    STATUS
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {itensPagina.map(items => <tr className="bg-gray-900 border-b border-gray-700 hover:bg-gray-800" key={items.id} onClick={() => items.status !== -1 && setAtendimentoSelecionado(items)}>
-                                <th scope="row" className="px-6 py-4 font-medium text-white">{items.descricao}</th>
-                                <td className="px-6 py-4">{items.servico}</td>
-                                <td className="px-6 py-4 text-orange-500 font-bold">{items.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-                                <td className="px-6 py-4">{items.formaPagamento}</td>
-                                <td className="px-6 py-4">{items.date}</td>
-                                <td className="px-6 py-4">
+
+        {/* Tabela com scroll horizontal no mobile */}
+        <div className="bg-gray-950 px-4 sm:p-6">
+            <div className="relative overflow-x-auto rounded-xl border border-gray-700">
+                <table className="w-full text-sm text-left text-gray-300 min-w-[600px]">
+                    <thead className="text-xs text-gray-400 uppercase bg-gray-800 border-b border-gray-700">
+                        <tr>
+                            <th scope="col" className="px-4 py-3 font-medium">CLIENTE</th>
+                            <th scope="col" className="px-4 py-3 font-medium">SERVIÇO</th>
+                            <th scope="col" className="px-4 py-3 font-medium">VALOR</th>
+                            <th scope="col" className="px-4 py-3 font-medium">PAGAMENTO</th>
+                            <th scope="col" className="px-4 py-3 font-medium">DATA</th>
+                            <th scope="col" className="px-4 py-3 font-medium">STATUS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {itensPagina.map(items => (
+                            <tr
+                                className="bg-gray-900 border-b border-gray-700 hover:bg-gray-800"
+                                key={items.id}
+                                onClick={() => items.status !== -1 && setAtendimentoSelecionado(items)}
+                            >
+                                <th scope="row" className="px-4 py-4 font-medium text-white">{items.descricao}</th>
+                                <td className="px-4 py-4">{items.servico}</td>
+                                <td className="px-4 py-4 text-orange-500 font-bold">
+                                    {items.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                </td>
+                                <td className="px-4 py-4">{items.formaPagamento}</td>
+                                <td className="px-4 py-4">{items.date}</td>
+                                <td className="px-4 py-4">
                                     <span className={items.status === 1 ? 'text-orange-500 font-semibold' : 'text-gray-500'}>
                                         {items.status === 1 ? 'REALIZADO' : 'EXCLUÍDO'}
                                     </span>
                                 </td>
-                            </tr>)}
-                        </tbody>
-                    </table>
-                    <Paginacao
-                        paginaAtual={paginaAtual}
-                        totalPaginas={totalPaginas}
-                        totalItens={totalItens}
-                        itensPorPagina={7}
-                        onPaginaChange={setPaginaAtual}
-                    />
-                </div>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                <Paginacao
+                    paginaAtual={paginaAtual}
+                    totalPaginas={totalPaginas}
+                    totalItens={totalItens}
+                    itensPorPagina={7}
+                    onPaginaChange={setPaginaAtual}
+                />
             </div>
-            <div>
-            <ModalEditarAtendimento
-                atendimento={atendimentoSelecionado}
-                open={atendimentoSelecionado !== null}
-                onFechar={() => setAtendimentoSelecionado(null)}
-                onConfirmar={atualizarAtendimento}
-                onDeletar={deletarAtendimento}
-            />
-            </div>
-            </>
+        </div>
 
+        <ModalEditarAtendimento
+            atendimento={atendimentoSelecionado}
+            open={atendimentoSelecionado !== null}
+            onFechar={() => setAtendimentoSelecionado(null)}
+            onConfirmar={atualizarAtendimento}
+            onDeletar={deletarAtendimento}
+        />
+        </>
     )
 
 }
