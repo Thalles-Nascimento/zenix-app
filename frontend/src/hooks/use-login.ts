@@ -24,7 +24,7 @@ export function useLogin(){
 
         try {
             const dados = await loginService(email, senha)
-            login(dados.token, dados.username, dados.permissao)
+            login(dados.token, dados.username, dados.permissoes)
             navigate('/atendimentos')
 
         } catch(error){
