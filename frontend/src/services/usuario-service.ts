@@ -39,3 +39,8 @@ export async function trocarSenhaService(id: number, senha: string) {
     const response = await api_url.put(`/users/${id}`, { senha })
     return response.data
 }
+
+export async function barbeirosPorUnidadeService(unidadeId: number) {
+    const response = await api_url.get(`/users/barbeiros/${unidadeId}`)
+    return response.data
+}

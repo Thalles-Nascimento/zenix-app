@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { usuariosService } from "../services/usuario-service"
+import { barbeirosPorUnidadeService } from "../services/usuario-service"
 import type { UserProps } from "../types/usuario"
 
 export function useBarbeiros(unidadeId: number) {
@@ -8,11 +8,8 @@ export function useBarbeiros(unidadeId: number) {
     useEffect(() => {
         const buscar = async () => {
             try {
-                const usuarios = await usuariosService()
-                setBarbeiros(usuarios.filter((u: UserProps) =>
-                    u.status === 1 &&
-                    u.unidade.id === unidadeId
-                ))
+                const data = await barbeirosPorUnidadeService(unidadeId)
+                setBarbeiros(data)
             } catch (error) {
                 console.error(error)
             }
