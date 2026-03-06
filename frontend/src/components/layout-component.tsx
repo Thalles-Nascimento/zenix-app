@@ -13,60 +13,55 @@ interface LayoutProps {
 }
 
 function SidebarContent({ onClose }: { onClose?: () => void }) {
-    const { logout, permissao } = useAuth();
+    const { logout, permissao } = useAuth()
     const navigate = useNavigate()
-   
 
     const menuItems = [
-        { label: "Atendimentos", path: "/atendimentos", icon: <Scissors size={18} />, roles: ["ADMIN", 'USER']  },
-        { label: "Financeiro",   path: "/financeiro",   icon: <DollarSign size={18} />, roles: ['ADMIN', 'USER'] },
-        { label: "Usuários",     path: "/usuarios",     icon: <UserPlus size={18} />, roles: ['ADMIN'] },
-        { label: "Relatório", path: "/dashboard", icon: <ChartBarStacked size={18} />, roles: ['ADMIN'] },
-        { label: "Unidades",     path: "/unidades",     icon: <Building2 size={18} />, roles: ['ADMIN'] },
-        { label: "Fila",     path: "/fila",     icon: <Users size={18} />, roles: ['ADMIN', 'USER'] },
+        { label: "Atendimentos", path: "/atendimentos", icon: <Scissors size={18} />, roles: ["ADMIN", "USER"] },
+        { label: "Financeiro",   path: "/financeiro",   icon: <DollarSign size={18} />, roles: ["ADMIN", "USER"] },
+        { label: "Usuários",     path: "/usuarios",     icon: <UserPlus size={18} />, roles: ["ADMIN"] },
+        { label: "Relatório",    path: "/dashboard",    icon: <ChartBarStacked size={18} />, roles: ["ADMIN"] },
+        { label: "Unidades",     path: "/unidades",     icon: <Building2 size={18} />, roles: ["ADMIN"] },
+        { label: "Fila",         path: "/fila",         icon: <Users size={18} />, roles: ["ADMIN", "USER"] },
     ]
 
     const clickButtonLogout = () => {
         logout()
-        navigate('/login')
+        navigate("/login")
     }
-    
+
     const location = useLocation()
 
     return (
         <div className="flex flex-col h-full bg-black text-white">
-            {/* Logo */}
-            <div className="flex items-center justify-center gap-3 px-6 py-5 border-b h-15 border-gray-700">
-                <img className="w-20 h-20 mr-2" src="/assets/imagens/LogoWN.png" alt="logo"/>
+            <div className="flex items-center justify-center gap-3 px-6 py-5 border-b border-gray-700">
+                <img className="w-20 h-20" src="/assets/imagens/LogoWN.png" alt="logo" />
             </div>
-
-            {/* Menu */}
             <nav className="flex flex-col gap-1 p-4 flex-1 bg-black">
-                {menuItems.filter(item => item.roles.includes(permissao ?? ''))
-                .map(item => (
-                    <Link
-                        key={item.path}
-                        to={item.path}
-                        onClick={onClose}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors
-                            ${location.pathname === item.path
-                                ? "bg-orange-600 text-white"
-                                : "text-gray-400 hover:bg-gray-800 hover:text-white"
-                            }`}
-                    >
-                        {item.icon}
-                        {item.label}
-                    </Link>
-                ))}
+                {menuItems
+                    .filter(item => item.roles.includes(permissao ?? ""))
+                    .map(item => (
+                        <Link
+                            key={item.path}
+                            to={item.path}
+                            onClick={onClose}
+                            className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors
+                                ${location.pathname === item.path
+                                    ? "bg-orange-600 text-white"
+                                    : "text-gray-400 hover:bg-gray-800 hover:text-white"
+                                }`}
+                        >
+                            {item.icon}
+                            {item.label}
+                        </Link>
+                    ))}
             </nav>
             <div className="p-4">
                 <Button variant="ghost" size="sm" onClick={clickButtonLogout}>
-                    <LogOutIcon />Logout
+                    <LogOutIcon className="mr-2" /> Logout
                 </Button>
             </div>
-
-            {/* Footer do Sidebar */}
-            <div className="px-6 py-4 border-t border-gray-950 text-xs font-bold text-gray-500">
+            <div className="px-6 py-4 border-t border-gray-800 text-xs font-bold text-gray-500">
                 Zenix © {new Date().getFullYear()}
             </div>
         </div>
@@ -76,7 +71,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
 export default function Layout({ children }: LayoutProps) {
     const { userName, permissao } = useAuth()
     const [mobileOpen, setMobileOpen] = useState(false)
-    const [grupo, setGrupo] = useState(permissao);
+    const [grupo, setGrupo] = useState(permissao)
     const { trocarSenha } = usePerfil()
     const [dropdownOpen, setDropdownOpen] = useState(false)
     const [modalSenhaOpen, setModalSenhaOpen] = useState(false)
@@ -93,29 +88,25 @@ export default function Layout({ children }: LayoutProps) {
         setNovaSenha("")
         setConfirmarSenha("")
     }
-    
-    useEffect(() => {
-        if (permissao === 'USER'){
-            setGrupo("Barbeiro")
-        }else{
-            setGrupo(permissao)
-        }
-    }, [grupo])
 
+    useEffect(() => {
+        setGrupo(permissao === "USER" ? "Barbeiro" : permissao)
+    }, [permissao])
 
     return (
-        <div className="flex min-h-screen bg-gray-950 text-white">
+        // overflow-x-hidden aqui é a correção principal — impede scroll horizontal
+        <div className="flex min-h-screen bg-gray-950 text-white overflow-x-hidden">
 
-            {/* Sidebar desktop — fixo à esquerda */}
-            <aside className="hidden md:flex w-64 flex-col fixed inset-y-0 left-0 border-r border-gray-700">
+            {/* Sidebar desktop */}
+            <aside className="hidden md:flex w-64 flex-col fixed inset-y-0 left-0 border-r border-gray-700 z-30">
                 <SidebarContent />
             </aside>
 
             {/* Conteúdo principal */}
-            <div className="flex flex-col flex-1 md:ml-64">
+            <div className="flex flex-col flex-1 min-w-0 md:ml-64">
 
                 {/* Navbar */}
-                <header className="sticky top-0 h-15 z-40 flex items-center justify-between px-6 py-4 bg-black border-b border-gray-700">
+                <header className="sticky top-0 z-40 flex items-center justify-between px-4 py-3 bg-black border-b border-gray-700">
 
                     {/* Hamburguer — só no mobile */}
                     <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -129,8 +120,7 @@ export default function Layout({ children }: LayoutProps) {
 
                     <div className="ml-auto flex items-center gap-3 relative">
                         <span className="text-sm text-gray-300 hidden sm:block">{grupo}</span>
-                        
-                        {/* Avatar clicável */}
+
                         <button
                             onClick={() => setDropdownOpen(!dropdownOpen)}
                             className="w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center font-bold text-sm hover:bg-orange-500 transition-colors"
@@ -138,24 +128,16 @@ export default function Layout({ children }: LayoutProps) {
                             {userName?.charAt(0).toUpperCase()}
                         </button>
 
-                        {/* Dropdown */}
                         {dropdownOpen && (
                             <>
-                                {/* Overlay para fechar */}
-                                <div
-                                    className="fixed inset-0 z-40"
-                                    onClick={() => setDropdownOpen(false)}
-                                />
+                                <div className="fixed inset-0 z-40" onClick={() => setDropdownOpen(false)} />
                                 <div className="absolute right-0 top-10 z-50 bg-gray-800 border border-gray-700 rounded-xl shadow-lg w-48 py-2">
                                     <div className="px-4 py-2 border-b border-gray-700">
                                         <p className="text-white text-sm font-medium">{userName}</p>
                                         <p className="text-gray-400 text-xs">{grupo}</p>
                                     </div>
                                     <button
-                                        onClick={() => {
-                                            setDropdownOpen(false)
-                                            setModalSenhaOpen(true)
-                                        }}
+                                        onClick={() => { setDropdownOpen(false); setModalSenhaOpen(true) }}
                                         className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
                                     >
                                         <KeyRound size={14} />
@@ -165,9 +147,12 @@ export default function Layout({ children }: LayoutProps) {
                             </>
                         )}
                     </div>
-                    {modalSenhaOpen && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-                        <div className="bg-gray-900 border border-gray-700 rounded-xl p-6 w-full max-w-sm mx-4">
+                </header>
+
+                {/* Modal trocar senha */}
+                {modalSenhaOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
+                        <div className="bg-gray-900 border border-gray-700 rounded-xl p-6 w-full max-w-sm">
                             <div className="flex items-center justify-between mb-4">
                                 <h2 className="text-white font-bold">Trocar Senha</h2>
                                 <button onClick={() => setModalSenhaOpen(false)}>
@@ -214,22 +199,15 @@ export default function Layout({ children }: LayoutProps) {
                     </div>
                 )}
 
-                    
-                </header>
-
                 {/* Página */}
-                <main className="flex-1 py-3 px-6">
+                <main className="flex-1 py-4 px-4 min-w-0">
                     {children}
                 </main>
 
-                {/* Footer */}
                 <footer className="px-6 py-4 border-t border-gray-700 text-center text-xs text-gray-500">
                     <h2 className="font-bold">Zenix — Todos os direitos reservados ©</h2>
                 </footer>
-
             </div>
         </div>
-
-        
     )
 }
