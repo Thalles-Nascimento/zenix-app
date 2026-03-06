@@ -1,0 +1,118 @@
+import { Toaster } from "sonner"
+import { useFila } from "../hooks/use-fila"
+import { ModalFinalizarAtendimento } from "./modals/finalizar-atendimento-modal"
+import { criarAtendimentoService } from "../services/atendimento-service"
+import { Badge } from "../components/ui/badge"
+import { Spinner } from "../components/ui/spinner"
+
+export default function FilaPage() {
+    const { fila, carregando, clienteSelecionado, setClienteSelecionado, chamarProximo, finalizarAtendimento } = useFila()
+
+    const aguardando = fila.filter(c => c.status === 'AGUARDANDO')
+    const emAtendimento = fila.filter(c => c.status === 'EM_ATENDIMENTO')
+
+    const handleFinalizar = async (id: number, valor: string) => {
+        const cliente = fila.find(c => c.id === id)
+        if (!cliente) return
+
+        // Cria o atendimento na API antes de remover da fila
+        await criarAtendimentoService({
+            descricao: cliente.nomeCliente,
+            servico: cliente.servico,
+            valor: valor,
+            formaPagamento: cliente.formaPagamento
+        })
+
+        await finalizarAtendimento(id)
+    }
+
+    if (carregando) {
+        return (
+            <div className="min-h-screen bg-gray-950 w-full flex items-center justify-center">
+                <Badge variant="secondary"><Spinner />Carregando...</Badge>
+            </div>
+        )
+    }
+
+    return (
+        <>
+            <Toaster richColors position="top-center" />
+            <div className="flex flex-col gap-6">
+                <h1 className="text-white text-xl font-bold">Fila de Atendimentos</h1>
+
+                {/* Cards de resumo */}
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-gray-900 rounded-xl border border-gray-700 p-5">
+                        <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Aguardando</p>
+                        <p className="text-orange-500 text-2xl font-bold">{aguardando.length}</p>
+                    </div>
+                    <div className="bg-gray-900 rounded-xl border border-gray-700 p-5">
+                        <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Em Atendimento</p>
+                        <p className="text-orange-500 text-2xl font-bold">{emAtendimento.length}</p>
+                    </div>
+                </div>
+
+                {/* Lista da fila */}
+                {fila.length === 0 ? (
+                    <div className="bg-gray-900 rounded-xl border border-gray-700 p-10 text-center">
+                        <p className="text-gray-500">Nenhum cliente na fila no momento</p>
+                    </div>
+                ) : (
+                    <div className="flex flex-col gap-3">
+                        {fila.map((cliente, index) => (
+                            <div key={cliente.id}
+                                className="bg-gray-900 rounded-xl border border-gray-700 p-4 flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                    {/* Posição */}
+                                    <div className="w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center font-bold text-sm">
+                                        {index + 1}
+                                    </div>
+                                    <div>
+                                        <p className="text-white font-medium">{cliente.nomeCliente}</p>
+                                        <p className="text-gray-400 text-sm">{cliente.servico} • {cliente.formaPagamento}</p>
+                                        <p className="text-gray-500 text-xs">Entrou às {cliente.horario}</p>
+                                    </div>
+                                </div>
+
+                                {/* Ações */}
+                                <div className="flex items-center gap-2">
+                                    <span className={`text-xs font-semibold px-2 py-1 rounded-full
+                                        ${cliente.status === 'AGUARDANDO'
+                                            ? 'bg-gray-700 text-gray-300'
+                                            : 'bg-orange-900 text-orange-400'
+                                        }`}>
+                                        {cliente.status === 'AGUARDANDO' ? 'Aguardando' : 'Em Atendimento'}
+                                    </span>
+
+                                    {cliente.status === 'AGUARDANDO' && (
+                                        <button
+                                            onClick={() => chamarProximo(cliente.id)}
+                                            disabled={emAtendimento.length > 0}
+                                            className="bg-orange-600 hover:bg-orange-500 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors disabled:bg-gray-600">
+                                            Chamar
+                                        </button>
+                                    )}
+
+                                    {cliente.status === 'EM_ATENDIMENTO' && (
+                                        <button
+                                            onClick={() => setClienteSelecionado(cliente)}
+                                            className="bg-green-700 hover:bg-green-600 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">
+                                            Finalizar
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+
+            <ModalFinalizarAtendimento
+                cliente={clienteSelecionado}
+                open={clienteSelecionado !== null}
+                onFechar={() => setClienteSelecionado(null)}
+                onFinalizar={handleFinalizar}
+            />
+        </>
+    )
+}
