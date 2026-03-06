@@ -77,7 +77,7 @@ export default function Layout({ children }: LayoutProps) {
     const { userName, permissao } = useAuth()
     const [mobileOpen, setMobileOpen] = useState(false)
     const [grupo, setGrupo] = useState(permissao);
-    const { perfil, trocarSenha } = usePerfil()
+    const { trocarSenha } = usePerfil()
     const [dropdownOpen, setDropdownOpen] = useState(false)
     const [modalSenhaOpen, setModalSenhaOpen] = useState(false)
     const [novaSenha, setNovaSenha] = useState("")

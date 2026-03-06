@@ -11,7 +11,7 @@ interface Props {
     onChange: (telefoneCompleto: string) => void
 }
 
-export function InputTelefone({ value, onChange }: Props) {
+export function InputTelefone({ onChange }: Props) {
     const [codigo, setCodigo] = useState("+55")
     const [telefoneFormatado, setTelefoneFormatado] = useState("")
 

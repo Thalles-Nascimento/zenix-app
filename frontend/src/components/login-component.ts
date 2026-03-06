@@ -10,7 +10,7 @@ export default function LoginComponent({email, senha}: {email:string, senha:stri
     const clickButtonLogin = async () => {
         try {
             const dados = await LoginService(email, senha)
-            login(dados.token, dados.username)
+            login(dados.token, dados.username, dados.permissoes)
             navigate('/atendimentos')
 
         } catch(error){

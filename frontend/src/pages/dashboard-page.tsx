@@ -109,8 +109,9 @@ export default function DashboardPage() {
                         <BarChart
                             data={porBarbeiro}
                             onClick={(data) => {
-                                if (data?.activePayload?.[0]) {
-                                    setBarbeiroSelecionado(data.activePayload[0].payload.barbeiro)
+                                const payload = (data as any)?.activePayload?.[0]
+                                if (payload) {
+                                    setBarbeiroSelecionado(payload.payload.barbeiro)
                                 }
                             }}
                             style={{ cursor: 'pointer' }}
