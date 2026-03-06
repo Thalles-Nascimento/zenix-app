@@ -11,4 +11,8 @@ public interface UnidadeRepository extends JpaRepository<Unidades, Long> {
     @Modifying
     @Query(value = "UPDATE Unidades SET status = -1 WHERE id = :id")
     void deleteLogico(@Param("id") Long id);
+
+    @Modifying
+    @Query(value = "UPDATE Unidades SET status = 1 WHERE id = :id")
+    void ativarUnidade(@Param("id") Long id);
 }

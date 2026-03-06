@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLIntegrityConstraintViolationException;
+
 @RestController
 @RequestMapping(value = "/api/v1/fila")
 @Tag(name = "Fila", description = "API do serviço de Fila")
@@ -20,7 +22,7 @@ public class FilaController {
     private FilaService filaService;
 
     @PostMapping
-    public ResponseEntity<?> inserirClienteFila(@RequestBody @Valid FilaRequestDTO filaDTO, BindingResult result){
+    public ResponseEntity<?> inserirClienteFila(@RequestBody @Valid FilaRequestDTO filaDTO, BindingResult result) throws SQLIntegrityConstraintViolationException {
         if (result.hasErrors()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(BindingHandler.insertError(result));

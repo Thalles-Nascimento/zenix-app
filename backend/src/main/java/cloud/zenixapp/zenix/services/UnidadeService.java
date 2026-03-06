@@ -1,6 +1,7 @@
 package cloud.zenixapp.zenix.services;
 
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
+import cloud.zenixapp.zenix.configs.exceptions.UnidadeAtivaException;
 import cloud.zenixapp.zenix.configs.exceptions.UnidadeExcluidoException;
 import cloud.zenixapp.zenix.configs.exceptions.UsuarioExcluidoException;
 import cloud.zenixapp.zenix.configs.mappers.UnidadeMapper;
@@ -130,6 +131,25 @@ public class UnidadeService {
                             HttpStatus.OK.value(),
                             "Unidade deletada com sucesso",
                             unidade.getNomeUnidade()
+                    );
+                })
+                .orElseThrow(() -> new NotFoundException("Unidade não encontrada!"));
+    }
+
+    @Transactional
+    public SuccessUnidadeResponseDTO ativarUnidade(Long id){
+        return unidadeRepository.findById(id)
+                .map(unidade -> {
+                    if(unidade.getStatus() != -1){
+                        throw new UnidadeAtivaException("Unidade já está ativa!");
+
+                    }
+                    unidadeRepository.ativarUnidade(id);
+
+                    return new SuccessUnidadeResponseDTO(
+                            HttpStatus.OK.value(),
+                            "Unidade ativada com sucesso",
+                            unidade
                     );
                 })
                 .orElseThrow(() -> new NotFoundException("Unidade não encontrada!"));

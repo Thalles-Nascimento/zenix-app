@@ -143,4 +143,11 @@ public class UnidadeController {
 
     }
 
+    @PatchMapping(value ="{id}")
+    @Operation(summary = "Ativar unidade", description = "Endpoint para ativar uma unidade do sistema")
+    public ResponseEntity<?> ativarUsuario(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(unidadeService.ativarUnidade(id));
+    }
+
 }

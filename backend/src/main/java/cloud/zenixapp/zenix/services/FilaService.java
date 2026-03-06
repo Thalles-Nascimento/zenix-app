@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class FilaService {
     private FilaMapper filaMapper;
 
     @Transactional
-    public SucessFilaResponseDTO inserirAtendimentoFila(FilaRequestDTO filaDTO){
+    public SucessFilaResponseDTO inserirAtendimentoFila(FilaRequestDTO filaDTO) throws SQLIntegrityConstraintViolationException {
         Fila fila = new Fila();
         Usuarios user = usuarioService.getUsuarioById(filaDTO.idBarbeiro());
 
@@ -43,6 +44,7 @@ public class FilaService {
         fila.setUsuario(user);
 
         filaRepository.save(fila);
+
 
         return new SucessFilaResponseDTO(
                 fila.getId(),
