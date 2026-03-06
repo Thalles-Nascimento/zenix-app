@@ -33,7 +33,7 @@ export function ModalEditarUsuario({ usuario, open, onFechar, onConfirmar, onDel
                 nome: usuario.nome,
                 email: usuario.email,
                 cpf: limparCPF(usuario.cpf),
-                unidade: usuario.unidade.id,
+                unidade: usuario.unidade?.id ?? 0,
                 senha: "",
                 grupo: usuario.grupo
             })
