@@ -120,7 +120,7 @@ export default function FinanceiroPage() {
                             <Tooltip
                                 contentStyle={{ backgroundColor: '#111827', border: '1px solid #374151', borderRadius: '8px' }}
                                 labelStyle={{ color: '#f97316' }}
-                                formatter={(value: number) => [formatBRL(value), 'Total']}
+                                formatter={(value: number | undefined) => [formatBRL(value ?? 0), 'Total']}
                             />
                             <Area type="monotone" dataKey="total" stroke="#ea580c"
                                 strokeWidth={2} fill="url(#colorTotal)" />
