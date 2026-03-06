@@ -38,9 +38,9 @@ export default function DashboardPage() {
 
             {/* Filtro por período */}
             <div className="flex flex-wrap items-center gap-3 bg-gray-900 rounded-xl border border-gray-700 p-4">
-                <span className="text-white text-sm font-medium">Período:</span>
+                <span className="text-gray-400 text-sm font-medium w-full sm:w-auto">Período:</span>
                 <div className="flex items-center gap-2">
-                    <label className="text-white text-sm">De</label>
+                    <label className="text-gray-400 text-sm">De</label>
                     <input
                         type="date"
                         value={filtroInicio}
@@ -49,7 +49,7 @@ export default function DashboardPage() {
                     />
                 </div>
                 <div className="flex items-center gap-2">
-                    <label className="text-white text-sm">Até</label>
+                    <label className="text-gray-400 text-sm">Até</label>
                     <input
                         type="date"
                         value={filtroFim}
