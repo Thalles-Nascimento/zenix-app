@@ -18,15 +18,12 @@ interface Props {
     onReativar: (id: number) => void
 }
 
-export function ModalEditarUsuario({ usuario, open, onFechar, onConfirmar, onDeletar, onReativar  }: Props) {
-    const [form, setForm] = useState<UsuarioFormProps>({
-        nome: "", email: "", cpf: "", unidade: 0, senha: "", grupo: ""
-    })
+export function ModalEditarUsuario({ usuario, open, onFechar, onConfirmar, onDeletar, onReativar }: Props) {
+    const [form, setForm] = useState<UsuarioFormProps>({ nome: "", email: "", cpf: "", unidade: 0, senha: "", grupo: "" })
     const [cpfFormatado, setCpfFormatado] = useState("")
     const [erro, setErro] = useState<string | null>(null)
     const [reativar, setReativar] = useState(false)
     const { unidades } = useUnidades()
-
 
     useEffect(() => {
         if (usuario) {
@@ -44,12 +41,11 @@ export function ModalEditarUsuario({ usuario, open, onFechar, onConfirmar, onDel
     }, [usuario])
 
     const handleConfirmar = async () => {
-        if (form.senha != "" && !validarSenha(form.senha)) {
+        if (form.senha !== "" && !validarSenha(form.senha)) {
             setErro("A senha deve ter no mínimo 6 caracteres.")
             return
         }
         if (!usuario) return
-
         if (reativar && usuario.status === -1) {
             await onReativar(usuario.id)
         } else {
@@ -58,16 +54,9 @@ export function ModalEditarUsuario({ usuario, open, onFechar, onConfirmar, onDel
         onFechar()
     }
 
-    // const handleReativar = () => {
-    //     if (!usuario) return
-    //     onReativar(usuario.id)
-    //     onFechar()
-    // }
-
     const handleCPF = (e: React.ChangeEvent<HTMLInputElement>) => {
         const formatado = formatarCPF(e.target.value)
         setCpfFormatado(formatado)
-        // Salva no form sem formatação
         setForm({ ...form, cpf: limparCPF(formatado) })
     }
 
@@ -79,7 +68,7 @@ export function ModalEditarUsuario({ usuario, open, onFechar, onConfirmar, onDel
 
     return (
         <Dialog open={open} onOpenChange={onFechar}>
-            <DialogContent className="bg-gray-900 border-gray-700 text-white">
+            <DialogContent className="bg-gray-900 border-gray-700 text-white w-[calc(100vw-2rem)] max-w-md max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle className="text-white">Editar Usuário</DialogTitle>
                 </DialogHeader>
@@ -108,7 +97,7 @@ export function ModalEditarUsuario({ usuario, open, onFechar, onConfirmar, onDel
                     </div>
                     <div>
                         <Label className="text-gray-300">Usuário</Label>
-                        <Select value={form.grupo} onValueChange={(value: 'ADMIN' | 'USER') => setForm({ ...form, grupo: value })}>
+                        <Select value={form.grupo} onValueChange={(v: "ADMIN" | "USER") => setForm({ ...form, grupo: v })}>
                             <SelectTrigger className="mt-1 w-full bg-gray-800 border-gray-700 text-white">
                                 <SelectValue placeholder="Selecione" />
                             </SelectTrigger>
@@ -120,41 +109,35 @@ export function ModalEditarUsuario({ usuario, open, onFechar, onConfirmar, onDel
                     </div>
                     <div>
                         <Label className="text-gray-300">Unidade</Label>
-                        <Select
-                            value={String(form.unidade)}
-                            onValueChange={(value) => {setForm({ ...form, unidade: Number(value) }); console.log("Unidade selecionada:", value)}}
-                        >
+                        <Select value={String(form.unidade)} onValueChange={(v) => setForm({ ...form, unidade: Number(v) })}>
                             <SelectTrigger className="mt-1 w-full bg-gray-800 border-gray-700 text-white">
                                 <SelectValue placeholder="Selecione a unidade" />
                             </SelectTrigger>
                             <SelectContent className="bg-gray-800 border-gray-700 text-white">
                                 {unidades.map(u => (
-                                    <SelectItem key={u.id} value={String(u.id)}>
-                                        {u.nomeUnidade}
-                                    </SelectItem>
+                                    <SelectItem key={u.id} value={String(u.id)}>{u.nomeUnidade}</SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>
                     </div>
-                    
                     {usuario?.status === -1 && (
-                    <div className="flex items-center gap-2 py-1">
-                        <input
-                            type="checkbox"
-                            id="reativar"
-                            checked={reativar}
-                            className="w-4 h-4 accent-orange-500 cursor-pointer"
-                            onChange={(e) => setReativar(e.target.checked)}
-                        />
-                        <label htmlFor="reativar" className="text-gray-300 text-sm cursor-pointer">
-                            Reativar usuário
-                        </label>
-                    </div>
-                )}
+                        <div className="flex items-center gap-2 py-1">
+                            <input
+                                type="checkbox"
+                                id="reativar"
+                                checked={reativar}
+                                className="w-4 h-4 accent-orange-500 cursor-pointer"
+                                onChange={(e) => setReativar(e.target.checked)}
+                            />
+                            <label htmlFor="reativar" className="text-gray-300 text-sm cursor-pointer">
+                                Reativar usuário
+                            </label>
+                        </div>
+                    )}
                     <div className="flex flex-col gap-2 mt-2">
-                        <Botao texto="Salvar Alterações" color="sucess" click={handleConfirmar}></Botao>
-                        <Botao texto="Deletar" color="delete" click={handleDeletar}></Botao>
-                        <Botao texto="Cancelar" color="cancel" click={onFechar}></Botao>
+                        <Botao texto="Salvar Alterações" color="sucess" click={handleConfirmar} />
+                        <Botao texto="Deletar" color="delete" click={handleDeletar} />
+                        <Botao texto="Cancelar" color="cancel" click={onFechar} />
                     </div>
                 </div>
             </DialogContent>

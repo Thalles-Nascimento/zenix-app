@@ -6,35 +6,21 @@ import { usePaginacao } from "../hooks/use-pagination"
 import { Paginacao } from "../components/pagination"
 
 const formatBRL = (valor: number) =>
-    valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+    valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
 
 export default function FinanceiroPage() {
     const {
-        carregando,
-        totalDia,
-        totalSemana,
-        totalMes,
-        totalPeriodo,
-        ticketMedio,
-        porFormaPagamento,
-        atendimentosFiltrados,
-        dadosGrafico,
-        filtroInicio,
-        filtroFim,
-        setFiltroInicio,
-        setFiltroFim
+        carregando, totalDia, totalSemana, totalMes, totalPeriodo,
+        ticketMedio, porFormaPagamento, atendimentosFiltrados,
+        dadosGrafico, filtroInicio, filtroFim, setFiltroInicio, setFiltroFim
     } = useFinanceiro()
 
     const { itensPagina, paginaAtual, totalPaginas, totalItens, setPaginaAtual } = usePaginacao(atendimentosFiltrados, 4)
 
-
     if (carregando) {
         return (
-            <div className="min-h-screen bg-gray-950 w-full flex items-center justify-center">
-                <Badge variant="secondary">
-                    <Spinner data-icon="inline-start" />
-                    Carregando...
-                </Badge>
+            <div className="w-full flex items-center justify-center py-20">
+                <Badge variant="secondary"><Spinner />Carregando...</Badge>
             </div>
         )
     }
@@ -60,8 +46,8 @@ export default function FinanceiroPage() {
             </div>
 
             {/* Filtro por período */}
-            <div className="flex flex-wrap items-center gap-4 bg-gray-900 rounded-xl border border-gray-700 p-4">
-                <span className="text-gray-400 text-sm font-medium">Filtrar por período:</span>
+            <div className="flex flex-wrap items-center gap-3 bg-gray-900 rounded-xl border border-gray-700 p-4">
+                <span className="text-gray-400 text-sm font-medium w-full sm:w-auto">Filtrar por período:</span>
                 <div className="flex items-center gap-2">
                     <label className="text-gray-400 text-sm">De</label>
                     <input type="date" value={filtroInicio}
@@ -82,7 +68,7 @@ export default function FinanceiroPage() {
                 )}
             </div>
 
-            {/* Cards do período filtrado */}
+            {/* Cards período filtrado */}
             {(filtroInicio || filtroFim) && (
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="bg-gray-900 rounded-xl border border-orange-700 p-5">
@@ -102,8 +88,6 @@ export default function FinanceiroPage() {
 
             {/* Gráfico + Formas de pagamento */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-
-                {/* Gráfico — ocupa 2/3 */}
                 <div className="lg:col-span-2 bg-gray-900 rounded-xl border border-gray-700 p-5">
                     <p className="text-gray-400 text-xs uppercase tracking-widest mb-4">Arrecadado por Dia</p>
                     <ResponsiveContainer width="100%" height={220}>
@@ -118,17 +102,15 @@ export default function FinanceiroPage() {
                             <XAxis dataKey="data" stroke="#9ca3af" tick={{ fontSize: 11 }} />
                             <YAxis stroke="#9ca3af" tick={{ fontSize: 11 }} tickFormatter={(v) => `R$${v}`} />
                             <Tooltip
-                                contentStyle={{ backgroundColor: '#111827', border: '1px solid #374151', borderRadius: '8px' }}
-                                labelStyle={{ color: '#f97316' }}
-                                formatter={(value: number | undefined) => [formatBRL(value ?? 0), 'Total']}
+                                contentStyle={{ backgroundColor: "#111827", border: "1px solid #374151", borderRadius: "8px" }}
+                                labelStyle={{ color: "#f97316" }}
+                                formatter={(value: number | undefined) => [formatBRL(value ?? 0), "Total"]}
                             />
-                            <Area type="monotone" dataKey="total" stroke="#ea580c"
-                                strokeWidth={2} fill="url(#colorTotal)" />
+                            <Area type="monotone" dataKey="total" stroke="#ea580c" strokeWidth={2} fill="url(#colorTotal)" />
                         </AreaChart>
                     </ResponsiveContainer>
                 </div>
 
-                {/* Formas de pagamento — ocupa 1/3 */}
                 <div className="bg-gray-900 rounded-xl border border-gray-700 p-5">
                     <p className="text-gray-400 text-xs uppercase tracking-widest mb-4">Por Forma de Pagamento</p>
                     {porFormaPagamento.length === 0 ? (
@@ -157,15 +139,15 @@ export default function FinanceiroPage() {
             </div>
 
             {/* Tabela */}
-            <div className="relative overflow-x-auto rounded-xl border border-gray-700">
-                <table className="w-full text-sm text-left text-gray-300">
+            <div className="overflow-x-auto rounded-xl border border-gray-700">
+                <table className="w-full text-sm text-left text-gray-300 min-w-[500px]">
                     <thead className="text-xs text-gray-400 uppercase bg-gray-800 border-b border-gray-700">
                         <tr>
-                            <th className="px-6 py-3">CLIENTE</th>
-                            <th className="px-6 py-3">SERVIÇO</th>
-                            <th className="px-6 py-3">VALOR</th>
-                            <th className="px-6 py-3">PAGAMENTO</th>
-                            <th className="px-6 py-3">DATA</th>
+                            <th className="px-4 py-3">CLIENTE</th>
+                            <th className="px-4 py-3">SERVIÇO</th>
+                            <th className="px-4 py-3">VALOR</th>
+                            <th className="px-4 py-3">PAGAMENTO</th>
+                            <th className="px-4 py-3">DATA</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -178,11 +160,11 @@ export default function FinanceiroPage() {
                         ) : (
                             itensPagina.map(item => (
                                 <tr key={item.id} className="bg-gray-900 border-b border-gray-700 hover:bg-gray-800">
-                                    <td className="px-6 py-4 font-medium text-white">{item.descricao}</td>
-                                    <td className="px-6 py-4">{item.servico}</td>
-                                    <td className="px-6 py-4 text-orange-500 font-bold">{formatBRL(item.valor)}</td>
-                                    <td className="px-6 py-4">{item.formaPagamento}</td>
-                                    <td className="px-6 py-4">{item.date}</td>
+                                    <td className="px-4 py-4 font-medium text-white">{item.descricao}</td>
+                                    <td className="px-4 py-4">{item.servico}</td>
+                                    <td className="px-4 py-4 text-orange-500 font-bold">{formatBRL(item.valor)}</td>
+                                    <td className="px-4 py-4">{item.formaPagamento}</td>
+                                    <td className="px-4 py-4">{item.date}</td>
                                 </tr>
                             ))
                         )}

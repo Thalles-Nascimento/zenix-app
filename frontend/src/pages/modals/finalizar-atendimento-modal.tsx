@@ -23,7 +23,7 @@ export function ModalFinalizarAtendimento({ cliente, open, onFechar, onFinalizar
 
     return (
         <Dialog open={open} onOpenChange={onFechar}>
-            <DialogContent className="bg-gray-900 border-gray-700 text-white">
+            <DialogContent className="bg-gray-900 border-gray-700 text-white w-[calc(100vw-2rem)] max-w-md max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle className="text-white">Finalizar Atendimento</DialogTitle>
                 </DialogHeader>

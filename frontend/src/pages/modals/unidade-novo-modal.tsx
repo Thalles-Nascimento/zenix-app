@@ -1,3 +1,4 @@
+// ─── unidade-novo-modal.tsx ───────────────────────────────────────────────
 import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../components/ui/dialog"
 import { Button } from "../../components/ui/button"
@@ -6,13 +7,13 @@ import { Label } from "../../components/ui/label"
 import { Botao } from "../../components/common/botao"
 import type { UnidadeFormProps } from "../../types/usuario"
 
-interface Props {
+interface NovaProps {
     onConfirmar: (form: UnidadeFormProps) => void
 }
 
 const formInicial: UnidadeFormProps = { nomeUnidade: "", endereco: "" }
 
-export function ModalNovaUnidade({ onConfirmar }: Props) {
+export function ModalNovaUnidade({ onConfirmar }: NovaProps) {
     const [open, setOpen] = useState(false)
     const [form, setForm] = useState<UnidadeFormProps>(formInicial)
 
@@ -28,7 +29,7 @@ export function ModalNovaUnidade({ onConfirmar }: Props) {
             <DialogTrigger asChild>
                 <Button>NOVA UNIDADE</Button>
             </DialogTrigger>
-            <DialogContent className="bg-gray-900 border-gray-700 text-white">
+            <DialogContent className="bg-gray-900 border-gray-700 text-white w-[calc(100vw-2rem)] max-w-md max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle className="text-white">Nova Unidade</DialogTitle>
                 </DialogHeader>

@@ -8,49 +8,36 @@ import { Spinner } from "../components/ui/spinner"
 import { usePaginacao } from "../hooks/use-pagination"
 import { Paginacao } from "../components/pagination"
 
-
 export default function DashboardPage() {
     const {
-        carregando,
-        totalDia,
-        totalAtendimentos,
-        ticketMedio,
-        rankingServicos,
-        porBarbeiro,
-        atendimentos,
-        filtroInicio,
-        filtroFim,
-        setFiltroInicio,
-        setFiltroFim
+        carregando, totalDia, totalAtendimentos, ticketMedio,
+        rankingServicos, porBarbeiro, atendimentos,
+        filtroInicio, filtroFim, setFiltroInicio, setFiltroFim
     } = useDashboard()
 
     const [barbeiroSelecionado, setBarbeiroSelecionado] = useState<string | null>(null)
     const atendimentosBarbeiro = atendimentos.filter(a => a.barbeiro === barbeiroSelecionado)
     const { itensPagina, paginaAtual, totalPaginas, totalItens, setPaginaAtual } = usePaginacao(atendimentos, 4)
 
-
     const formatBRL = (valor: number) =>
-        valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+        valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
 
     const isPeriodoHoje = filtroInicio === filtroFim && filtroInicio === hoje()
 
     if (carregando) {
         return (
-            <div className="min-h-screen bg-gray-950 w-full flex items-center justify-center">
-                <Badge variant="secondary">
-                    <Spinner data-icon="inline-start" />
-                    Carregando...
-                </Badge>
+            <div className="w-full flex items-center justify-center py-20">
+                <Badge variant="secondary"><Spinner />Carregando...</Badge>
             </div>
         )
     }
 
     return (
-        <div className="flex flex-col gap-6 bg-black">
+        <div className="flex flex-col gap-6">
             <h1 className="text-white text-xl font-bold">Dashboard</h1>
 
             {/* Filtro por período */}
-            <div className="flex flex-wrap items-center gap-4 bg-gray-900 rounded-xl border border-gray-700 p-4">
+            <div className="flex flex-wrap items-center gap-3 bg-gray-900 rounded-xl border border-gray-700 p-4">
                 <span className="text-white text-sm font-medium">Período:</span>
                 <div className="flex items-center gap-2">
                     <label className="text-white text-sm">De</label>
@@ -84,7 +71,7 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="bg-gray-900 rounded-xl border border-gray-700 p-5">
                     <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">
-                        {isPeriodoHoje ? 'Total do Dia' : 'Total do Período'}
+                        {isPeriodoHoje ? "Total do Dia" : "Total do Período"}
                     </p>
                     <p className="text-orange-500 text-2xl font-bold">{formatBRL(totalDia)}</p>
                 </div>
@@ -98,10 +85,8 @@ export default function DashboardPage() {
                 </div>
             </div>
 
-            {/* Gráficos lado a lado */}
+            {/* Gráficos */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-
-                {/* Atendimentos por barbeiro */}
                 <div className="bg-gray-900 rounded-xl border border-gray-700 p-5">
                     <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Atendimentos por Barbeiro</p>
                     <p className="text-gray-500 text-xs mb-4">Clique na barra para ver detalhes</p>
@@ -110,25 +95,22 @@ export default function DashboardPage() {
                             data={porBarbeiro}
                             onClick={(data) => {
                                 const payload = (data as any)?.activePayload?.[0]
-                                if (payload) {
-                                    setBarbeiroSelecionado(payload.payload.barbeiro)
-                                }
+                                if (payload) setBarbeiroSelecionado(payload.payload.barbeiro)
                             }}
-                            style={{ cursor: 'pointer' }}
+                            style={{ cursor: "pointer" }}
                         >
                             <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                            <XAxis dataKey="barbeiro" stroke="#9ca3af" tick={{ fontSize: 12 }} />
-                            <YAxis stroke="#9ca3af" tick={{ fontSize: 12 }} />
+                            <XAxis dataKey="barbeiro" stroke="#9ca3af" tick={{ fontSize: 11 }} />
+                            <YAxis stroke="#9ca3af" tick={{ fontSize: 11 }} />
                             <Tooltip
-                                contentStyle={{ backgroundColor: '#111827', border: '1px solid #374151', borderRadius: '8px' }}
-                                labelStyle={{ color: '#f97316' }}
+                                contentStyle={{ backgroundColor: "#111827", border: "1px solid #374151", borderRadius: "8px" }}
+                                labelStyle={{ color: "#f97316" }}
                             />
                             <Bar dataKey="quantidade" fill="#ea580c" radius={[4, 4, 0, 0]} name="Atendimentos" />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
 
-                {/* Ranking de serviços */}
                 <div className="bg-gray-900 rounded-xl border border-gray-700 p-5">
                     <p className="text-gray-400 text-xs uppercase tracking-widest mb-4">Ranking de Serviços</p>
                     {rankingServicos.length === 0 ? (
@@ -159,20 +141,20 @@ export default function DashboardPage() {
 
             {/* Tabela */}
             <div className="bg-gray-900 rounded-xl border border-gray-700">
-                <div className="px-6 py-4 border-b border-gray-700">
+                <div className="px-4 py-4 border-b border-gray-700">
                     <p className="text-gray-400 text-xs uppercase tracking-widest">
-                        {isPeriodoHoje ? 'Atendimentos de Hoje' : `Atendimentos de ${filtroInicio} até ${filtroFim}`}
+                        {isPeriodoHoje ? "Atendimentos de Hoje" : `Atendimentos de ${filtroInicio} até ${filtroFim}`}
                     </p>
                 </div>
                 <div className="overflow-x-auto">
-                    <table className="w-full text-sm text-left text-gray-300">
+                    <table className="w-full text-sm text-left text-gray-300 min-w-[500px]">
                         <thead className="text-xs text-gray-400 uppercase bg-gray-800 border-b border-gray-700">
                             <tr>
-                                <th className="px-6 py-3">CLIENTE</th>
-                                <th className="px-6 py-3">SERVIÇO</th>
-                                <th className="px-6 py-3">BARBEIRO</th>
-                                <th className="px-6 py-3">VALOR</th>
-                                <th className="px-6 py-3">PAGAMENTO</th>
+                                <th className="px-4 py-3">CLIENTE</th>
+                                <th className="px-4 py-3">SERVIÇO</th>
+                                <th className="px-4 py-3">BARBEIRO</th>
+                                <th className="px-4 py-3">VALOR</th>
+                                <th className="px-4 py-3">PAGAMENTO</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -185,11 +167,11 @@ export default function DashboardPage() {
                             ) : (
                                 itensPagina.map(items => (
                                     <tr key={items.id} className="bg-gray-900 border-b border-gray-700 hover:bg-gray-800">
-                                        <td className="px-6 py-4 font-medium text-white">{items.descricao}</td>
-                                        <td className="px-6 py-4">{items.servico}</td>
-                                        <td className="px-6 py-4 text-orange-500">{items.barbeiro}</td>
-                                        <td className="px-6 py-4 font-bold text-orange-500">{formatBRL(items.valor)}</td>
-                                        <td className="px-6 py-4">{items.formaPagamento}</td>
+                                        <td className="px-4 py-4 font-medium text-white">{items.descricao}</td>
+                                        <td className="px-4 py-4">{items.servico}</td>
+                                        <td className="px-4 py-4 text-orange-500">{items.barbeiro}</td>
+                                        <td className="px-4 py-4 font-bold text-orange-500">{formatBRL(items.valor)}</td>
+                                        <td className="px-4 py-4">{items.formaPagamento}</td>
                                     </tr>
                                 ))
                             )}
@@ -207,14 +189,12 @@ export default function DashboardPage() {
 
             {/* Modal barbeiro */}
             <Dialog open={barbeiroSelecionado !== null} onOpenChange={() => setBarbeiroSelecionado(null)}>
-                <DialogContent className="bg-gray-900 border-gray-700 text-white max-w-2xl">
+                <DialogContent className="bg-gray-900 border-gray-700 text-white w-full max-w-lg mx-4">
                     <DialogHeader>
                         <DialogTitle className="text-white">
-                            Atendimentos de{" "}
-                            <span className="text-orange-500">{barbeiroSelecionado}</span>
+                            Atendimentos de <span className="text-orange-500">{barbeiroSelecionado}</span>
                         </DialogTitle>
                     </DialogHeader>
-
                     <div className="grid grid-cols-2 gap-3 mt-2">
                         <div className="bg-gray-800 rounded-lg p-3">
                             <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Atendimentos</p>
@@ -227,9 +207,8 @@ export default function DashboardPage() {
                             </p>
                         </div>
                     </div>
-
                     <div className="overflow-x-auto rounded-lg border border-gray-700 mt-2">
-                        <table className="w-full text-sm text-left text-gray-300">
+                        <table className="w-full text-sm text-left text-gray-300 min-w-[360px]">
                             <thead className="text-xs text-gray-400 uppercase bg-gray-800 border-b border-gray-700">
                                 <tr>
                                     <th className="px-4 py-3">CLIENTE</th>

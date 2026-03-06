@@ -1,3 +1,4 @@
+// ─── atendimento-novo-modal.tsx ────────────────────────────────────────────
 import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../components/ui/dialog"
 import { Button } from "../../components/ui/button"
@@ -15,10 +16,7 @@ interface Props {
 export function ModalNovoAtendimento({ onConfirmar }: Props) {
     const [open, setOpen] = useState(false)
     const [form, setForm] = useState<AtendimentoFormProps>({
-        descricao: "",
-        servico: "",
-        valor: "",
-        formaPagamento: ""
+        descricao: "", servico: "", valor: "", formaPagamento: ""
     })
 
     const handleConfirmar = () => {
@@ -32,51 +30,39 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
             <DialogTrigger asChild>
                 <Button>NOVO ATENDIMENTO</Button>
             </DialogTrigger>
-            <DialogContent className="bg-gray-900 border-gray-700 text-white">
+            <DialogContent className="bg-gray-900 border-gray-700 text-white w-[calc(100vw-2rem)] max-w-md max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle className="text-white">Novo Atendimento</DialogTitle>
                 </DialogHeader>
-
                 <div className="flex flex-col gap-4 mt-2">
                     <div>
                         <Label className="text-gray-300">Cliente</Label>
-                        <Input
-                            className="mt-1 bg-gray-800 border-gray-700 text-white"
+                        <Input className="mt-1 bg-gray-800 border-gray-700 text-white"
                             placeholder="Nome do cliente"
                             value={form.descricao}
-                            onChange={(e) => setForm({ ...form, descricao: e.target.value })}
-                        />
+                            onChange={(e) => setForm({ ...form, descricao: e.target.value })} />
                     </div>
                     <div>
                         <Label className="text-gray-300">Serviço</Label>
-                        <Select
-                            value={form.servico}
-                            onValueChange={(value) => setForm({ ...form, servico: value })}
-                        >
+                        <Select value={form.servico} onValueChange={(v) => setForm({ ...form, servico: v })}>
                             <SelectTrigger className="mt-1 bg-gray-800 border-gray-700 text-white w-full">
                                 <SelectValue placeholder="Selecione o serviço" />
                             </SelectTrigger>
                             <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                                {SERVICOS.map(servico => (
-                                    <SelectItem key={servico} value={servico}>
-                                        {servico}
-                                    </SelectItem>
-                                ))}
+                                {SERVICOS.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
                             </SelectContent>
                         </Select>
                     </div>
                     <div>
                         <Label className="text-gray-300">Valor</Label>
-                        <Input
-                            className="mt-1 bg-gray-800 border-gray-700 text-white"
+                        <Input className="mt-1 bg-gray-800 border-gray-700 text-white"
                             placeholder="0,00"
                             value={form.valor}
-                            onChange={(e) => setForm({ ...form, valor: e.target.value })}
-                        />
+                            onChange={(e) => setForm({ ...form, valor: e.target.value })} />
                     </div>
                     <div>
                         <Label className="text-gray-300">Forma de Pagamento</Label>
-                        <Select onValueChange={(value) => setForm({ ...form, formaPagamento: value })}>
+                        <Select onValueChange={(v) => setForm({ ...form, formaPagamento: v })}>
                             <SelectTrigger className="mt-1 bg-gray-800 border-gray-700 text-white">
                                 <SelectValue placeholder="Selecione" />
                             </SelectTrigger>
@@ -87,10 +73,9 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
                             </SelectContent>
                         </Select>
                     </div>
-
                     <div className="flex gap-3 mt-2">
-                        <Botao color="primary" texto="Confirmar" click={handleConfirmar}></Botao>
-                        <Botao color="secondary" texto="Cancelar" click={() => setOpen(false)}></Botao>
+                        <Botao color="primary" texto="Confirmar" click={handleConfirmar} />
+                        <Botao color="secondary" texto="Cancelar" click={() => setOpen(false)} />
                     </div>
                 </div>
             </DialogContent>

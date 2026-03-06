@@ -10,14 +10,11 @@ import { formatarCPF, limparCPF } from "../../utils/formatter"
 import { validarSenha } from "../../utils/validators"
 import { useUnidades } from "../../hooks/use-unidades"
 
-
 interface Props {
     onConfirmar: (form: UsuarioFormProps) => void
 }
 
-const formInicial: UsuarioFormProps = {
-    nome: "", email: "", cpf: "", unidade: 0, senha: "", grupo: ""
-}
+const formInicial: UsuarioFormProps = { nome: "", email: "", cpf: "", unidade: 0, senha: "", grupo: "" }
 
 export function ModalNovoUsuario({ onConfirmar }: Props) {
     const [open, setOpen] = useState(false)
@@ -25,7 +22,6 @@ export function ModalNovoUsuario({ onConfirmar }: Props) {
     const [cpfFormatado, setCpfFormatado] = useState("")
     const [erro, setErro] = useState<string | null>(null)
     const { unidades } = useUnidades()
-
 
     const handleConfirmar = () => {
         if (!validarSenha(form.senha)) {
@@ -40,17 +36,15 @@ export function ModalNovoUsuario({ onConfirmar }: Props) {
     const handleCPF = (e: React.ChangeEvent<HTMLInputElement>) => {
         const formatado = formatarCPF(e.target.value)
         setCpfFormatado(formatado)
-        // Salva no form sem formatação
         setForm({ ...form, cpf: limparCPF(formatado) })
     }
-
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button>NOVO USUÁRIO</Button>
             </DialogTrigger>
-            <DialogContent className="bg-gray-900 border-gray-700 text-white">
+            <DialogContent className="bg-gray-900 border-gray-700 text-white w-[calc(100vw-2rem)] max-w-md max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle className="text-white">Novo Usuário</DialogTitle>
                 </DialogHeader>
@@ -68,32 +62,30 @@ export function ModalNovoUsuario({ onConfirmar }: Props) {
                     <div>
                         <Label className="text-gray-300">CPF</Label>
                         <Input className="mt-1 bg-gray-800 border-gray-700 text-white" placeholder="000.000.000-00"
-                            value={cpfFormatado} onChange={handleCPF} maxLength={14}/>
+                            value={cpfFormatado} onChange={handleCPF} maxLength={14} />
                     </div>
                     <div>
                         <Label className="text-gray-300">Senha</Label>
                         <Input className="mt-1 bg-gray-800 border-gray-700 text-white" type="password" placeholder="********"
                             value={form.senha} onChange={(e) => setForm({ ...form, senha: e.target.value })} />
-                            {erro && <p className="text-red-500 text-xs mt-1">{erro}</p>}
+                        {erro && <p className="text-red-500 text-xs mt-1">{erro}</p>}
                     </div>
                     <div>
-                        
                         <Label className="text-gray-300">Unidade</Label>
-                        <Select onValueChange={(value) => setForm({ ...form, unidade: Number(value) })}>
+                        <Select onValueChange={(v) => setForm({ ...form, unidade: Number(v) })}>
                             <SelectTrigger className="mt-1 w-full bg-gray-800 border-gray-700 text-white">
                                 <SelectValue placeholder="Selecione" />
                             </SelectTrigger>
                             <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                                {unidades.map(unidade => (
-                                    <SelectItem key={unidade.id} value={String(unidade.id)}>{unidade.nomeUnidade}</SelectItem>
+                                {unidades.map(u => (
+                                    <SelectItem key={u.id} value={String(u.id)}>{u.nomeUnidade}</SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>
-                    
                     </div>
                     <div>
                         <Label className="text-gray-300">Usuário</Label>
-                        <Select onValueChange={(value: 'ADMIN' | 'USER') => setForm({ ...form, grupo: value })}>
+                        <Select onValueChange={(v: "ADMIN" | "USER") => setForm({ ...form, grupo: v })}>
                             <SelectTrigger className="mt-1 w-full bg-gray-800 border-gray-700 text-white">
                                 <SelectValue placeholder="Selecione" />
                             </SelectTrigger>
@@ -104,8 +96,8 @@ export function ModalNovoUsuario({ onConfirmar }: Props) {
                         </Select>
                     </div>
                     <div className="flex gap-3 mt-2">
-                        <Botao color="primary" texto="Confirmar" click={handleConfirmar}></Botao>
-                        <Botao color="secondary" texto="Cancelar" click={() => setOpen(false)}></Botao>
+                        <Botao color="primary" texto="Confirmar" click={handleConfirmar} />
+                        <Botao color="secondary" texto="Cancelar" click={() => setOpen(false)} />
                     </div>
                 </div>
             </DialogContent>

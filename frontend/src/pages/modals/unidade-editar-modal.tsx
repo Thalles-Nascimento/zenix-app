@@ -15,9 +15,9 @@ interface Props {
     onReativar: (id: number) => void
 }
 
-const grupoConfig: Record<string, { label: string, className: string }> = {
-    ADMIN: { label: 'Admin',    className: 'text-orange-500 font-semibold' },
-    USER:  { label: 'Barbeiro', className: 'text-blue-400 font-semibold' }
+const grupoConfig: Record<string, { label: string; className: string }> = {
+    ADMIN: { label: "Admin",    className: "text-orange-500 font-semibold" },
+    USER:  { label: "Barbeiro", className: "text-blue-400 font-semibold" },
 }
 
 export function ModalEditarUnidade({ unidade, open, onFechar, onConfirmar, onDeletar, onReativar }: Props) {
@@ -29,11 +29,7 @@ export function ModalEditarUnidade({ unidade, open, onFechar, onConfirmar, onDel
         if (unidade) {
             setForm({ nomeUnidade: unidade.nomeUnidade, endereco: unidade.endereco })
             setReativar(false)
-
-            // Busca detalhes com usuários
-            buscarUnidadeDetalheService(unidade.id)
-                .then(setDetalhe)
-                .catch(console.error)
+            buscarUnidadeDetalheService(unidade.id).then(setDetalhe).catch(console.error)
         }
     }, [unidade])
 
@@ -55,7 +51,7 @@ export function ModalEditarUnidade({ unidade, open, onFechar, onConfirmar, onDel
 
     return (
         <Dialog open={open} onOpenChange={onFechar}>
-            <DialogContent className="bg-gray-900 border-gray-700 text-white">
+            <DialogContent className="bg-gray-900 border-gray-700 text-white w-[calc(100vw-2rem)] max-w-md max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle className="text-white">Editar Unidade</DialogTitle>
                 </DialogHeader>
@@ -72,44 +68,45 @@ export function ModalEditarUnidade({ unidade, open, onFechar, onConfirmar, onDel
                             value={form.endereco}
                             onChange={(e) => setForm({ ...form, endereco: e.target.value })} />
                     </div>
+
                     <Label className="text-gray-300">Barbeiros</Label>
-                    <div className="flex flex-col gap-2 max-h-48 overflow-y-auto">
+                    <div className="flex flex-col gap-2 max-h-40 overflow-y-auto">
                         {detalhe?.usuarios?.length === 0 ? (
                             <p className="text-gray-500 text-sm">Nenhum usuário nessa unidade</p>
                         ) : (
                             detalhe?.usuarios?.map(u => (
-                                <div key={u.id}
-                                    className="flex items-center justify-between bg-gray-800 rounded-lg px-3 py-2">
+                                <div key={u.id} className="flex items-center justify-between bg-gray-800 rounded-lg px-3 py-2">
                                     <div>
                                         <p className="text-white text-sm font-medium">{u.nome}</p>
                                         <p className="text-gray-400 text-xs">{u.email}</p>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <span className={`text-xs ${grupoConfig[u.grupo]?.className ?? ''}`}>
+                                        <span className={`text-xs ${grupoConfig[u.grupo]?.className ?? ""}`}>
                                             {grupoConfig[u.grupo]?.label ?? u.grupo}
                                         </span>
-                                        <span className={`text-xs ${u.status === 1 ? 'text-orange-500' : 'text-gray-500'}`}>
-                                            {u.status === 1 ? 'Ativo' : 'Inativo'}
+                                        <span className={`text-xs ${u.status === 1 ? "text-orange-500" : "text-gray-500"}`}>
+                                            {u.status === 1 ? "Ativo" : "Inativo"}
                                         </span>
                                     </div>
                                 </div>
                             ))
                         )}
                     </div>
+
                     {unidade?.status === -1 && (
-                    <div className="flex items-center gap-2 py-1">
-                        <input
-                            type="checkbox"
-                            id="reativar"
-                            checked={reativar}
-                            className="w-4 h-4 accent-orange-500 cursor-pointer"
-                            onChange={(e) => setReativar(e.target.checked)}
-                        />
-                        <label htmlFor="reativar" className="text-gray-300 text-sm cursor-pointer">
-                            Reativar unidade
-                        </label>
-                    </div>
-                )}
+                        <div className="flex items-center gap-2 py-1">
+                            <input
+                                type="checkbox"
+                                id="reativar"
+                                checked={reativar}
+                                className="w-4 h-4 accent-orange-500 cursor-pointer"
+                                onChange={(e) => setReativar(e.target.checked)}
+                            />
+                            <label htmlFor="reativar" className="text-gray-300 text-sm cursor-pointer">
+                                Reativar unidade
+                            </label>
+                        </div>
+                    )}
 
                     <div className="flex flex-col gap-2 mt-2">
                         <Botao texto="Salvar Alterações" color="sucess" click={handleConfirmar} />
