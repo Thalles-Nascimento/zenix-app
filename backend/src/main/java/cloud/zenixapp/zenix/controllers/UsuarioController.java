@@ -39,7 +39,6 @@ public class UsuarioController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(usuarioService.loginUser(userLogin));
-
     }
 
     @PostMapping("/register")
@@ -57,7 +56,6 @@ public class UsuarioController {
             error.put("message", "Usuário já cadastrado");
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(error);
-
         }
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -71,6 +69,19 @@ public class UsuarioController {
                 .body(usuarioService.buscarUsuarios());
     }
 
+    @GetMapping("/me")
+    @Operation(summary = "Buscar usuário autenticado", description = "Endpoint para buscar os dados do usuário autenticado")
+    public ResponseEntity<?> buscarMeUser(){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(usuarioService.getUsuarioID());
+    }
+
+    @GetMapping("/barbeiros/{unidadeId}")
+    @Operation(summary = "Listar barbeiros por unidade", description = "Endpoint público para listar barbeiros ativos de uma unidade")
+    public ResponseEntity<List<UsuarioResponseDTO>> listarBarbeirosPorUnidade(@PathVariable Long unidadeId){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(usuarioService.buscarBarbeirosPorUnidade(unidadeId));
+    }
 
     @PutMapping("/{id}")
     @Operation(summary = "Atualizar usuário", description = "Endpoint para atualizar as informações de um usuário existente")
@@ -79,7 +90,6 @@ public class UsuarioController {
             if (BindingHandler.isErrorNull(result)) {
                 return ResponseEntity.status(HttpStatus.OK)
                         .body(usuarioService.atualizarUsuario(id, user));
-
             }
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -93,7 +103,6 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(usuarioService.atualizarUsuario(id, user));
     }
-
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Excluir usuário", description = "Endpoint para excluir um usuário do sistema")
@@ -109,9 +118,4 @@ public class UsuarioController {
                 .body(usuarioService.ativarUsuario(id));
     }
 
-    @GetMapping("/me")
-    public ResponseEntity<?> buscarMeUser(){
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(usuarioService.getUsuarioID());
-    }
 }
