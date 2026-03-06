@@ -1,8 +1,4 @@
-package cloud.zenixapp.zenix.models.dtos;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-import java.time.LocalDateTime;
+package cloud.zenixapp.zenix.models.dtos.responses;
 
 public record AtendimentoResponseDTO(
         Long id,

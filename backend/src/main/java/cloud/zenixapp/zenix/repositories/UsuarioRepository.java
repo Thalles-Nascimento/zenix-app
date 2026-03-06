@@ -19,4 +19,8 @@ public interface UsuarioRepository extends JpaRepository<Usuarios, Long> {
     @Query(value = "UPDATE Usuarios SET status = -1 WHERE id = :id")
     void deleteLogico(@Param("id") Long id);
 
+    @Modifying
+    @Query(value = "UPDATE Usuarios SET status = 1 WHERE id = :id")
+    void ativarUsuario(@Param("id") Long id);
+
 }

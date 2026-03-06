@@ -3,10 +3,10 @@ package cloud.zenixapp.zenix.services;
 import cloud.zenixapp.zenix.configs.exceptions.AtendimentoExcluidoException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.mappers.AtendimentoMapper;
-import cloud.zenixapp.zenix.models.dtos.AtendimentoRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.AtendimentoResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.SucessAtendimentoResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.SumAtendimentoResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.requests.AtendimentoRequestDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.AtendimentoAdminResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.AtendimentoResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.SucessAtendimentoResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Atendimento;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.repositories.AtendimentoRepository;
@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class AtendimentoService {
         atendimento.setServico(atendimentoDTO.servico());
         atendimento.setValor(atendimentoDTO.valor());
         atendimento.setFormaPagamento(atendimentoDTO.formaPagamento());
-        atendimento.setDate(LocalDateTime.now().format(current_date));
+        atendimento.setDate(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")).format(current_date));
         atendimento.setUsuarios(user);
 
         atendimentoRepository.save(atendimento);
@@ -60,8 +61,24 @@ public class AtendimentoService {
 
     public List<AtendimentoResponseDTO> listarAtendimentos(){
         Usuarios user = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        LocalDateTime date = LocalDateTime.now();
         return atendimentoMapper.listResponseDTO(atendimentoRepository.findByUserDate(user.getId(), LocalDateTime.now().format(current_date)));
+    }
+
+    public List<AtendimentoAdminResponseDTO> listarTodosAtendimentos(){
+        return atendimentoRepository
+                .findAll()
+                .stream()
+                .map(a -> new AtendimentoAdminResponseDTO(
+                        a.getId(),
+                        a.getDescricao(),
+                        a.getServico(),
+                        a.getValor(),
+                        a.getFormaPagamento(),
+                        a.getDate(),
+                        a.getStatus(),
+                        a.getUsuarios().getNome()
+                ))
+                .toList();
     }
 
     public AtendimentoResponseDTO listarAtendimentoPorId(Long id){
@@ -76,6 +93,12 @@ public class AtendimentoService {
 
                 }))
                 .orElseThrow(() -> new NotFoundException("Atendimento não encontrado!"));
+    }
+
+    public List<AtendimentoResponseDTO> listarHistorico(Long userId){
+        return atendimentoMapper.listResponseDTO(
+                atendimentoRepository.findByUser(userId)
+        );
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -114,14 +137,6 @@ public class AtendimentoService {
 
                 })
                 .orElseThrow(() -> new NotFoundException("Atendimento não encontrado!"));
-    }
-
-    public SumAtendimentoResponseDTO sum(){
-        Usuarios user = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return new SumAtendimentoResponseDTO(
-                HttpStatus.OK.value(),
-                atendimentoRepository.sumAtendimentos(user.getId()));
-
     }
 
 }

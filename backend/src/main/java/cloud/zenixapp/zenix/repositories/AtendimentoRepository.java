@@ -17,16 +17,16 @@ public interface AtendimentoRepository extends JpaRepository<Atendimento, Long> 
     @Query(value = "UPDATE Atendimento SET status = -1 WHERE id = :id")
     void deleteLogico(@Param("id") Long id);
 
-    @Query(value = "SELECT * FROM atendimento WHERE usuario_id = :id", nativeQuery = true)
+    @Query(value = "SELECT * FROM atendimentos WHERE usuario_id = :id", nativeQuery = true)
     List<Atendimento> findByUser(@Param("id") Long id);
 
-    @Query(value = "SELECT SUM(a.atendimento_valor) FROM atendimento a WHERE a.usuario_id = :id and a.atendimento_status = 1", nativeQuery = true)
+    @Query(value = "SELECT SUM(a.atendimento_valor) FROM atendimentos a WHERE a.usuario_id = :id and a.atendimento_status = 1", nativeQuery = true)
     Double sumAtendimentos(@Param("id") Long id);
 
-    @Query(value = "SELECT * FROM atendimento WHERE usuario_id = :idUser and atendimento_id = :id", nativeQuery = true)
+    @Query(value = "SELECT * FROM atendimentos WHERE usuario_id = :idUser and atendimento_id = :id", nativeQuery = true)
     Optional<Atendimento> findByUserById(@Param("idUser") Long idUser, @Param("id") Long id);
 
-    @Query(value = "SELECT * FROM atendimento WHERE usuario_id = :id and atendimento_data = :data", nativeQuery = true)
+    @Query(value = "SELECT * FROM atendimentos WHERE usuario_id = :id and atendimento_data = :data", nativeQuery = true)
     List<Atendimento> findByUserDate(@Param("id") Long id, @Param("data") String data);
 
 }

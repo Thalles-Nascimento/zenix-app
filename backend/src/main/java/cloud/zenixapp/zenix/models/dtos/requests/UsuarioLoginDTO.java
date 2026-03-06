@@ -1,4 +1,4 @@
-package cloud.zenixapp.zenix.models.dtos;
+package cloud.zenixapp.zenix.models.dtos.requests;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;

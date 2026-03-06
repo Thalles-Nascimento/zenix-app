@@ -2,6 +2,7 @@ package cloud.zenixapp.zenix.models.entities;
 
 
 import cloud.zenixapp.zenix.models.enums.UsuariosRoleEnum;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,6 +12,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
@@ -19,7 +22,10 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name="usuarios")
 @Entity
-public class Usuarios implements UserDetails {
+public class Usuarios implements UserDetails, Serializable {
+
+    @Serial
+    private static final long serialVersionUID = -6321586946159484859L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,8 +47,16 @@ public class Usuarios implements UserDetails {
     @Column(name = "usuario_grupo")
     private UsuariosRoleEnum grupo;
 
+    @ManyToOne
+    @JoinColumn(name = "usuarios_unidade")
+//    @JsonIgnore
+    private Unidades unidade;
+
     @OneToMany(mappedBy = "usuarios")
     private List<Atendimento> atendimentos;
+
+    @OneToMany(mappedBy = "usuario")
+    private List<Fila> filaClientes;
 
     @Column(name = "usuario_status")
     private int status = 1;
@@ -50,9 +64,10 @@ public class Usuarios implements UserDetails {
     private boolean enabled = true;
 
 
-    public Usuarios(String nome, String email, String senha, String cpf, UsuariosRoleEnum grupo) {
+    public Usuarios(String nome, String email, Unidades unidade, String senha, String cpf, UsuariosRoleEnum grupo) {
         this.nome = nome;
         this.email = email;
+        this.unidade = unidade;
         this.senha = senha;
         this.cpf = cpf;
         this.grupo = grupo;

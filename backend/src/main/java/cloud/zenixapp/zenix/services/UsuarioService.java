@@ -2,12 +2,16 @@ package cloud.zenixapp.zenix.services;
 
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.exceptions.UsuarioExcluidoException;
+import cloud.zenixapp.zenix.configs.mappers.UnidadeMapper;
 import cloud.zenixapp.zenix.configs.mappers.UsuarioMapper;
-import cloud.zenixapp.zenix.models.dtos.SucessUsuarioResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.UsuarioRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.UsuarioLoginDTO;
-import cloud.zenixapp.zenix.models.dtos.UsuarioResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.SucessUsuarioResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.requests.UsuarioRequestDTO;
+import cloud.zenixapp.zenix.models.dtos.requests.UsuarioLoginDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.UnidadeResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.UsuarioResponseDTO;
+import cloud.zenixapp.zenix.models.entities.Unidades;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
+import cloud.zenixapp.zenix.repositories.UnidadeRepository;
 import cloud.zenixapp.zenix.repositories.UsuarioRepository;
 import cloud.zenixapp.zenix.services.security.TokenService;
 import jakarta.transaction.Transactional;
@@ -16,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +42,12 @@ public class UsuarioService {
 
     @Autowired
     private UsuarioMapper usuarioMapper;
+
+    @Autowired
+    private UnidadeService unidadeService;
+
+    @Autowired
+    private UnidadeRepository unidadeRepository;
 
 
     public Map<String, String> loginUser(@NonNull UsuarioLoginDTO user){
@@ -66,8 +77,10 @@ public class UsuarioService {
 
         }
         String encryptPassword = new BCryptPasswordEncoder().encode(userRegister.senha());
+        Unidades unidade = unidadeService.listarUnidadeByIdCompleto(userRegister.unidade());
         UsuarioResponseDTO usuario = usuarioMapper.usuarioResponseDTO(
-                usuarioRepository.save(new Usuarios(userRegister.nome(), userRegister.email(), encryptPassword, userRegister.cpf(), userRegister.grupo()))
+                usuarioRepository
+                        .save(new Usuarios(userRegister.nome(), userRegister.email(), unidade, encryptPassword, userRegister.cpf(), userRegister.grupo()))
         );
 
         return new SucessUsuarioResponseDTO(
@@ -91,8 +104,14 @@ public class UsuarioService {
 
                     usuarioMapper.atualizarUsuario(user, userDTO);
                     if (userDTO.senha() != null && !userDTO.senha().isBlank()) {user.setSenha(new BCryptPasswordEncoder().encode(userDTO.senha()));}
-                    UsuarioResponseDTO usuario = usuarioMapper.usuarioResponseDTO(usuarioRepository.save(user));
 
+                    if (userDTO.unidade() != null) {
+                        Unidades unidade = unidadeRepository.findById(userDTO.unidade())
+                                .orElseThrow(() -> new NotFoundException("Unidade não encontrada!"));
+                        user.setUnidade(unidade);
+                    }
+
+                    UsuarioResponseDTO usuario = usuarioMapper.usuarioResponseDTO(usuarioRepository.save(user));
                     return new SucessUsuarioResponseDTO(
                         HttpStatus.OK.value(),
                         "Usuário atualizado com sucesso",
@@ -120,6 +139,51 @@ public class UsuarioService {
                     );
                 })
                 .orElseThrow(() -> new NotFoundException("Usuário não encontrado!"));
+    }
+
+    @Transactional
+    public SucessUsuarioResponseDTO ativarUsuario(Long id){
+        return usuarioRepository.findById(id)
+                .map(user -> {
+                    if(user.getStatus() != -1){
+                        throw new UsuarioExcluidoException("Usuário já está ativo!");
+
+                    }
+                    usuarioRepository.ativarUsuario(id);
+                    return new SucessUsuarioResponseDTO(
+                            HttpStatus.OK.value(),
+                            "Usuário ativado com sucesso",
+                            usuarioMapper.usuarioResponseDTO(user)
+                    );
+                })
+                .orElseThrow(() -> new NotFoundException("Usuário não encontrado!"));
+    }
+
+    public UsuarioResponseDTO getUsuarioID(){
+        Usuarios userAuth = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return usuarioRepository.findById(userAuth.getId())
+                .map(user -> {
+                    if(user.getStatus() == -1){
+                        throw new UsuarioExcluidoException("Usuário foi excluído!");
+
+                    }
+                    return usuarioMapper.usuarioResponseDTO(user);
+                })
+                .orElseThrow(() -> new NotFoundException("Usuário não encontrado!"));
+
+    }
+
+    public Usuarios getUsuarioById(Long id){
+        return usuarioRepository.findById(id)
+                .map(user -> {
+                    if(user.getStatus() == -1){
+                        throw new UsuarioExcluidoException("Usuário foi excluído!");
+
+                    }
+                    return user;
+                })
+                .orElseThrow(() -> new NotFoundException("Usuário não encontrado!"));
+
     }
 
 }
