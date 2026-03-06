@@ -1,10 +1,6 @@
 import api_url from "../enviroments/enviroments";
 import type { AtendimentoFormProps } from "../types/atendimento";
 
-
-
-const getToken = () => localStorage.getItem("token")
-
 export async function atendimentoService() {
     
     const response = await api_url.get('/atendimentos');
