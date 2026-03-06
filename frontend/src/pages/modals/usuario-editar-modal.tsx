@@ -109,7 +109,7 @@ export function ModalEditarUsuario({ usuario, open, onFechar, onConfirmar, onDel
                     </div>
                     <div>
                         <Label className="text-gray-300">Unidade</Label>
-                        <Select value={String(form.unidade)} onValueChange={(v) => setForm({ ...form, unidade: Number(v) })}>
+                        <Select value={String(form.unidade ? String(form.unidade): "")} onValueChange={(v) => setForm({ ...form, unidade: Number(v) })}>
                             <SelectTrigger className="mt-1 w-full bg-gray-800 border-gray-700 text-white">
                                 <SelectValue placeholder="Selecione a unidade" />
                             </SelectTrigger>
