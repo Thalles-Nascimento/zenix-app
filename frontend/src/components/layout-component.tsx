@@ -34,8 +34,8 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
 
     return (
         <div className="flex flex-col h-full bg-black text-white">
-            <div className="flex items-center justify-center gap-3 px-6 py-5 border-b border-gray-700">
-                <img className="w-20 h-20" src="/assets/imagens/LogoWN.png" alt="logo" />
+            <div className="flex items-center justify-center gap-3 px-6">
+                <img className="w-32 h-32" src="/assets/imagens/LogoWN.png" alt="logo" />
             </div>
             <nav className="flex flex-col gap-1 p-4 flex-1 bg-black">
                 {menuItems

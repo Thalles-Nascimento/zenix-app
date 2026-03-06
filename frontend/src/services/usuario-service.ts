@@ -2,9 +2,6 @@ import api_url from "../enviroments/enviroments";
 import type { UsuarioFormProps } from "../types/usuario";
 
 
-const token = () => localStorage.getItem("token")
-const headers = () => ({Authorization: `Bearer ${token()}`})
-
 export async function usuariosService() {
     
     const response = await api_url.get('/users');
@@ -14,35 +11,31 @@ export async function usuariosService() {
 } 
 
 export async function criarUsuarioService(dados: UsuarioFormProps) {
-    const response = await api_url.post('/users/register', dados, { headers: headers() })
+    const response = await api_url.post('/users/register', dados)
     return response.data
 }
 
 export async function atualizarUsuarioService(id: number, dados: UsuarioFormProps) {
-    const response = await api_url.put(`/users/${id}`, dados, { headers: headers() })
+    const response = await api_url.put(`/users/${id}`, dados)
     return response.data
 }
 
 export async function deletarUsuarioService(id: number) {
-    const response = await api_url.delete(`/users/${id}`, { headers: headers() })
+    const response = await api_url.delete(`/users/${id}`)
     return response.data
 }
 
 export async function reativarUsuarioService(id: number) {
-    const response = await api_url.patch(`/users/${id}`, {}, { headers: headers() })
+    const response = await api_url.patch(`/users/${id}`, {})
     return response.data
 }
 
 export async function getMeuPerfilService() {
-    const response = await api_url.get('/users/me', {
-        headers: headers()
-    })
+    const response = await api_url.get('/users/me')
     return response.data
 }
 
 export async function trocarSenhaService(id: number, senha: string) {
-    const response = await api_url.put(`/users/${id}`, { senha }, {
-        headers: headers()
-    })
+    const response = await api_url.put(`/users/${id}`, { senha })
     return response.data
 }
