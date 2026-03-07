@@ -47,6 +47,7 @@ public class AtendimentoController {
     })
     @Operation(summary = "Adicionar atendimento", description = "Endpoint para adiciona um novo atendimento")
     public ResponseEntity<?> save(@RequestBody @Valid AtendimentoRequestDTO atendimentoDTO, BindingResult result){
+        System.out.println(result.getAllErrors());
         if (result.hasErrors()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(BindingHandler.insertError(result));

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "atendimentos")
@@ -27,7 +28,7 @@ public class Atendimento implements Serializable {
     private String descricao;
 
     @Column(name = "atendimento_servico", length = 100)
-    private String servico;
+    private List<String> servico;
 
     @Column(name = "atendimento_valor", length = 25)
     private Double valor;
