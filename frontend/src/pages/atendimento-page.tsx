@@ -69,7 +69,7 @@ export default function Atendimentos() {
                                 onClick={() => items.status !== -1 && setAtendimentoSelecionado(items)}
                             >
                                 <td className="px-4 py-4 font-medium text-white">{items.descricao}</td>
-                                <td className="px-4 py-4">{items.servico}</td>
+                                <td className="px-4 py-4">{Array.isArray(items.servico) ? items.servico.join(" + ") : items.servico}</td>
                                 <td className="px-4 py-4 text-orange-500 font-bold">
                                     {items.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
                                 </td>

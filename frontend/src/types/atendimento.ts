@@ -1,16 +1,16 @@
-export interface DadosProps{
-    id: number,
-    descricao: string,
-    servico: string,
-    valor: number,
-    formaPagamento: string,
-    date: string,
+export interface DadosProps {
+    id: number
+    descricao: string
+    servico: string[]
+    valor: number
+    formaPagamento: string
+    date: string
     status: number
 }
 
 export interface AtendimentoFormProps {
     descricao: string
-    servico: string
+    servico: string[]
     valor: string
     formaPagamento: string
 }

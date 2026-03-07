@@ -5,7 +5,7 @@ import { Label } from "../../components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select"
 import type { DadosProps, AtendimentoFormProps } from "../../types/atendimento"
 import { Botao } from "../../components/common/botao"
-import { SERVICOS } from "../../utils/servicos"
+import { ServicosMultiSelect } from "../../components/common/servicos-multiselect-component"
 
 interface Props {
     atendimento: DadosProps | null
@@ -17,14 +17,14 @@ interface Props {
 
 export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirmar, onDeletar }: Props) {
     const [form, setForm] = useState<AtendimentoFormProps>({
-        descricao: "", servico: "", valor: "", formaPagamento: ""
+        descricao: "", servico: [], valor: "", formaPagamento: ""
     })
 
     useEffect(() => {
         if (atendimento) {
             setForm({
                 descricao: atendimento.descricao,
-                servico: atendimento.servico,
+                servico: Array.isArray(atendimento.servico) ? atendimento.servico : [atendimento.servico],
                 valor: String(atendimento.valor),
                 formaPagamento: atendimento.formaPagamento
             })
@@ -57,15 +57,16 @@ export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirma
                             onChange={(e) => setForm({ ...form, descricao: e.target.value })} />
                     </div>
                     <div>
-                        <Label className="text-gray-300">Serviço</Label>
-                        <Select value={form.servico} onValueChange={(v) => setForm({ ...form, servico: v })}>
-                            <SelectTrigger className="mt-1 bg-gray-800 border-gray-700 text-white w-full">
-                                <SelectValue placeholder="Selecione o serviço" />
-                            </SelectTrigger>
-                            <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                                {SERVICOS.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                            </SelectContent>
-                        </Select>
+                        <Label className="text-gray-300">
+                            Serviços
+                            {form.servico.length > 0 && (
+                                <span className="ml-2 text-orange-500 text-xs">{form.servico.length} selecionado(s)</span>
+                            )}
+                        </Label>
+                        <ServicosMultiSelect
+                            selecionados={form.servico}
+                            onChange={(v) => setForm({ ...form, servico: v })}
+                        />
                     </div>
                     <div>
                         <Label className="text-gray-300">Valor</Label>

@@ -4,17 +4,16 @@ import { Input } from "../components/ui/input"
 import { Button } from "../components/ui/button"
 import { Label } from "../components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select"
-import { SERVICOS } from "../utils/servicos"
 import { useBarbeiros } from "../hooks/use-barber"
 import { entrarFilaService } from "../services/fila-service"
 import { toast, Toaster } from "sonner"
 import { SuccessScreen } from "../components/successScreen-component"
 import { InputTelefone } from "../components/common/input-telefone"
+import { ServicosMultiSelect } from "../components/common/servicos-multiselect-component"
 
 export default function LoginClient() {
     const { unidadeId } = useParams()
 
-    // Se não tiver unidadeId na URL, redireciona para 404
     if (!unidadeId || isNaN(Number(unidadeId))) {
         return <Navigate to="/*" />
     }
@@ -22,7 +21,7 @@ export default function LoginClient() {
     const { barbeiros } = useBarbeiros(Number(unidadeId))
 
     const [nome, setNome] = useState("")
-    const [servico, setServico] = useState("")
+    const [servicos, setServicos] = useState<string[]>([])
     const [formaPagamento, setFormaPagamento] = useState("")
     const [idBarbeiro, setIdBarbeiro] = useState<number | null>(null)
     const [carregando, setCarregando] = useState(false)
@@ -30,14 +29,20 @@ export default function LoginClient() {
     const [telefone, setTelefone] = useState("")
 
     const entrarFila = async () => {
-        if (!nome || !servico || !formaPagamento || !telefone || !idBarbeiro) {
+        if (!nome || servicos.length === 0 || !formaPagamento || !telefone || !idBarbeiro) {
             toast.error("Preencha todos os campos!")
             return
         }
 
         try {
             setCarregando(true)
-            await entrarFilaService({ nomeCliente: nome, servico, formaPagamento, telefoneCliente: telefone, idBarbeiro })
+            await entrarFilaService({
+                nomeCliente: nome,
+                servico: servicos,
+                formaPagamento,
+                telefoneCliente: telefone.replace(/\D/g, ""),
+                idBarbeiro
+            })
             setSucesso(true)
         } catch (error) {
             toast.error("Erro ao entrar na fila. Tente novamente.")
@@ -63,6 +68,7 @@ export default function LoginClient() {
                             Entre na lista
                         </h1>
                         <form className="space-y-4 md:space-y-6" onSubmit={(e) => e.preventDefault()}>
+
                             <div>
                                 <label className="block mb-2 text-sm font-medium text-gray-300">Seu Nome</label>
                                 <Input
@@ -80,17 +86,13 @@ export default function LoginClient() {
                             </div>
 
                             <div>
-                                <Label className="text-gray-300">Serviço</Label>
-                                <Select onValueChange={setServico}>
-                                    <SelectTrigger className="mt-2 bg-gray-800 border-gray-700 text-white w-full">
-                                        <SelectValue placeholder="Selecione o serviço" />
-                                    </SelectTrigger>
-                                    <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                                        {SERVICOS.map(s => (
-                                            <SelectItem key={s} value={s}>{s}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                <Label className="text-gray-300">
+                                    Serviços
+                                    {servicos.length > 0 && (
+                                        <span className="ml-2 text-orange-500 text-xs">{servicos.length} selecionado(s)</span>
+                                    )}
+                                </Label>
+                                <ServicosMultiSelect selecionados={servicos} onChange={setServicos} />
                             </div>
 
                             <div>

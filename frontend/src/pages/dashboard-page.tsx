@@ -168,7 +168,7 @@ export default function DashboardPage() {
                                 itensPagina.map(items => (
                                     <tr key={items.id} className="bg-gray-900 border-b border-gray-700 hover:bg-gray-800">
                                         <td className="px-4 py-4 font-medium text-white">{items.descricao}</td>
-                                        <td className="px-4 py-4">{items.servico}</td>
+                                        <td className="px-4 py-4">{Array.isArray(items.servico) ? items.servico.join("+") : items.servico}</td>
                                         <td className="px-4 py-4 text-orange-500">{items.barbeiro}</td>
                                         <td className="px-4 py-4 font-bold text-orange-500">{formatBRL(items.valor)}</td>
                                         <td className="px-4 py-4">{items.formaPagamento}</td>

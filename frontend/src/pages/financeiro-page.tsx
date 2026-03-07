@@ -161,7 +161,7 @@ export default function FinanceiroPage() {
                             itensPagina.map(item => (
                                 <tr key={item.id} className="bg-gray-900 border-b border-gray-700 hover:bg-gray-800">
                                     <td className="px-4 py-4 font-medium text-white">{item.descricao}</td>
-                                    <td className="px-4 py-4">{item.servico}</td>
+                                    <td className="px-4 py-4">{Array.isArray(item.servico) ? item.servico.join(" + ") : item.servico}</td>
                                     <td className="px-4 py-4 text-orange-500 font-bold">{formatBRL(item.valor)}</td>
                                     <td className="px-4 py-4">{item.formaPagamento}</td>
                                     <td className="px-4 py-4">{item.date}</td>
