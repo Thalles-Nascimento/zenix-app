@@ -9,6 +9,7 @@ import cloud.zenixapp.zenix.models.dtos.requests.UsuarioRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.UsuarioLoginDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.UnidadeResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.UsuarioResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.UsuarioResponseSimplesDTO;
 import cloud.zenixapp.zenix.models.entities.Unidades;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.repositories.UnidadeRepository;
@@ -90,8 +91,8 @@ public class UsuarioService {
         return usuarioMapper.listResponseDTO(usuarioRepository.findAll());
     }
 
-    public List<UsuarioResponseDTO> buscarBarbeirosPorUnidade(Long unidadeId){
-        return usuarioMapper.listResponseDTO(usuarioRepository.findBarbeirosByUnidade(unidadeId));
+    public List<UsuarioResponseSimplesDTO> buscarBarbeirosPorUnidade(Long unidadeId){
+        return usuarioMapper.listResponseSimplesDTO(usuarioRepository.findBarbeirosByUnidade(unidadeId));
     }
 
     @Transactional
