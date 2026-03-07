@@ -9,6 +9,7 @@ import cloud.zenixapp.zenix.models.dtos.requests.UsuarioRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.UsuarioLoginDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.UnidadeResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.UsuarioResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.UsuarioResponseSimplesDTO;
 import cloud.zenixapp.zenix.models.entities.Unidades;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.repositories.UnidadeRepository;
@@ -51,10 +52,8 @@ public class UsuarioService {
 
 
     public Map<String, String> loginUser(@NonNull UsuarioLoginDTO user){
-//        TODO Revisar o login de usuários - Resolver o Nulo, quando usuário não existe
         if (usuarioRepository.querieStatusUser(user.email()) == -1){
             throw new UsuarioExcluidoException("Usuário foi excluído!");
-
         }
 
         Map<String, String> access = new HashMap<>();
@@ -74,7 +73,6 @@ public class UsuarioService {
     public SucessUsuarioResponseDTO registerUser(UsuarioRequestDTO userRegister){
         if(usuarioRepository.findByEmail(userRegister.email()) != null){
             return null;
-
         }
         String encryptPassword = new BCryptPasswordEncoder().encode(userRegister.senha());
         Unidades unidade = unidadeService.listarUnidadeByIdCompleto(userRegister.unidade());
@@ -93,17 +91,22 @@ public class UsuarioService {
         return usuarioMapper.listResponseDTO(usuarioRepository.findAll());
     }
 
+    public List<UsuarioResponseSimplesDTO> buscarBarbeirosPorUnidade(Long unidadeId){
+        return usuarioMapper.listResponseSimplesDTO(usuarioRepository.findBarbeirosByUnidade(unidadeId));
+    }
+
     @Transactional
     public SucessUsuarioResponseDTO atualizarUsuario(Long id, UsuarioRequestDTO userDTO) throws NotFoundException {
         return usuarioRepository.findById(id)
                 .map(user -> {
                     if(user.getStatus() == -1){
                         throw new NotFoundException("Usuário foi excluído!");
-
                     }
 
                     usuarioMapper.atualizarUsuario(user, userDTO);
-                    if (userDTO.senha() != null && !userDTO.senha().isBlank()) {user.setSenha(new BCryptPasswordEncoder().encode(userDTO.senha()));}
+                    if (userDTO.senha() != null && !userDTO.senha().isBlank()) {
+                        user.setSenha(new BCryptPasswordEncoder().encode(userDTO.senha()));
+                    }
 
                     if (userDTO.unidade() != null) {
                         Unidades unidade = unidadeRepository.findById(userDTO.unidade())
@@ -117,7 +120,6 @@ public class UsuarioService {
                         "Usuário atualizado com sucesso",
                         usuario
                     );
-
                 })
                 .orElseThrow(() -> new NotFoundException("Usuário não encontrado!"));
     }
@@ -128,7 +130,6 @@ public class UsuarioService {
                 .map(user -> {
                     if(user.getStatus() == -1){
                         throw new UsuarioExcluidoException("Usuário já foi excluído!");
-
                     }
 
                     usuarioRepository.deleteLogico(id);
@@ -147,7 +148,6 @@ public class UsuarioService {
                 .map(user -> {
                     if(user.getStatus() != -1){
                         throw new UsuarioExcluidoException("Usuário já está ativo!");
-
                     }
                     usuarioRepository.ativarUsuario(id);
                     return new SucessUsuarioResponseDTO(
@@ -165,12 +165,10 @@ public class UsuarioService {
                 .map(user -> {
                     if(user.getStatus() == -1){
                         throw new UsuarioExcluidoException("Usuário foi excluído!");
-
                     }
                     return usuarioMapper.usuarioResponseDTO(user);
                 })
                 .orElseThrow(() -> new NotFoundException("Usuário não encontrado!"));
-
     }
 
     public Usuarios getUsuarioById(Long id){
@@ -178,12 +176,10 @@ public class UsuarioService {
                 .map(user -> {
                     if(user.getStatus() == -1){
                         throw new UsuarioExcluidoException("Usuário foi excluído!");
-
                     }
                     return user;
                 })
                 .orElseThrow(() -> new NotFoundException("Usuário não encontrado!"));
-
     }
 
 }

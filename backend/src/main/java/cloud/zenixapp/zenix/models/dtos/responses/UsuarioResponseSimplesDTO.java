@@ -1,0 +1,13 @@
+package cloud.zenixapp.zenix.models.dtos.responses;
+
+import cloud.zenixapp.zenix.models.entities.Unidades;
+import cloud.zenixapp.zenix.models.enums.UsuariosRoleEnum;
+
+import java.util.List;
+
+public record UsuarioResponseSimplesDTO(
+        Long id,
+        String nome
+
+) {
+}

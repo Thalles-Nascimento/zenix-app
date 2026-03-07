@@ -2,6 +2,7 @@ package cloud.zenixapp.zenix.configs.mappers;
 
 import cloud.zenixapp.zenix.models.dtos.requests.UsuarioRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.UsuarioResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.UsuarioResponseSimplesDTO;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -28,5 +29,7 @@ public interface UsuarioMapper {
     UsuarioResponseDTO usuarioResponseDTO(Usuarios user);
 
     List<UsuarioResponseDTO> listResponseDTO(List<Usuarios> usuariosList);
+
+    List<UsuarioResponseSimplesDTO> listResponseSimplesDTO(List<Usuarios> usuariosList);
 
 }

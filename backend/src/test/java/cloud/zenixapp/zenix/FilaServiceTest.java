@@ -95,7 +95,7 @@ class FilaServiceTest {
 
     @Test
     @DisplayName("Deve inserir cliente na fila com sucesso")
-    void inserirAtendimentoFila_quandoDadosValidos_deveRetornarSucesso() {
+    void inserirAtendimentoFila_quandoDadosValidos_deveRetornarSucesso() throws java.sql.SQLIntegrityConstraintViolationException {
         when(usuarioService.getUsuarioById(1L)).thenReturn(barbeiro);
         when(filaRepository.save(any())).thenReturn(filaAguardando);
 
@@ -112,7 +112,7 @@ class FilaServiceTest {
 
     @Test
     @DisplayName("Deve associar o barbeiro correto ao inserir na fila")
-    void inserirAtendimentoFila_deveBuscarBarbeiroCorreto() {
+    void inserirAtendimentoFila_deveBuscarBarbeiroCorreto() throws java.sql.SQLIntegrityConstraintViolationException {
         when(usuarioService.getUsuarioById(1L)).thenReturn(barbeiro);
         when(filaRepository.save(any())).thenReturn(filaAguardando);
 

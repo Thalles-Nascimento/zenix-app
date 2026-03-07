@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.List;
+
 
 public interface UsuarioRepository extends JpaRepository<Usuarios, Long> {
 
@@ -22,5 +24,8 @@ public interface UsuarioRepository extends JpaRepository<Usuarios, Long> {
     @Modifying
     @Query(value = "UPDATE Usuarios SET status = 1 WHERE id = :id")
     void ativarUsuario(@Param("id") Long id);
+
+    @Query("SELECT u FROM Usuarios u WHERE u.unidade.id = :unidadeId AND u.status = 1")
+    List<Usuarios> findBarbeirosByUnidade(@Param("unidadeId") Long unidadeId);
 
 }
