@@ -3,13 +3,14 @@ package cloud.zenixapp.zenix.models.dtos.responses;
 import cloud.zenixapp.zenix.models.enums.StatusFilaEnum;
 
 import java.time.LocalTime;
+import java.util.List;
 
 public record FilaResponseDTO(
         Long id,
 
         String nomeCliente,
 
-        String servico,
+        List<String> servico,
 
         String formaPagamento,
 

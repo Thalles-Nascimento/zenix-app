@@ -57,7 +57,7 @@ class AtendimentoServiceTests {
         atendimentoAtivo = new Atendimento();
         atendimentoAtivo.setId(1L);
         atendimentoAtivo.setDescricao("Memphis Depay");
-        atendimentoAtivo.setServico("Corte");
+        atendimentoAtivo.setServico(List.of("Corte", "Sombrancelha"));
         atendimentoAtivo.setValor(50.0);
         atendimentoAtivo.setStatus(1);
         atendimentoAtivo.setUsuarios(usuarioLogado);
@@ -65,7 +65,7 @@ class AtendimentoServiceTests {
         atendimentoExcluido = new Atendimento();
         atendimentoExcluido.setId(2L);
         atendimentoExcluido.setDescricao("Nathan");
-        atendimentoExcluido.setServico("Barba");
+        atendimentoExcluido.setServico(List.of("Barba"));
         atendimentoExcluido.setValor(30.0);
         atendimentoExcluido.setStatus(-1);
         atendimentoExcluido.setUsuarios(usuarioLogado);
@@ -88,7 +88,7 @@ class AtendimentoServiceTests {
         when(atendimentoRepository.save(any())).thenReturn(atendimentoAtivo);
 
         AtendimentoRequestDTO dto = new AtendimentoRequestDTO(
-                "Memphis Depay", "Corte", "PIX", 35.0
+                "Memphis Depay", List.of("Corte", "Sombrancelha"), "PIX", 35.0
         );
 
         SucessAtendimentoResponseDTO resultado = atendimentoService.inserirAtendimento(dto);
@@ -138,7 +138,7 @@ class AtendimentoServiceTests {
         when(atendimentoRepository.findByUserById(1L, 1L)).thenReturn(Optional.of(atendimentoAtivo));
 
         AtendimentoRequestDTO dto = new AtendimentoRequestDTO(
-                "Memphis Depay", "Corte + Barba", "CARTAO", 70.0
+                "Memphis Depay", List.of("Corte + Barba"), "CARTAO", 70.0
         );
 
         SucessAtendimentoResponseDTO resultado = atendimentoService.atualizarAtendimento(1L, dto);
@@ -154,7 +154,7 @@ class AtendimentoServiceTests {
         when(atendimentoRepository.findByUserById(1L, 2L)).thenReturn(Optional.of(atendimentoExcluido));
 
         AtendimentoRequestDTO dto = new AtendimentoRequestDTO(
-                "Nathan", "Barba", "DINHEIRO", 30.0
+                "Nathan", List.of("Barba"), "DINHEIRO", 30.0
         );
 
         assertThrows(NotFoundException.class, () -> {
@@ -171,7 +171,7 @@ class AtendimentoServiceTests {
         when(atendimentoRepository.findByUserById(1L, 99L)).thenReturn(Optional.empty());
 
         AtendimentoRequestDTO dto = new AtendimentoRequestDTO(
-                "Inexistente", "Corte", "PIX", 50.0
+                "Inexistente", List.of("Corte"), "PIX", 50.0
         );
 
         assertThrows(NotFoundException.class, () -> {
@@ -185,7 +185,7 @@ class AtendimentoServiceTests {
         mockSecurityContext();
 
         AtendimentoResponseDTO dtoExcluido = new AtendimentoResponseDTO(
-                2L, "Nathan", "Barba", 30.0, "DINHEIRO", "05/03/2026", -1
+                2L, "Nathan", List.of("Barba"), 30.0, "DINHEIRO", "05/03/2026", -1
         );
 
         when(atendimentoRepository.findByUserById(1L, 2L)).thenReturn(Optional.of(atendimentoExcluido));
@@ -212,7 +212,7 @@ class AtendimentoServiceTests {
     void listarHistorico_quandoExistemAtendimentos_deveRetornarLista() {
         when(atendimentoRepository.findByUser(1L)).thenReturn(List.of(atendimentoAtivo));
         when(atendimentoMapper.listResponseDTO(any())).thenReturn(List.of(
-                new AtendimentoResponseDTO(1L, "Memphis Depay", "Corte", 50.0, "PIX", "05/03/2026", 1)
+                new AtendimentoResponseDTO(1L, "Memphis Depay", List.of("Barba"), 50.0, "PIX", "05/03/2026", 1)
         ));
 
         var resultado = atendimentoService.listarHistorico(1L);

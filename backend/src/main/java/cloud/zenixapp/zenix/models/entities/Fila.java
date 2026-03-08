@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalTime;
+import java.util.List;
 
 
 @Entity
@@ -29,8 +30,8 @@ public class Fila implements Serializable {
     @Column(name = "fila_client", length = 120)
     private String nomeCliente;
 
-    @Column(name = "fila_servico", length = 100)
-    private String servico;
+    @Column(name = "fila_servico")
+    private List<String> servico;
 
     @Column(name = "fila_pagamento")
     private String formaPagamento;
