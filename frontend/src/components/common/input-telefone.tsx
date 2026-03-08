@@ -33,7 +33,7 @@ export function InputTelefone({ onChange }: Props) {
                 <select
                     value={codigo}
                     onChange={(e) => handleCodigo(e.target.value)}
-                    className="bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-2 py-2 outline-none cursor-pointer">
+                    className="border border-gray-300 text-white text-sm rounded-lg px-2 py-2 outline-none cursor-pointer">
                     
                     {CODIGOS_PAIS.map((p: any) => (
                         <option key={p.codigo} value={p.codigo}>
@@ -48,7 +48,7 @@ export function InputTelefone({ onChange }: Props) {
                     onChange={handleTelefone}
                     placeholder="(11) 99999-9999"
                     maxLength={15}
-                    className="flex-1 bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 outline-none"
+                    className="flex-1 border border-gray-300 text-white text-sm rounded-lg px-3 py-2 outline-none"
                 />
             </div>
     )

@@ -62,7 +62,7 @@ export default function LoginClient() {
                 <div className="flex items-center mb-1">
                     <img className="w-48 h-48 mr-2" src="/assets/imagens/LogoWN.png" alt="logo" />
                 </div>
-                <div className="w-full bg-gray-900 rounded-xl shadow border md:mt-0 sm:max-w-md xl:p-0 border-gray-700">
+                <div className="w-full bg-zinc-900 rounded-xl shadow border md:mt-0 sm:max-w-md xl:p-0 border-gray-500">
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
                         <h1 className="text-xl font-bold leading-tight tracking-tight text-white md:text-2xl">
                             Entre na lista
@@ -74,7 +74,7 @@ export default function LoginClient() {
                                 <Input
                                     type="text"
                                     placeholder="Nome completo"
-                                    className="text-white bg-gray-800 border-gray-700"
+                                    className="text-white"
                                     value={nome}
                                     onChange={(e) => setNome(e.target.value)}
                                 />
@@ -98,10 +98,10 @@ export default function LoginClient() {
                             <div>
                                 <Label className="text-gray-300">Forma de Pagamento</Label>
                                 <Select onValueChange={setFormaPagamento}>
-                                    <SelectTrigger className="mt-2 bg-gray-800 border-gray-700 text-white w-full">
+                                    <SelectTrigger className="mt-2 border-gray-300 text-white w-full">
                                         <SelectValue placeholder="Selecione" />
                                     </SelectTrigger>
-                                    <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                                    <SelectContent className="border-gray-300 text-white">
                                         <SelectItem value="DINHEIRO">Dinheiro</SelectItem>
                                         <SelectItem value="PIX">Pix</SelectItem>
                                         <SelectItem value="CARTAO">Cartão</SelectItem>
@@ -112,10 +112,10 @@ export default function LoginClient() {
                             <div>
                                 <Label className="text-gray-300">Barbeiro</Label>
                                 <Select onValueChange={(value) => setIdBarbeiro(Number(value))}>
-                                    <SelectTrigger className="mt-2 bg-gray-800 border-gray-700 text-white w-full">
+                                    <SelectTrigger className="mt-2 border-gray-300 text-white w-full">
                                         <SelectValue placeholder="Selecione o barbeiro" />
                                     </SelectTrigger>
-                                    <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                                    <SelectContent className="bg-black border-gray-300 text-white">
                                         {barbeiros.map(b => (
                                             <SelectItem key={b.id} value={String(b.id)}>
                                                 {b.nome}

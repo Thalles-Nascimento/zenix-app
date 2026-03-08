@@ -40,9 +40,9 @@ export function ServicosMultiSelect({ selecionados, onChange }: Props) {
             <button
                 type="button"
                 onClick={() => setAberto(prev => !prev)}
-                className="w-full flex items-center justify-between bg-gray-800 border border-gray-700 text-sm rounded-md px-3 py-2 text-left focus:outline-none focus:ring-1 focus:ring-gray-500"
+                className="w-full flex items-center justify-between border border-gray-300 text-sm rounded-md px-3 py-2 text-left focus:outline-none focus:ring-1 focus:ring-gray-500"
             >
-                <span className={`truncate ${selecionados.length === 0 ? "text-gray-400" : "text-white"}`}>
+                <span className={`truncate ${selecionados.length === 0 ? "text-zinc-400" : "text-white"}`}>
                     {label}
                 </span>
                 <ChevronDown className={`ml-2 h-4 w-4 text-gray-400 shrink-0 transition-transform ${aberto ? "rotate-180" : ""}`} />
@@ -50,7 +50,7 @@ export function ServicosMultiSelect({ selecionados, onChange }: Props) {
 
             {/* Dropdown */}
             {aberto && (
-                <div className="absolute z-50 mt-1 w-full bg-gray-800 border border-gray-700 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                <div className="bg-black absolute z-50 mt-1 w-full border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
                     {SERVICOS.map(s => {
                         const marcado = selecionados.includes(s)
                         return (
@@ -58,7 +58,7 @@ export function ServicosMultiSelect({ selecionados, onChange }: Props) {
                                 key={s}
                                 type="button"
                                 onClick={() => toggle(s)}
-                                className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-left hover:bg-gray-700 transition-colors"
+                                className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-left hover:bg-primary transition-colors"
                             >
                                 {/* Checkbox */}
                                 <div className={`w-4 h-4 shrink-0 rounded border flex items-center justify-center transition-colors
