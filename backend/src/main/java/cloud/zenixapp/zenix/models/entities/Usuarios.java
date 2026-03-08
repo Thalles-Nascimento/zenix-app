@@ -73,6 +73,14 @@ public class Usuarios implements UserDetails, Serializable {
         this.grupo = grupo;
     }
 
+    public Usuarios(String nome, String email, String senha, String cpf, UsuariosRoleEnum grupo) {
+        this.nome = nome;
+        this.email = email;
+        this.senha = senha;
+        this.cpf = cpf;
+        this.grupo = grupo;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (this.grupo == UsuariosRoleEnum.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));

@@ -12,6 +12,7 @@ import cloud.zenixapp.zenix.models.dtos.responses.UsuarioResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.UsuarioResponseSimplesDTO;
 import cloud.zenixapp.zenix.models.entities.Unidades;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
+import cloud.zenixapp.zenix.models.enums.UsuariosRoleEnum;
 import cloud.zenixapp.zenix.repositories.UnidadeRepository;
 import cloud.zenixapp.zenix.repositories.UsuarioRepository;
 import cloud.zenixapp.zenix.services.security.TokenService;
@@ -75,7 +76,14 @@ public class UsuarioService {
             return null;
         }
         String encryptPassword = new BCryptPasswordEncoder().encode(userRegister.senha());
+        if (userRegister.grupo() == UsuariosRoleEnum.ADMIN){
+            UsuarioResponseDTO usuario = usuarioMapper.usuarioResponseDTO(
+                    usuarioRepository
+                            .save(new Usuarios(userRegister.nome(), userRegister.email(), encryptPassword, userRegister.cpf(), userRegister.grupo()))
+            );
+        }
         Unidades unidade = unidadeService.listarUnidadeByIdCompleto(userRegister.unidade());
+
         UsuarioResponseDTO usuario = usuarioMapper.usuarioResponseDTO(
                 usuarioRepository
                         .save(new Usuarios(userRegister.nome(), userRegister.email(), unidade, encryptPassword, userRegister.cpf(), userRegister.grupo()))
