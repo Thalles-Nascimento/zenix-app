@@ -1,4 +1,4 @@
-import api_url from "../enviroments/enviroments-dev"
+import api_url from "../enviroments/enviroments"
 
 export interface ClienteDTO {
     id: number
