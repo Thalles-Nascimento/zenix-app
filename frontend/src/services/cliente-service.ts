@@ -19,6 +19,6 @@ export async function criarClienteService(nomeCliente: string, telefoneCliente: 
     await api_url.post('/clientes', { nomeCliente, telefoneCliente })
 }
 
-export async function atualizarRetorno(id: number): Promise<void> {
+export async function atualizarRetornoService(id: number): Promise<void> {
     await api_url.patch(`/clientes/${id}`, {})
 }

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { buscarClientesPorTelefoneService, criarClienteService } from "../services/cliente-service"
+import { atualizarRetornoService, buscarClientesPorTelefoneService, criarClienteService } from "../services/cliente-service"
 import type { ClienteDTO } from "../services/cliente-service"
 
 export function useCliente() {
@@ -30,7 +30,7 @@ export function useCliente() {
     }
 
     const atualizarRetorno = async (id: number) => {
-        await atualizarRetorno(id) 
+        await atualizarRetornoService(id)
     }
 
     return { clientes, buscarClientes, criarCliente, buscando, atualizarRetorno }

@@ -53,10 +53,13 @@ export default function LoginClient() {
             
             // Cria cliente novo se não existia na lista ou escolheu "sou outra pessoa"
             const clienteSelecionado = clientes.find(c => c.nomeCliente === nomeEfetivo)
+
             if (clienteSelecionado) {
-                await atualizarRetorno(clienteSelecionado.id)
+                try {
+                    await atualizarRetorno(clienteSelecionado.id)
+                } catch {
+                }
             } else {
-                // Cliente novo → cria no banco
                 await criarCliente(nomeEfetivo, telefoneNumeros)
             }
 
