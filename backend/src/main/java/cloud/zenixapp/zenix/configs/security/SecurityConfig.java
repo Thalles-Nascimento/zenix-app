@@ -39,6 +39,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/users/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/fila").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/users/barbeiros/{unidadeId}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/clientes/telefone/{numero}").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/clientes").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/users/me").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/v1/users").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/users/{id}").hasRole("ADMIN")

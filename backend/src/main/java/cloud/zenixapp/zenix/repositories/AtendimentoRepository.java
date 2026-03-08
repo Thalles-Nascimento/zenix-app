@@ -20,9 +20,6 @@ public interface AtendimentoRepository extends JpaRepository<Atendimento, Long> 
     @Query(value = "SELECT * FROM atendimentos WHERE usuario_id = :id", nativeQuery = true)
     List<Atendimento> findByUser(@Param("id") Long id);
 
-    @Query(value = "SELECT SUM(a.atendimento_valor) FROM atendimentos a WHERE a.usuario_id = :id and a.atendimento_status = 1", nativeQuery = true)
-    Double sumAtendimentos(@Param("id") Long id);
-
     @Query(value = "SELECT * FROM atendimentos WHERE usuario_id = :idUser and atendimento_id = :id", nativeQuery = true)
     Optional<Atendimento> findByUserById(@Param("idUser") Long idUser, @Param("id") Long id);
 

@@ -64,7 +64,7 @@ public class FilaService {
         return filaRepository.findById(id)
                 .map(atendimentoFila -> {
                     if(atendimentoFila.getStatus() != AGUARDANDO){
-                        throw new FilaException("Cliente está Em Atendimento ou Finalizado");
+                        throw new FilaException("Clientes está Em Atendimento ou Finalizado");
                     }
 
                     filaRepository.paraAtendimento(id);
@@ -85,7 +85,7 @@ public class FilaService {
         return filaRepository.findById(id)
                 .map(atendimentoFila -> {
                     if (atendimentoFila.getStatus() != EM_ATENDIMENTO){
-                        throw new FilaException("Cliente já Finalizado ou está Aguardando");
+                        throw new FilaException("Clientes já Finalizado ou está Aguardando");
                     }
                     filaRepository.finalizarAtendimentoFila(id);
                     filaRepository.marcarHoraFinal(id, LocalTime.now());
