@@ -36,4 +36,10 @@ public class ClienteController {
                 .body(clienteService.clientesByTelefone(numero));
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> atualizarClienteRetorno(@PathVariable Long id){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(clienteService.atualizarRetornoCliente(id));
+    }
+
 }

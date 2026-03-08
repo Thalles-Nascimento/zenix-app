@@ -25,7 +25,7 @@ public class TelefoneCliente implements Serializable {
     @Column(name = "telefone_id", nullable = false)
     private Long id;
 
-    @Column(name = "telefone_cliente")
+    @Column(name = "telefone_cliente", unique = true)
     private String telefoneCliente;
 
     @OneToMany(mappedBy = "telefoneCliente")

@@ -36,7 +36,7 @@ public class Fila implements Serializable {
     @Column(name = "fila_pagamento")
     private String formaPagamento;
 
-    @Column(name = "fila_telefone", unique = true)
+    @Column(name = "fila_telefone")
     private String telefoneCliente;
 
     @Column(name = "fila_horario", nullable = false)

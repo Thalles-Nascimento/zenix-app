@@ -32,9 +32,9 @@ public class Clientes implements Serializable {
     private TelefoneCliente telefoneCliente;
 
     @Column(name = "cliente_retorno")
-    private int count = 0;
+    private int totalRetornos = 1;
 
-    @Column(name = "cliente_created", unique = true)
+    @Column(name = "cliente_created")
     private LocalDateTime created_at = LocalDateTime.now();
 
 }

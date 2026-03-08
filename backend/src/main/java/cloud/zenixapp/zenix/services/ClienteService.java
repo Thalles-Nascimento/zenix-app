@@ -2,17 +2,21 @@ package cloud.zenixapp.zenix.services;
 
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.mappers.ClienteMapper;
+import cloud.zenixapp.zenix.models.dtos.requests.AtendimentoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ClienteSimplesResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessClienteResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.SucessAtendimentoResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Clientes;
 import cloud.zenixapp.zenix.models.entities.TelefoneCliente;
+import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.repositories.ClienteRepository;
 import cloud.zenixapp.zenix.repositories.TelefoneRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -62,6 +66,26 @@ public class ClienteService {
             return Collections.emptyList();
         }
         return clienteMapper.listResponseDTO(clienteRepository.findClientByNumber(telefone.get().getId()));
+    }
+
+    @Transactional
+    public SuccessClienteResponseDTO atualizarRetornoCliente(Long id) throws NotFoundException {
+        return clienteRepository.findById(id)
+                .map(cliente -> {
+                    int count = cliente.getTotalRetornos();
+                    System.out.println(count);
+                    count = count + 1;
+                    cliente.setTotalRetornos(count);
+
+                    clienteRepository.save(cliente);
+                    System.out.println(count);
+                    return new SuccessClienteResponseDTO(
+                            HttpStatus.OK.value(),
+                            "Obrigado pelo retorno!"
+                    );
+
+                })
+                .orElseThrow(() -> new NotFoundException("Cliente não encontrado!"));
     }
 
 
