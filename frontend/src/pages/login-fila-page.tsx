@@ -5,6 +5,7 @@ import { Button } from "../components/ui/button"
 import { Label } from "../components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select"
 import { useBarbeiros } from "../hooks/use-barber"
+import { useCliente } from "../hooks/use-cliente"
 import { entrarFilaService } from "../services/fila-service"
 import { toast, Toaster } from "sonner"
 import { SuccessScreen } from "../components/successScreen-component"
@@ -19,8 +20,10 @@ export default function LoginClient() {
     }
 
     const { barbeiros } = useBarbeiros(Number(unidadeId))
+    const { clientes, buscarClientes, criarCliente, buscando } = useCliente()
 
     const [nome, setNome] = useState("")
+    const [nomeNovo, setNomeNovo] = useState("")
     const [servicos, setServicos] = useState<string[]>([])
     const [formaPagamento, setFormaPagamento] = useState("")
     const [idBarbeiro, setIdBarbeiro] = useState<number | null>(null)
@@ -28,19 +31,37 @@ export default function LoginClient() {
     const [sucesso, setSucesso] = useState(false)
     const [telefone, setTelefone] = useState("")
 
+    const handleTelefoneChange = async (valor: string) => {
+        setTelefone(valor)
+        setNome("")
+        setNomeNovo("")
+        await buscarClientes(valor)
+    }
+
+    // Nome efetivo: se escolheu "novo", usa o campo digitado; senão usa o selecionado
+    const nomeEfetivo = nome === "__novo__" ? nomeNovo : nome
+
     const entrarFila = async () => {
-        if (!nome || servicos.length === 0 || !formaPagamento || !telefone || !idBarbeiro) {
+        if (!nomeEfetivo || servicos.length === 0 || !formaPagamento || !telefone || !idBarbeiro) {
             toast.error("Preencha todos os campos!")
             return
         }
 
         try {
             setCarregando(true)
+            const telefoneNumeros = telefone.replace(/\D/g, "")
+
+            // Cria cliente novo se não existia na lista ou escolheu "sou outra pessoa"
+            const clienteExiste = clientes.some(c => c.nomeCliente === nomeEfetivo)
+            if (!clienteExiste) {
+                await criarCliente(nomeEfetivo, telefoneNumeros)
+            }
+
             await entrarFilaService({
-                nomeCliente: nome,
+                nomeCliente: nomeEfetivo,
                 servico: servicos,
                 formaPagamento,
-                telefoneCliente: telefone.replace(/\D/g, ""),
+                telefoneCliente: telefoneNumeros,
                 idBarbeiro
             })
             setSucesso(true)
@@ -52,7 +73,7 @@ export default function LoginClient() {
     }
 
     if (sucesso) {
-        return <SuccessScreen nome={nome} />
+        return <SuccessScreen nome={nomeEfetivo} />
     }
 
     return (
@@ -69,21 +90,56 @@ export default function LoginClient() {
                         </h1>
                         <form className="space-y-4 md:space-y-6" onSubmit={(e) => e.preventDefault()}>
 
-                            <div>
-                                <label className="block mb-2 text-sm font-medium text-gray-300">Seu Nome</label>
-                                <Input
-                                    type="text"
-                                    placeholder="Nome completo"
-                                    className="text-white"
-                                    value={nome}
-                                    onChange={(e) => setNome(e.target.value)}
-                                />
-                            </div>
-
+                            {/* Telefone — dispara busca ao completar 11 dígitos */}
                             <div>
                                 <Label className="text-gray-300">Telefone</Label>
-                                <InputTelefone value={telefone} onChange={setTelefone} />
+                                <InputTelefone value={telefone} onChange={handleTelefoneChange} />
+                                {buscando && (
+                                    <p className="text-gray-400 text-xs mt-1">Buscando...</p>
+                                )}
                             </div>
+
+                            {/* Nome — dropdown se encontrou clientes, campo livre se não */}
+                            {clientes.length > 0 ? (
+                                <div>
+                                    <Label className="text-gray-300">
+                                        Selecione um cliente ou insira um novo
+                                    </Label>
+                                    <Select onValueChange={setNome}>
+                                        <SelectTrigger className="mt-2 border-gray-300 text-white w-full">
+                                            <SelectValue placeholder="Selecione seu nome" />
+                                        </SelectTrigger>
+                                        <SelectContent className="bg-black border-gray-300 text-white">
+                                            {clientes.map(c => (
+                                                <SelectItem key={c.id} value={c.nomeCliente}>
+                                                    {c.nomeCliente}
+                                                </SelectItem>
+                                            ))}
+                                            <SelectItem value="__novo__">Cadastrar novo cliente</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    {nome === "__novo__" && (
+                                        <Input
+                                            type="text"
+                                            placeholder="Digite seu nome"
+                                            className="mt-2 text-white"
+                                            value={nomeNovo}
+                                            onChange={(e) => setNomeNovo(e.target.value)}
+                                        />
+                                    )}
+                                </div>
+                            ) : (
+                                <div>
+                                    <label className="block mb-2 text-sm font-medium text-gray-300">Seu Nome</label>
+                                    <Input
+                                        type="text"
+                                        placeholder="Nome completo"
+                                        className="text-white"
+                                        value={nome}
+                                        onChange={(e) => setNome(e.target.value)}
+                                    />
+                                </div>
+                            )}
 
                             <div>
                                 <Label className="text-gray-300">
@@ -101,7 +157,7 @@ export default function LoginClient() {
                                     <SelectTrigger className="mt-2 border-gray-300 text-white w-full">
                                         <SelectValue placeholder="Selecione" />
                                     </SelectTrigger>
-                                    <SelectContent className="border-gray-300 text-white">
+                                    <SelectContent className="border-gray-300 bg-black text-white">
                                         <SelectItem value="DINHEIRO">Dinheiro</SelectItem>
                                         <SelectItem value="PIX">Pix</SelectItem>
                                         <SelectItem value="CARTAO">Cartão</SelectItem>
