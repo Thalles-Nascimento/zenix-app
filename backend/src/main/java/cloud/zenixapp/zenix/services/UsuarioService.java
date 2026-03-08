@@ -81,6 +81,10 @@ public class UsuarioService {
                     usuarioRepository
                             .save(new Usuarios(userRegister.nome(), userRegister.email(), encryptPassword, userRegister.cpf(), userRegister.grupo()))
             );
+            return new SucessUsuarioResponseDTO(
+                    HttpStatus.CREATED.value(),
+                    "Usuário registrado com sucesso",
+                    usuario);
         }
         Unidades unidade = unidadeService.listarUnidadeByIdCompleto(userRegister.unidade());
 
