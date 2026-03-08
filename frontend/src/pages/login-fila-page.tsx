@@ -20,7 +20,7 @@ export default function LoginClient() {
     }
 
     const { barbeiros } = useBarbeiros(Number(unidadeId))
-    const { clientes, buscarClientes, criarCliente, buscando } = useCliente()
+    const { clientes, buscarClientes, criarCliente, buscando, atualizarRetorno } = useCliente()
 
     const [nome, setNome] = useState("")
     const [nomeNovo, setNomeNovo] = useState("")
@@ -50,10 +50,13 @@ export default function LoginClient() {
         try {
             setCarregando(true)
             const telefoneNumeros = telefone.replace(/\D/g, "")
-
+            
             // Cria cliente novo se não existia na lista ou escolheu "sou outra pessoa"
-            const clienteExiste = clientes.some(c => c.nomeCliente === nomeEfetivo)
-            if (!clienteExiste) {
+            const clienteSelecionado = clientes.find(c => c.nomeCliente === nomeEfetivo)
+            if (clienteSelecionado) {
+                await atualizarRetorno(clienteSelecionado.id)
+            } else {
+                // Cliente novo → cria no banco
                 await criarCliente(nomeEfetivo, telefoneNumeros)
             }
 

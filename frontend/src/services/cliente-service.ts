@@ -18,3 +18,7 @@ export async function buscarClientesPorTelefoneService(telefone: string): Promis
 export async function criarClienteService(nomeCliente: string, telefoneCliente: string): Promise<void> {
     await api_url.post('/clientes', { nomeCliente, telefoneCliente })
 }
+
+export async function atualizarRetorno(id: number): Promise<void> {
+    await api_url.patch(`/clientes/${id}`, {})
+}

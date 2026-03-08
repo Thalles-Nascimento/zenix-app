@@ -29,5 +29,9 @@ export function useCliente() {
         await criarClienteService(nomeCliente, telefoneCliente.replace(/\D/g, ""))
     }
 
-    return { clientes, buscarClientes, criarCliente, buscando }
+    const atualizarRetorno = async (id: number) => {
+        await atualizarRetorno(id) 
+    }
+
+    return { clientes, buscarClientes, criarCliente, buscando, atualizarRetorno }
 }
