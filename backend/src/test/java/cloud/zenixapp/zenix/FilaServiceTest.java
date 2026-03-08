@@ -58,7 +58,7 @@ class FilaServiceTest {
         filaAguardando = new Fila();
         filaAguardando.setId(1L);
         filaAguardando.setNomeCliente("Memphis Depay");
-        filaAguardando.setServico("Corte");
+        filaAguardando.setServico(List.of("Corte"));
         filaAguardando.setFormaPagamento("PIX");
         filaAguardando.setTelefoneCliente("+5521999999999");
         filaAguardando.setStatus(AGUARDANDO);
@@ -67,7 +67,7 @@ class FilaServiceTest {
         filaEmAtendimento = new Fila();
         filaEmAtendimento.setId(2L);
         filaEmAtendimento.setNomeCliente("Nathan");
-        filaEmAtendimento.setServico("Barba");
+        filaEmAtendimento.setServico(List.of("Barba"));
         filaEmAtendimento.setFormaPagamento("DINHEIRO");
         filaEmAtendimento.setStatus(EM_ATENDIMENTO);
         filaEmAtendimento.setUsuario(barbeiro);
@@ -75,7 +75,7 @@ class FilaServiceTest {
         filaFinalizada = new Fila();
         filaFinalizada.setId(3L);
         filaFinalizada.setNomeCliente("Gustavo");
-        filaFinalizada.setServico("Corte + Barba");
+        filaFinalizada.setServico(List.of("Corte + Barba"));
         filaFinalizada.setFormaPagamento("CARTAO");
         filaFinalizada.setStatus(AGUARDANDO);
         filaFinalizada.setUsuario(barbeiro);
@@ -100,7 +100,7 @@ class FilaServiceTest {
         when(filaRepository.save(any())).thenReturn(filaAguardando);
 
         FilaRequestDTO dto = new FilaRequestDTO(
-                "Memphis Depay", "Corte", "+5521999999999", "PIX", 1L
+                "Memphis Depay", List.of("Corte"), "+5521999999999", "PIX", 1L
         );
 
         SucessFilaResponseDTO resultado = filaService.inserirAtendimentoFila(dto);
@@ -117,7 +117,7 @@ class FilaServiceTest {
         when(filaRepository.save(any())).thenReturn(filaAguardando);
 
         FilaRequestDTO dto = new FilaRequestDTO(
-                "Memphis Depay", "Corte", "+5521999999999", "PIX", 1L
+                "Memphis Depay", List.of("Corte"), "+5521999999999", "PIX", 1L
         );
 
         filaService.inserirAtendimentoFila(dto);
@@ -215,7 +215,7 @@ class FilaServiceTest {
         mockSecurityContext();
 
         List<FilaResponseDTO> filaEsperada = List.of(
-                new FilaResponseDTO(1L, "Memphis Depay", "Corte", "PIX", null, AGUARDANDO)
+                new FilaResponseDTO(1L, "Memphis Depay", List.of("Corte"), "PIX", null, AGUARDANDO)
         );
 
         when(filaRepository.findByUser(1L)).thenReturn(List.of(filaAguardando));
