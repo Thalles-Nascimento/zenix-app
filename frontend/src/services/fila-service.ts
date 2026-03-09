@@ -1,5 +1,5 @@
 import type { FilaFormProps } from "../types/fila"
-import api_url from "../enviroments/enviroments-dev"
+import api_url from "../enviroments/enviroments"
 
 // Público — cliente entra na fila (sem token)
 export async function entrarFilaService(dados: FilaFormProps) {
