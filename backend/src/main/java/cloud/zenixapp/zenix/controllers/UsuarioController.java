@@ -44,7 +44,7 @@ public class UsuarioController {
         // Controller aplica o cookie httpOnly na resposta — responsabilidade HTTP
         ResponseCookie cookie = ResponseCookie.from("auth_token", dados.get("token"))
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
                 .sameSite("Strict")
                 .path("/")
                 .maxAge(Duration.ofHours(2))
@@ -64,7 +64,7 @@ public class UsuarioController {
     public ResponseEntity<?> logout(HttpServletResponse response) {
         ResponseCookie cookie = ResponseCookie.from("auth_token", "")
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
                 .sameSite("Strict")
                 .path("/")
                 .maxAge(0)
