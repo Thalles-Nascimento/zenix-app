@@ -1,63 +1,66 @@
-import { useEffect, useState } from "react"
-import { trace, SpanStatusCode } from "@opentelemetry/api"
-import  api_url from "../enviroments/enviroments-dev"
+import { useState, useEffect } from "react"
+import type { UnidadeProps, UnidadeFormProps } from "../types/usuario"
+import { buscarUnidades, criarUnidadeService, atualizarUnidadeService, deletarUnidadeService, reativarUnidadeService } from "../services/unidade-service"
+import { toast } from "sonner"
 
-const tracer = trace.getTracer("zenix-frontend")
+export function useUnidades() {
+    const [unidades, setUnidades] = useState<UnidadeProps[]>([])
+    const [carregando, setCarregando] = useState(true)
 
-interface Unidade {
-    id: number
-    nomeUnidade: string
-}
+    const buscar = async () => {
+        try {
+            setCarregando(true)
+            const dados = await buscarUnidades()
+            setUnidades(dados)
+        } catch (error) {
+            toast.error("Erro ao buscar unidades.")
+        } finally {
+            setCarregando(false)
+        }
+    }
 
-interface UseUnidadesReturn {
-    unidades: Unidade[]
-    loading: boolean
-    error: string | null
-}
+    useEffect(() => { buscar() }, [])
 
-export function useUnidades(): UseUnidadesReturn {
-    const [unidades, setUnidades] = useState<Unidade[]>([])
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState<string | null>(null)
+    const criarUnidade = async (form: UnidadeFormProps) => {
+        try {
+            await criarUnidadeService(form)
+            toast.success("Unidade criada com sucesso!")
+            await buscar()
+        } catch (error) {
+            toast.error("Erro ao criar unidade.")
+        }
+    }
 
-    useEffect(() => {
-        const span = tracer.startSpan("hook.useUnidades.fetch")
+    const atualizarUnidade = async (id: number, form: UnidadeFormProps) => {
+        try {
+            await atualizarUnidadeService(id, form)
+            toast.success("Unidade atualizada com sucesso!")
+            await buscar()
+        } catch (error) {
+            toast.error("Erro ao atualizar unidade.")
+        }
+    }
 
-        api_url.get<Unidade[]>("/unidades")
-            .then((res) => {
-                const data = res.data
+    const deletarUnidade = async (id: number) => {
+        try {
+            await deletarUnidadeService(id)
+            toast.success("Unidade deletada com sucesso!")
+            await buscar()
+        } catch (error) {
+            toast.error("Erro ao deletar unidade.")
+        }
+    }
 
-                span.setAttribute("unidades.count", data?.length ?? 0)
-                span.setAttribute("unidades.raw_type", typeof data)
-                span.setAttribute("unidades.is_array", Array.isArray(data))
+    const reativarUnidade = async (id: number) => {
+            try {
+                console.log("Estou aqui")
+                await reativarUnidadeService(id)
+                toast.success("Unidade reativada com sucesso!")
+                await buscar()
+            } catch (error) {
+                toast.error("Erro ao reativar unidade.")
+            }
+        }
 
-                // Garante que sempre é um array — evita crash no .map()
-                if (!Array.isArray(data)) {
-                    const msg = `Resposta inesperada: esperado array, recebido ${typeof data}`
-                    span.setStatus({ code: SpanStatusCode.ERROR, message: msg })
-                    span.recordException(new Error(msg))
-                    setError(msg)
-                    setUnidades([])
-                    return
-                }
-
-                setUnidades(data)
-                span.setStatus({ code: SpanStatusCode.OK })
-            })
-            .catch((err) => {
-                const msg = err?.response?.data?.message ?? err?.message ?? "Erro desconhecido"
-                span.recordException(err)
-                span.setStatus({ code: SpanStatusCode.ERROR, message: msg })
-                span.setAttribute("error.status", err?.response?.status ?? 0)
-                setError(msg)
-                setUnidades([])
-                console.error("[useUnidades] Erro ao buscar unidades:", err)
-            })
-            .finally(() => {
-                setLoading(false)
-                span.end()
-            })
-    }, [])
-
-    return { unidades, loading, error }
+    return { unidades, carregando, criarUnidade, atualizarUnidade, deletarUnidade, reativarUnidade }
 }
