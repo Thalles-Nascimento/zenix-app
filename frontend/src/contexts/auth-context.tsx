@@ -17,24 +17,24 @@ export function useAuth(){
 }
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [token, setToken] = useState<string | null>(localStorage.getItem("token"));
-    const [userName, setUserName] = useState<string | null>(localStorage.getItem("username"))
-    const [permissao, setpermissao] = useState<string | null>(localStorage.getItem("permissao"))
+    const [token, setToken] = useState<string | null>(sessionStorage.getItem("token"));
+    const [userName, setUserName] = useState<string | null>(sessionStorage.getItem("username"))
+    const [permissao, setpermissao] = useState<string | null>(sessionStorage.getItem("permissao"))
 
     const login = (novoToken: string, novoUserName: string, grupo: string) => {
         setToken(novoToken)
         setUserName(novoUserName)
         setpermissao(grupo)
-        localStorage.setItem("token", novoToken)
-        localStorage.setItem("username", novoUserName)
-        localStorage.setItem("permissao", grupo)
+        sessionStorage.setItem("token", novoToken)
+        sessionStorage.setItem("username", novoUserName)
+        sessionStorage.setItem("permissao", grupo)
     }
     const logout = () => {
         setToken(null)
         setUserName(null)
-        localStorage.removeItem("token")
-        localStorage.removeItem("username")
-        localStorage.removeItem("permissao")
+        sessionStorage.removeItem("token")
+        sessionStorage.removeItem("username")
+        sessionStorage.removeItem("permissao")
 
     }
 

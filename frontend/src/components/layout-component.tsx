@@ -94,9 +94,9 @@ export default function Layout({ children }: LayoutProps) {
     }, [permissao])
 
     return (
-        // overflow-x-hidden aqui é a correção principal — impede scroll horizontal
-        <div className="flex min-h-screen bg-gray-950 text-white overflow-x-hidden">
-
+        <div className="flex overflow-x-hidden bg-gray-950 text-white"
+            style={{ minHeight: "100dvh" }}
+        >
             {/* Sidebar desktop */}
             <aside className="hidden md:flex w-64 flex-col fixed inset-y-0 left-0 border-r border-gray-700 z-30">
                 <SidebarContent />
@@ -105,10 +105,14 @@ export default function Layout({ children }: LayoutProps) {
             {/* Conteúdo principal */}
             <div className="flex flex-col flex-1 min-w-0 md:ml-64">
 
-                {/* Navbar */}
-                <header className="sticky top-0 z-40 flex items-center justify-between px-4 py-3 bg-black border-b border-gray-700">
-
-                    {/* Hamburguer — só no mobile */}
+                {/* Navbar — padding top respeita Dynamic Island */}
+                <header
+                    className="sticky top-0 z-40 flex items-center justify-between px-4 bg-black border-b border-gray-700"
+                    style={{
+                        paddingTop: "max(0.75rem, env(safe-area-inset-top))",
+                        paddingBottom: "0.75rem"
+                    }}
+                >
                     <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
                         <SheetTrigger className="md:hidden text-gray-400 hover:text-white">
                             <Menu size={24} />
@@ -204,7 +208,14 @@ export default function Layout({ children }: LayoutProps) {
                     {children}
                 </main>
 
-                <footer className="px-6 py-4 border-t border-gray-700 text-center text-xs text-gray-500">
+                {/* Footer — padding bottom respeita barra de navegação do iPhone */}
+                <footer
+                    className="px-6 border-t border-gray-700 text-center text-xs text-gray-500"
+                    style={{
+                        paddingTop: "1rem",
+                        paddingBottom: "max(1rem, env(safe-area-inset-bottom))"
+                    }}
+                >
                     <h2 className="font-bold">Zenix — Todos os direitos reservados ©</h2>
                 </footer>
             </div>
