@@ -24,11 +24,10 @@ export function useLogin(){
 
         try {
             const dados = await loginService(email, senha)
-            login(dados.token, dados.username, dados.permissoes)
+            login(dados.nome, dados.grupo)
             navigate('/atendimentos')
-
-        } catch(error){
-            toast.error(`Usuário Inválido`)
+        } catch (error) {
+            toast.error("Usuário Inválido")
         }
     }
 

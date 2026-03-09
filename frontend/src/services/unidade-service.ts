@@ -1,4 +1,4 @@
-import api_url from "../enviroments/enviroments"
+import api_url from "../enviroments/enviroments-dev"
 import type { UnidadeFormProps } from "../types/usuario"
 
 export async function buscarUnidadeById(id: number) {

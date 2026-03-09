@@ -1,11 +1,21 @@
 import { Navigate, Outlet } from 'react-router-dom'
+import { useAuth } from '../contexts/auth-context'
+import { Loader2 } from 'lucide-react'
 
-export default function RotaProtegida(){
-    const token = localStorage.getItem("token");
+export default function RotaProtegida() {
+    const { userName, carregando } = useAuth()
 
-    if (token === null){
-        return <Navigate to='/login'/>
+    if (carregando) {
+        return (
+            <div className="flex min-h-screen items-center justify-center bg-black">
+                <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
+            </div>
+        )
     }
-    
-    return <Outlet/>;
+
+    if (userName === null) {
+        return <Navigate to='/login' />
+    }
+
+    return <Outlet />
 }

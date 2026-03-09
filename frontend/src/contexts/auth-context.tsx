@@ -1,10 +1,11 @@
-import { createContext, useContext, useState } from 'react'
+import api_url from '@/enviroments/enviroments-dev'
+import { createContext, useContext, useEffect, useState } from 'react'
 
 interface AuthContextProps {
-    token: string | null
     userName: string | null
     permissao: string | null
-    login: (token: string, userName: string, permissao: string) => void
+    carregando: boolean
+    login: (userName: string, permissao: string) => void
     logout: () => void
 }
 
@@ -17,30 +18,44 @@ export function useAuth(){
 }
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [token, setToken] = useState<string | null>(sessionStorage.getItem("token"));
-    const [userName, setUserName] = useState<string | null>(sessionStorage.getItem("username"))
-    const [permissao, setpermissao] = useState<string | null>(sessionStorage.getItem("permissao"))
+    const [userName, setUserName] = useState<string | null>(null)
+    const [permissao, setPermissao] = useState<string | null>(null)
+    const [carregando, setCarregando] = useState(true)
 
-    const login = (novoToken: string, novoUserName: string, grupo: string) => {
-        setToken(novoToken)
+    useEffect(() => {
+        const recuperarSessao = async () => {
+            try {
+                const response = await api_url.get('/users/me')
+                setUserName(response.data.nome)
+                setPermissao(response.data.grupo)
+            } catch (error) {
+                // Cookie inexistente ou expirado — usuário precisa fazer login
+                console.log(error)
+                setUserName(null)
+                setPermissao(null)
+            } finally {
+                setCarregando(false)
+            }
+        }
+
+        recuperarSessao()
+    }, [])
+
+    const login = (novoUserName: string, grupo: string) => {
         setUserName(novoUserName)
-        setpermissao(grupo)
-        sessionStorage.setItem("token", novoToken)
-        sessionStorage.setItem("username", novoUserName)
-        sessionStorage.setItem("permissao", grupo)
-    }
-    const logout = () => {
-        setToken(null)
-        setUserName(null)
-        setpermissao(null)
-        sessionStorage.removeItem("token")
-        sessionStorage.removeItem("username")
-        sessionStorage.removeItem("permissao")
+        setPermissao(grupo)
 
+    }
+
+    const logout = async () => {
+        // Chama o backend para apagar o cookie httpOnly
+        await api_url.post('/users/logout')
+        setUserName(null)
+        setPermissao(null)
     }
 
     return (
-        <AuthContext.Provider value={{ token, userName, permissao, login, logout }}>
+        <AuthContext.Provider value={{ userName, permissao, carregando, login, logout }}>
             {children}
         </AuthContext.Provider>
     )

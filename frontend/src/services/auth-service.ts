@@ -1,4 +1,4 @@
-import api_url from "../enviroments/enviroments";
+import api_url from "../enviroments/enviroments-dev";
 
 
 export default async function loginService(email:string, senha: string) {
