@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { trace, SpanStatusCode } from "@opentelemetry/api"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../components/ui/dialog"
 import { Button } from "../../components/ui/button"
 import { Input } from "../../components/ui/input"
@@ -9,28 +10,114 @@ import { Botao } from "../../components/common/botao"
 import { formatarCPF, limparCPF } from "../../utils/formatter"
 import { validarSenha } from "../../utils/validators"
 import { useUnidades } from "../../hooks/use-unidades"
+import { ErrorBoundary } from "../../components/common/error-boundary"
 
 interface Props {
     onConfirmar: (form: UsuarioFormProps) => void
 }
 
+const tracer = trace.getTracer("zenix-frontend")
 const formInicial: UsuarioFormProps = { nome: "", email: "", cpf: "", unidade: 0, senha: "", grupo: "" }
+
+// Componente interno do select de unidade — isolado no ErrorBoundary
+function SelectUnidade({ value, onChange }: { value: number, onChange: (v: number) => void }) {
+    const { unidades, loading, error } = useUnidades()
+
+    const span = tracer.startSpan("select.unidade.render")
+    span.setAttribute("unidades.count", unidades?.length ?? 0)
+    span.setAttribute("unidades.loading", loading ?? false)
+    span.setAttribute("unidades.error", error ?? "none")
+    span.end()
+
+    if (loading) {
+        return <p className="text-gray-400 text-xs mt-1">Carregando unidades...</p>
+    }
+
+    if (error) {
+        return <p className="text-red-500 text-xs mt-1">Erro ao carregar unidades: {error}</p>
+    }
+
+    if (!unidades || unidades.length === 0) {
+        return <p className="text-yellow-500 text-xs mt-1">Nenhuma unidade disponível.</p>
+    }
+
+    return (
+        // FIX MOBILE: container={document.body} evita problema do Portal dentro do Dialog em mobile
+        <Select
+            value={value ? String(value) : ""}
+            onValueChange={(v) => {
+                const span = tracer.startSpan("select.unidade.change")
+                try {
+                    const parsed = Number(v)
+                    if (isNaN(parsed) || parsed === 0) {
+                        throw new Error(`Valor inválido recebido: "${v}"`)
+                    }
+                    span.setAttribute("unidade.id", parsed)
+                    span.setAttribute("unidade.nome", unidades.find(u => u.id === parsed)?.nomeUnidade ?? "desconhecida")
+                    onChange(parsed)
+                    span.setStatus({ code: SpanStatusCode.OK })
+                } catch (err) {
+                    const error = err as Error
+                    span.recordException(error)
+                    span.setStatus({ code: SpanStatusCode.ERROR, message: error.message })
+                    console.error("[SelectUnidade] Erro ao processar seleção:", error)
+                } finally {
+                    span.end()
+                }
+            }}
+        >
+            <SelectTrigger className="mt-1 w-full bg-gray-800 border-gray-700 text-white">
+                <SelectValue placeholder="Selecione" />
+            </SelectTrigger>
+            {/* FIX MOBILE: position="popper" é mais estável em mobile dentro de Dialog */}
+            <SelectContent
+                className="bg-gray-800 border-gray-700 text-white"
+                position="popper"
+            >
+                {unidades.map(u => (
+                    <SelectItem key={u.id} value={String(u.id)}>
+                        {u.nomeUnidade}
+                    </SelectItem>
+                ))}
+            </SelectContent>
+        </Select>
+    )
+}
 
 export function ModalNovoUsuario({ onConfirmar }: Props) {
     const [open, setOpen] = useState(false)
     const [form, setForm] = useState<UsuarioFormProps>(formInicial)
     const [cpfFormatado, setCpfFormatado] = useState("")
     const [erro, setErro] = useState<string | null>(null)
-    const { unidades } = useUnidades()
 
     const handleConfirmar = () => {
-        if (!validarSenha(form.senha)) {
-            setErro("A senha deve ter no mínimo 6 caracteres.")
-            return
+        const span = tracer.startSpan("modal.novo-usuario.confirmar")
+        try {
+            span.setAttribute("form.nome.preenchido", !!form.nome)
+            span.setAttribute("form.email.preenchido", !!form.email)
+            span.setAttribute("form.cpf.preenchido", !!form.cpf)
+            span.setAttribute("form.unidade.id", form.unidade)
+            span.setAttribute("form.grupo", form.grupo)
+
+            if (!validarSenha(form.senha)) {
+                setErro("A senha deve ter no mínimo 6 caracteres.")
+                span.setAttribute("validacao.erro", "senha_invalida")
+                span.setStatus({ code: SpanStatusCode.ERROR, message: "Senha inválida" })
+                return
+            }
+
+            onConfirmar(form)
+            setOpen(false)
+            setForm(formInicial)
+            span.setStatus({ code: SpanStatusCode.OK })
+        } catch (err) {
+            const error = err as Error
+            span.recordException(error)
+            span.setStatus({ code: SpanStatusCode.ERROR, message: error.message })
+            console.error("[ModalNovoUsuario] Erro ao confirmar:", error)
+        } finally {
+            span.end()
         }
-        onConfirmar(form)
-        setOpen(false)
-        setForm(formInicial)
     }
 
     const handleCPF = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,7 +127,13 @@ export function ModalNovoUsuario({ onConfirmar }: Props) {
     }
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={(isOpen) => {
+            const span = tracer.startSpan("modal.novo-usuario.toggle")
+            span.setAttribute("modal.open", isOpen)
+            span.end()
+            setOpen(isOpen)
+            if (!isOpen) setForm(formInicial)
+        }}>
             <DialogTrigger asChild>
                 <Button>NOVO USUÁRIO</Button>
             </DialogTrigger>
@@ -72,16 +165,20 @@ export function ModalNovoUsuario({ onConfirmar }: Props) {
                     </div>
                     <div>
                         <Label className="text-gray-300">Unidade</Label>
-                        <Select onValueChange={(v) => setForm({ ...form, unidade: Number(v) })}>
-                            <SelectTrigger className="mt-1 w-full bg-gray-800 border-gray-700 text-white">
-                                <SelectValue placeholder="Selecione" />
-                            </SelectTrigger>
-                            <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                                {unidades.map(u => (
-                                    <SelectItem key={u.id} value={String(u.id)}>{u.nomeUnidade}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                        {/* ErrorBoundary isola crash do SelectUnidade — evita tela branca */}
+                        <ErrorBoundary
+                            componentName="SelectUnidade"
+                            fallback={
+                                <p className="text-red-500 text-xs mt-1">
+                                    Erro ao carregar unidades. Feche e tente novamente.
+                                </p>
+                            }
+                        >
+                            <SelectUnidade
+                                value={form.unidade}
+                                onChange={(v) => setForm({ ...form, unidade: v })}
+                            />
+                        </ErrorBoundary>
                     </div>
                     <div>
                         <Label className="text-gray-300">Usuário</Label>
@@ -89,7 +186,7 @@ export function ModalNovoUsuario({ onConfirmar }: Props) {
                             <SelectTrigger className="mt-1 w-full bg-gray-800 border-gray-700 text-white">
                                 <SelectValue placeholder="Selecione" />
                             </SelectTrigger>
-                            <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                            <SelectContent className="bg-gray-800 border-gray-700 text-white" position="popper">
                                 <SelectItem value="ADMIN">Administrador</SelectItem>
                                 <SelectItem value="USER">Barbeiro</SelectItem>
                             </SelectContent>
