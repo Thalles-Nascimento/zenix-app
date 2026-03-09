@@ -32,6 +32,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     const logout = () => {
         setToken(null)
         setUserName(null)
+        setpermissao(null)
         sessionStorage.removeItem("token")
         sessionStorage.removeItem("username")
         sessionStorage.removeItem("permissao")
