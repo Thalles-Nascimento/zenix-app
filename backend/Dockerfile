@@ -6,6 +6,4 @@ COPY target/*.jar /zenixapp/app.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", \
-  "-Dotel.java.global-autoconfigure.enabled=true", \
-  "-jar", "/zenixapp/app.jar"]
+ENTRYPOINT ["java", "-jar", "/zenixapp/app.jar"]
