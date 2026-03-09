@@ -8,13 +8,17 @@ import cloud.zenixapp.zenix.models.dtos.responses.*;
 import cloud.zenixapp.zenix.services.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.HashMap;
@@ -32,11 +36,43 @@ public class UsuarioController {
 
     @PostMapping("/login")
     @Operation(summary = "Login de usuário", description = "Endpoint para realizar o login do usuário e obter um token de autenticação")
-    public ResponseEntity<?> login(@RequestBody @Valid UsuarioLoginDTO userLogin, BindingResult result){
+    public ResponseEntity<?> login(@RequestBody @Valid UsuarioLoginDTO userLogin, BindingResult result, HttpServletResponse response){
         if (result.hasErrors()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BindingHandler.insertError(result));
 
+        Map<String, String> dados = usuarioService.loginUser(userLogin);
+
+        // Controller aplica o cookie httpOnly na resposta — responsabilidade HTTP
+        ResponseCookie cookie = ResponseCookie.from("auth_token", dados.get("token"))
+                .httpOnly(true)
+                .secure(false)
+                .sameSite("Strict")
+                .path("/")
+                .maxAge(Duration.ofHours(2))
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        // Remove o token do body — nunca deve ser exposto ao frontend
+        dados.remove("token");
+
         return ResponseEntity.status(HttpStatus.OK)
-                .body(usuarioService.loginUser(userLogin));
+                    .body(dados);
+    }
+
+    @PostMapping("/logout")
+    @Operation(summary = "Logout de usuário", description = "Invalida o cookie de autenticação")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        ResponseCookie cookie = ResponseCookie.from("auth_token", "")
+                .httpOnly(true)
+                .secure(false)
+                .sameSite("Strict")
+                .path("/")
+                .maxAge(0)
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PostMapping("/register")
