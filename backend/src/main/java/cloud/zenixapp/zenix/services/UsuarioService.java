@@ -76,7 +76,7 @@ public class UsuarioService {
             return null;
         }
         String encryptPassword = new BCryptPasswordEncoder().encode(userRegister.senha());
-        if (userRegister.unidade() == null){
+        if (userRegister.unidade() == 0){
             UsuarioResponseDTO usuario = usuarioMapper.usuarioResponseDTO(
                     usuarioRepository
                             .save(new Usuarios(userRegister.nome(), userRegister.email(), encryptPassword, userRegister.cpf(), userRegister.grupo()))
