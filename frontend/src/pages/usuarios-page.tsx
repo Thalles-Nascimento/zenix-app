@@ -11,7 +11,7 @@ import { Paginacao } from "../components/pagination"
 import { usePaginacao } from "../hooks/use-pagination"
 
 export default function UsersPage() {
-    const { dados, carregando, criarUsuario, atualizarUsuario, deletarUsuario, reativarUsuario } = useUsuarios()
+    const { dados, carregando, filtro, setFiltro, criarUsuario, atualizarUsuario, deletarUsuario, reativarUsuario } = useUsuarios()
     const [usuarioSelecionado, setUsuarioSelecionado] = useState<UserProps | null>(null)
     const { itensPagina, paginaAtual, totalPaginas, totalItens, setPaginaAtual } = usePaginacao(dados, 7)
 
@@ -35,7 +35,23 @@ export default function UsersPage() {
             {/* Topbar */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 notranslate">
                 <h1 className="text-white text-xl font-bold">Usuários</h1>
-                <ModalNovoUsuario onConfirmar={criarUsuario} />
+                <div className="flex flex-wrap items-center gap-2">
+                    <button
+                        onClick={() => setFiltro("ativos")}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors
+                            ${filtro === "ativos" ? "bg-orange-700 text-white" : "bg-gray-800 text-gray-400 hover:text-white"}`}
+                    >
+                        Ativos
+                    </button>
+                    <button
+                        onClick={() => setFiltro("todos")}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors
+                            ${filtro === "todos" ? "bg-gray-600 text-white" : "bg-gray-800 text-gray-400 hover:text-white"}`}
+                    >
+                        Todos
+                    </button>
+                    <ModalNovoUsuario onConfirmar={criarUsuario} />
+                </div>
             </div>
 
             {/* Tabela */}

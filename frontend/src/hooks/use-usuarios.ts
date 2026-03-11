@@ -8,6 +8,12 @@ export function useUsuarios(){
     const [dados, setDados] = useState<UserProps[]>([]);
     const [carregando, setCarregando] = useState(true);
 
+    const [filtro, setFiltro] = useState<'ativos' | 'todos'>('ativos')
+
+    const dadosFiltrados = filtro === 'ativos'
+        ? dados.filter(u => u.status === 1)
+        : dados
+
     const buscarUsuarios = async () => {
         try {
             setCarregando(true)
@@ -65,5 +71,5 @@ export function useUsuarios(){
         }
     }
 
-    return { dados, carregando, criarUsuario, atualizarUsuario, deletarUsuario, reativarUsuario }
+    return { dados: dadosFiltrados, carregando, filtro, setFiltro, criarUsuario, atualizarUsuario, deletarUsuario, reativarUsuario }
 }

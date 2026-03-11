@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { listarAtendimentosAdminService } from "../services/atendimento-service"
 import type { AtendimentoAdminProps } from "../types/dashboard"
 import { parseData, hoje } from "../utils/date"
+import { toast } from "sonner"
 
 export function useDashboard() {
     const [todosAtendimentos, setTodosAtendimentos] = useState<AtendimentoAdminProps[]>([])
@@ -13,9 +14,9 @@ export function useDashboard() {
         try {
             setCarregando(true)
             const dados = await listarAtendimentosAdminService()
-            setTodosAtendimentos(dados.filter((a: AtendimentoAdminProps) => a.status === 1))
+            setTodosAtendimentos(dados)
         } catch (error) {
-            console.error(error)
+            toast.error(`Erro: ${error}`)
         } finally {
             setCarregando(false)
         }
@@ -25,7 +26,6 @@ export function useDashboard() {
         buscar()
     }, [])
 
-    // Filtra pelo período selecionado
     const atendimentos = todosAtendimentos.filter(a => {
         const data = parseData(a.date)
         if (filtroInicio && data < filtroInicio) return false
@@ -33,14 +33,15 @@ export function useDashboard() {
         return true
     })
 
-    // Cards
-    const totalDia = atendimentos.reduce((acc, a) => acc + a.valor, 0)
-    const totalAtendimentos = atendimentos.length
+    // Cards — somente ativos
+    const atendimentosAtivos = atendimentos.filter(a => a.status === 1)
+    const totalDia = atendimentosAtivos.reduce((acc, a) => acc + a.valor, 0)
+    const totalAtendimentos = atendimentosAtivos.length
     const ticketMedio = totalAtendimentos > 0 ? totalDia / totalAtendimentos : 0
 
-    // Ranking de serviços
+    // Rankings — somente ativos
     const rankingServicos = Object.entries(
-        atendimentos.reduce((acc: Record<string, number>, a) => {
+        atendimentosAtivos.reduce((acc: Record<string, number>, a) => {
             acc[a.servico] = (acc[a.servico] ?? 0) + 1
             return acc
         }, {})
@@ -48,9 +49,8 @@ export function useDashboard() {
     .map(([servico, quantidade]) => ({ servico, quantidade }))
     .sort((a, b) => b.quantidade - a.quantidade)
 
-    // Atendimentos por barbeiro
     const porBarbeiro = Object.entries(
-        atendimentos.reduce((acc: Record<string, { quantidade: number, total: number }>, a) => {
+        atendimentosAtivos.reduce((acc: Record<string, { quantidade: number, total: number }>, a) => {
             if (!acc[a.barbeiro]) acc[a.barbeiro] = { quantidade: 0, total: 0 }
             acc[a.barbeiro].quantidade += 1
             acc[a.barbeiro].total += a.valor

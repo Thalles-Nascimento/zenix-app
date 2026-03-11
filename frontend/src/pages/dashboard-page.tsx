@@ -11,11 +11,12 @@ import { Paginacao } from "../components/pagination"
 import { ModalEditarAtendimento } from "./modals/atendimento-editar-modal"
 import type { AtendimentoAdminProps } from "../types/dashboard"
 import type { DadosProps } from "../types/atendimento"
+import { Toaster } from "sonner"
 
 export default function DashboardPage() {
     const {
         carregando, totalDia, totalAtendimentos, ticketMedio,
-        rankingServicos, porBarbeiro, atendimentos,
+        porBarbeiro, atendimentos,
         filtroInicio, filtroFim, setFiltroInicio, setFiltroFim, recarregar
     } = useDashboard()
 
@@ -55,6 +56,7 @@ export default function DashboardPage() {
 
     return (
         <div className="flex flex-col gap-6 notranslate">
+            <Toaster richColors position="top-center" />
             <h1 className="text-white text-xl font-bold">Dashboard</h1>
 
             {/* Filtro por período */}
@@ -192,13 +194,18 @@ export default function DashboardPage() {
                                 itensPagina.map(items => (
                                     <tr
                                         key={items.id}
-                                        className="bg-gray-900 border-b border-gray-700 hover:bg-gray-800 cursor-pointer"
-                                        onClick={() => abrirEdicao(items)}
+                                        className={`border-b border-gray-700 hover:bg-gray-800 cursor-pointer
+                                            ${items.status === -1 ? "opacity-50" : "bg-gray-900"}`}
+                                        onClick={() => items.status !== -1 && abrirEdicao(items)}
                                     >
                                         <td className="px-4 py-4 notranslate font-medium text-white">{items.descricao}</td>
                                         <td className="px-4 py-4 notranslate">{Array.isArray(items.servico) ? items.servico.join(" + ") : items.servico}</td>
-                                        <td className="px-4 py-4 notranslate text-orange-500">{items.barbeiro}</td>
-                                        <td className="px-4 py-4 notranslate font-bold text-orange-500">{formatBRL(items.valor)}</td>
+                                        <td className={`px-4 py-4 notranslate ${items.status === -1 ? "text-gray-500" : "text-orange-500"}`}>
+                                            {items.barbeiro}
+                                        </td>
+                                        <td className={`px-4 py-4 notranslate font-bold ${items.status === -1 ? "text-gray-500" : "text-orange-500"}`}>
+                                            {formatBRL(items.valor)}
+                                        </td>
                                         <td className="px-4 py-4 notranslate">{items.formaPagamento}</td>
                                     </tr>
                                 ))

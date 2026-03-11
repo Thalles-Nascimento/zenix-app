@@ -28,7 +28,7 @@ export function useAtendimentos() {
             setDadosHoje(hojeData)
             setDadosHistorico(historicoData)
         } catch (error) {
-            toast.error("Erro ao ler os atendimentos")
+            toast.error(`Erro: ${error}`)
         } finally {
             setCarregando(false)
         }
@@ -44,10 +44,9 @@ export function useAtendimentos() {
             toast.success("Atendimento criado com sucesso!")
             await buscarAtendimentos()
         } catch (error) {
-            toast.error("Campos inválidos")
+            toast.error(`Erro: ${error}`)
         }
     }
-
     // Atualiza atendimento do próprio usuário (USER e ADMIN nos próprios atendimentos)
     const atualizarAtendimento = async (id: number, form: AtendimentoFormProps) => {
         try {
@@ -55,7 +54,7 @@ export function useAtendimentos() {
             toast.success("Atendimento atualizado com sucesso!")
             await buscarAtendimentos()
         } catch (error) {
-            toast.error("Erro ao atualizar o atendimento.")
+            toast.error(`Erro: ${error}`)
         }
     }
 
@@ -66,7 +65,7 @@ export function useAtendimentos() {
             toast.success("Atendimento atualizado com sucesso!")
             await buscarAtendimentos()
         } catch (error) {
-            toast.error("Erro ao atualizar o atendimento.")
+            toast.error(`Erro: ${error}`)
         }
     }
 
@@ -76,7 +75,7 @@ export function useAtendimentos() {
             toast.success("Atendimento deletado com sucesso!")
             await buscarAtendimentos()
         } catch (error) {
-            toast.error("Erro ao deletar o atendimento.")
+            toast.error(`Erro: ${error}`)
         }
     }
 
