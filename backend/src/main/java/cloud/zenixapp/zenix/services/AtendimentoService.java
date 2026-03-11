@@ -12,7 +12,6 @@ import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.repositories.AtendimentoRepository;
 import cloud.zenixapp.zenix.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -121,7 +120,7 @@ public class AtendimentoService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public SucessAtendimentoResponseDTO atualizarAtendimento(Long id, AtendimentoRequestDTO atendimentoRequestDTO) throws NotFoundException {
+    public SucessAtendimentoResponseDTO atualizarAtendimentoPorUsuario(Long id, AtendimentoRequestDTO atendimentoRequestDTO) throws NotFoundException {
         Usuarios user = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return atendimentoRepository.findByUserById(user.getId(), id)
                 .map(atendimento -> {
@@ -135,6 +134,40 @@ public class AtendimentoService {
                             "Atendimento atualizado com sucesso!"
                     );
 
+                })
+                .orElseThrow(() -> new NotFoundException("Atendimento não encontrado!"));
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public SucessAtendimentoResponseDTO atualizarAtendimento(Long id, AtendimentoRequestDTO atendimentoRequestDTO) throws NotFoundException {
+        return atendimentoRepository.findByIdAtendimento(id)
+                .map(atendimento -> {
+                    if(atendimento.getStatus() == -1){
+                        throw new NotFoundException("Não é possível atualizar um atendimento excluído!");
+                    }
+
+                    atendimentoMapper.atualizarAtendimento(atendimento, atendimentoRequestDTO);
+                    return new SucessAtendimentoResponseDTO(
+                            HttpStatus.OK.value(),
+                            "Atendimento atualizado com sucesso!"
+                    );
+
+                })
+                .orElseThrow(() -> new NotFoundException("Atendimento não encontrado!"));
+    }
+
+    @Transactional
+    public SucessAtendimentoResponseDTO ativarAtendimento(Long id){
+        return atendimentoRepository.findById(id)
+                .map(atendimento -> {
+                    if(atendimento.getStatus() != -1){
+                        throw new AtendimentoExcluidoException("Atendimento já está ativo!");
+                    }
+                    atendimentoRepository.ativarAtendimento(id);
+                    return new SucessAtendimentoResponseDTO(
+                            HttpStatus.OK.value(),
+                            "Atendimento ativado com sucesso"
+                    );
                 })
                 .orElseThrow(() -> new NotFoundException("Atendimento não encontrado!"));
     }

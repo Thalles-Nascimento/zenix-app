@@ -39,7 +39,7 @@ public class Fila implements Serializable {
     @Column(name = "fila_telefone")
     private String telefoneCliente;
 
-    @Column(name = "fila_horario", nullable = false)
+    @Column(name = "fila_horario", nullable = false, columnDefinition = "TIME(6)")
     private LocalTime horario = LocalTime.now();
 
     @ManyToOne

@@ -47,7 +47,6 @@ public class AtendimentoController {
     })
     @Operation(summary = "Adicionar atendimento", description = "Endpoint para adiciona um novo atendimento")
     public ResponseEntity<?> save(@RequestBody @Valid AtendimentoRequestDTO atendimentoDTO, BindingResult result){
-        System.out.println(result.getAllErrors());
         if (result.hasErrors()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(BindingHandler.insertError(result));
@@ -119,6 +118,37 @@ public class AtendimentoController {
 
 
     /*
+     * Endpoint para atualizar um atendimento do Banco de Dados pelo ID do Usuario
+     *
+     */
+    @PutMapping(value = "/usuario/{id}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Atendimento atualizado"),
+            @ApiResponse(responseCode = "404", description = "Atendimento não encontrado"),
+            @ApiResponse(responseCode = "400", description = "Campos com nulos ou fora do padrão")
+    })
+    @Operation(summary = "Atualizar atendimento por ID do Usuario", description = "Endpoint para atualiza um atendimento por ID do Usuario")
+    public ResponseEntity<?> updateByUser(@PathVariable Long id, @RequestBody @Valid AtendimentoRequestDTO atendimentoRequestDTO, BindingResult result) throws NotFoundException {
+        if(result.hasErrors()){
+            if (BindingHandler.isErrorNull(result)){
+                return ResponseEntity.status(HttpStatus.OK)
+                        .body(atendimentoService.atualizarAtendimentoPorUsuario(id, atendimentoRequestDTO));
+            }
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorResponseDTO(
+                            HttpStatus.BAD_REQUEST.value(),
+                            "Alguns campos estão fora do padrão",
+                            LocalDateTime.now().toInstant(ZoneOffset.of("-03:00")))
+                    );
+        }
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(atendimentoService.atualizarAtendimentoPorUsuario(id, atendimentoRequestDTO));
+
+    }
+
+    /*
      * Endpoint para atualizar um atendimento do Banco de Dados pelo ID
      *
      */
@@ -129,7 +159,7 @@ public class AtendimentoController {
             @ApiResponse(responseCode = "400", description = "Campos com nulos ou fora do padrão")
     })
     @Operation(summary = "Atualizar atendimento por ID", description = "Endpoint para atualiza um atendimento por ID")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid AtendimentoRequestDTO atendimentoRequestDTO, BindingResult result) throws NotFoundException {
+    public ResponseEntity<?> updateByAtendimento(@PathVariable Long id, @RequestBody @Valid AtendimentoRequestDTO atendimentoRequestDTO, BindingResult result) throws NotFoundException {
         if(result.hasErrors()){
             if (BindingHandler.isErrorNull(result)){
                 return ResponseEntity.status(HttpStatus.OK)
@@ -147,6 +177,13 @@ public class AtendimentoController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.atualizarAtendimento(id, atendimentoRequestDTO));
 
+    }
+
+    @PatchMapping("/{id}")
+    @Operation(summary = "Ativar atendimento", description = "Endpoint para ativar um atendimento do sistema")
+    public ResponseEntity<?> ativarAtendimento(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(atendimentoService.ativarAtendimento(id));
     }
 
 }
