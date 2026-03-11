@@ -73,12 +73,10 @@ public class ClienteService {
         return clienteRepository.findById(id)
                 .map(cliente -> {
                     int count = cliente.getTotalRetornos();
-                    System.out.println(count);
                     count = count + 1;
                     cliente.setTotalRetornos(count);
 
                     clienteRepository.save(cliente);
-                    System.out.println(count);
                     return new SuccessClienteResponseDTO(
                             HttpStatus.OK.value(),
                             "Obrigado pelo retorno!"

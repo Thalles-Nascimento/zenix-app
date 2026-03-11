@@ -26,4 +26,7 @@ public interface AtendimentoRepository extends JpaRepository<Atendimento, Long> 
     @Query(value = "SELECT * FROM atendimentos WHERE usuario_id = :id and atendimento_data = :data", nativeQuery = true)
     List<Atendimento> findByUserDate(@Param("id") Long id, @Param("data") String data);
 
+    @Query(value = "SELECT * FROM atendimentos WHERE atendimento_id = :id", nativeQuery = true)
+    Optional<Atendimento> findByIdAtendimento(@Param("id") Long id);
+
 }

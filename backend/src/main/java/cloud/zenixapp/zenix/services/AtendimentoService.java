@@ -121,9 +121,27 @@ public class AtendimentoService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public SucessAtendimentoResponseDTO atualizarAtendimento(Long id, AtendimentoRequestDTO atendimentoRequestDTO) throws NotFoundException {
+    public SucessAtendimentoResponseDTO atualizarAtendimentoPorUsuario(Long id, AtendimentoRequestDTO atendimentoRequestDTO) throws NotFoundException {
         Usuarios user = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return atendimentoRepository.findByUserById(user.getId(), id)
+                .map(atendimento -> {
+                    if(atendimento.getStatus() == -1){
+                        throw new NotFoundException("Não é possível atualizar um atendimento excluído!");
+                    }
+
+                    atendimentoMapper.atualizarAtendimento(atendimento, atendimentoRequestDTO);
+                    return new SucessAtendimentoResponseDTO(
+                            HttpStatus.OK.value(),
+                            "Atendimento atualizado com sucesso!"
+                    );
+
+                })
+                .orElseThrow(() -> new NotFoundException("Atendimento não encontrado!"));
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public SucessAtendimentoResponseDTO atualizarAtendimento(Long id, AtendimentoRequestDTO atendimentoRequestDTO) throws NotFoundException {
+        return atendimentoRepository.findByIdAtendimento(id)
                 .map(atendimento -> {
                     if(atendimento.getStatus() == -1){
                         throw new NotFoundException("Não é possível atualizar um atendimento excluído!");
