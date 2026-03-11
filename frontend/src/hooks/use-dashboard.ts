@@ -9,17 +9,19 @@ export function useDashboard() {
     const [filtroInicio, setFiltroInicio] = useState(hoje()) // ← começa com hoje
     const [filtroFim, setFiltroFim] = useState(hoje())       // ← começa com hoje
 
-    useEffect(() => {
-        const buscar = async () => {
-            try {
-                const dados = await listarAtendimentosAdminService()
-                setTodosAtendimentos(dados.filter((a: AtendimentoAdminProps) => a.status === 1))
-            } catch (error) {
-                console.error(error)
-            } finally {
-                setCarregando(false)
-            }
+    const buscar = async () => {
+        try {
+            setCarregando(true)
+            const dados = await listarAtendimentosAdminService()
+            setTodosAtendimentos(dados.filter((a: AtendimentoAdminProps) => a.status === 1))
+        } catch (error) {
+            console.error(error)
+        } finally {
+            setCarregando(false)
         }
+    }
+
+    useEffect(() => {
         buscar()
     }, [])
 
@@ -68,6 +70,7 @@ export function useDashboard() {
         filtroInicio,
         filtroFim,
         setFiltroInicio,
-        setFiltroFim
+        setFiltroFim,
+        recarregar: buscar  
     }
 }

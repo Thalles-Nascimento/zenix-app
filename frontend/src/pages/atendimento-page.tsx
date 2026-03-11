@@ -8,11 +8,13 @@ import { ModalNovoAtendimento } from "./modals/atendimento-novo-modal"
 import { ModalEditarAtendimento } from "./modals/atendimento-editar-modal"
 import { usePaginacao } from "../hooks/use-pagination"
 import { Paginacao } from "../components/pagination"
+import { useAuth } from "../contexts/auth-context"
 
 export default function Atendimentos() {
     const { dados, carregando, periodo, setPeriodo, criarAtendimento, atualizarAtendimento, deletarAtendimento } = useAtendimentos()
     const [atendimentoSelecionado, setAtendimentoSelecionado] = useState<DadosProps | null>(null)
     const { itensPagina, paginaAtual, totalPaginas, totalItens, setPaginaAtual } = usePaginacao(dados, 7)
+    const { permissao } = useAuth()
 
     if (carregando) {
         return (
@@ -65,8 +67,13 @@ export default function Atendimentos() {
                         {itensPagina.map(items => (
                             <tr
                                 key={items.id}
-                                className="bg-gray-900 border-b border-gray-700 hover:bg-gray-800 cursor-pointer"
-                                onClick={() => items.status !== -1 && setAtendimentoSelecionado(items)}
+                                className={`bg-gray-900 border-b border-gray-700 hover:bg-gray-800 
+                                    ${permissao === "ADMIN" && items.status !== -1 ? "cursor-pointer" : "cursor-default"}`}
+                                onClick={() => {
+                                    if(items.status !== -1 && permissao === "ADMIN"){
+                                        setAtendimentoSelecionado(items)
+                                    }
+                                }}
                             >
                                 <td className="px-4 py-4 font-medium text-white">{items.descricao}</td>
                                 <td className="px-4 py-4">{Array.isArray(items.servico) ? items.servico.join(" + ") : items.servico}</td>

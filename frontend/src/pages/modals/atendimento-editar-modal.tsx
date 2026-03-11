@@ -35,7 +35,7 @@ export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirma
             setForm({
                 descricao: atendimento.descricao,
                 servico: servicos,
-                valor: calcularTotal(servicos),
+                valor: atendimento.valor, // ← valor do banco, não recalculado
                 formaPagamento: atendimento.formaPagamento
             })
         }
@@ -81,9 +81,11 @@ export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirma
                     <div>
                         <Label className="text-gray-300">Valor Total</Label>
                         <Input
-                            disabled
-                            className="mt-1 bg-gray-800 border-gray-600 text-orange-400 font-semibold cursor-not-allowed"
-                            value={form.servico.length === 0 ? "R$ 0,00" : `R$ ${form.valor.toFixed(2).replace(".", ",")}`}
+                            className="mt-1 bg-gray-800 border-gray-600 text-orange-400 font-semibold"
+                            value={form.valor === 0 ? "" : form.valor}
+                            placeholder="R$ 0,00"
+                            type="number"
+                            onChange={(e) => setForm({ ...form, valor: parseFloat(e.target.value) || 0 })}
                         />
                     </div>
                     <div>

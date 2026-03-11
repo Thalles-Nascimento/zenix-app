@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useDashboard } from "../hooks/use-dashboard"
+import { useAtendimentos } from "../hooks/use-atendimentos"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../components/ui/dialog"
 import { hoje } from "../utils/date"
@@ -7,15 +8,22 @@ import { Badge } from "../components/ui/badge"
 import { Spinner } from "../components/ui/spinner"
 import { usePaginacao } from "../hooks/use-pagination"
 import { Paginacao } from "../components/pagination"
+import { ModalEditarAtendimento } from "./modals/atendimento-editar-modal"
+import type { AtendimentoAdminProps } from "../types/dashboard"
+import type { DadosProps } from "../types/atendimento"
 
 export default function DashboardPage() {
     const {
         carregando, totalDia, totalAtendimentos, ticketMedio,
         rankingServicos, porBarbeiro, atendimentos,
-        filtroInicio, filtroFim, setFiltroInicio, setFiltroFim
+        filtroInicio, filtroFim, setFiltroInicio, setFiltroFim, recarregar
     } = useDashboard()
 
+    const { atualizarAtendimentoAdmin, deletarAtendimento } = useAtendimentos()
+
     const [barbeiroSelecionado, setBarbeiroSelecionado] = useState<string | null>(null)
+    const [atendimentoSelecionado, setAtendimentoSelecionado] = useState<DadosProps | null>(null)
+
     const atendimentosBarbeiro = atendimentos.filter(a => a.barbeiro === barbeiroSelecionado)
     const { itensPagina, paginaAtual, totalPaginas, totalItens, setPaginaAtual } = usePaginacao(atendimentos, 4)
 
@@ -23,6 +31,19 @@ export default function DashboardPage() {
         valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
 
     const isPeriodoHoje = filtroInicio === filtroFim && filtroInicio === hoje()
+
+    // Adapta AtendimentoAdminProps → DadosProps para o modal de edição
+    const abrirEdicao = (item: AtendimentoAdminProps) => {
+        setAtendimentoSelecionado({
+            id: item.id,
+            descricao: item.descricao,
+            servico: Array.isArray(item.servico) ? item.servico : item.servico.split(", "),
+            valor: item.valor,
+            formaPagamento: item.formaPagamento,
+            date: item.date,
+            status: item.status
+        })
+    }
 
     if (carregando) {
         return (
@@ -112,18 +133,21 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="bg-gray-900 rounded-xl border border-gray-700 p-5 notranslate">
-                    <p className="text-gray-400 text-xs uppercase tracking-widest mb-4">Ranking de Serviços</p>
-                    {rankingServicos.length === 0 ? (
+                    <p className="text-gray-400 text-xs uppercase tracking-widest mb-4">Ranking de Barbeiros</p>
+                    {porBarbeiro.length === 0 ? (
                         <p className="text-gray-500 text-sm">Nenhum dado no período</p>
                     ) : (
                         <div className="flex flex-col gap-3">
-                            {rankingServicos.map((item, index) => (
-                                <div key={item.servico} className="flex items-center gap-3">
+                            {porBarbeiro.map((item, index) => (
+                                <div key={item.barbeiro} className="flex items-center gap-3">
                                     <span className="text-orange-500 font-bold w-5 text-sm">{index + 1}º</span>
                                     <div className="flex-1">
                                         <div className="flex justify-between mb-1">
-                                            <span className="text-white text-sm">{item.servico}</span>
-                                            <span className="text-gray-400 text-sm">{item.quantidade}x</span>
+                                            <span className="text-white text-sm">{item.barbeiro}</span>
+                                            <div className="flex gap-3">
+                                                <span className="text-gray-400 text-sm">{item.quantidade}x</span>
+                                                <span className="text-orange-400 text-sm font-semibold">{formatBRL(item.total)}</span>
+                                            </div>
                                         </div>
                                         <div className="w-full bg-gray-700 rounded-full h-1.5">
                                             <div
@@ -139,7 +163,7 @@ export default function DashboardPage() {
                 </div>
             </div>
 
-            {/* Tabela */}
+            {/* Tabela principal */}
             <div className="bg-gray-900 rounded-xl border border-gray-700 notranslate">
                 <div className="px-4 py-4 border-b border-gray-700 notranslate">
                     <p className="text-gray-400 text-xs uppercase tracking-widest">
@@ -166,9 +190,13 @@ export default function DashboardPage() {
                                 </tr>
                             ) : (
                                 itensPagina.map(items => (
-                                    <tr key={items.id} className="bg-gray-900 border-b border-gray-700 hover:bg-gray-800">
+                                    <tr
+                                        key={items.id}
+                                        className="bg-gray-900 border-b border-gray-700 hover:bg-gray-800 cursor-pointer"
+                                        onClick={() => abrirEdicao(items)}
+                                    >
                                         <td className="px-4 py-4 notranslate font-medium text-white">{items.descricao}</td>
-                                        <td className="px-4 py-4 notranslate">{Array.isArray(items.servico) ? items.servico.join("+") : items.servico}</td>
+                                        <td className="px-4 py-4 notranslate">{Array.isArray(items.servico) ? items.servico.join(" + ") : items.servico}</td>
                                         <td className="px-4 py-4 notranslate text-orange-500">{items.barbeiro}</td>
                                         <td className="px-4 py-4 notranslate font-bold text-orange-500">{formatBRL(items.valor)}</td>
                                         <td className="px-4 py-4 notranslate">{items.formaPagamento}</td>
@@ -187,7 +215,7 @@ export default function DashboardPage() {
                 </div>
             </div>
 
-            {/* Modal barbeiro */}
+            {/* Modal detalhes por barbeiro */}
             <Dialog open={barbeiroSelecionado !== null} onOpenChange={() => setBarbeiroSelecionado(null)}>
                 <DialogContent className="bg-gray-900 border-gray-700 text-white w-full max-w-lg mx-4 notranslate">
                     <DialogHeader>
@@ -219,7 +247,11 @@ export default function DashboardPage() {
                             </thead>
                             <tbody>
                                 {atendimentosBarbeiro.map(item => (
-                                    <tr key={item.id} className="border-b border-gray-700 hover:bg-gray-800 notranslate">
+                                    <tr
+                                        key={item.id}
+                                        className="border-b border-gray-700 hover:bg-gray-800 cursor-pointer notranslate"
+                                        onClick={() => { setBarbeiroSelecionado(null); abrirEdicao(item) }}
+                                    >
                                         <td className="px-4 py-3 notranslate font-medium text-white">{item.descricao}</td>
                                         <td className="px-4 py-3 notranslate">{item.servico}</td>
                                         <td className="px-4 py-3 notranslate text-orange-500 font-bold">{formatBRL(item.valor)}</td>
@@ -231,6 +263,21 @@ export default function DashboardPage() {
                     </div>
                 </DialogContent>
             </Dialog>
+
+            {/* Modal editar atendimento */}
+            <ModalEditarAtendimento
+                atendimento={atendimentoSelecionado}
+                open={atendimentoSelecionado !== null}
+                onFechar={() => setAtendimentoSelecionado(null)}
+                onConfirmar={async (id, form) => {
+                    await atualizarAtendimentoAdmin(id, form)
+                    recarregar()
+                }}
+                onDeletar={async (id) => {
+                    await deletarAtendimento(id)
+                    recarregar()
+                }}
+            />
         </div>
     )
 }
