@@ -9,7 +9,6 @@ import { ModalEditarAtendimento } from "./modals/atendimento-editar-modal"
 import { usePaginacao } from "../hooks/use-pagination"
 import { Paginacao } from "../components/pagination"
 import { useAuth } from "../contexts/auth-context"
-import { ativarAtendimentoService } from "@/services/atendimento-service"
 
 export default function Atendimentos() {
     const { dados, carregando, periodo, setPeriodo, criarAtendimento, atualizarAtendimento, deletarAtendimento, ativarAtendimento } = useAtendimentos()
