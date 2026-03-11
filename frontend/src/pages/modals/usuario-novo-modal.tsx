@@ -90,7 +90,7 @@ export function ModalNovoUsuario({ onConfirmar }: Props) {
                                 <SelectValue placeholder="Selecione" />
                             </SelectTrigger>
                             <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                                <SelectItem value="ADMIN">Administrator</SelectItem>
+                                <SelectItem value="ADMIN">Administrador</SelectItem>
                                 <SelectItem value="USER">Barbeiro</SelectItem>
                             </SelectContent>
                         </Select>
