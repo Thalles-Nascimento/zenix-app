@@ -67,7 +67,7 @@ export default function FilaPage() {
                                         {index + 1}
                                     </div>
                                     <div>
-                                        <p className="text-white font-medium">{cliente.nomeCliente} Guys</p>
+                                        <p className="text-white font-medium">{cliente.nomeCliente}</p>
                                         <p className="text-gray-400 text-sm">{Array.isArray(cliente.servico) ? cliente.servico.join(" + ") : cliente.servico} • {cliente.formaPagamento}</p>
                                         <p className="text-gray-500 text-xs">Entrou às {cliente.horario}</p>
                                     </div>

@@ -11,6 +11,8 @@ import { toast, Toaster } from "sonner"
 import { SuccessScreen } from "../components/successScreen-component"
 import { InputTelefone } from "../components/common/input-telefone"
 import { ServicosMultiSelect } from "../components/common/servicos-multiselect-component"
+import { SERVICOS } from "@/utils/servicos"
+
 
 export default function LoginClient() {
     const { unidadeId } = useParams()
@@ -82,6 +84,13 @@ export default function LoginClient() {
         return <SuccessScreen nome={nomeEfetivo} />
     }
 
+    const valorTotal = servicos.reduce((acc, nome) => {
+        const servico = SERVICOS.find(s => s.nome === nome)
+        if (!servico) return acc
+        const valor = parseFloat(servico.valor.replace("R$", "").replace(",", ".").trim())
+        return acc + valor
+    }, 0)
+
     return (
         <section className="min-h-screen bg-black notranslate">
             <Toaster richColors position="top-center" />
@@ -151,12 +160,11 @@ export default function LoginClient() {
                                 <Label className="text-gray-300">
                                     Serviços
                                     {servicos.length > 0 && (
-                                        <span className="ml-2 text-orange-500 text-xs">{servicos.length} selecionado(s)</span>
+                                        <span className="ml-2 text-orange-500 text-xs">{servicos.length} selecionado(s) — VALOR TOTAL R$ {valorTotal.toFixed(2).replace(".", ",")}</span>
                                     )}
                                 </Label>
                                 <ServicosMultiSelect selecionados={servicos} onChange={setServicos} />
                             </div>
-
                             <div>
                                 <Label className="text-gray-300">Forma de Pagamento</Label>
                                 <Select onValueChange={setFormaPagamento}>
