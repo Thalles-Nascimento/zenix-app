@@ -79,6 +79,14 @@ export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirma
                 </DialogHeader>
                 <div className="flex flex-col gap-4 mt-2 notranslate">
                     <div>
+                        <Label className="text-gray-300">Cliente</Label>
+                        <Input
+                            className="mt-1 bg-gray-800 border-gray-700 text-white"
+                            value={form.descricao}
+                            onChange={(e) => setForm({ ...form, descricao: e.target.value })}
+                        />
+                    </div>
+                    <div>
                         <Label className="text-gray-300">
                             Serviços
                             {form.servico.length > 0 && (
