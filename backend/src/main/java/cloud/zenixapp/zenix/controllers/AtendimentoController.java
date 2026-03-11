@@ -179,4 +179,11 @@ public class AtendimentoController {
 
     }
 
+    @PatchMapping("/{id}")
+    @Operation(summary = "Ativar atendimento", description = "Endpoint para ativar um atendimento do sistema")
+    public ResponseEntity<?> ativarAtendimento(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(atendimentoService.ativarAtendimento(id));
+    }
+
 }

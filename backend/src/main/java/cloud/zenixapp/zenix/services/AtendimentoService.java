@@ -12,7 +12,6 @@ import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.repositories.AtendimentoRepository;
 import cloud.zenixapp.zenix.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -153,6 +152,22 @@ public class AtendimentoService {
                             "Atendimento atualizado com sucesso!"
                     );
 
+                })
+                .orElseThrow(() -> new NotFoundException("Atendimento não encontrado!"));
+    }
+
+    @Transactional
+    public SucessAtendimentoResponseDTO ativarAtendimento(Long id){
+        return atendimentoRepository.findById(id)
+                .map(atendimento -> {
+                    if(atendimento.getStatus() != -1){
+                        throw new AtendimentoExcluidoException("Atendimento já está ativo!");
+                    }
+                    atendimentoRepository.ativarAtendimento(id);
+                    return new SucessAtendimentoResponseDTO(
+                            HttpStatus.OK.value(),
+                            "Atendimento ativado com sucesso"
+                    );
                 })
                 .orElseThrow(() -> new NotFoundException("Atendimento não encontrado!"));
     }
