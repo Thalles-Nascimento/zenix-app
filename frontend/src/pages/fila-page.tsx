@@ -11,6 +11,14 @@ export default function FilaPage() {
     const aguardando = fila.filter(c => c.status === "AGUARDANDO")
     const emAtendimento = fila.filter(c => c.status === "EM_ATENDIMENTO")
 
+    const formatarHorario = (horario: string) => {
+        if (!horario) return ""
+        const [hora, minuto, segundo] = horario.split(":")
+        const seg = segundo?.split(".")[0] ?? "00"
+        const ms = segundo?.split(".")[1]?.slice(0, 3) ?? "000"
+        return `${hora}:${minuto}:${seg}.${ms}`
+    }
+
     const handleFinalizar = async (id: number, valor: number) => {
         const cliente = fila.find(c => c.id === id)
         if (!cliente) return
@@ -69,7 +77,7 @@ export default function FilaPage() {
                                     <div>
                                         <p className="text-white font-medium">{cliente.nomeCliente}</p>
                                         <p className="text-gray-400 text-sm">{Array.isArray(cliente.servico) ? cliente.servico.join(" + ") : cliente.servico} • {cliente.formaPagamento}</p>
-                                        <p className="text-gray-500 text-xs">Entrou às {cliente.horario}</p>
+                                        <p className="text-gray-500 text-xs">Entrou às {formatarHorario(cliente.horario)}</p>
                                     </div>
                                 </div>
 
