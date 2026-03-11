@@ -1,4 +1,4 @@
-import api_url from "../enviroments/enviroments-dev";
+import api_url from "../enviroments/enviroments";
 import type { AtendimentoFormProps } from "../types/atendimento";
 
 export async function atendimentoService() {

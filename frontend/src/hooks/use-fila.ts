@@ -21,8 +21,6 @@ export function useFila() {
 
     useEffect(() => {
         buscarFila()
-
-        // Atualiza a fila a cada 5 segundos automaticamente
         const intervalo = setInterval(buscarFila, 5000)
         return () => clearInterval(intervalo)
     }, [])
