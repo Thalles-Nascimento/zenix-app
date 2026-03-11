@@ -45,11 +45,11 @@ export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirma
 
     return (
         <Dialog open={open} onOpenChange={onFechar}>
-            <DialogContent className="bg-gray-900 border-gray-700 text-white w-[calc(100vw-2rem)] max-w-md max-h-[90vh] overflow-y-auto">
+            <DialogContent className="notranslate bg-gray-900 border-gray-700 text-white w-[calc(100vw-2rem)] max-w-md max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                    <DialogTitle className="text-white">Editar Atendimento</DialogTitle>
+                    <DialogTitle className="text-white notranslate">Editar Atendimento</DialogTitle>
                 </DialogHeader>
-                <div className="flex flex-col gap-4 mt-2">
+                <div className="flex flex-col gap-4 mt-2 notranslate">
                     <div>
                         <Label className="text-gray-300">Cliente</Label>
                         <Input className="mt-1 bg-gray-800 border-gray-700 text-white"
@@ -77,10 +77,10 @@ export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirma
                     <div>
                         <Label className="text-gray-300">Forma de Pagamento</Label>
                         <Select value={form.formaPagamento} onValueChange={(v) => setForm({ ...form, formaPagamento: v })}>
-                            <SelectTrigger className="mt-1 bg-gray-800 border-gray-700 text-white">
+                            <SelectTrigger className="mt-1 bg-gray-800 border-gray-700 text-white notranslate">
                                 <SelectValue placeholder="Selecione" />
                             </SelectTrigger>
-                            <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                            <SelectContent className="bg-gray-800 border-gray-700 text-white notranslate">
                                 <SelectItem value="DINHEIRO">Dinheiro</SelectItem>
                                 <SelectItem value="PIX">Pix</SelectItem>
                                 <SelectItem value="CARTAO">Cartão</SelectItem>

@@ -34,16 +34,16 @@ export default function FilaPage() {
     return (
         <>
             <Toaster richColors position="top-center" />
-            <div className="flex flex-col gap-6">
-                <h1 className="text-white text-xl font-bold">Fila de Atendimentos</h1>
+            <div className="flex flex-col gap-6 notranslate">
+                <h1 className="text-white text-xl font-bold">Fila de atendimentos</h1>
 
                 {/* Cards resumo */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4 notranslate">
                     <div className="bg-gray-900 rounded-xl border border-gray-700 p-4">
                         <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Aguardando</p>
                         <p className="text-orange-500 text-2xl font-bold">{aguardando.length}</p>
                     </div>
-                    <div className="bg-gray-900 rounded-xl border border-gray-700 p-4">
+                    <div className="bg-gray-900 rounded-xl border border-gray-700 p-4 notranslate">
                         <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Em Atendimento</p>
                         <p className="text-orange-500 text-2xl font-bold">{emAtendimento.length}</p>
                     </div>
@@ -51,30 +51,30 @@ export default function FilaPage() {
 
                 {/* Lista */}
                 {fila.length === 0 ? (
-                    <div className="bg-gray-900 rounded-xl border border-gray-700 p-10 text-center">
+                    <div className="bg-gray-900 rounded-xl border border-gray-700 p-10 text-center notranslate">
                         <p className="text-gray-500">Nenhum cliente na fila no momento</p>
                     </div>
                 ) : (
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-3 notranslate">
                         {fila.map((cliente, index) => (
                             <div
                                 key={cliente.id}
-                                className="bg-gray-900 rounded-xl border border-gray-700 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+                                className="notranslate bg-gray-900 rounded-xl border border-gray-700 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
                             >
                                 {/* Info do cliente */}
-                                <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 shrink-0 rounded-full bg-orange-600 flex items-center justify-center font-bold text-sm">
+                                <div className="flex items-center gap-3 notranslate">
+                                    <div className="notranslate w-8 h-8 shrink-0 rounded-full bg-orange-600 flex items-center justify-center font-bold text-sm">
                                         {index + 1}
                                     </div>
                                     <div>
-                                        <p className="text-white font-medium">{cliente.nomeCliente}</p>
+                                        <p className="text-white font-medium">{cliente.nomeCliente} Guys</p>
                                         <p className="text-gray-400 text-sm">{Array.isArray(cliente.servico) ? cliente.servico.join(" + ") : cliente.servico} • {cliente.formaPagamento}</p>
                                         <p className="text-gray-500 text-xs">Entrou às {cliente.horario}</p>
                                     </div>
                                 </div>
 
                                 {/* Ações */}
-                                <div className="flex items-center gap-2 flex-wrap">
+                                <div className="flex items-center gap-2 flex-wrap notranslate">
                                     <span className={`text-xs font-semibold px-2 py-1 rounded-full
                                         ${cliente.status === "AGUARDANDO"
                                             ? "bg-gray-700 text-gray-300"

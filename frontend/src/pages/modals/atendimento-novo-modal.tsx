@@ -62,12 +62,12 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
                             onChange={(e) => setForm({ ...form, valor: e.target.value })} />
                     </div>
                     <div>
-                        <Label className="text-gray-300">Forma de Pagamento</Label>
+                        <Label className="text-gray-300 notranslate">Forma de Pagamento</Label>
                         <Select onValueChange={(v) => setForm({ ...form, formaPagamento: v })}>
-                            <SelectTrigger className="mt-1 bg-gray-800 border-gray-700 text-white">
+                            <SelectTrigger className="mt-1 bg-gray-800 border-gray-700 text-white notranslate">
                                 <SelectValue placeholder="Selecione" />
                             </SelectTrigger>
-                            <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                            <SelectContent className="bg-gray-800 border-gray-700 text-white notranslate">
                                 <SelectItem value="DINHEIRO">Dinheiro</SelectItem>
                                 <SelectItem value="PIX">Pix</SelectItem>
                                 <SelectItem value="CARTAO">Cartão</SelectItem>

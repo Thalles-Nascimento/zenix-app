@@ -24,25 +24,25 @@ export default function UnidadesPage() {
             <Toaster richColors position="top-right" />
 
             {/* Topbar */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 notranslate">
                 <h1 className="text-white text-xl font-bold">Unidades</h1>
                 <ModalNovaUnidade onConfirmar={criarUnidade} />
             </div>
 
             {/* Tabela */}
-            <div className="overflow-x-auto rounded-xl border border-gray-700">
-                <table className="w-full text-sm text-left text-gray-300 min-w-[400px]">
-                    <thead className="text-xs text-gray-400 uppercase bg-gray-800 border-b border-gray-700">
+            <div className="overflow-x-auto rounded-xl border border-gray-700 notranslate">
+                <table className="w-full text-sm text-left text-gray-300 min-w-[400px] notranslate">
+                    <thead className="text-xs text-gray-400 uppercase bg-gray-800 border-b border-gray-700 notranslate">
                         <tr>
-                            <th className="px-4 py-3">UNIDADE</th>
-                            <th className="px-4 py-3">ENDEREÇO</th>
-                            <th className="px-4 py-3">STATUS</th>
+                            <th className="px-4 py-3 notranslate">UNIDADE</th>
+                            <th className="px-4 py-3 notranslate">ENDEREÇO</th>
+                            <th className="px-4 py-3 notranslate">STATUS</th>
                         </tr>
                     </thead>
                     <tbody>
                         {unidades.length === 0 ? (
                             <tr>
-                                <td colSpan={3} className="px-6 py-8 text-center text-gray-500">
+                                <td colSpan={3} className="px-6 py-8 text-center text-gray-500 notranslate">
                                     Nenhuma unidade cadastrada
                                 </td>
                             </tr>
@@ -50,12 +50,12 @@ export default function UnidadesPage() {
                             unidades.map(u => (
                                 <tr
                                     key={u.id}
-                                    className="bg-gray-900 border-b border-gray-700 hover:bg-gray-800 cursor-pointer"
+                                    className="bg-gray-900 border-b border-gray-700 hover:bg-gray-800 cursor-pointer notranslate"
                                     onClick={() => setUnidadeSelecionada(u)}
                                 >
-                                    <td className="px-4 py-4 font-medium text-white">{u.nomeUnidade}</td>
-                                    <td className="px-4 py-4">{u.endereco}</td>
-                                    <td className="px-4 py-4">
+                                    <td className="px-4 py-4 notranslate font-medium text-white">{u.nomeUnidade}</td>
+                                    <td className="px-4 py-4 notranslate">{u.endereco}</td>
+                                    <td className="px-4 py-4 notranslate">
                                         <span className={u.status === 1 ? "text-orange-500 font-semibold" : "text-gray-500"}>
                                             {u.status === 1 ? "ATIVA" : "INATIVA"}
                                         </span>

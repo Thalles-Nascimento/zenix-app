@@ -98,10 +98,10 @@ export function ModalEditarUsuario({ usuario, open, onFechar, onConfirmar, onDel
                     <div>
                         <Label className="text-gray-300">Usuário</Label>
                         <Select value={form.grupo} onValueChange={(v: "ADMIN" | "USER") => setForm({ ...form, grupo: v })}>
-                            <SelectTrigger className="mt-1 w-full bg-gray-800 border-gray-700 text-white">
+                            <SelectTrigger className="notranslate mt-1 w-full bg-gray-800 border-gray-700 text-white">
                                 <SelectValue placeholder="Selecione" />
                             </SelectTrigger>
-                            <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                            <SelectContent className="notranslate bg-gray-800 border-gray-700 text-white">
                                 <SelectItem value="ADMIN">Administrador</SelectItem>
                                 <SelectItem value="USER">Barbeiro</SelectItem>
                             </SelectContent>
@@ -110,10 +110,10 @@ export function ModalEditarUsuario({ usuario, open, onFechar, onConfirmar, onDel
                     <div>
                         <Label className="text-gray-300">Unidade</Label>
                         <Select value={String(form.unidade ? String(form.unidade): "")} onValueChange={(v) => setForm({ ...form, unidade: Number(v) })}>
-                            <SelectTrigger className="mt-1 w-full bg-gray-800 border-gray-700 text-white">
+                            <SelectTrigger className="notranslate mt-1 w-full bg-gray-800 border-gray-700 text-white">
                                 <SelectValue placeholder="Selecione a unidade" />
                             </SelectTrigger>
-                            <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                            <SelectContent className="notranslate bg-gray-800 border-gray-700 text-white">
                                 {unidades.map(u => (
                                     <SelectItem key={u.id} value={String(u.id)}>{u.nomeUnidade}</SelectItem>
                                 ))}
@@ -121,20 +121,20 @@ export function ModalEditarUsuario({ usuario, open, onFechar, onConfirmar, onDel
                         </Select>
                     </div>
                     {usuario?.status === -1 && (
-                        <div className="flex items-center gap-2 py-1">
+                        <div className="notranslate flex items-center gap-2 py-1">
                             <input
                                 type="checkbox"
                                 id="reativar"
                                 checked={reativar}
-                                className="w-4 h-4 accent-orange-500 cursor-pointer"
+                                className="notranslate w-4 h-4 accent-orange-500 cursor-pointer"
                                 onChange={(e) => setReativar(e.target.checked)}
                             />
-                            <label htmlFor="reativar" className="text-gray-300 text-sm cursor-pointer">
+                            <label htmlFor="reativar" className="notranslate text-gray-300 text-sm cursor-pointer">
                                 Reativar usuário
                             </label>
                         </div>
                     )}
-                    <div className="flex flex-col gap-2 mt-2">
+                    <div className="flex flex-col gap-2 mt-2 notranslate">
                         <Botao texto="Salvar Alterações" color="sucess" click={handleConfirmar} />
                         <Botao texto="Deletar" color="delete" click={handleDeletar} />
                         <Botao texto="Cancelar" color="cancel" click={onFechar} />

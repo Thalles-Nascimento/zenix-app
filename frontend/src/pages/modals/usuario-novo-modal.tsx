@@ -73,10 +73,10 @@ export function ModalNovoUsuario({ onConfirmar }: Props) {
                     <div>
                         <Label className="text-gray-300">Unidade</Label>
                         <Select onValueChange={(v) => setForm({ ...form, unidade: Number(v) })}>
-                            <SelectTrigger className="mt-1 w-full bg-gray-800 border-gray-700 text-white">
+                            <SelectTrigger className="mt-1 w-full bg-gray-800 border-gray-700 text-white notranslate">
                                 <SelectValue placeholder="Selecione" />
                             </SelectTrigger>
-                            <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                            <SelectContent className="bg-gray-800 border-gray-700 text-white notranslate">
                                 {unidades.map(u => (
                                     <SelectItem key={u.id} value={String(u.id)}>{u.nomeUnidade}</SelectItem>
                                 ))}
@@ -86,11 +86,11 @@ export function ModalNovoUsuario({ onConfirmar }: Props) {
                     <div>
                         <Label className="text-gray-300">Usuário</Label>
                         <Select onValueChange={(v: "ADMIN" | "USER") => setForm({ ...form, grupo: v })}>
-                            <SelectTrigger className="mt-1 w-full bg-gray-800 border-gray-700 text-white">
+                            <SelectTrigger className="mt-1 w-full bg-gray-800 border-gray-700 text-white notranslate">
                                 <SelectValue placeholder="Selecione" />
                             </SelectTrigger>
                             <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                                <SelectItem value="ADMIN">Administrador</SelectItem>
+                                <SelectItem value="ADMIN">Administrator</SelectItem>
                                 <SelectItem value="USER">Barbeiro</SelectItem>
                             </SelectContent>
                         </Select>

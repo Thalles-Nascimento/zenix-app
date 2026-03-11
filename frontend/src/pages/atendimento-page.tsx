@@ -27,7 +27,7 @@ export default function Atendimentos() {
             <Toaster richColors position="top-center" />
 
             {/* Topbar */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 notranslate">
                 <h1 className="text-white text-xl font-bold">Atendimentos</h1>
                 <div className="flex flex-wrap items-center gap-2">
                     <button
@@ -49,16 +49,16 @@ export default function Atendimentos() {
             </div>
 
             {/* Tabela */}
-            <div className="overflow-x-auto rounded-xl border border-gray-700">
+            <div className="overflow-x-auto rounded-xl border border-gray-700 notranslate">
                 <table className="w-full text-sm text-left text-gray-300 min-w-[600px]">
                     <thead className="text-xs text-gray-400 uppercase bg-gray-800 border-b border-gray-700">
                         <tr>
-                            <th className="px-4 py-3">CLIENTE</th>
-                            <th className="px-4 py-3">SERVIÇO</th>
-                            <th className="px-4 py-3">VALOR</th>
-                            <th className="px-4 py-3">PAGAMENTO</th>
-                            <th className="px-4 py-3">DATA</th>
-                            <th className="px-4 py-3">STATUS</th>
+                            <th className="px-4 py-3 notranslate">CLIENTE</th>
+                            <th className="px-4 py-3 notranslate">SERVIÇO</th>
+                            <th className="px-4 py-3 notranslate">VALOR</th>
+                            <th className="px-4 py-3 notranslate">PAGAMENTO</th>
+                            <th className="px-4 py-3 notranslate">DATA</th>
+                            <th className="px-4 py-3 notranslate">STATUS</th>
                         </tr>
                     </thead>
                     <tbody>

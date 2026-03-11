@@ -26,35 +26,35 @@ export default function FinanceiroPage() {
     }
 
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 notranslate">
             <h1 className="text-white text-xl font-bold">Financeiro</h1>
 
             {/* Cards fixos */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="bg-gray-900 rounded-xl border border-gray-700 p-5">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 notranslate">
+                <div className="bg-gray-900 rounded-xl border border-gray-700 p-5 notranslate">
                     <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Hoje</p>
                     <p className="text-orange-500 text-2xl font-bold">{formatBRL(totalDia)}</p>
                 </div>
-                <div className="bg-gray-900 rounded-xl border border-gray-700 p-5">
+                <div className="bg-gray-900 rounded-xl border border-gray-700 p-5 notranslate">
                     <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Esta Semana</p>
                     <p className="text-orange-500 text-2xl font-bold">{formatBRL(totalSemana)}</p>
                 </div>
-                <div className="bg-gray-900 rounded-xl border border-gray-700 p-5">
+                <div className="bg-gray-900 rounded-xl border border-gray-700 p-5 notranslate">
                     <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Este Mês</p>
                     <p className="text-orange-500 text-2xl font-bold">{formatBRL(totalMes)}</p>
                 </div>
             </div>
 
             {/* Filtro por período */}
-            <div className="flex flex-wrap items-center gap-3 bg-gray-900 rounded-xl border border-gray-700 p-4">
+            <div className="flex flex-wrap items-center gap-3 bg-gray-900 rounded-xl border border-gray-700 p-4 notranslate">
                 <span className="text-gray-400 text-sm font-medium w-full sm:w-auto">Filtrar por período:</span>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 notranslate">
                     <label className="text-gray-400 text-sm">De</label>
                     <input type="date" value={filtroInicio}
                         onChange={(e) => setFiltroInicio(e.target.value)}
                         className="bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 outline-none" />
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 notranslate">
                     <label className="text-gray-400 text-sm">Até</label>
                     <input type="date" value={filtroFim}
                         onChange={(e) => setFiltroFim(e.target.value)}
@@ -70,16 +70,16 @@ export default function FinanceiroPage() {
 
             {/* Cards período filtrado */}
             {(filtroInicio || filtroFim) && (
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div className="bg-gray-900 rounded-xl border border-orange-700 p-5">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 notranslate">
+                    <div className="bg-gray-900 rounded-xl border border-orange-700 p-5 notranslate">
                         <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Total do Período</p>
                         <p className="text-orange-500 text-2xl font-bold">{formatBRL(totalPeriodo)}</p>
                     </div>
-                    <div className="bg-gray-900 rounded-xl border border-orange-700 p-5">
+                    <div className="bg-gray-900 rounded-xl border border-orange-700 p-5 notranslate">
                         <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Ticket Médio</p>
                         <p className="text-orange-500 text-2xl font-bold">{formatBRL(ticketMedio)}</p>
                     </div>
-                    <div className="bg-gray-900 rounded-xl border border-orange-700 p-5">
+                    <div className="bg-gray-900 rounded-xl border border-orange-700 p-5 notranslate">
                         <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Atendimentos</p>
                         <p className="text-orange-500 text-2xl font-bold">{atendimentosFiltrados.length}</p>
                     </div>
@@ -87,8 +87,8 @@ export default function FinanceiroPage() {
             )}
 
             {/* Gráfico + Formas de pagamento */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                <div className="lg:col-span-2 bg-gray-900 rounded-xl border border-gray-700 p-5">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 notranslate">
+                <div className="lg:col-span-2 bg-gray-900 rounded-xl border border-gray-700 p-5 notranslate">
                     <p className="text-gray-400 text-xs uppercase tracking-widest mb-4">Arrecadado por Dia</p>
                     <ResponsiveContainer width="100%" height={220}>
                         <AreaChart data={dadosGrafico}>
@@ -111,19 +111,19 @@ export default function FinanceiroPage() {
                     </ResponsiveContainer>
                 </div>
 
-                <div className="bg-gray-900 rounded-xl border border-gray-700 p-5">
+                <div className="bg-gray-900 rounded-xl border border-gray-700 p-5 notranslate">
                     <p className="text-gray-400 text-xs uppercase tracking-widest mb-4">Por Forma de Pagamento</p>
                     {porFormaPagamento.length === 0 ? (
                         <p className="text-gray-500 text-sm">Nenhum dado</p>
                     ) : (
-                        <div className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-4 notranslate">
                             {porFormaPagamento.map(item => (
                                 <div key={item.forma}>
-                                    <div className="flex justify-between mb-1">
+                                    <div className="flex justify-between mb-1 notranslate">
                                         <span className="text-white text-sm">{item.forma}</span>
                                         <span className="text-orange-500 text-sm font-bold">{formatBRL(item.total)}</span>
                                     </div>
-                                    <div className="w-full bg-gray-700 rounded-full h-1.5">
+                                    <div className="w-full bg-gray-700 rounded-full h-1.5 notranslate">
                                         <div
                                             className="bg-orange-500 h-1.5 rounded-full"
                                             style={{
@@ -139,15 +139,15 @@ export default function FinanceiroPage() {
             </div>
 
             {/* Tabela */}
-            <div className="overflow-x-auto rounded-xl border border-gray-700">
-                <table className="w-full text-sm text-left text-gray-300 min-w-[500px]">
-                    <thead className="text-xs text-gray-400 uppercase bg-gray-800 border-b border-gray-700">
+            <div className="overflow-x-auto rounded-xl border border-gray-700 notranslate">
+                <table className="w-full text-sm text-left text-gray-300 min-w-[500px] notranslate">
+                    <thead className="text-xs text-gray-400 uppercase bg-gray-800 border-b border-gray-700 notranslate">
                         <tr>
-                            <th className="px-4 py-3">CLIENTE</th>
-                            <th className="px-4 py-3">SERVIÇO</th>
-                            <th className="px-4 py-3">VALOR</th>
-                            <th className="px-4 py-3">PAGAMENTO</th>
-                            <th className="px-4 py-3">DATA</th>
+                            <th className="px-4 py-3 notranslate">CLIENTE</th>
+                            <th className="px-4 py-3 notranslate">SERVIÇO</th>
+                            <th className="px-4 py-3 notranslate">VALOR</th>
+                            <th className="px-4 py-3 notranslate">PAGAMENTO</th>
+                            <th className="px-4 py-3 notranslate">DATA</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -159,12 +159,12 @@ export default function FinanceiroPage() {
                             </tr>
                         ) : (
                             itensPagina.map(item => (
-                                <tr key={item.id} className="bg-gray-900 border-b border-gray-700 hover:bg-gray-800">
-                                    <td className="px-4 py-4 font-medium text-white">{item.descricao}</td>
-                                    <td className="px-4 py-4">{Array.isArray(item.servico) ? item.servico.join(" + ") : item.servico}</td>
-                                    <td className="px-4 py-4 text-orange-500 font-bold">{formatBRL(item.valor)}</td>
-                                    <td className="px-4 py-4">{item.formaPagamento}</td>
-                                    <td className="px-4 py-4">{item.date}</td>
+                                <tr key={item.id} className="bg-gray-900 border-b border-gray-700 hover:bg-gray-800 notranslate">
+                                    <td className="px-4 py-4 notranslate font-medium text-white">{item.descricao}</td>
+                                    <td className="px-4 py-4 notranslate">{Array.isArray(item.servico) ? item.servico.join(" + ") : item.servico}</td>
+                                    <td className="px-4 py-4 notranslate text-orange-500 font-bold">{formatBRL(item.valor)}</td>
+                                    <td className="px-4 py-4 notranslate">{item.formaPagamento}</td>
+                                    <td className="px-4 py-4 notranslate">{item.date}</td>
                                 </tr>
                             ))
                         )}

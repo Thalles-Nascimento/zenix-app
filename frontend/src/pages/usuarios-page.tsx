@@ -33,41 +33,41 @@ export default function UsersPage() {
             <Toaster richColors position="top-right" />
 
             {/* Topbar */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 notranslate">
                 <h1 className="text-white text-xl font-bold">Usuários</h1>
                 <ModalNovoUsuario onConfirmar={criarUsuario} />
             </div>
 
             {/* Tabela */}
-            <div className="overflow-x-auto rounded-xl border border-gray-700">
-                <table className="w-full text-sm text-left text-gray-300 min-w-[700px]">
-                    <thead className="text-xs text-gray-400 uppercase bg-gray-800 border-b border-gray-700">
+            <div className="overflow-x-auto rounded-xl border border-gray-700 notranslate">
+                <table className="w-full text-sm text-left text-gray-300 min-w-[700px] notranslate">
+                    <thead className="text-xs text-gray-400 uppercase bg-gray-800 border-b border-gray-700 notranslate">
                         <tr>
-                            <th className="px-4 py-3">USUÁRIO</th>
-                            <th className="px-4 py-3">E-MAIL</th>
-                            <th className="px-4 py-3">CPF</th>
-                            <th className="px-4 py-3">PERMISSÕES</th>
-                            <th className="px-4 py-3">UNIDADE</th>
-                            <th className="px-4 py-3">STATUS</th>
+                            <th className="px-4 py-3 notranslate">USUÁRIO</th>
+                            <th className="px-4 py-3 notranslate">E-MAIL</th>
+                            <th className="px-4 py-3 notranslate">CPF</th>
+                            <th className="px-4 py-3 notranslate">PERMISSÕES</th>
+                            <th className="px-4 py-3 notranslate">UNIDADE</th>
+                            <th className="px-4 py-3 notranslate">STATUS</th>
                         </tr>
                     </thead>
                     <tbody>
                         {itensPagina.map(items => (
                             <tr
                                 key={items.id}
-                                className="bg-gray-900 border-b border-gray-700 hover:bg-gray-800 cursor-pointer"
+                                className="bg-gray-900 border-b border-gray-700 hover:bg-gray-800 cursor-pointer notranslate"
                                 onClick={() => setUsuarioSelecionado(items)}
                             >
-                                <td className="px-4 py-4 font-medium text-white">{items.nome}</td>
-                                <td className="px-4 py-4">{items.email}</td>
-                                <td className="px-4 py-4">{formatarCPF(items.cpf)}</td>
-                                <td className="px-4 py-4">
+                                <td className="px-4 py-4 notranslate font-medium text-white">{items.nome}</td>
+                                <td className="px-4 py-4 notranslate">{items.email}</td>
+                                <td className="px-4 py-4 notranslate">{formatarCPF(items.cpf)}</td>
+                                <td className="px-4 py-4 notranslate">
                                     <span className={grupoConfig[items.grupo]?.className ?? ""}>
                                         {grupoConfig[items.grupo]?.label ?? items.grupo}
                                     </span>
                                 </td>
-                                <td className="px-4 py-4">{items.unidade?.nomeUnidade ?? '--'}</td>
-                                <td className="px-4 py-4">
+                                <td className="px-4 py-4 notranslate">{items.unidade?.nomeUnidade ?? '--'}</td>
+                                <td className="px-4 py-4 notranslate">
                                     <span className={items.status === 1 ? "text-orange-500 font-semibold" : "text-gray-500"}>
                                         {items.status === 1 ? "ATIVO" : "EXCLUÍDO"}
                                     </span>

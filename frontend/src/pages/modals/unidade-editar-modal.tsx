@@ -70,21 +70,21 @@ export function ModalEditarUnidade({ unidade, open, onFechar, onConfirmar, onDel
                     </div>
 
                     <Label className="text-gray-300">Barbeiros</Label>
-                    <div className="flex flex-col gap-2 max-h-40 overflow-y-auto">
+                    <div className="flex flex-col gap-2 max-h-40 overflow-y-auto notranslate">
                         {detalhe?.usuarios?.length === 0 ? (
-                            <p className="text-gray-500 text-sm">Nenhum usuário nessa unidade</p>
+                            <p className="text-gray-500 text-sm notranslate">Nenhum usuário nessa unidade</p>
                         ) : (
                             detalhe?.usuarios?.map(u => (
-                                <div key={u.id} className="flex items-center justify-between bg-gray-800 rounded-lg px-3 py-2">
+                                <div key={u.id} className="notranslate flex items-center justify-between bg-gray-800 rounded-lg px-3 py-2">
                                     <div>
-                                        <p className="text-white text-sm font-medium">{u.nome}</p>
-                                        <p className="text-gray-400 text-xs">{u.email}</p>
+                                        <p className="text-white text-sm font-medium notranslate">{u.nome}</p>
+                                        <p className="text-gray-400 text-xs notranslate">{u.email}</p>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <span className={`text-xs ${grupoConfig[u.grupo]?.className ?? ""}`}>
+                                    <div className="flex items-center gap-2 notranslate">
+                                        <span className={`notranslate text-xs ${grupoConfig[u.grupo]?.className ?? ""}`}>
                                             {grupoConfig[u.grupo]?.label ?? u.grupo}
                                         </span>
-                                        <span className={`text-xs ${u.status === 1 ? "text-orange-500" : "text-gray-500"}`}>
+                                        <span className={`notranslate text-xs ${u.status === 1 ? "text-orange-500" : "text-gray-500"}`}>
                                             {u.status === 1 ? "Ativo" : "Inativo"}
                                         </span>
                                     </div>
@@ -94,21 +94,21 @@ export function ModalEditarUnidade({ unidade, open, onFechar, onConfirmar, onDel
                     </div>
 
                     {unidade?.status === -1 && (
-                        <div className="flex items-center gap-2 py-1">
+                        <div className="flex items-center gap-2 py-1 notranslate">
                             <input
                                 type="checkbox"
                                 id="reativar"
                                 checked={reativar}
-                                className="w-4 h-4 accent-orange-500 cursor-pointer"
+                                className="w-4 h-4 accent-orange-500 cursor-pointer notranslate"
                                 onChange={(e) => setReativar(e.target.checked)}
                             />
-                            <label htmlFor="reativar" className="text-gray-300 text-sm cursor-pointer">
+                            <label htmlFor="reativar" className="text-gray-300 text-sm cursor-pointer notranslate">
                                 Reativar unidade
                             </label>
                         </div>
                     )}
 
-                    <div className="flex flex-col gap-2 mt-2">
+                    <div className="flex flex-col gap-2 mt-2 notranslate">
                         <Botao texto="Salvar Alterações" color="sucess" click={handleConfirmar} />
                         <Botao texto="Deletar" color="delete" click={handleDeletar} />
                         <Botao texto="Cancelar" color="cancel" click={onFechar} />
