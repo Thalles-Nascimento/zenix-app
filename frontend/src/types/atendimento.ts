@@ -11,6 +11,6 @@ export interface DadosProps {
 export interface AtendimentoFormProps {
     descricao: string
     servico: string[]
-    valor: string
+    valor: number
     formaPagamento: string
 }

@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../components/ui/dialog"
-import { Input } from "../../components/ui/input"
 import { Label } from "../../components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select"
 import type { DadosProps, AtendimentoFormProps } from "../../types/atendimento"
 import { Botao } from "../../components/common/botao"
 import { ServicosMultiSelect } from "../../components/common/servicos-multiselect-component"
+import { SERVICOS } from "../../utils/servicos"
+import { Input } from "@/components/ui/input"
 
 interface Props {
     atendimento: DadosProps | null
@@ -15,21 +16,34 @@ interface Props {
     onDeletar: (id: number) => void
 }
 
+const calcularTotal = (servicos: string[]): number => {
+    return servicos.reduce((acc, nome) => {
+        const servico = SERVICOS.find(s => s.nome === nome)
+        if (!servico) return acc
+        return acc + parseFloat(servico.valor.replace("R$", "").replace(",", ".").trim())
+    }, 0)
+}
+
 export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirmar, onDeletar }: Props) {
     const [form, setForm] = useState<AtendimentoFormProps>({
-        descricao: "", servico: [], valor: "", formaPagamento: ""
+        descricao: "", servico: [], valor: 0, formaPagamento: ""
     })
 
     useEffect(() => {
         if (atendimento) {
+            const servicos = Array.isArray(atendimento.servico) ? atendimento.servico : [atendimento.servico]
             setForm({
                 descricao: atendimento.descricao,
-                servico: Array.isArray(atendimento.servico) ? atendimento.servico : [atendimento.servico],
-                valor: String(atendimento.valor),
+                servico: servicos,
+                valor: calcularTotal(servicos),
                 formaPagamento: atendimento.formaPagamento
             })
         }
     }, [atendimento])
+
+    const handleServicosChange = (servicos: string[]) => {
+        setForm({ ...form, servico: servicos, valor: calcularTotal(servicos) })
+    }
 
     const handleConfirmar = () => {
         if (!atendimento) return
@@ -51,28 +65,26 @@ export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirma
                 </DialogHeader>
                 <div className="flex flex-col gap-4 mt-2 notranslate">
                     <div>
-                        <Label className="text-gray-300">Cliente</Label>
-                        <Input className="mt-1 bg-gray-800 border-gray-700 text-white"
-                            value={form.descricao}
-                            onChange={(e) => setForm({ ...form, descricao: e.target.value })} />
-                    </div>
-                    <div>
                         <Label className="text-gray-300">
                             Serviços
                             {form.servico.length > 0 && (
-                                <span className="ml-2 text-orange-500 text-xs">{form.servico.length} selecionado(s)</span>
+                                <span className="ml-2 text-orange-500 text-xs">
+                                    {form.servico.length} selecionado(s)
+                                </span>
                             )}
                         </Label>
                         <ServicosMultiSelect
                             selecionados={form.servico}
-                            onChange={(v) => setForm({ ...form, servico: v })}
+                            onChange={handleServicosChange}
                         />
                     </div>
                     <div>
-                        <Label className="text-gray-300">Valor</Label>
-                        <Input className="mt-1 bg-gray-800 border-gray-700 text-white"
-                            value={form.valor}
-                            onChange={(e) => setForm({ ...form, valor: e.target.value })} />
+                        <Label className="text-gray-300">Valor Total</Label>
+                        <Input
+                            disabled
+                            className="mt-1 bg-gray-800 border-gray-600 text-orange-400 font-semibold cursor-not-allowed"
+                            value={form.servico.length === 0 ? "R$ 0,00" : `R$ ${form.valor.toFixed(2).replace(".", ",")}`}
+                        />
                     </div>
                     <div>
                         <Label className="text-gray-300">Forma de Pagamento</Label>

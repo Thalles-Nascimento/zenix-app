@@ -11,7 +11,7 @@ export default function FilaPage() {
     const aguardando = fila.filter(c => c.status === "AGUARDANDO")
     const emAtendimento = fila.filter(c => c.status === "EM_ATENDIMENTO")
 
-    const handleFinalizar = async (id: number, valor: string) => {
+    const handleFinalizar = async (id: number, valor: number) => {
         const cliente = fila.find(c => c.id === id)
         if (!cliente) return
         await criarAtendimentoService({

@@ -7,22 +7,35 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import type { AtendimentoFormProps } from "../../types/atendimento"
 import { Botao } from "../../components/common/botao"
 import { ServicosMultiSelect } from "../../components/common/servicos-multiselect-component"
+import { SERVICOS } from "../../utils/servicos"
 
 interface Props {
     onConfirmar: (form: AtendimentoFormProps) => void
 }
 
+const calcularTotal = (servicos: string[]): number => {
+    return servicos.reduce((acc, nome) => {
+        const servico = SERVICOS.find(s => s.nome === nome)
+        if (!servico) return acc
+        return acc + parseFloat(servico.valor.replace("R$", "").replace(",", ".").trim())
+    }, 0)
+}
+
 export function ModalNovoAtendimento({ onConfirmar }: Props) {
     const [open, setOpen] = useState(false)
     const [form, setForm] = useState<AtendimentoFormProps>({
-        descricao: "", servico: [], valor: "", formaPagamento: ""
+        descricao: "", servico: [], valor: 0, formaPagamento: ""
     })
+
+    const handleServicosChange = (servicos: string[]) => {
+        setForm({ ...form, servico: servicos, valor: calcularTotal(servicos) })
+    }
 
     const handleConfirmar = () => {
         if (form.servico.length === 0) return
         onConfirmar(form)
         setOpen(false)
-        setForm({ descricao: "", servico: [], valor: "", formaPagamento: "" })
+        setForm({ descricao: "", servico: [], valor: 0, formaPagamento: "" })
     }
 
     return (
@@ -46,20 +59,23 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
                         <Label className="text-gray-300">
                             Serviços
                             {form.servico.length > 0 && (
-                                <span className="ml-2 text-orange-500 text-xs">{form.servico.length} selecionado(s)</span>
+                                <span className="ml-2 text-orange-500 text-xs">
+                                    {form.servico.length} selecionado(s)
+                                </span>
                             )}
                         </Label>
                         <ServicosMultiSelect
                             selecionados={form.servico}
-                            onChange={(v) => setForm({ ...form, servico: v })}
+                            onChange={handleServicosChange}
                         />
                     </div>
                     <div>
-                        <Label className="text-gray-300">Valor</Label>
-                        <Input className="mt-1 bg-gray-800 border-gray-700 text-white"
-                            placeholder="0,00"
-                            value={form.valor}
-                            onChange={(e) => setForm({ ...form, valor: e.target.value })} />
+                        <Label className="text-gray-300">Valor Total</Label>
+                        <Input
+                            disabled
+                            className="mt-1 bg-gray-800 border-gray-600 text-orange-400 font-semibold cursor-not-allowed"
+                            value={form.servico.length === 0 ? "R$ 0,00" : `R$ ${form.valor.toFixed(2).replace(".", ",")}`}
+                        />
                     </div>
                     <div>
                         <Label className="text-gray-300 notranslate">Forma de Pagamento</Label>

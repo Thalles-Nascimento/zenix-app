@@ -1,24 +1,32 @@
-import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../components/ui/dialog"
-import { Input } from "../../components/ui/input"
-import { Label } from "../../components/ui/label"
 import { Botao } from "../../components/common/botao"
 import type { FilaProps } from "../../types/fila"
-// TODO - Refazer resumo
+import { SERVICOS } from "../../utils/servicos"
+
 interface Props {
     cliente: FilaProps | null
     open: boolean
     onFechar: () => void
-    onFinalizar: (id: number, valor: string) => void
+    onFinalizar: (id: number, valor: number) => void
 }
 
 export function ModalFinalizarAtendimento({ cliente, open, onFechar, onFinalizar }: Props) {
-    const [valor, setValor] = useState("")
+
+    const calcularTotal = (servicos: string | string[]): string => {
+        const lista = Array.isArray(servicos) ? servicos : [servicos]
+        const total = lista.reduce((acc, nome) => {
+            const servico = SERVICOS.find(s => s.nome === nome)
+            if (!servico) return acc
+            const valor = parseFloat(servico.valor.replace("R$", "").replace(",", ".").trim())
+            return acc + valor
+        }, 0)
+        return total.toFixed(2).replace(".", ",")
+    }
 
     const handleFinalizar = () => {
-        if (!cliente || !valor) return
+        if (!cliente) return
+        const valor = parseFloat(calcularTotal(cliente.servico))
         onFinalizar(cliente.id, valor)
-        setValor("")
     }
 
     return (
@@ -40,16 +48,9 @@ export function ModalFinalizarAtendimento({ cliente, open, onFechar, onFinalizar
                             }
                         </div>
                         <p className="text-gray-300 text-sm">{cliente?.formaPagamento}</p>
-                    </div>
-                    <div>
-                        <Label className="text-gray-300">Valor cobrado</Label>
-                        <Input
-                            className="mt-1 bg-gray-800 border-gray-700 text-white"
-                            placeholder="R$ 0,00"
-                            type="number"
-                            value={valor}
-                            onChange={(e) => setValor(e.target.value)}
-                        />
+                        <p className="text-orange-400 font-semibold text-sm mt-1">
+                            Total: R$ {cliente ? calcularTotal(cliente.servico) : "0,00"}
+                        </p>
                     </div>
                     <div className="flex flex-col gap-2 mt-2">
                         <Botao texto="Finalizar Atendimento" color="sucess" click={handleFinalizar} />
