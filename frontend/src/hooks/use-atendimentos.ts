@@ -5,6 +5,7 @@ import {
     atualizarAtendimentoService,
     atualizarAtendimentoAdminService,
     deletarAtendimentoService,
+    ativarAtendimentoService,
     listarHistorico
 } from "../services/atendimento-service"
 import type { DadosProps, AtendimentoFormProps } from "../types/atendimento"
@@ -47,6 +48,7 @@ export function useAtendimentos() {
             toast.error(`Erro: ${error}`)
         }
     }
+
     // Atualiza atendimento do próprio usuário (USER e ADMIN nos próprios atendimentos)
     const atualizarAtendimento = async (id: number, form: AtendimentoFormProps) => {
         try {
@@ -79,7 +81,17 @@ export function useAtendimentos() {
         }
     }
 
+    const ativarAtendimento = async (id: number) => {
+        try {
+            await ativarAtendimentoService(id)
+            toast.success("Atendimento reativado com sucesso!")
+            await buscarAtendimentos()
+        } catch (error) {
+            toast.error(`Erro: ${error}`)
+        }
+    }
+
     const dados = periodo === 'hoje' ? dadosHoje : dadosHistorico
 
-    return { dados, carregando, periodo, setPeriodo, criarAtendimento, atualizarAtendimento, atualizarAtendimentoAdmin, deletarAtendimento }
+    return { dados, carregando, periodo, setPeriodo, criarAtendimento, atualizarAtendimento, atualizarAtendimentoAdmin, deletarAtendimento, ativarAtendimento }
 }

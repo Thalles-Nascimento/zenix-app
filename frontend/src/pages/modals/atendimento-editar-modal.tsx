@@ -14,6 +14,7 @@ interface Props {
     onFechar: () => void
     onConfirmar: (id: number, form: AtendimentoFormProps) => void
     onDeletar: (id: number) => void
+    onReativar?: (id: number) => void
 }
 
 const calcularTotal = (servicos: string[]): number => {
@@ -24,10 +25,12 @@ const calcularTotal = (servicos: string[]): number => {
     }, 0)
 }
 
-export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirmar, onDeletar }: Props) {
+export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirmar, onDeletar, onReativar }: Props) {
     const [form, setForm] = useState<AtendimentoFormProps>({
         descricao: "", servico: [], valor: 0, formaPagamento: ""
     })
+
+    const deletado = atendimento?.status === -1
 
     useEffect(() => {
         if (atendimento) {
@@ -35,7 +38,7 @@ export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirma
             setForm({
                 descricao: atendimento.descricao,
                 servico: servicos,
-                valor: atendimento.valor, // ← valor do banco, não recalculado
+                valor: atendimento.valor,
                 formaPagamento: atendimento.formaPagamento
             })
         }
@@ -57,11 +60,22 @@ export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirma
         onFechar()
     }
 
+    const handleReativar = () => {
+        if (!atendimento || !onReativar) return
+        onReativar(atendimento.id)
+        onFechar()
+    }
+
     return (
         <Dialog open={open} onOpenChange={onFechar}>
             <DialogContent className="notranslate bg-gray-900 border-gray-700 text-white w-[calc(100vw-2rem)] max-w-md max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                    <DialogTitle className="text-white notranslate">Editar Atendimento</DialogTitle>
+                    <DialogTitle className="text-white notranslate">
+                        Editar Atendimento
+                        {deletado && (
+                            <span className="ml-2 text-xs text-gray-500 font-normal">— Excluído</span>
+                        )}
+                    </DialogTitle>
                 </DialogHeader>
                 <div className="flex flex-col gap-4 mt-2 notranslate">
                     <div>
@@ -102,8 +116,15 @@ export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirma
                         </Select>
                     </div>
                     <div className="flex flex-col gap-2 mt-2">
-                        <Botao texto="Salvar Alterações" color="sucess" click={handleConfirmar} />
-                        <Botao texto="Deletar" color="delete" click={handleDeletar} />
+                        {!deletado && (
+                            <>
+                                <Botao texto="Salvar Alterações" color="sucess" click={handleConfirmar} />
+                                <Botao texto="Deletar" color="delete" click={handleDeletar} />
+                            </>
+                        )}
+                        {deletado && onReativar && (
+                            <Botao texto="Reativar Atendimento" color="sucess" click={handleReativar} />
+                        )}
                         <Botao texto="Cancelar" color="cancel" click={onFechar} />
                     </div>
                 </div>

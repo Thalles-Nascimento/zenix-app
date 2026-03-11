@@ -32,12 +32,12 @@ export function ServicosMultiSelect({ selecionados, onChange }: Props) {
     // Exibe "Nome - R$XX,00" para os selecionados no label do trigger
     const label = selecionados.length === 0
         ? "Selecione os serviços"
-        : selecionados
-            .map(nome => {
+        : selecionados.length <= 2
+            ? selecionados.map(nome => {
                 const servico = SERVICOS.find(s => s.nome === nome)
                 return servico ? `${servico.nome} - ${servico.valor}` : nome
-            })
-            .join(", ")
+            }).join(", ")
+            : `${selecionados.length} serviços selecionados`
 
     return (
         <div ref={ref} className="relative mt-1 notranslate">

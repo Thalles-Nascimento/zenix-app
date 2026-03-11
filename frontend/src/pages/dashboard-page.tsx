@@ -20,7 +20,7 @@ export default function DashboardPage() {
         filtroInicio, filtroFim, setFiltroInicio, setFiltroFim, recarregar
     } = useDashboard()
 
-    const { atualizarAtendimentoAdmin, deletarAtendimento } = useAtendimentos()
+    const { atualizarAtendimentoAdmin, deletarAtendimento, ativarAtendimento } = useAtendimentos()
 
     const [barbeiroSelecionado, setBarbeiroSelecionado] = useState<string | null>(null)
     const [atendimentoSelecionado, setAtendimentoSelecionado] = useState<DadosProps | null>(null)
@@ -38,7 +38,9 @@ export default function DashboardPage() {
         setAtendimentoSelecionado({
             id: item.id,
             descricao: item.descricao,
-            servico: Array.isArray(item.servico) ? item.servico : item.servico.split(", "),
+            servico: Array.isArray(item.servico)
+                ? item.servico
+                : item.servico.split(",").map(s => s.trim()), // ← trim() em cada item
             valor: item.valor,
             formaPagamento: item.formaPagamento,
             date: item.date,
@@ -196,7 +198,7 @@ export default function DashboardPage() {
                                         key={items.id}
                                         className={`border-b border-gray-700 hover:bg-gray-800 cursor-pointer
                                             ${items.status === -1 ? "opacity-50" : "bg-gray-900"}`}
-                                        onClick={() => items.status !== -1 && abrirEdicao(items)}
+                                        onClick={() => abrirEdicao(items)}
                                     >
                                         <td className="px-4 py-4 notranslate font-medium text-white">{items.descricao}</td>
                                         <td className="px-4 py-4 notranslate">{Array.isArray(items.servico) ? items.servico.join(" + ") : items.servico}</td>
@@ -282,6 +284,10 @@ export default function DashboardPage() {
                 }}
                 onDeletar={async (id) => {
                     await deletarAtendimento(id)
+                    recarregar()
+                }}
+                onReativar={async (id) => {
+                    await ativarAtendimento(id)
                     recarregar()
                 }}
             />

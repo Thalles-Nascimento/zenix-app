@@ -2,11 +2,8 @@ import api_url from "../enviroments/enviroments-dev";
 import type { AtendimentoFormProps } from "../types/atendimento";
 
 export async function atendimentoService() {
-    
     const response = await api_url.get('/atendimentos');
-    
     return response.data
-
 }
 
 export async function criarAtendimentoService(dados: AtendimentoFormProps) {
@@ -29,6 +26,10 @@ export async function deletarAtendimentoService(id: number) {
     return response.data
 }
 
+export async function ativarAtendimentoService(id: number) {
+    const response = await api_url.patch(`/atendimentos/${id}`)
+    return response.data
+}
 
 export async function listarAtendimentosAdminService() {
     const response = await api_url.get('/atendimentos/admin')

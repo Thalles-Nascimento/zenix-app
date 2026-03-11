@@ -9,9 +9,10 @@ import { ModalEditarAtendimento } from "./modals/atendimento-editar-modal"
 import { usePaginacao } from "../hooks/use-pagination"
 import { Paginacao } from "../components/pagination"
 import { useAuth } from "../contexts/auth-context"
+import { ativarAtendimentoService } from "@/services/atendimento-service"
 
 export default function Atendimentos() {
-    const { dados, carregando, periodo, setPeriodo, criarAtendimento, atualizarAtendimento, deletarAtendimento } = useAtendimentos()
+    const { dados, carregando, periodo, setPeriodo, criarAtendimento, atualizarAtendimento, deletarAtendimento, ativarAtendimento } = useAtendimentos()
     const [atendimentoSelecionado, setAtendimentoSelecionado] = useState<DadosProps | null>(null)
     const { itensPagina, paginaAtual, totalPaginas, totalItens, setPaginaAtual } = usePaginacao(dados, 7)
     const { permissao } = useAuth()
@@ -68,9 +69,9 @@ export default function Atendimentos() {
                             <tr
                                 key={items.id}
                                 className={`bg-gray-900 border-b border-gray-700 hover:bg-gray-800 
-                                    ${permissao === "ADMIN" && items.status !== -1 ? "cursor-pointer" : "cursor-default"}`}
+                                    ${permissao === "ADMIN" ? "cursor-pointer" : "cursor-default"}`}
                                 onClick={() => {
-                                    if(items.status !== -1 && permissao === "ADMIN"){
+                                    if (permissao === "ADMIN") {
                                         setAtendimentoSelecionado(items)
                                     }
                                 }}
@@ -106,6 +107,7 @@ export default function Atendimentos() {
                 onFechar={() => setAtendimentoSelecionado(null)}
                 onConfirmar={atualizarAtendimento}
                 onDeletar={deletarAtendimento}
+                onReativar={ativarAtendimento}
             />
         </>
     )
