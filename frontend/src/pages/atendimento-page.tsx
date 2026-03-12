@@ -53,7 +53,7 @@ export default function Atendimentos() {
             {/* Tabela */}
             <div className="overflow-x-auto rounded-xl border border-gray-700 notranslate">
                 <table className="w-full text-sm text-left text-gray-300 min-w-[600px]">
-                    <thead className="text-xs text-gray-400 uppercase bg-gray-800 border-b border-gray-700">
+                    <thead className="text-xs text-white uppercase bg-gray-800 border-b border-gray-700">
                         <tr>
                             <th className="px-4 py-3 notranslate">CLIENTE</th>
                             <th className="px-4 py-3 notranslate">SERVIÇO</th>
@@ -67,7 +67,7 @@ export default function Atendimentos() {
                         {itensPagina.map(items => (
                             <tr
                                 key={items.id}
-                                className={`bg-gray-900 border-b border-gray-700 hover:bg-gray-800 
+                                className={`bg-black border-b border-gray-700 hover:bg-gray-800 
                                     ${permissao === "ADMIN" ? "cursor-pointer" : "cursor-default"}`}
                                 onClick={() => {
                                     if (permissao === "ADMIN") {
@@ -91,14 +91,15 @@ export default function Atendimentos() {
                         ))}
                     </tbody>
                 </table>
-                <Paginacao
+                
+            </div>
+            <Paginacao
                     paginaAtual={paginaAtual}
                     totalPaginas={totalPaginas}
                     totalItens={totalItens}
                     itensPorPagina={7}
                     onPaginaChange={setPaginaAtual}
                 />
-            </div>
 
             <ModalEditarAtendimento
                 atendimento={atendimentoSelecionado}

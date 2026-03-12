@@ -68,12 +68,12 @@ export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirma
 
     return (
         <Dialog open={open} onOpenChange={onFechar}>
-            <DialogContent className="notranslate bg-gray-900 border-gray-700 text-white w-[calc(100vw-2rem)] max-w-md max-h-[90vh] overflow-y-auto">
+            <DialogContent className="notranslate bg-black border-gray-700 text-white w-[calc(100vw-2rem)] max-w-md max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle className="text-white notranslate">
                         Editar Atendimento
                         {deletado && (
-                            <span className="ml-2 text-xs text-gray-500 font-normal">— Excluído</span>
+                            <span className="ml-2 text-xs text-gray-500 font-bold">— Excluído</span>
                         )}
                     </DialogTitle>
                 </DialogHeader>
@@ -81,7 +81,7 @@ export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirma
                     <div>
                         <Label className="text-gray-300">Cliente</Label>
                         <Input
-                            className="mt-1 bg-gray-800 border-gray-700 text-white"
+                            className="mt-1 bg-gray-900 border-gray-700 text-white"
                             value={form.descricao}
                             onChange={(e) => setForm({ ...form, descricao: e.target.value })}
                         />
@@ -103,7 +103,7 @@ export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirma
                     <div>
                         <Label className="text-gray-300">Valor Total</Label>
                         <Input
-                            className="mt-1 bg-gray-800 border-gray-600 text-orange-400 font-semibold"
+                            className="mt-1 bg-gray-900 border-gray-600 text-orange-400 font-semibold"
                             value={form.valor === 0 ? "" : form.valor}
                             placeholder="R$ 0,00"
                             type="number"
@@ -113,10 +113,10 @@ export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirma
                     <div>
                         <Label className="text-gray-300">Forma de Pagamento</Label>
                         <Select value={form.formaPagamento} onValueChange={(v) => setForm({ ...form, formaPagamento: v })}>
-                            <SelectTrigger className="mt-1 bg-gray-800 border-gray-700 text-white notranslate">
+                            <SelectTrigger className="mt-1 bg-gray-900 border-gray-700 text-white w-full notranslate">
                                 <SelectValue placeholder="Selecione" />
                             </SelectTrigger>
-                            <SelectContent className="bg-gray-800 border-gray-700 text-white notranslate">
+                            <SelectContent className="bg-black border-gray-700 text-white notranslate">
                                 <SelectItem value="DINHEIRO">Dinheiro</SelectItem>
                                 <SelectItem value="PIX">Pix</SelectItem>
                                 <SelectItem value="CARTAO">Cartão</SelectItem>

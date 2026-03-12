@@ -45,7 +45,7 @@ export function ServicosMultiSelect({ selecionados, onChange }: Props) {
             <button
                 type="button"
                 onClick={() => setAberto(prev => !prev)}
-                className="w-full flex items-center justify-between border border-gray-300 text-sm rounded-md px-3 py-2 text-left focus:outline-none focus:ring-1 focus:ring-gray-500"
+                className="bg-gray-900 w-full flex items-center justify-between border border-gray-600 text-sm rounded-md px-3 py-2 text-left focus:outline-none focus:ring-1 focus:ring-gray-500"
             >
                 <span className={`truncate ${selecionados.length === 0 ? "text-zinc-400" : "text-white"}`}>
                     {label}

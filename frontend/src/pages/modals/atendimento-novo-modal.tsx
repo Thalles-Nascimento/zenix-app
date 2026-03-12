@@ -43,20 +43,20 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
             <DialogTrigger asChild>
                 <Button>NOVO ATENDIMENTO</Button>
             </DialogTrigger>
-            <DialogContent className="bg-gray-900 border-gray-700 text-white w-[calc(100vw-2rem)] max-w-md max-h-[90vh] overflow-y-auto">
+            <DialogContent className="bg-black border-gray-700 text-white w-[calc(100vw-2rem)] max-w-md max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle className="text-white">Novo Atendimento</DialogTitle>
                 </DialogHeader>
                 <div className="flex flex-col gap-4 mt-2">
                     <div>
                         <Label className="text-gray-300">Cliente</Label>
-                        <Input className="mt-1 bg-gray-800 border-gray-700 text-white"
+                        <Input className="mt-2 bg-gray-900 border-gray-700 text-white"
                             placeholder="Nome do cliente"
                             value={form.descricao}
                             onChange={(e) => setForm({ ...form, descricao: e.target.value })} />
                     </div>
                     <div>
-                        <Label className="text-gray-300">
+                        <Label className="text-gray-300 mb-2">
                             Serviços
                             {form.servico.length > 0 && (
                                 <span className="ml-2 text-orange-500 text-xs">
@@ -73,17 +73,17 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
                         <Label className="text-gray-300">Valor Total</Label>
                         <Input
                             disabled
-                            className="mt-1 bg-gray-800 border-gray-600 text-orange-400 font-semibold cursor-not-allowed"
+                            className="mt-2 bg-gray-600 border-gray-600 text-orange-400 font-semibold cursor-not-allowed"
                             value={form.servico.length === 0 ? "R$ 0,00" : `R$ ${form.valor.toFixed(2).replace(".", ",")}`}
                         />
                     </div>
                     <div>
                         <Label className="text-gray-300 notranslate">Forma de Pagamento</Label>
                         <Select onValueChange={(v) => setForm({ ...form, formaPagamento: v })}>
-                            <SelectTrigger className="mt-1 bg-gray-800 border-gray-700 text-white notranslate">
+                            <SelectTrigger className="w-full mt-2 bg-gray-900 border-gray-700 text-white notranslate">
                                 <SelectValue placeholder="Selecione" />
                             </SelectTrigger>
-                            <SelectContent className="bg-gray-800 border-gray-700 text-white notranslate">
+                            <SelectContent className="bg-black border-gray-700 text-white notranslate">
                                 <SelectItem value="DINHEIRO">Dinheiro</SelectItem>
                                 <SelectItem value="PIX">Pix</SelectItem>
                                 <SelectItem value="CARTAO">Cartão</SelectItem>
