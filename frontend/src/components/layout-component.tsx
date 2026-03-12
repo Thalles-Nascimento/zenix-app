@@ -94,7 +94,7 @@ export default function Layout({ children }: LayoutProps) {
     }, [permissao])
 
     return (
-        <div className="flex overflow-x-hidden bg-gray-950 text-white"
+        <div className="flex overflow-x-hidden bg-black text-white"
             style={{ minHeight: "100dvh" }}
         >
             {/* Sidebar desktop */}
@@ -156,7 +156,7 @@ export default function Layout({ children }: LayoutProps) {
                 {/* Modal trocar senha */}
                 {modalSenhaOpen && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
-                        <div className="bg-gray-900 border border-gray-700 rounded-xl p-6 w-full max-w-sm">
+                        <div className="bg-black border border-gray-700 rounded-xl p-6 w-full max-w-sm">
                             <div className="flex items-center justify-between mb-4">
                                 <h2 className="text-white font-bold">Trocar Senha</h2>
                                 <button onClick={() => setModalSenhaOpen(false)}>
@@ -165,23 +165,23 @@ export default function Layout({ children }: LayoutProps) {
                             </div>
                             <div className="flex flex-col gap-3">
                                 <div>
-                                    <label className="text-gray-300 text-sm">Nova senha</label>
+                                    <label className="text-white text-sm">Nova senha</label>
                                     <input
                                         type="password"
                                         placeholder="Mínimo 6 caracteres"
                                         value={novaSenha}
                                         onChange={(e) => setNovaSenha(e.target.value)}
-                                        className="mt-1 w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 outline-none"
+                                        className="mt-1 w-full bg-gray-900 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 outline-none"
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-gray-300 text-sm">Confirmar senha</label>
+                                    <label className="text-white text-sm">Confirmar senha</label>
                                     <input
                                         type="password"
                                         placeholder="Repita a senha"
                                         value={confirmarSenha}
                                         onChange={(e) => setConfirmarSenha(e.target.value)}
-                                        className="mt-1 w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 outline-none"
+                                        className="mt-1 w-full bg-gray-900 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 outline-none"
                                     />
                                 </div>
                                 <div className="flex gap-2 mt-2">

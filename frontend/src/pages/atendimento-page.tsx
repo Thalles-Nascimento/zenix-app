@@ -18,7 +18,7 @@ export default function Atendimentos() {
 
     if (carregando) {
         return (
-            <div className="w-full flex items-center justify-center py-20">
+            <div className="w-full bg-black flex items-center justify-center py-20">
                 <Badge variant="secondary"><Spinner />Carregando...</Badge>
             </div>
         )
@@ -29,7 +29,7 @@ export default function Atendimentos() {
             <Toaster richColors position="top-center" />
 
             {/* Topbar */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 notranslate">
+            <div className="flex  flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 notranslate">
                 <h1 className="text-white text-xl font-bold">Atendimentos</h1>
                 <div className="flex flex-wrap items-center gap-2">
                     <button
