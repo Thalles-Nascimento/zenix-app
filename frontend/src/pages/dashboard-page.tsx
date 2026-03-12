@@ -295,7 +295,7 @@ export default function DashboardPage() {
 
             {/* Modal detalhes do barbeiro */}
             <Dialog open={barbeiroSelecionado !== null} onOpenChange={() => setBarbeiroSelecionado(null)}>
-                <DialogContent className="bg-black border-gray-500 text-white w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto notranslate">
+                <DialogContent className="bg-black border-gray-500 text-white w-[calc(100vw-2rem)] max-w-2xl max-h-[90vh] overflow-y-auto notranslate">
                     <DialogHeader>
                         <DialogTitle className="text-white notranslate">
                             Barbeiro: <span className="text-orange-500 font-bold">{barbeiroSelecionado}</span>
@@ -303,7 +303,7 @@ export default function DashboardPage() {
                     </DialogHeader>
 
                     {/* Cards resumo */}
-                    <div className="grid grid-cols-3 gap-3 notranslate">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 notranslate">
                         <div className="bg-black rounded-lg p-3 border border-gray-500 notranslate">
                             <p className="text-white font-bold text-xs uppercase tracking-widest mb-1">Atendimentos</p>
                             <p className="text-orange-500 text-xl font-bold">{atendimentosBarbeiro.length}</p>
@@ -335,7 +335,7 @@ export default function DashboardPage() {
                             <tbody>
                                 {itensPaginaModal.length === 0 ? (
                                     <tr>
-                                        <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
+                                        <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
                                             Nenhum atendimento no período
                                         </td>
                                     </tr>
