@@ -78,6 +78,11 @@ export function useFinanceiro() {
         }, {})
     ).sort((a, b) => parseData(a.data) > parseData(b.data) ? 1 : -1)
 
+    const comissaoBarbeiro = totalPeriodo * 0.5
+    const comissaoDia = totalDia * 0.5
+    const comissaoSemana = totalSemana * 0.5
+    const comissaoMes = totalMes * 0.5
+
     return {
         carregando,
         totalDia,
@@ -91,6 +96,10 @@ export function useFinanceiro() {
         filtroInicio,
         filtroFim,
         setFiltroInicio,
-        setFiltroFim
+        setFiltroFim,
+        comissaoBarbeiro,
+        comissaoDia,
+        comissaoSemana,
+        comissaoMes
     }
 }

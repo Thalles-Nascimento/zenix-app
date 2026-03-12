@@ -12,7 +12,8 @@ export default function FinanceiroPage() {
     const {
         carregando, totalDia, totalSemana, totalMes, totalPeriodo,
         ticketMedio, porFormaPagamento, atendimentosFiltrados,
-        dadosGrafico, filtroInicio, filtroFim, setFiltroInicio, setFiltroFim
+        dadosGrafico, filtroInicio, filtroFim, setFiltroInicio, setFiltroFim, 
+        comissaoBarbeiro, comissaoDia, comissaoSemana, comissaoMes
     } = useFinanceiro()
 
     const { itensPagina, paginaAtual, totalPaginas, totalItens, setPaginaAtual } = usePaginacao(atendimentosFiltrados, 4)
@@ -42,6 +43,21 @@ export default function FinanceiroPage() {
                 <div className="bg-gray-900 rounded-xl border border-gray-700 p-5 notranslate">
                     <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Este Mês</p>
                     <p className="text-orange-500 text-2xl font-bold">{formatBRL(totalMes)}</p>
+                </div>
+                <div className="bg-gray-900 rounded-xl border border-green-700 p-5 notranslate">
+                    <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Minha Comissão (Dia)</p>
+                    <p className="text-green-400 text-2xl font-bold">{formatBRL(comissaoDia)}</p>
+                    <p className="text-gray-500 text-xs mt-1">50% do total</p>
+                </div>
+                <div className="bg-gray-900 rounded-xl border border-green-700 p-5 notranslate">
+                    <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Minha Comissão (Semana)</p>
+                    <p className="text-green-400 text-2xl font-bold">{formatBRL(comissaoSemana)}</p>
+                    <p className="text-gray-500 text-xs mt-1">50% do total</p>
+                </div>
+                <div className="bg-gray-900 rounded-xl border border-green-700 p-5 notranslate">
+                    <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Minha Comissão (Mês)</p>
+                    <p className="text-green-400 text-2xl font-bold">{formatBRL(comissaoMes)}</p>
+                    <p className="text-gray-500 text-xs mt-1">50% do total</p>
                 </div>
             </div>
 
@@ -82,6 +98,11 @@ export default function FinanceiroPage() {
                     <div className="bg-gray-900 rounded-xl border border-orange-700 p-5 notranslate">
                         <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Atendimentos</p>
                         <p className="text-orange-500 text-2xl font-bold">{atendimentosFiltrados.length}</p>
+                    </div>
+                    <div className="bg-gray-900 rounded-xl border border-green-700 p-5 notranslate">
+                        <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Minha Comissão</p>
+                        <p className="text-green-400 text-2xl font-bold">{formatBRL(comissaoBarbeiro)}</p>
+                        <p className="text-gray-500 text-xs mt-1">50% do período</p>
                     </div>
                 </div>
             )}
