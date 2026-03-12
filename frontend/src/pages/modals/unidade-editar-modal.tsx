@@ -51,40 +51,40 @@ export function ModalEditarUnidade({ unidade, open, onFechar, onConfirmar, onDel
 
     return (
         <Dialog open={open} onOpenChange={onFechar}>
-            <DialogContent className="bg-gray-900 border-gray-700 text-white w-[calc(100vw-2rem)] max-w-md max-h-[90vh] overflow-y-auto">
+            <DialogContent className="bg-black border-gray-500 text-white w-[calc(100vw-2rem)] max-w-md max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle className="text-white">Editar Unidade</DialogTitle>
                 </DialogHeader>
                 <div className="flex flex-col gap-4 mt-2">
                     <div>
-                        <Label className="text-gray-300">Nome da Unidade</Label>
-                        <Input className="mt-1 bg-gray-800 border-gray-700 text-white"
+                        <Label className="text-white">Nome da Unidade</Label>
+                        <Input className="mt-1 bg-gray-900 border-gray-700 text-white"
                             value={form.nomeUnidade}
                             onChange={(e) => setForm({ ...form, nomeUnidade: e.target.value })} />
                     </div>
                     <div>
-                        <Label className="text-gray-300">Endereço</Label>
-                        <Input className="mt-1 bg-gray-800 border-gray-700 text-white"
+                        <Label className="text-white">Endereço</Label>
+                        <Input className="mt-1 bg-gray-900 border-gray-700 text-white"
                             value={form.endereco}
                             onChange={(e) => setForm({ ...form, endereco: e.target.value })} />
                     </div>
 
-                    <Label className="text-gray-300">Barbeiros</Label>
+                    <Label className="text-white">Barbeiros</Label>
                     <div className="flex flex-col gap-2 max-h-40 overflow-y-auto notranslate">
                         {detalhe?.usuarios?.length === 0 ? (
                             <p className="text-gray-500 text-sm notranslate">Nenhum usuário nessa unidade</p>
                         ) : (
                             detalhe?.usuarios?.map(u => (
-                                <div key={u.id} className="notranslate flex items-center justify-between bg-gray-800 rounded-lg px-3 py-2">
+                                <div key={u.id} className="notranslate flex items-center justify-between bg-gray-900 rounded-lg px-3 py-2">
                                     <div>
-                                        <p className="text-white text-sm font-medium notranslate">{u.nome}</p>
+                                        <p className="text-white text-sm font-bold notranslate">{u.nome}</p>
                                         <p className="text-gray-400 text-xs notranslate">{u.email}</p>
                                     </div>
                                     <div className="flex items-center gap-2 notranslate">
                                         <span className={`notranslate text-xs ${grupoConfig[u.grupo]?.className ?? ""}`}>
                                             {grupoConfig[u.grupo]?.label ?? u.grupo}
                                         </span>
-                                        <span className={`notranslate text-xs ${u.status === 1 ? "text-orange-500" : "text-gray-500"}`}>
+                                        <span className={`notranslate text-xs font-bold ${u.status === 1 ? "text-orange-500" : "text-gray-500"}`}>
                                             {u.status === 1 ? "Ativo" : "Inativo"}
                                         </span>
                                     </div>

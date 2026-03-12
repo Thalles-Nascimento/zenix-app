@@ -67,7 +67,7 @@ export default function Atendimentos() {
                         {itensPagina.map(items => (
                             <tr
                                 key={items.id}
-                                className={`bg-black border-b border-gray-700 hover:bg-gray-800 
+                                className={`bg-black border-b border-gray-700 hover:bg-gray-900 
                                     ${permissao === "ADMIN" ? "cursor-pointer" : "cursor-default"}`}
                                 onClick={() => {
                                     if (permissao === "ADMIN") {

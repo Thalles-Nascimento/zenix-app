@@ -29,21 +29,21 @@ export function ModalNovaUnidade({ onConfirmar }: NovaProps) {
             <DialogTrigger asChild>
                 <Button>NOVA UNIDADE</Button>
             </DialogTrigger>
-            <DialogContent className="bg-gray-900 border-gray-700 text-white w-[calc(100vw-2rem)] max-w-md max-h-[90vh] overflow-y-auto">
+            <DialogContent className="bg-black border-gray-500 text-white w-[calc(100vw-2rem)] max-w-md max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle className="text-white">Nova Unidade</DialogTitle>
                 </DialogHeader>
                 <div className="flex flex-col gap-4 mt-2 notranslate">
                     <div>
-                        <Label className="text-gray-300">Nome da Unidade</Label>
-                        <Input className="mt-1 bg-gray-800 border-gray-700 text-white notranslate"
+                        <Label className="text-white">Nome da Unidade</Label>
+                        <Input className="mt-1 bg-gray-900 border-gray-700 text-white notranslate"
                             placeholder="Ex: WN Barbearia Centro"
                             value={form.nomeUnidade}
                             onChange={(e) => setForm({ ...form, nomeUnidade: e.target.value })} />
                     </div>
                     <div>
-                        <Label className="text-gray-300">Endereço</Label>
-                        <Input className="mt-1 bg-gray-800 border-gray-700 text-white notranslate"
+                        <Label className="text-white">Endereço</Label>
+                        <Input className="mt-1 bg-gray-900 border-gray-700 text-white notranslate"
                             placeholder="Ex: Centro"
                             value={form.endereco}
                             onChange={(e) => setForm({ ...form, endereco: e.target.value })} />

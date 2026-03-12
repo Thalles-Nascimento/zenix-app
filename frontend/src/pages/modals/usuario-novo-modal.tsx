@@ -44,39 +44,39 @@ export function ModalNovoUsuario({ onConfirmar }: Props) {
             <DialogTrigger asChild>
                 <Button>NOVO USUÁRIO</Button>
             </DialogTrigger>
-            <DialogContent className="bg-gray-900 border-gray-700 text-white w-[calc(100vw-2rem)] max-w-md max-h-[90vh] overflow-y-auto">
+            <DialogContent className="bg-black border-gray-700 text-white w-[calc(100vw-2rem)] max-w-md max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle className="text-white">Novo Usuário</DialogTitle>
                 </DialogHeader>
                 <div className="flex flex-col gap-4 mt-2">
                     <div>
-                        <Label className="text-gray-300">Nome</Label>
-                        <Input className="mt-1 bg-gray-800 border-gray-700 text-white" placeholder="Nome completo"
+                        <Label className="text-white">Nome</Label>
+                        <Input className="mt-1 bg-gray-900 border-gray-700 text-white" placeholder="Nome completo"
                             value={form.nome} onChange={(e) => setForm({ ...form, nome: e.target.value })} />
                     </div>
                     <div>
-                        <Label className="text-gray-300">E-mail</Label>
-                        <Input className="mt-1 bg-gray-800 border-gray-700 text-white" type="email" placeholder="email@exemplo.com"
+                        <Label className="text-white">E-mail</Label>
+                        <Input className="mt-1 bg-gray-900 border-gray-700 text-white" type="email" placeholder="email@exemplo.com"
                             value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
                     </div>
                     <div>
-                        <Label className="text-gray-300">CPF</Label>
-                        <Input className="mt-1 bg-gray-800 border-gray-700 text-white" placeholder="000.000.000-00"
+                        <Label className="text-white">CPF</Label>
+                        <Input className="mt-1 bg-gray-900 border-gray-700 text-white" placeholder="000.000.000-00"
                             value={cpfFormatado} onChange={handleCPF} maxLength={14} />
                     </div>
                     <div>
-                        <Label className="text-gray-300">Senha</Label>
-                        <Input className="mt-1 bg-gray-800 border-gray-700 text-white" type="password" placeholder="********"
+                        <Label className="text-white">Senha</Label>
+                        <Input className="mt-1 bg-gray-900 border-gray-700 text-white" type="password" placeholder="********"
                             value={form.senha} onChange={(e) => setForm({ ...form, senha: e.target.value })} />
                         {erro && <p className="text-red-500 text-xs mt-1">{erro}</p>}
                     </div>
                     <div>
-                        <Label className="text-gray-300">Unidade</Label>
+                        <Label className="text-white">Unidade</Label>
                         <Select onValueChange={(v) => setForm({ ...form, unidade: Number(v) })}>
-                            <SelectTrigger className="mt-1 w-full bg-gray-800 border-gray-700 text-white notranslate">
+                            <SelectTrigger className="mt-1 w-full bg-gray-900 border-gray-700 text-white notranslate">
                                 <SelectValue placeholder="Selecione" />
                             </SelectTrigger>
-                            <SelectContent className="bg-gray-800 border-gray-700 text-white notranslate">
+                            <SelectContent className="bg-black border-gray-700 text-white notranslate">
                                 {unidades.map(u => (
                                     <SelectItem key={u.id} value={String(u.id)}>{u.nomeUnidade}</SelectItem>
                                 ))}
@@ -84,12 +84,12 @@ export function ModalNovoUsuario({ onConfirmar }: Props) {
                         </Select>
                     </div>
                     <div>
-                        <Label className="text-gray-300">Usuário</Label>
+                        <Label className="text-white">Usuário</Label>
                         <Select onValueChange={(v: "ADMIN" | "USER") => setForm({ ...form, grupo: v })}>
-                            <SelectTrigger className="mt-1 w-full bg-gray-800 border-gray-700 text-white notranslate">
+                            <SelectTrigger className="mt-1 w-full bg-gray-900 border-gray-700 text-white notranslate">
                                 <SelectValue placeholder="Selecione" />
                             </SelectTrigger>
-                            <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                            <SelectContent className="bg-black border-gray-700 text-white">
                                 <SelectItem value="ADMIN">Administrador</SelectItem>
                                 <SelectItem value="USER">Barbeiro</SelectItem>
                             </SelectContent>

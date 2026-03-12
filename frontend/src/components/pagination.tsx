@@ -21,7 +21,7 @@ export function Paginacao({ paginaAtual, totalPaginas, totalItens, itensPorPagin
                 <button
                     onClick={() => onPaginaChange(paginaAtual - 1)}
                     disabled={paginaAtual === 1}
-                    className="px-3 py-1.5 rounded-lg text-sm bg-gray-800 text-gray-300 hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                    className="px-3 py-1.5 rounded-lg text-sm bg-gray-900 text-white hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 >
                     ← Anterior
                 </button>
@@ -54,7 +54,7 @@ export function Paginacao({ paginaAtual, totalPaginas, totalItens, itensPorPagin
                 <button
                     onClick={() => onPaginaChange(paginaAtual + 1)}
                     disabled={paginaAtual === totalPaginas}
-                    className="px-3 py-1.5 rounded-lg text-sm bg-gray-800 text-gray-300 hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                    className="px-3 py-1.5 rounded-lg text-sm bg-gray-900 text-white hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 >
                     Próxima →
                 </button>

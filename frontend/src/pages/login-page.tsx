@@ -23,19 +23,19 @@ export default function LoginPage() {
             <div className="flex items-center mb-1 text-4xl font-semibold notranslate">
                 <img className="w-48 h-48 mr-2" src="/assets/imagens/LogoWN.png" alt="logo" />
             </div>
-            <div className="w-full bg-zinc-900 rounded-xl shadow border md:mt-0 sm:max-w-md xl:p-0 border-gray-500 notranslate">
+            <div className="w-full bg-black rounded-xl shadow border md:mt-0 sm:max-w-md xl:p-0 border-gray-500 notranslate">
                 <div className="p-6 space-y-4 md:space-y-6 sm:p-8 notranslate">
                     <h1 className="text-xl font-bold leading-tight tracking-tight text-white md:text-2xl">
                         Faça login na sua conta.
                     </h1>
                     <form className="space-y-4 md:space-y-6" onSubmit={(event) => event.preventDefault()}>
                         <div>
-                            <label className="block mb-2 text-sm font-medium text-gray-300">Seu e-mail</label>
-                            <Input type="email" placeholder="E-mail" className="text-white" onChange={(event) => setEmail(event.target.value)} />
+                            <label className="bg-gray-900block mb-2 text-sm font-medium text-white">Seu e-mail</label>
+                            <Input type="email" placeholder="E-mail" className="text-white bg-gray-900" onChange={(event) => setEmail(event.target.value)} />
                         </div>
                         <div>
-                            <label className="block mb-2 text-sm font-medium text-gray-300">Senha</label>
-                            <Input type="password" placeholder="********" className="text-white" onChange={(event) => setSenha(event.target.value)} />
+                            <label className="block mb-2 text-sm font-medium text-white">Senha</label>
+                            <Input type="password" placeholder="********" className="text-white bg-gray-900" onChange={(event) => setSenha(event.target.value)} />
                         </div>
 
                         {erro && (

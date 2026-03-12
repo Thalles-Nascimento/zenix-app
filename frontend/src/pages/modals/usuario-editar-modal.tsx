@@ -68,52 +68,52 @@ export function ModalEditarUsuario({ usuario, open, onFechar, onConfirmar, onDel
 
     return (
         <Dialog open={open} onOpenChange={onFechar}>
-            <DialogContent className="bg-gray-900 border-gray-700 text-white w-[calc(100vw-2rem)] max-w-md max-h-[90vh] overflow-y-auto">
+            <DialogContent className="bg-black border-gray-700 text-white w-[calc(100vw-2rem)] max-w-md max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                    <DialogTitle className="text-white">Editar Usuário</DialogTitle>
+                    <DialogTitle className="text-white">Editar Usuário - {form.nome}</DialogTitle>
                 </DialogHeader>
                 <div className="flex flex-col gap-4 mt-2">
                     <div>
-                        <Label className="text-gray-300">Nome</Label>
-                        <Input className="mt-1 bg-gray-800 border-gray-700 text-white"
+                        <Label className="text-white">Nome</Label>
+                        <Input className="mt-1 bg-gray-900 border-gray-700 text-white"
                             value={form.nome} onChange={(e) => setForm({ ...form, nome: e.target.value })} />
                     </div>
                     <div>
-                        <Label className="text-gray-300">E-mail</Label>
-                        <Input className="mt-1 bg-gray-800 border-gray-700 text-white" type="email"
+                        <Label className="text-white">E-mail</Label>
+                        <Input className="mt-1 bg-gray-900 border-gray-700 text-white" type="email"
                             value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
                     </div>
                     <div>
-                        <Label className="text-gray-300">CPF</Label>
-                        <Input className="mt-1 bg-gray-800 border-gray-700 text-white"
+                        <Label className="text-white">CPF</Label>
+                        <Input className="mt-1 bg-gray-900 border-gray-700 text-white"
                             value={cpfFormatado} onChange={handleCPF} maxLength={14} placeholder="000.000.000-00" />
                     </div>
                     <div>
-                        <Label className="text-gray-300">Nova Senha</Label>
-                        <Input className="mt-1 bg-gray-800 border-gray-700 text-white" type="password"
+                        <Label className="text-white">Nova Senha</Label>
+                        <Input className="mt-1 bg-gray-900 border-gray-700 text-white" type="password"
                             placeholder="***************"
                             value={form.senha} onChange={(e) => setForm({ ...form, senha: e.target.value })} />
                         {erro && <p className="text-red-500 text-xs mt-1">{erro}</p>}
                     </div>
                     <div>
-                        <Label className="text-gray-300">Usuário</Label>
+                        <Label className="text-white">Usuário</Label>
                         <Select value={form.grupo} onValueChange={(v: "ADMIN" | "USER") => setForm({ ...form, grupo: v })}>
-                            <SelectTrigger className="notranslate mt-1 w-full bg-gray-800 border-gray-700 text-white">
+                            <SelectTrigger className="notranslate mt-1 w-full bg-gray-900 border-gray-700 text-white">
                                 <SelectValue placeholder="Selecione" />
                             </SelectTrigger>
-                            <SelectContent className="notranslate bg-gray-800 border-gray-700 text-white">
+                            <SelectContent className="notranslate bg-black border-gray-700 text-white">
                                 <SelectItem value="ADMIN">Administrador</SelectItem>
                                 <SelectItem value="USER">Barbeiro</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
                     <div>
-                        <Label className="text-gray-300">Unidade</Label>
+                        <Label className="text-white">Unidade</Label>
                         <Select value={String(form.unidade ? String(form.unidade): "")} onValueChange={(v) => setForm({ ...form, unidade: Number(v) })}>
-                            <SelectTrigger className="notranslate mt-1 w-full bg-gray-800 border-gray-700 text-white">
+                            <SelectTrigger className="notranslate mt-1 w-full bg-gray-900 border-gray-700 text-white">
                                 <SelectValue placeholder="Selecione a unidade" />
                             </SelectTrigger>
-                            <SelectContent className="notranslate bg-gray-800 border-gray-700 text-white">
+                            <SelectContent className="notranslate bg-black border-gray-700 text-white">
                                 {unidades.map(u => (
                                     <SelectItem key={u.id} value={String(u.id)}>{u.nomeUnidade}</SelectItem>
                                 ))}
@@ -129,7 +129,7 @@ export function ModalEditarUsuario({ usuario, open, onFechar, onConfirmar, onDel
                                 className="notranslate w-4 h-4 accent-orange-500 cursor-pointer"
                                 onChange={(e) => setReativar(e.target.checked)}
                             />
-                            <label htmlFor="reativar" className="notranslate text-gray-300 text-sm cursor-pointer">
+                            <label htmlFor="reativar" className="notranslate text-white text-sm cursor-pointer">
                                 Reativar usuário
                             </label>
                         </div>

@@ -98,16 +98,16 @@ export default function LoginClient() {
                 <div className="flex items-center mb-1 notranslate">
                     <img className="w-48 h-48 mr-2" src="/assets/imagens/LogoWN.png" alt="logo" />
                 </div>
-                <div className="w-full bg-zinc-900 rounded-xl shadow border md:mt-0 sm:max-w-md xl:p-0 border-gray-500 notranslate">
+                <div className="w-full bg-black rounded-xl shadow border md:mt-0 sm:max-w-md xl:p-0 border-gray-500 notranslate">
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8 notranslate">
                         <h1 className="text-xl font-bold leading-tight tracking-tight text-white md:text-2xl">
-                            Entre na lista
+                            Entre na Fila de Atendimento
                         </h1>
                         <form className="space-y-4 md:space-y-6" onSubmit={(e) => e.preventDefault()}>
 
                             {/* Telefone — dispara busca ao completar 11 dígitos */}
                             <div className="notranslate">
-                                <Label className="text-gray-300">Telefone</Label>
+                                <Label className="text-white">Telefone</Label>
                                 <InputTelefone value={telefone} onChange={handleTelefoneChange} />
                                 {buscando && (
                                     <p className="text-gray-400 text-xs mt-1 notranslate">Buscando...</p>
@@ -117,11 +117,11 @@ export default function LoginClient() {
                             {/* Nome — dropdown se encontrou clientes, campo livre se não */}
                             {clientes.length > 0 ? (
                                 <div className="notranslate">
-                                    <Label className="text-gray-300">
+                                    <Label className="text-white">
                                         Selecione um cliente ou insira um novo
                                     </Label>
                                     <Select onValueChange={setNome}>
-                                        <SelectTrigger className="mt-2 border-gray-300 text-white w-full notranslate">
+                                        <SelectTrigger className="mt-2 bg-gray-900 border-gray-300 text-white w-full notranslate">
                                             <SelectValue placeholder="Selecione seu nome" />
                                         </SelectTrigger>
                                         <SelectContent className="bg-black border-gray-300 text-white notranslate">
@@ -137,7 +137,7 @@ export default function LoginClient() {
                                         <Input
                                             type="text"
                                             placeholder="Digite seu nome"
-                                            className="mt-2 text-white notranslate"
+                                            className="mt-2 bg-gray-900 text-white notranslate"
                                             value={nomeNovo}
                                             onChange={(e) => setNomeNovo(e.target.value)}
                                         />
@@ -145,11 +145,11 @@ export default function LoginClient() {
                                 </div>
                             ) : (
                                 <div>
-                                    <label className="block mb-2 text-sm font-medium text-gray-300">Seu Nome</label>
+                                    <label className="block mb-2 text-sm font-medium text-white">Seu Nome</label>
                                     <Input
                                         type="text"
                                         placeholder="Nome completo"
-                                        className="text-white notranslate"
+                                        className="text-white bg-gray-900 notranslate"
                                         value={nome}
                                         onChange={(e) => setNome(e.target.value)}
                                     />
@@ -157,7 +157,7 @@ export default function LoginClient() {
                             )}
 
                             <div>
-                                <Label className="text-gray-300">
+                                <Label className="text-white">
                                     Serviços
                                     {servicos.length > 0 && (
                                         <span className="ml-2 text-orange-500 text-xs">{servicos.length} selecionado(s) — VALOR TOTAL R$ {valorTotal.toFixed(2).replace(".", ",")}</span>
@@ -166,9 +166,9 @@ export default function LoginClient() {
                                 <ServicosMultiSelect selecionados={servicos} onChange={setServicos} />
                             </div>
                             <div>
-                                <Label className="text-gray-300">Forma de Pagamento</Label>
+                                <Label className="text-white">Forma de Pagamento</Label>
                                 <Select onValueChange={setFormaPagamento}>
-                                    <SelectTrigger className="mt-2 border-gray-300 text-white w-full notranslate">
+                                    <SelectTrigger className="bg-gray-900 mt-2 border-gray-300 text-white w-full notranslate">
                                         <SelectValue placeholder="Selecione" />
                                     </SelectTrigger>
                                     <SelectContent className="border-gray-300 bg-black text-white notranslate">
@@ -180,9 +180,9 @@ export default function LoginClient() {
                             </div>
 
                             <div>
-                                <Label className="text-gray-300">Barbeiro</Label>
+                                <Label className="text-white">Barbeiro</Label>
                                 <Select onValueChange={(value) => setIdBarbeiro(Number(value))}>
-                                    <SelectTrigger className="mt-2 border-gray-300 text-white w-full notranslate">
+                                    <SelectTrigger className="bg-gray-900 mt-2 border-gray-300 text-white w-full notranslate">
                                         <SelectValue placeholder="Selecione o barbeiro" />
                                     </SelectTrigger>
                                     <SelectContent className="bg-black border-gray-300 text-white notranslate">

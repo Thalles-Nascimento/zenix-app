@@ -4,6 +4,7 @@ import { useFinanceiro } from "../hooks/use-financeiro"
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 import { usePaginacao } from "../hooks/use-pagination"
 import { Paginacao } from "../components/pagination"
+import { hoje } from "@/utils/date"
 
 const formatBRL = (valor: number) =>
     valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
@@ -15,7 +16,9 @@ export default function FinanceiroPage() {
         dadosGrafico, filtroInicio, filtroFim, setFiltroInicio, setFiltroFim, 
         comissaoBarbeiro, comissaoDia, comissaoSemana, comissaoMes
     } = useFinanceiro()
-
+    
+    const isFiltroInicio = filtroInicio === ""
+    const isFiltroFim = filtroFim === ""
     const { itensPagina, paginaAtual, totalPaginas, totalItens, setPaginaAtual } = usePaginacao(atendimentosFiltrados, 4)
 
     if (carregando) {
@@ -27,54 +30,23 @@ export default function FinanceiroPage() {
     }
 
     return (
-        <div className="flex flex-col gap-6 notranslate">
+        <div className="bg-black flex flex-col gap-6 notranslate">
             <h1 className="text-white text-xl font-bold">Financeiro</h1>
-
-            {/* Cards fixos */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 notranslate">
-                <div className="bg-gray-900 rounded-xl border border-gray-700 p-5 notranslate">
-                    <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Hoje</p>
-                    <p className="text-orange-500 text-2xl font-bold">{formatBRL(totalDia)}</p>
-                </div>
-                <div className="bg-gray-900 rounded-xl border border-gray-700 p-5 notranslate">
-                    <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Esta Semana</p>
-                    <p className="text-orange-500 text-2xl font-bold">{formatBRL(totalSemana)}</p>
-                </div>
-                <div className="bg-gray-900 rounded-xl border border-gray-700 p-5 notranslate">
-                    <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Este Mês</p>
-                    <p className="text-orange-500 text-2xl font-bold">{formatBRL(totalMes)}</p>
-                </div>
-                <div className="bg-gray-900 rounded-xl border border-green-700 p-5 notranslate">
-                    <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Minha Comissão (Dia)</p>
-                    <p className="text-green-400 text-2xl font-bold">{formatBRL(comissaoDia)}</p>
-                    <p className="text-gray-500 text-xs mt-1">50% do total</p>
-                </div>
-                <div className="bg-gray-900 rounded-xl border border-green-700 p-5 notranslate">
-                    <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Minha Comissão (Semana)</p>
-                    <p className="text-green-400 text-2xl font-bold">{formatBRL(comissaoSemana)}</p>
-                    <p className="text-gray-500 text-xs mt-1">50% do total</p>
-                </div>
-                <div className="bg-gray-900 rounded-xl border border-green-700 p-5 notranslate">
-                    <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Minha Comissão (Mês)</p>
-                    <p className="text-green-400 text-2xl font-bold">{formatBRL(comissaoMes)}</p>
-                    <p className="text-gray-500 text-xs mt-1">50% do total</p>
-                </div>
-            </div>
 
             {/* Filtro por período */}
             <div className="flex flex-wrap items-center gap-3 bg-gray-900 rounded-xl border border-gray-700 p-4 notranslate">
-                <span className="text-gray-400 text-sm font-medium w-full sm:w-auto">Filtrar por período:</span>
+                <span className="text-white text-sm font-medium w-full sm:w-auto">Filtrar por período:</span>
                 <div className="flex items-center gap-2 notranslate">
                     <label className="text-gray-400 text-sm">De</label>
                     <input type="date" value={filtroInicio}
                         onChange={(e) => setFiltroInicio(e.target.value)}
-                        className="bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 outline-none" />
+                        className="bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-1 py-1 outline-none" />
                 </div>
                 <div className="flex items-center gap-2 notranslate">
                     <label className="text-gray-400 text-sm">Até</label>
                     <input type="date" value={filtroFim}
                         onChange={(e) => setFiltroFim(e.target.value)}
-                        className="bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 outline-none" />
+                        className="bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-1 py-1 outline-none" />
                 </div>
                 {(filtroInicio || filtroFim) && (
                     <button onClick={() => { setFiltroInicio(""); setFiltroFim("") }}
@@ -84,47 +56,81 @@ export default function FinanceiroPage() {
                 )}
             </div>
 
+            {/* Cards fixos */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 notranslate">
+                <div className="bg-black rounded-xl border border-orange-500 p-5 notranslate">
+                    <p className="text-white text-xs uppercase tracking-widest mb-1">Hoje</p>
+                    <p className="text-orange-500 text-2xl font-bold">{formatBRL(totalDia)}</p>
+                </div>
+                <div className="bg-black rounded-xl border border-orange-500 p-5 notranslate">
+                    <p className="text-white text-xs uppercase tracking-widest mb-1">Esta Semana</p>
+                    <p className="text-orange-500 text-2xl font-bold">{formatBRL(totalSemana)}</p>
+                </div>
+                <div className="bg-black rounded-xl border border-orange-500 p-5 notranslate">
+                    <p className="text-white text-xs uppercase tracking-widest mb-1">Este Mês</p>
+                    <p className="text-orange-500 text-2xl font-bold">{formatBRL(totalMes)}</p>
+                </div>
+                <div className="bg-black rounded-xl border border-green-700 p-5 notranslate">
+                    <p className="text-white text-xs uppercase tracking-widest mb-1">Minha Comissão (Dia)</p>
+                    <p className="text-green-400 text-2xl font-bold">{formatBRL(comissaoDia)}</p>
+                    <p className="text-gray-500 text-xs mt-1">50% do total</p>
+                </div>
+                <div className="bg-black rounded-xl border border-green-700 p-5 notranslate">
+                    <p className="text-white text-xs uppercase tracking-widest mb-1">Minha Comissão (Semana)</p>
+                    <p className="text-green-400 text-2xl font-bold">{formatBRL(comissaoSemana)}</p>
+                    <p className="text-gray-500 text-xs mt-1">50% do total</p>
+                </div>
+                <div className="bg-black rounded-xl border border-green-700 p-5 notranslate">
+                    <p className="text-white text-xs uppercase tracking-widest mb-1">Minha Comissão (Mês)</p>
+                    <p className="text-green-400 text-2xl font-bold">{formatBRL(comissaoMes)}</p>
+                    <p className="text-gray-500 text-xs mt-1">50% do total</p>
+                </div>
+            </div>
+
             {/* Cards período filtrado */}
             {(filtroInicio || filtroFim) && (
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 notranslate">
-                    <div className="bg-gray-900 rounded-xl border border-orange-700 p-5 notranslate">
-                        <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Total do Período</p>
-                        <p className="text-orange-500 text-2xl font-bold">{formatBRL(totalPeriodo)}</p>
+                <>
+                    <h1 className="text-white text-xl font-bold">Filtro de: {isFiltroInicio ? hoje() : filtroInicio} até {isFiltroFim ? hoje() : filtroFim}</h1>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 notranslate">                    
+                        <div className="bg-black rounded-xl border border-orange-700 p-5 notranslate">
+                            <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Total do Período</p>
+                            <p className="text-orange-500 text-2xl font-bold">{formatBRL(totalPeriodo)}</p>
+                        </div>
+                        <div className="bg-black rounded-xl border border-orange-700 p-5 notranslate">
+                            <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Ticket Médio</p>
+                            <p className="text-orange-500 text-2xl font-bold">{formatBRL(ticketMedio)}</p>
+                        </div>
+                        <div className="bg-black rounded-xl border border-orange-700 p-5 notranslate">
+                            <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Atendimentos</p>
+                            <p className="text-orange-500 text-2xl font-bold">{atendimentosFiltrados.length}</p>
+                        </div>
+                        <div className="bg-black rounded-xl border border-green-700 p-5 notranslate">
+                            <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Minha Comissão</p>
+                            <p className="text-green-400 text-2xl font-bold">{formatBRL(comissaoBarbeiro)}</p>
+                            <p className="text-gray-500 text-xs mt-1">50% do período</p>
+                        </div>
                     </div>
-                    <div className="bg-gray-900 rounded-xl border border-orange-700 p-5 notranslate">
-                        <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Ticket Médio</p>
-                        <p className="text-orange-500 text-2xl font-bold">{formatBRL(ticketMedio)}</p>
-                    </div>
-                    <div className="bg-gray-900 rounded-xl border border-orange-700 p-5 notranslate">
-                        <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Atendimentos</p>
-                        <p className="text-orange-500 text-2xl font-bold">{atendimentosFiltrados.length}</p>
-                    </div>
-                    <div className="bg-gray-900 rounded-xl border border-green-700 p-5 notranslate">
-                        <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Minha Comissão</p>
-                        <p className="text-green-400 text-2xl font-bold">{formatBRL(comissaoBarbeiro)}</p>
-                        <p className="text-gray-500 text-xs mt-1">50% do período</p>
-                    </div>
-                </div>
+                </>
             )}
 
             {/* Gráfico + Formas de pagamento */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 notranslate">
-                <div className="lg:col-span-2 bg-gray-900 rounded-xl border border-gray-700 p-5 notranslate">
-                    <p className="text-gray-400 text-xs uppercase tracking-widest mb-4">Arrecadado por Dia</p>
+                <div className="lg:col-span-2 bg-black rounded-xl border border-gray-500 p-5 notranslate">
+                    <p className="text-white text-xs uppercase tracking-widest mb-4">Arrecadado por Dia</p>
                     <ResponsiveContainer width="100%" height={220}>
                         <AreaChart data={dadosGrafico}>
                             <defs>
                                 <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#ea580c" stopOpacity={0.3} />
-                                    <stop offset="95%" stopColor="#ea580c" stopOpacity={0} />
+                                    <stop offset="5%" stopColor="#ea580c" stopOpacity={1} />
+                                    <stop offset="95%" stopColor="#ea580c" stopOpacity={0.2} />
                                 </linearGradient>
                             </defs>
                             <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                             <XAxis dataKey="data" stroke="#9ca3af" tick={{ fontSize: 11 }} />
-                            <YAxis stroke="#9ca3af" tick={{ fontSize: 11 }} tickFormatter={(v) => `R$${v}`} />
+                            <YAxis stroke="#9ca3af" tick={{ fontSize: 11 }} tickFormatter={(v) => `R$ ${v}`} />
                             <Tooltip
                                 contentStyle={{ backgroundColor: "#111827", border: "1px solid #374151", borderRadius: "8px" }}
-                                labelStyle={{ color: "#f97316" }}
+                                labelStyle={{ color: "white" }}
                                 formatter={(value: number | undefined) => [formatBRL(value ?? 0), "Total"]}
                             />
                             <Area type="monotone" dataKey="total" stroke="#ea580c" strokeWidth={2} fill="url(#colorTotal)" />
@@ -132,8 +138,8 @@ export default function FinanceiroPage() {
                     </ResponsiveContainer>
                 </div>
 
-                <div className="bg-gray-900 rounded-xl border border-gray-700 p-5 notranslate">
-                    <p className="text-gray-400 text-xs uppercase tracking-widest mb-4">Por Forma de Pagamento</p>
+                <div className="bg-black rounded-xl border border-gray-500 p-5 notranslate">
+                    <p className="text-white text-xs uppercase tracking-widest mb-4">Por Forma de Pagamento</p>
                     {porFormaPagamento.length === 0 ? (
                         <p className="text-gray-500 text-sm">Nenhum dado</p>
                     ) : (
@@ -162,7 +168,7 @@ export default function FinanceiroPage() {
             {/* Tabela */}
             <div className="overflow-x-auto rounded-xl border border-gray-700 notranslate">
                 <table className="w-full text-sm text-left text-gray-300 min-w-[500px] notranslate">
-                    <thead className="text-xs text-gray-400 uppercase bg-gray-800 border-b border-gray-700 notranslate">
+                    <thead className="text-xs text-white uppercase bg-gray-800 border-b border-gray-700 notranslate">
                         <tr>
                             <th className="px-4 py-3 notranslate">CLIENTE</th>
                             <th className="px-4 py-3 notranslate">SERVIÇO</th>
@@ -180,7 +186,7 @@ export default function FinanceiroPage() {
                             </tr>
                         ) : (
                             itensPagina.map(item => (
-                                <tr key={item.id} className="bg-gray-900 border-b border-gray-700 hover:bg-gray-800 notranslate">
+                                <tr key={item.id} className="bg-black border-b border-gray-500 hover:bg-gray-900 notranslate">
                                     <td className="px-4 py-4 notranslate font-medium text-white">{item.descricao}</td>
                                     <td className="px-4 py-4 notranslate">{Array.isArray(item.servico) ? item.servico.join(" + ") : item.servico}</td>
                                     <td className="px-4 py-4 notranslate text-orange-500 font-bold">{formatBRL(item.valor)}</td>

@@ -3,7 +3,7 @@ import { useDashboard } from "../hooks/use-dashboard"
 import { useAtendimentos } from "../hooks/use-atendimentos"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../components/ui/dialog"
-import { hoje, parseData } from "../utils/date"
+import { hoje } from "../utils/date"
 import { Badge } from "../components/ui/badge"
 import { Spinner } from "../components/ui/spinner"
 import { usePaginacao } from "../hooks/use-pagination"
@@ -25,18 +25,10 @@ export default function DashboardPage() {
     const [barbeiroSelecionado, setBarbeiroSelecionado] = useState<string | null>(null)
     const [atendimentoSelecionado, setAtendimentoSelecionado] = useState<DadosProps | null>(null)
 
-    const [modalFiltroInicio, setModalFiltroInicio] = useState("")
-    const [modalFiltroFim, setModalFiltroFim] = useState("")
-
-    const atendimentosBarbeiro = atendimentos
-        .filter(a => a.barbeiro === barbeiroSelecionado && a.status === 1)
-        .filter(a => {
-            if (!modalFiltroInicio && !modalFiltroFim) return true
-            const data = parseData(a.date)
-            if (modalFiltroInicio && data < modalFiltroInicio) return false
-            if (modalFiltroFim && data > modalFiltroFim) return false
-            return true
-        })
+    // Atendimentos do barbeiro selecionado no período atual (apenas ativos)
+    const atendimentosBarbeiro = atendimentos.filter(
+        a => a.barbeiro === barbeiroSelecionado && a.status === 1
+    )
 
     const totalBarbeiro = atendimentosBarbeiro.reduce((acc, a) => acc + a.valor, 0)
     const comissaoBarbeiro = totalBarbeiro * 0.5
@@ -62,10 +54,10 @@ export default function DashboardPage() {
         setPaginaAtual: setPaginaModal
     } = usePaginacao(atendimentosBarbeiro, 10)
 
-    // Reseta página do modal ao trocar barbeiro ou filtro
+    // Reseta página do modal ao trocar de barbeiro
     useEffect(() => {
         setPaginaModal(1)
-    }, [modalFiltroInicio, modalFiltroFim, barbeiroSelecionado])
+    }, [barbeiroSelecionado])
 
     const formatBRL = (valor: number) =>
         valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
@@ -86,12 +78,6 @@ export default function DashboardPage() {
         })
     }
 
-    const abrirModalBarbeiro = (nomeBarbeiro: string) => {
-        setBarbeiroSelecionado(nomeBarbeiro)
-        setModalFiltroInicio("")
-        setModalFiltroFim("")
-    }
-
     if (carregando) {
         return (
             <div className="w-full flex items-center justify-center py-20">
@@ -106,15 +92,14 @@ export default function DashboardPage() {
             <h1 className="text-white text-xl font-bold">Dashboard</h1>
 
             {/* Filtro por período */}
-            <div className="flex flex-wrap items-center gap-3 bg-gray-900 rounded-xl border border-gray-700 p-4 notranslate">
-                <span className="text-gray-400 text-sm font-medium w-full sm:w-auto">Período:</span>
+            <div className="flex flex-wrap items-center gap-3 bg-black rounded-xl border border-gray-500 p-4 notranslate">
+                <span className="text-white text-sm font-medium w-full sm:w-auto">Período:</span>
                 <div className="flex items-center gap-2 notranslate">
-                    <label className="text-gray-400 text-sm">De</label>
                     <input
                         type="date"
                         value={filtroInicio}
                         onChange={(e) => setFiltroInicio(e.target.value)}
-                        className="bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 outline-none"
+                        className="bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-1 py-1 outline-none"
                     />
                 </div>
                 <div className="flex items-center gap-2 notranslate">
@@ -123,7 +108,7 @@ export default function DashboardPage() {
                         type="date"
                         value={filtroFim}
                         onChange={(e) => setFiltroFim(e.target.value)}
-                        className="bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 outline-none"
+                        className="bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-1 py-1 outline-none"
                     />
                 </div>
                 {!isPeriodoHoje && (
@@ -138,26 +123,26 @@ export default function DashboardPage() {
 
             {/* Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 notranslate">
-                <div className="bg-gray-900 rounded-xl border border-gray-700 p-5 notranslate">
-                    <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">
+                <div className="bg-black rounded-xl border border-orange-700 p-5 notranslate">
+                    <p className="text-white text-xs uppercase tracking-widest mb-1">
                         {isPeriodoHoje ? "Total do Dia" : "Total do Período"}
                     </p>
                     <p className="text-orange-500 text-2xl font-bold">{formatBRL(totalDia)}</p>
                 </div>
-                <div className="bg-gray-900 rounded-xl border border-gray-700 p-5 notranslate">
-                    <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Atendimentos</p>
+                <div className="bg-black rounded-xl border border-orange-700 p-5 notranslate">
+                    <p className="text-white text-xs uppercase tracking-widest mb-1">Atendimentos</p>
                     <p className="text-orange-500 text-2xl font-bold">{totalAtendimentos}</p>
                 </div>
-                <div className="bg-gray-900 rounded-xl border border-gray-700 p-5 notranslate">
-                    <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Ticket Médio</p>
+                <div className="bg-black rounded-xl border border-orange-700 p-5 notranslate">
+                    <p className="text-white text-xs uppercase tracking-widest mb-1">Ticket Médio</p>
                     <p className="text-orange-500 text-2xl font-bold">{formatBRL(ticketMedio)}</p>
                 </div>
             </div>
 
             {/* Gráficos */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 notranslate">
-                <div className="bg-gray-900 rounded-xl border border-gray-700 p-5 notranslate">
-                    <p className="text-gray-400 text-xs uppercase tracking-widest mb-4">Atendimentos por Barbeiro</p>
+                <div className="bg-black rounded-xl border border-gray-700 p-5 notranslate">
+                    <p className="text-white text-xs uppercase tracking-widest mb-4">Atendimentos por Barbeiro</p>
                     <ResponsiveContainer width="100%" height={220}>
                         <BarChart data={porBarbeiro}>
                             <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
@@ -165,15 +150,15 @@ export default function DashboardPage() {
                             <YAxis stroke="#9ca3af" tick={{ fontSize: 11 }} />
                             <Tooltip
                                 contentStyle={{ backgroundColor: "#111827", border: "1px solid #374151", borderRadius: "8px" }}
-                                labelStyle={{ color: "#f97316" }}
+                                labelStyle={{ color: "white" }}
                             />
                             <Bar dataKey="quantidade" fill="#ea580c" radius={[4, 4, 0, 0]} name="Atendimentos" />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
 
-                <div className="bg-gray-900 rounded-xl border border-gray-700 p-5 notranslate">
-                    <p className="text-gray-400 text-xs uppercase tracking-widest mb-4">Ranking de Barbeiros</p>
+                <div className="bg-black rounded-xl border border-gray-700 p-5 notranslate">
+                    <p className="text-white text-xs uppercase tracking-widest mb-4">Ranking de Barbeiros</p>
                     {porBarbeiro.length === 0 ? (
                         <p className="text-gray-500 text-sm">Nenhum dado no período</p>
                     ) : (
@@ -185,7 +170,7 @@ export default function DashboardPage() {
                                         <div className="flex justify-between mb-1">
                                             <span className="text-white text-sm">{item.barbeiro}</span>
                                             <div className="flex gap-3">
-                                                <span className="text-gray-400 text-sm">{item.quantidade}x</span>
+                                                <span className="text-gray-400 text-sm">Atendimentos: {item.quantidade}</span>
                                                 <span className="text-orange-400 text-sm font-semibold">{formatBRL(item.total)}</span>
                                             </div>
                                         </div>
@@ -206,17 +191,16 @@ export default function DashboardPage() {
             {/* Tabela resumo por barbeiro */}
             <div className="bg-gray-900 rounded-xl border border-gray-700 notranslate">
                 <div className="px-4 py-4 border-b border-gray-700 notranslate">
-                    <p className="text-gray-400 text-xs uppercase tracking-widest">Resumo por Barbeiro</p>
-                    <p className="text-gray-500 text-xs mt-1">Clique em um barbeiro para ver os detalhes do período</p>
+                    <p className="text-white text-xs uppercase tracking-widest">Resumo por Barbeiro</p>
                 </div>
-                <div className="overflow-x-auto notranslate">
+                <div className="overflow-x-auto rounded-b-xl notranslate">
                     <table className="w-full text-sm text-left text-gray-300 min-w-[500px] notranslate">
-                        <thead className="text-xs text-gray-400 uppercase bg-gray-800 border-b border-gray-700 notranslate">
+                        <thead className="text-xs text-white uppercase bg-gray-800 border-b border-gray-500 notranslate">
                             <tr>
                                 <th className="px-4 py-3 notranslate">BARBEIRO</th>
                                 <th className="px-4 py-3 notranslate">ATENDIMENTOS</th>
                                 <th className="px-4 py-3 notranslate">TOTAL GERADO</th>
-                                <th className="px-4 py-3 notranslate">COMISSÃO (50%)</th>
+                                <th className="px-4 py-3 notranslate">COMISSÃO DO BARBEIRO (50%)</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -230,10 +214,10 @@ export default function DashboardPage() {
                                 itensPaginaBarbeiros.map(item => (
                                     <tr
                                         key={item.barbeiro}
-                                        className="bg-gray-900 border-b border-gray-700 hover:bg-gray-800 cursor-pointer transition-colors notranslate"
-                                        onClick={() => abrirModalBarbeiro(item.barbeiro)}
+                                        className="bg-black border-b border-gray-700 hover:bg-gray-900 cursor-pointer transition-colors notranslate"
+                                        onClick={() => setBarbeiroSelecionado(item.barbeiro)}
                                     >
-                                        <td className="px-4 py-4 notranslate font-medium text-white">{item.barbeiro}</td>
+                                        <td className="px-4 py-4 notranslate font-bold text-white">{item.barbeiro}</td>
                                         <td className="px-4 py-4 notranslate text-gray-300">{item.quantidade}x</td>
                                         <td className="px-4 py-4 notranslate font-bold text-orange-500">{formatBRL(item.total)}</td>
                                         <td className="px-4 py-4 notranslate font-bold text-green-400">{formatBRL(item.total * 0.5)}</td>
@@ -255,13 +239,13 @@ export default function DashboardPage() {
             {/* Tabela principal de atendimentos */}
             <div className="bg-gray-900 rounded-xl border border-gray-700 notranslate">
                 <div className="px-4 py-4 border-b border-gray-700 notranslate">
-                    <p className="text-gray-400 text-xs uppercase tracking-widest">
+                    <p className="text-white text-xs uppercase tracking-widest">
                         {isPeriodoHoje ? "Atendimentos de Hoje" : `Atendimentos de ${filtroInicio} até ${filtroFim}`}
                     </p>
                 </div>
-                <div className="overflow-x-auto notranslate">
+                <div className="overflow-x-auto rounded-b-xl notranslate">
                     <table className="w-full text-sm text-left text-gray-300 min-w-[500px] notranslate">
-                        <thead className="text-xs text-gray-400 uppercase bg-gray-800 border-b border-gray-700 notranslate">
+                        <thead className="text-xs text-white uppercase bg-gray-800 border-b border-gray-700 notranslate">
                             <tr>
                                 <th className="px-4 py-3 notranslate">CLIENTE</th>
                                 <th className="px-4 py-3 notranslate">SERVIÇO</th>
@@ -281,16 +265,16 @@ export default function DashboardPage() {
                                 itensPagina.map(items => (
                                     <tr
                                         key={items.id}
-                                        className={`border-b border-gray-700 hover:bg-gray-800 cursor-pointer
-                                            ${items.status === -1 ? "opacity-50" : "bg-gray-900"}`}
+                                        className={`border-b border-gray-700 hover:bg-gray-900 cursor-pointer
+                                            ${items.status === -1 ? "opacity-50" : "bg-black"}`}
                                         onClick={() => abrirEdicao(items)}
                                     >
-                                        <td className="px-4 py-4 notranslate font-medium text-white">{items.descricao}</td>
+                                        <td className="px-4 py-4 notranslate font-bold text-white">{items.descricao}</td>
                                         <td className="px-4 py-4 notranslate">{Array.isArray(items.servico) ? items.servico.join(" + ") : items.servico}</td>
-                                        <td className={`px-4 py-4 notranslate ${items.status === -1 ? "text-gray-500" : "text-orange-500"}`}>
+                                        <td className={`px-4 py-4 notranslate ${items.status === -1 ? "text-gray-500" : "text-orange-500 font-bold"}`}>
                                             {items.barbeiro}
                                         </td>
-                                        <td className={`px-4 py-4 notranslate font-bold ${items.status === -1 ? "text-gray-500" : "text-orange-500"}`}>
+                                        <td className={`px-4 py-4 notranslate font-bold ${items.status === -1 ? "text-gray-500" : "text-white"}`}>
                                             {formatBRL(items.valor)}
                                         </td>
                                         <td className="px-4 py-4 notranslate">{items.formaPagamento}</td>
@@ -311,65 +295,41 @@ export default function DashboardPage() {
 
             {/* Modal detalhes do barbeiro */}
             <Dialog open={barbeiroSelecionado !== null} onOpenChange={() => setBarbeiroSelecionado(null)}>
-                <DialogContent className="bg-gray-900 border-gray-700 text-white w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto notranslate">
+                <DialogContent className="bg-black border-gray-500 text-white w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto notranslate">
                     <DialogHeader>
                         <DialogTitle className="text-white notranslate">
-                            Atendimentos de <span className="text-orange-500">{barbeiroSelecionado}</span>
+                            Barbeiro: <span className="text-orange-500 font-bold">{barbeiroSelecionado}</span>
                         </DialogTitle>
                     </DialogHeader>
 
-                    {/* Filtro extra */}
-                    <div className="flex flex-wrap items-center gap-2 bg-gray-800 rounded-lg p-3 notranslate">
-                        <span className="text-gray-400 text-xs font-medium">Refinar período:</span>
-                        <input
-                            type="date"
-                            value={modalFiltroInicio}
-                            onChange={(e) => setModalFiltroInicio(e.target.value)}
-                            className="bg-gray-700 border border-gray-600 text-white text-xs rounded px-2 py-1 outline-none"
-                        />
-                        <span className="text-gray-400 text-xs">até</span>
-                        <input
-                            type="date"
-                            value={modalFiltroFim}
-                            onChange={(e) => setModalFiltroFim(e.target.value)}
-                            className="bg-gray-700 border border-gray-600 text-white text-xs rounded px-2 py-1 outline-none"
-                        />
-                        {(modalFiltroInicio || modalFiltroFim) && (
-                            <button
-                                onClick={() => { setModalFiltroInicio(""); setModalFiltroFim("") }}
-                                className="text-orange-500 text-xs hover:underline"
-                            >
-                                Limpar
-                            </button>
-                        )}
-                    </div>
-
                     {/* Cards resumo */}
                     <div className="grid grid-cols-3 gap-3 notranslate">
-                        <div className="bg-gray-800 rounded-lg p-3 notranslate">
-                            <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Atendimentos</p>
+                        <div className="bg-black rounded-lg p-3 border border-gray-500 notranslate">
+                            <p className="text-white font-bold text-xs uppercase tracking-widest mb-1">Atendimentos</p>
                             <p className="text-orange-500 text-xl font-bold">{atendimentosBarbeiro.length}</p>
                         </div>
-                        <div className="bg-gray-800 rounded-lg p-3 notranslate">
-                            <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Total Gerado</p>
+                        <div className="bg-black rounded-lg p-3 border border-orange-700 notranslate">
+                            <p className="text-white font-bold text-xs uppercase tracking-widest mb-1">Total Gerado</p>
                             <p className="text-orange-500 text-xl font-bold">{formatBRL(totalBarbeiro)}</p>
                         </div>
-                        <div className="bg-gray-800 rounded-lg p-3 border border-green-700 notranslate">
-                            <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Comissão (50%)</p>
+                        <div className="bg-black rounded-lg p-3 border border-green-700 notranslate">
+                            <p className="text-white font-bold text-xs uppercase tracking-widest mb-1">Comissão (50%)</p>
                             <p className="text-green-400 text-xl font-bold">{formatBRL(comissaoBarbeiro)}</p>
                         </div>
                     </div>
 
                     {/* Tabela de atendimentos do barbeiro */}
-                    <div className="overflow-x-auto rounded-lg border border-gray-700 notranslate">
+                    <div className="overflow-x-auto notranslate">
+                        <span className="text-white font-bold">Atendimentos</span>
+                    </div>
+                    <div className="overflow-x-auto rounded-xl border border-gray-700 notranslate">
                         <table className="w-full text-sm text-left text-gray-300 min-w-[400px] notranslate">
-                            <thead className="text-xs text-gray-400 uppercase bg-gray-800 border-b border-gray-700 notranslate">
+                            <thead className="text-xs text-white uppercase bg-gray-800 border-b border-gray-700 notranslate">
                                 <tr>
                                     <th className="px-4 py-3 notranslate">CLIENTE</th>
                                     <th className="px-4 py-3 notranslate">SERVIÇO</th>
                                     <th className="px-4 py-3 notranslate">VALOR</th>
                                     <th className="px-4 py-3 notranslate">PAGAMENTO</th>
-                                    <th className="px-4 py-3 notranslate">DATA</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -383,14 +343,13 @@ export default function DashboardPage() {
                                     itensPaginaModal.map(item => (
                                         <tr
                                             key={item.id}
-                                            className="border-b border-gray-700 hover:bg-gray-800 cursor-pointer notranslate"
+                                            className="border-b border-gray-700 hover:bg-gray-900 cursor-pointer notranslate"
                                             onClick={() => abrirEdicao(item)}
                                         >
                                             <td className="px-4 py-3 notranslate font-medium text-white">{item.descricao}</td>
                                             <td className="px-4 py-3 notranslate">{Array.isArray(item.servico) ? item.servico.join(" + ") : item.servico}</td>
                                             <td className="px-4 py-3 notranslate text-orange-500 font-bold">{formatBRL(item.valor)}</td>
                                             <td className="px-4 py-3 notranslate">{item.formaPagamento}</td>
-                                            <td className="px-4 py-3 notranslate text-gray-400">{item.date}</td>
                                         </tr>
                                     ))
                                 )}

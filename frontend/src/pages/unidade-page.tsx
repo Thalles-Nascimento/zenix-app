@@ -21,7 +21,7 @@ export default function UnidadesPage() {
 
     return (
         <>
-            <Toaster richColors position="top-right" />
+            <Toaster richColors position="top-center" />
 
             {/* Topbar */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 notranslate">
@@ -32,7 +32,7 @@ export default function UnidadesPage() {
             {/* Tabela */}
             <div className="overflow-x-auto rounded-xl border border-gray-700 notranslate">
                 <table className="w-full text-sm text-left text-gray-300 min-w-[400px] notranslate">
-                    <thead className="text-xs text-gray-400 uppercase bg-gray-800 border-b border-gray-700 notranslate">
+                    <thead className="text-xs text-white uppercase bg-gray-800 border-b border-gray-500 notranslate">
                         <tr>
                             <th className="px-4 py-3 notranslate">UNIDADE</th>
                             <th className="px-4 py-3 notranslate">ENDEREÇO</th>
@@ -50,7 +50,7 @@ export default function UnidadesPage() {
                             unidades.map(u => (
                                 <tr
                                     key={u.id}
-                                    className="bg-gray-900 border-b border-gray-700 hover:bg-gray-800 cursor-pointer notranslate"
+                                    className="bg-black border-b border-gray-700 hover:bg-gray-900 cursor-pointer notranslate"
                                     onClick={() => setUnidadeSelecionada(u)}
                                 >
                                     <td className="px-4 py-4 notranslate font-medium text-white">{u.nomeUnidade}</td>
