@@ -11,28 +11,27 @@ funcionalidade de agendamento, permitindo aos clientes que agendem os seus horá
 barbeiros.
 
 ## Instalação Local
-### Docker
-### JDK 17
+### JDK 21
 ### Maven
 
-## Após instalar o Docker, JDK 17 e o Maven, faça o passo a passo abaixo:
+## Após instalar o JDK 21 e o Maven, faça o passo a passo abaixo:
 
 ### 1 - Clonar projeto
 
 ### 2 - Dentro da pasta do projeto, rode este comando:
-### Linux `bash build.sh`
-### Windows PowerShell `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` e `.\build.ps1`
+### Execute-o da sua IDE favorita
 
-### 3 - Acesse na url: http://localhost:8080/swagger-ui/index.html
+### 3 - Clone também o repositório zenixapp-frontend para rodar o frontend do projeto
+
+### 4 - Acesse na url: http://localhost:5173/login
 
 # Ferramentas utilizadas
 #### Back-end
-| Java
+| Java 21
 | Spring Boot 4
 | Maven
 
-[//]: # ()
-[//]: # ()
-[//]: # (#### Front-end)
-
-[//]: # (Angular)
+#### Front-end
+| React
+| Shadcn UI
+| Vite
