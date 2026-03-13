@@ -10,6 +10,7 @@ public record AtendimentoAdminResponseDTO(
         String formaPagamento,
         String date,
         int status,
+        String observacao,
         String barbeiro
 ) {
 }

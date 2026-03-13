@@ -47,6 +47,7 @@ public class AtendimentoService {
         atendimento.setServico(atendimentoDTO.servico());
         atendimento.setValor(atendimentoDTO.valor());
         atendimento.setFormaPagamento(atendimentoDTO.formaPagamento());
+        atendimento.setObservacao(atendimentoDTO.observacao());
         atendimento.setDate(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")).format(current_date));
         atendimento.setUsuarios(user);
 
@@ -75,6 +76,7 @@ public class AtendimentoService {
                         a.getFormaPagamento(),
                         a.getDate(),
                         a.getStatus(),
+                        a.getObservacao(),
                         a.getUsuarios().getNome()
                 ))
                 .toList();

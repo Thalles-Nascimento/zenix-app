@@ -15,6 +15,8 @@ public record AtendimentoResponseDTO(
 
         String date,
 
+        String observacao,
+
         int status
 ){
 

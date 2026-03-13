@@ -25,6 +25,8 @@ public record AtendimentoRequestDTO (
         )
         String formaPagamento,
 
+        String observacao,
+
         @NotNull(message="Valor não pode ser nulo")
         Double valor
 ){
