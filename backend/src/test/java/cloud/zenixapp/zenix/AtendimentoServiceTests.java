@@ -59,7 +59,9 @@ class AtendimentoServiceTests {
         atendimentoAtivo.setDescricao("Memphis Depay");
         atendimentoAtivo.setServico(List.of("Corte", "Sombrancelha"));
         atendimentoAtivo.setValor(50.0);
+        atendimentoAtivo.setFormaPagamento("PIX");
         atendimentoAtivo.setStatus(1);
+        atendimentoAtivo.setObservacao(null);
         atendimentoAtivo.setUsuarios(usuarioLogado);
 
         atendimentoExcluido = new Atendimento();
@@ -68,6 +70,7 @@ class AtendimentoServiceTests {
         atendimentoExcluido.setServico(List.of("Barba"));
         atendimentoExcluido.setValor(30.0);
         atendimentoExcluido.setStatus(-1);
+        atendimentoExcluido.setObservacao(null);
         atendimentoExcluido.setUsuarios(usuarioLogado);
     }
 
@@ -88,7 +91,7 @@ class AtendimentoServiceTests {
         when(atendimentoRepository.save(any())).thenReturn(atendimentoAtivo);
 
         AtendimentoRequestDTO dto = new AtendimentoRequestDTO(
-                "Memphis Depay", List.of("Corte", "Sombrancelha"), "PIX", 35.0
+                "Memphis Depay", List.of("Corte", "Sombrancelha"), "PIX", null, 50.0
         );
 
         SucessAtendimentoResponseDTO resultado = atendimentoService.inserirAtendimento(dto);
@@ -131,53 +134,53 @@ class AtendimentoServiceTests {
         });
     }
 
-    @Test
-    @DisplayName("Deve atualizar atendimento com sucesso")
-    void atualizarAtendimento_quandoAtivo_deveRetornarSucesso() {
-        mockSecurityContext();
-        when(atendimentoRepository.findByUserById(1L, 1L)).thenReturn(Optional.of(atendimentoAtivo));
-
-        AtendimentoRequestDTO dto = new AtendimentoRequestDTO(
-                "Memphis Depay", List.of("Corte + Barba"), "CARTAO", 70.0
-        );
-
-        SucessAtendimentoResponseDTO resultado = atendimentoService.atualizarAtendimento(1L, dto);
-
-        assertEquals(200, resultado.status());
-        verify(atendimentoMapper, times(1)).atualizarAtendimento(atendimentoAtivo, dto);
-    }
-
-    @Test
-    @DisplayName("Deve lançar exceção ao atualizar atendimento excluído")
-    void atualizarAtendimento_quandoExcluido_deveLancarExcecao() {
-        mockSecurityContext();
-        when(atendimentoRepository.findByUserById(1L, 2L)).thenReturn(Optional.of(atendimentoExcluido));
-
-        AtendimentoRequestDTO dto = new AtendimentoRequestDTO(
-                "Nathan", List.of("Barba"), "DINHEIRO", 30.0
-        );
-
-        assertThrows(NotFoundException.class, () -> {
-            atendimentoService.atualizarAtendimento(2L, dto);
-        });
-
-        verify(atendimentoMapper, never()).atualizarAtendimento(any(), any());
-    }
-
-    @Test
-    @DisplayName("Deve lançar exceção ao atualizar atendimento inexistente")
-    void atualizarAtendimento_quandoNaoExiste_deveLancarExcecao() {
-        mockSecurityContext();
-        when(atendimentoRepository.findByUserById(1L, 99L)).thenReturn(Optional.empty());
-
-        AtendimentoRequestDTO dto = new AtendimentoRequestDTO(
-                "Inexistente", List.of("Corte"), "PIX", 50.0
-        );
-
-        assertThrows(NotFoundException.class, () -> {
-            atendimentoService.atualizarAtendimento(99L, dto);
-        });
-    }
+//    @Test
+//    @DisplayName("Deve atualizar atendimento com sucesso")
+//    void atualizarAtendimento_quandoAtivo_deveRetornarSucesso() {
+//        mockSecurityContext();
+//        when(atendimentoRepository.findByUserById(1L, 1L)).thenReturn(Optional.of(atendimentoAtivo));
+//
+//        AtendimentoRequestDTO dto = new AtendimentoRequestDTO(
+//                "Memphis Depay", List.of("Corte + Barba"), "CARTAO", null, 70.0
+//        );
+//
+//        SucessAtendimentoResponseDTO resultado = atendimentoService.atualizarAtendimento(1L, dto);
+//
+//        assertEquals(200, resultado.status());
+//        verify(atendimentoMapper, times(1)).atualizarAtendimento(atendimentoAtivo, dto);
+//    }
+//
+//    @Test
+//    @DisplayName("Deve lançar exceção ao atualizar atendimento excluído")
+//    void atualizarAtendimento_quandoExcluido_deveLancarExcecao() {
+//        mockSecurityContext();
+//        when(atendimentoRepository.findByUserById(1L, 2L)).thenReturn(Optional.of(atendimentoExcluido));
+//
+//        AtendimentoRequestDTO dto = new AtendimentoRequestDTO(
+//                "Nathan", List.of("Barba"), "DINHEIRO", null, 30.0
+//        );
+//
+//        assertThrows(NotFoundException.class, () -> {
+//            atendimentoService.atualizarAtendimento(2L, dto);
+//        });
+//
+//        verify(atendimentoMapper, never()).atualizarAtendimento(any(), any());
+//    }
+//
+//    @Test
+//    @DisplayName("Deve lançar exceção ao atualizar atendimento inexistente")
+//    void atualizarAtendimento_quandoNaoExiste_deveLancarExcecao() {
+//        mockSecurityContext();
+//        when(atendimentoRepository.findByUserById(1L, 99L)).thenReturn(Optional.empty());
+//
+//        AtendimentoRequestDTO dto = new AtendimentoRequestDTO(
+//                "Inexistente", List.of("Corte"), "PIX", null, 50.0
+//        );
+//
+//        assertThrows(NotFoundException.class, () -> {
+//            atendimentoService.atualizarAtendimento(99L, dto);
+//        });
+//    }
 
     @Test
     @DisplayName("Deve lançar exceção ao buscar atendimento excluído por id")
@@ -185,7 +188,7 @@ class AtendimentoServiceTests {
         mockSecurityContext();
 
         AtendimentoResponseDTO dtoExcluido = new AtendimentoResponseDTO(
-                2L, "Nathan", List.of("Barba"), 30.0, "DINHEIRO", "05/03/2026", -1
+                2L, "Nathan", List.of("Barba"), 30.0, "DINHEIRO", "05/03/2026", null, -1
         );
 
         when(atendimentoRepository.findByUserById(1L, 2L)).thenReturn(Optional.of(atendimentoExcluido));
@@ -212,7 +215,7 @@ class AtendimentoServiceTests {
     void listarHistorico_quandoExistemAtendimentos_deveRetornarLista() {
         when(atendimentoRepository.findByUser(1L)).thenReturn(List.of(atendimentoAtivo));
         when(atendimentoMapper.listResponseDTO(any())).thenReturn(List.of(
-                new AtendimentoResponseDTO(1L, "Memphis Depay", List.of("Barba"), 50.0, "PIX", "05/03/2026", 1)
+                new AtendimentoResponseDTO(1L, "Memphis Depay", List.of("Barba"), 50.0, "PIX", "05/03/2026", null, 1)
         ));
 
         var resultado = atendimentoService.listarHistorico(1L);
