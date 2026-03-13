@@ -12,6 +12,7 @@ import { ModalEditarAtendimento } from "./modals/atendimento-editar-modal"
 import type { AtendimentoAdminProps } from "../types/dashboard"
 import type { DadosProps } from "../types/atendimento"
 import { Toaster } from "sonner"
+import { MessageSquareWarning } from "lucide-react"
 
 export default function DashboardPage() {
     const {
@@ -74,7 +75,8 @@ export default function DashboardPage() {
             valor: item.valor,
             formaPagamento: item.formaPagamento,
             date: item.date,
-            status: item.status
+            status: item.status,
+            observacao: item.observacao
         })
     }
 
@@ -269,7 +271,14 @@ export default function DashboardPage() {
                                             ${items.status === -1 ? "opacity-50" : "bg-black"}`}
                                         onClick={() => abrirEdicao(items)}
                                     >
-                                        <td className="px-4 py-4 notranslate font-bold text-white">{items.descricao}</td>
+                                        <td className="px-4 py-4 notranslate font-medium text-white">
+                                            <div className="flex items-center gap-2">
+                                                {items.descricao}
+                                                {items.observacao && (
+                                                    <MessageSquareWarning color="#bd0000" />
+                                                )}
+                                            </div>
+                                        </td>
                                         <td className="px-4 py-4 notranslate">{Array.isArray(items.servico) ? items.servico.join(" + ") : items.servico}</td>
                                         <td className={`px-4 py-4 notranslate ${items.status === -1 ? "text-gray-500" : "text-orange-500 font-bold"}`}>
                                             {items.barbeiro}
@@ -283,14 +292,15 @@ export default function DashboardPage() {
                             )}
                         </tbody>
                     </table>
-                    <Paginacao
+                    
+                </div>
+                <Paginacao
                         paginaAtual={paginaAtual}
                         totalPaginas={totalPaginas}
                         totalItens={totalItens}
                         itensPorPagina={4}
                         onPaginaChange={setPaginaAtual}
                     />
-                </div>
             </div>
 
             {/* Modal detalhes do barbeiro */}
@@ -346,7 +356,14 @@ export default function DashboardPage() {
                                             className="border-b border-gray-700 hover:bg-gray-900 cursor-pointer notranslate"
                                             onClick={() => abrirEdicao(item)}
                                         >
-                                            <td className="px-4 py-3 notranslate font-medium text-white">{item.descricao}</td>
+                                            <td className="px-4 py-4 notranslate font-medium text-white">
+                                                <div className="flex items-center gap-2">
+                                                    {item.descricao}
+                                                    {item.observacao && (
+                                                        <MessageSquareWarning color="#bd0000" />
+                                                    )}
+                                                </div>
+                                            </td>
                                             <td className="px-4 py-3 notranslate">{Array.isArray(item.servico) ? item.servico.join(" + ") : item.servico}</td>
                                             <td className="px-4 py-3 notranslate text-orange-500 font-bold">{formatBRL(item.valor)}</td>
                                             <td className="px-4 py-3 notranslate">{item.formaPagamento}</td>

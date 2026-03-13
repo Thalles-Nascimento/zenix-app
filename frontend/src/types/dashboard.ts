@@ -7,4 +7,5 @@ export interface AtendimentoAdminProps {
     date: string
     status: number
     barbeiro: string
+    observacao?: string
 }

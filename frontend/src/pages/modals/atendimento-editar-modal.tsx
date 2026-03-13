@@ -7,6 +7,7 @@ import { Botao } from "../../components/common/botao"
 import { ServicosMultiSelect } from "../../components/common/servicos-multiselect-component"
 import { SERVICOS } from "../../utils/servicos"
 import { Input } from "@/components/ui/input"
+import { TextareaField } from "@/components/common/textarea"
 
 interface Props {
     atendimento: DadosProps | null
@@ -27,7 +28,7 @@ const calcularTotal = (servicos: string[]): number => {
 
 export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirmar, onDeletar, onReativar }: Props) {
     const [form, setForm] = useState<AtendimentoFormProps>({
-        descricao: "", servico: [], valor: 0, formaPagamento: ""
+        descricao: "", servico: [], valor: 0, formaPagamento: "", observacao: ""  // ← novo
     })
 
     const deletado = atendimento?.status === -1
@@ -39,7 +40,8 @@ export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirma
                 descricao: atendimento.descricao,
                 servico: servicos,
                 valor: atendimento.valor,
-                formaPagamento: atendimento.formaPagamento
+                formaPagamento: atendimento.formaPagamento,
+                observacao: atendimento.observacao ?? ""  // ← novo
             })
         }
     }, [atendimento])
@@ -123,7 +125,13 @@ export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirma
                             </SelectContent>
                         </Select>
                     </div>
+                    
+                    <TextareaField
+                        value={form.observacao ?? ""}
+                        onChange={(e) => setForm({ ...form, observacao: e.target.value })}
+                    />
                     <div className="flex flex-col gap-2 mt-2">
+                        {/* botões existentes */}
                         {!deletado && (
                             <>
                                 <Botao texto="Salvar Alterações" color="sucess" click={handleConfirmar} />

@@ -2,15 +2,19 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../componen
 import { Botao } from "../../components/common/botao"
 import type { FilaProps } from "../../types/fila"
 import { SERVICOS } from "../../utils/servicos"
+import { TextareaField } from "@/components/common/textarea"
+import { useState } from "react"
 
 interface Props {
     cliente: FilaProps | null
     open: boolean
     onFechar: () => void
-    onFinalizar: (id: number, valor: number) => void
+    onFinalizar: (id: number, valor: number, observacao: string) => void
 }
 
 export function ModalFinalizarAtendimento({ cliente, open, onFechar, onFinalizar }: Props) {
+
+    const [observacao, setObservacao] = useState("")
 
     const calcularTotal = (servicos: string | string[]): string => {
         const lista = Array.isArray(servicos) ? servicos : [servicos]
@@ -26,7 +30,8 @@ export function ModalFinalizarAtendimento({ cliente, open, onFechar, onFinalizar
     const handleFinalizar = () => {
         if (!cliente) return
         const valor = parseFloat(calcularTotal(cliente.servico))
-        onFinalizar(cliente.id, valor)
+        onFinalizar(cliente.id, valor, observacao)
+        setObservacao("")
     }
 
     return (
@@ -52,6 +57,11 @@ export function ModalFinalizarAtendimento({ cliente, open, onFechar, onFinalizar
                             Total: R$ {cliente ? calcularTotal(cliente.servico) : "0,00"}
                         </p>
                     </div>
+
+                    <TextareaField
+                        value={observacao}
+                        onChange={(e) => setObservacao(e.target.value)}
+                    />
                     <div className="flex flex-col gap-2 mt-2">
                         <Botao texto="Finalizar Atendimento" color="sucess" click={handleFinalizar} />
                         <Botao texto="Cancelar" color="cancel" click={onFechar} />

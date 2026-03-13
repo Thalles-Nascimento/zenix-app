@@ -9,6 +9,7 @@ import { ModalEditarAtendimento } from "./modals/atendimento-editar-modal"
 import { usePaginacao } from "../hooks/use-pagination"
 import { Paginacao } from "../components/pagination"
 import { useAuth } from "../contexts/auth-context"
+import { MessageSquareWarning } from "lucide-react"
 
 export default function Atendimentos() {
     const { dados, carregando, periodo, setPeriodo, criarAtendimento, atualizarAtendimento, deletarAtendimento, ativarAtendimento } = useAtendimentos()
@@ -75,7 +76,14 @@ export default function Atendimentos() {
                                     }
                                 }}
                             >
-                                <td className="px-4 py-4 font-medium text-white">{items.descricao}</td>
+                                <td className="px-4 py-4 notranslate font-medium text-white">
+                                            <div className="flex items-center gap-2">
+                                                {items.descricao}
+                                                {items.observacao && (
+                                                    <MessageSquareWarning color="#bd0000" />
+                                                )}
+                                            </div>
+                                        </td>
                                 <td className="px-4 py-4">{Array.isArray(items.servico) ? items.servico.join(" + ") : items.servico}</td>
                                 <td className="px-4 py-4 text-orange-500 font-bold">
                                     {items.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}

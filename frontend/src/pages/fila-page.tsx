@@ -19,17 +19,18 @@ export default function FilaPage() {
         return `${hora}:${minuto}:${seg}.${ms}`
     }
 
-    const handleFinalizar = async (id: number, valor: number) => {
-        const cliente = fila.find(c => c.id === id)
-        if (!cliente) return
-        await criarAtendimentoService({
-            descricao: cliente.nomeCliente,
-            servico: cliente.servico,
-            valor: valor,
-            formaPagamento: cliente.formaPagamento
-        })
-        await finalizarAtendimento(id)
-    }
+    const handleFinalizar = async (id: number, valor: number, observacao: string) => {
+    const cliente = fila.find(c => c.id === id)
+    if (!cliente) return
+    await criarAtendimentoService({
+        descricao: cliente.nomeCliente,
+        servico: cliente.servico,
+        valor: valor,
+        formaPagamento: cliente.formaPagamento,
+        observacao: observacao
+    })
+    await finalizarAtendimento(id)
+}
 
     if (carregando) {
         return (
