@@ -32,6 +32,8 @@ public class TelefoneCliente implements Serializable {
     @JsonIgnore
     private List<Clientes> clientes;
 
+    //  TODO Criar mais colunas - created_at, delete_at e update_at
+
     public TelefoneCliente(String telefone){
         this.telefoneCliente = telefone;
     }

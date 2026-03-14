@@ -39,17 +39,23 @@ public class FilaController {
                 .body(filaService.getFilasByUser());
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<?> atualizarClienteFila(@PathVariable Long id){
+    @PatchMapping("/chamar/{id}")
+    public ResponseEntity<?> chamarClienteFila(@PathVariable Long id){
         return ResponseEntity.status(HttpStatus.OK)
-                .body(filaService.atualizarAtendimentoFila(id));
+                .body(filaService.chamarCliente(id));
     }
 
 
-    @DeleteMapping("/{id}")
+    @PatchMapping("/finalizar/{id}")
     public ResponseEntity<?> finalizarAtendimentoFila(@PathVariable Long id){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(filaService.finalizarAtendimento(id));
     }
+
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<?> deletarClienteFila(@PathVariable Long id){
+//        return ResponseEntity.status(HttpStatus.OK)
+//                .body(filaService.retirarClienteFila(id));
+//    }
 
 }

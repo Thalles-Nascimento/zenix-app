@@ -14,9 +14,11 @@ public record FilaRequestDTO(
         )
         String nomeCliente,
 
+//        TODO Criar uma tabela serviço
         @NotNull(message = "Campo não pode ser nulo!")
         List<String> servico,
 
+//      TODO Verificar a possibilidade de um relacionamento entre telefoneCliente e Fila
         String telefoneCliente,
 
         @NotNull(message = "Campo não pode ser nulo!")

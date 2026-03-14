@@ -37,4 +37,6 @@ public class Clientes implements Serializable {
     @Column(name = "cliente_created")
     private LocalDateTime created_at = LocalDateTime.now();
 
+    //  TODO Criar mais colunas - delete_at e update_at
+
 }

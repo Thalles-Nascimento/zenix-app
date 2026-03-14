@@ -12,6 +12,9 @@ import java.util.Optional;
 
 public interface ClienteRepository extends JpaRepository<Clientes, Long> {
 
+//    TODO Melhorar esse retorno, deixando mais seguro -
+//     SELECT c.cliente_id, c.cliente_nome, c.cliente_retorno FROM clientes c WHERE c.telefone_id = :id
     @Query(value = "SELECT * FROM clientes WHERE telefone_id = :id", nativeQuery = true)
     List<Clientes> findClientByNumber(@Param("id") Long id);
+
 }

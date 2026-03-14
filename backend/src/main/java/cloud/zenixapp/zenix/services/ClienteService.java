@@ -1,5 +1,6 @@
 package cloud.zenixapp.zenix.services;
 
+import cloud.zenixapp.zenix.configs.exceptions.FilaException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.mappers.ClienteMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.AtendimentoRequestDTO;
@@ -29,6 +30,7 @@ public class ClienteService {
     @Autowired
     private ClienteRepository clienteRepository;
 
+//   TODO Criar um service comum entre Telefone e Clientes
     @Autowired
     private TelefoneRepository telefoneRepository;
 
@@ -36,10 +38,12 @@ public class ClienteService {
     private ClienteMapper clienteMapper;
 
 
+//    TODO Validar save
     @Transactional
     public SuccessClienteResponseDTO save(ClienteRequestDTO clienteDTO){
         Clientes cliente = new Clientes();
         cliente.setNomeCliente(clienteDTO.nomeCliente());
+//        TODO Refatorar o uso de repository
         Optional<TelefoneCliente> telefone = telefoneRepository.findByNumber(clienteDTO.telefoneCliente());
 
         if (telefone.isPresent()){
@@ -62,6 +66,7 @@ public class ClienteService {
 
     public List<ClienteSimplesResponseDTO> clientesByTelefone(String numero) {
         Optional<TelefoneCliente> telefone = telefoneRepository.findByNumber(numero);
+//        TODO Validar retorno
         if (telefone.isEmpty()) {
             return Collections.emptyList();
         }
@@ -85,6 +90,27 @@ public class ClienteService {
                 })
                 .orElseThrow(() -> new NotFoundException("Cliente não encontrado!"));
     }
+
+//    @Transactional
+//    public SuccessClienteResponseDTO retiraRetornoCliente(Long id) throws NotFoundException {
+//        return clienteRepository.findById(id)
+//                .map(cliente -> {
+//                    int count = cliente.getTotalRetornos();
+//                    if (count == 1){
+//                        throw new FilaException("Não foi possivel retirar o retorno do cliente");
+//                    }
+//                    count = count - 1;
+//                    cliente.setTotalRetornos(count);
+//
+//                    clienteRepository.save(cliente);
+//                    return new SuccessClienteResponseDTO(
+//                            HttpStatus.OK.value(),
+//                            "Obrigado pelo retorno!"
+//                    );
+//
+//                })
+//                .orElseThrow(() -> new NotFoundException("Cliente não encontrado!"));
+//    }
 
 
 }

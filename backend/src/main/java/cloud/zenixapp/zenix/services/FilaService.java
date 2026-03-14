@@ -1,19 +1,23 @@
 package cloud.zenixapp.zenix.services;
 
 import cloud.zenixapp.zenix.configs.exceptions.FilaException;
+import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.mappers.FilaMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.FilaRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.FilaResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SucessFilaResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.SucessFilaRetiradaResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Fila;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.repositories.FilaAtendimentoRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -28,6 +32,9 @@ public class FilaService {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private ClienteService clienteService;
 
     @Autowired
     private FilaMapper filaMapper;
@@ -61,7 +68,7 @@ public class FilaService {
     }
 
     @Transactional
-    public SucessFilaResponseDTO atualizarAtendimentoFila(Long id) {
+    public SucessFilaResponseDTO chamarCliente(Long id) {
         return filaRepository.findById(id)
                 .map(atendimentoFila -> {
                     if(atendimentoFila.getStatus() != AGUARDANDO){
@@ -78,7 +85,7 @@ public class FilaService {
                             atendimentoFila.getStatus()
                     );
                 })
-                .orElseThrow();
+                .orElseThrow(() -> new NotFoundException("Atendimento não encontrado"));
     }
 
     @Transactional
@@ -98,7 +105,29 @@ public class FilaService {
                             atendimentoFila.getStatus()
                     );
                 })
-                .orElseThrow();
+                .orElseThrow(() -> new NotFoundException("Atendimento não encontrado"));
     }
 
+//    @Transactional
+//    public SucessFilaRetiradaResponseDTO retirarClienteFila(Long id) {
+//        return filaRepository.findById(id)
+//                .map(atendimentoFila -> {
+//                    if (atendimentoFila.getStatus() == EM_ATENDIMENTO) {
+//                        throw new FilaException("Clientes está em atendimento");
+//                    }
+//
+//                    atendimentoFila.setDelete_at(LocalDateTime.now());
+//
+//                    filaRepository.retirarClienteFila(id);
+//
+//                    return new SucessFilaRetiradaResponseDTO(
+//                            HttpStatus.OK.value(),
+//                            atendimentoFila.getId(),
+//                            atendimentoFila.getNomeCliente()
+//                    );
+//
+//
+//                })
+//                .orElseThrow(() -> new NotFoundException("Atendimento não encontrado"));
+//    }
 }

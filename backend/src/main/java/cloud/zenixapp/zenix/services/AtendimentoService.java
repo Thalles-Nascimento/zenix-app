@@ -48,7 +48,7 @@ public class AtendimentoService {
         atendimento.setValor(atendimentoDTO.valor());
         atendimento.setFormaPagamento(atendimentoDTO.formaPagamento());
         atendimento.setObservacao(atendimentoDTO.observacao());
-        atendimento.setDate(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")).format(current_date));
+        atendimento.setDate(LocalDateTime.now().format(current_date));
         atendimento.setUsuarios(user);
 
         atendimentoRepository.save(atendimento);
@@ -59,11 +59,12 @@ public class AtendimentoService {
         );
     }
 
-    public List<AtendimentoResponseDTO> listarAtendimentos(){
+    public List<AtendimentoResponseDTO> listarAtendimentosHoje(){
         Usuarios user = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return atendimentoMapper.listResponseDTO(atendimentoRepository.findByUserDate(user.getId(), LocalDateTime.now().format(current_date)));
     }
 
+//    TODO Criar uma tela no frontend para visualizar esses atendimentos abaixo
     public List<AtendimentoAdminResponseDTO> listarTodosAtendimentos(){
         return atendimentoRepository
                 .findAll()
@@ -96,9 +97,11 @@ public class AtendimentoService {
                 .orElseThrow(() -> new NotFoundException("Atendimento não encontrado!"));
     }
 
-    public List<AtendimentoResponseDTO> listarHistorico(Long userId){
+    public List<AtendimentoResponseDTO> listarHistorico(){
+        Usuarios user = (Usuarios) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
         return atendimentoMapper.listResponseDTO(
-                atendimentoRepository.findByUser(userId)
+                atendimentoRepository.findByUser(user.getId())
         );
     }
 
@@ -111,7 +114,9 @@ public class AtendimentoService {
 
                     }
 
+                    atendimento.setDelete_at(LocalDateTime.now());
                     atendimentoRepository.deleteLogico(id);
+
                     return new SucessAtendimentoResponseDTO(
                             HttpStatus.OK.value(),
                             "Atendimento excluído com sucesso!"
@@ -121,25 +126,7 @@ public class AtendimentoService {
                 .orElseThrow(() -> new NotFoundException("Atendimento não encontrado!"));
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    public SucessAtendimentoResponseDTO atualizarAtendimentoPorUsuario(Long id, AtendimentoRequestDTO atendimentoRequestDTO) throws NotFoundException {
-        Usuarios user = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return atendimentoRepository.findByUserById(user.getId(), id)
-                .map(atendimento -> {
-                    if(atendimento.getStatus() == -1){
-                        throw new NotFoundException("Não é possível atualizar um atendimento excluído!");
-                    }
-
-                    atendimentoMapper.atualizarAtendimento(atendimento, atendimentoRequestDTO);
-                    return new SucessAtendimentoResponseDTO(
-                            HttpStatus.OK.value(),
-                            "Atendimento atualizado com sucesso!"
-                    );
-
-                })
-                .orElseThrow(() -> new NotFoundException("Atendimento não encontrado!"));
-    }
-
+//    TODO Restringir a edição apenas ao administrador | Restringir a chamada no método atualizar por campos não alterados
     @Transactional(propagation = Propagation.REQUIRED)
     public SucessAtendimentoResponseDTO atualizarAtendimento(Long id, AtendimentoRequestDTO atendimentoRequestDTO) throws NotFoundException {
         return atendimentoRepository.findByIdAtendimento(id)
@@ -148,7 +135,9 @@ public class AtendimentoService {
                         throw new NotFoundException("Não é possível atualizar um atendimento excluído!");
                     }
 
+                    atendimento.setUpdate_at(LocalDateTime.now());
                     atendimentoMapper.atualizarAtendimento(atendimento, atendimentoRequestDTO);
+
                     return new SucessAtendimentoResponseDTO(
                             HttpStatus.OK.value(),
                             "Atendimento atualizado com sucesso!"
@@ -158,6 +147,7 @@ public class AtendimentoService {
                 .orElseThrow(() -> new NotFoundException("Atendimento não encontrado!"));
     }
 
+    //    TODO Restringir a ativação apenas ao administrador
     @Transactional
     public SucessAtendimentoResponseDTO ativarAtendimento(Long id){
         return atendimentoRepository.findById(id)
@@ -165,6 +155,9 @@ public class AtendimentoService {
                     if(atendimento.getStatus() != -1){
                         throw new AtendimentoExcluidoException("Atendimento já está ativo!");
                     }
+
+                    atendimento.setDelete_at(null);
+
                     atendimentoRepository.ativarAtendimento(id);
                     return new SucessAtendimentoResponseDTO(
                             HttpStatus.OK.value(),

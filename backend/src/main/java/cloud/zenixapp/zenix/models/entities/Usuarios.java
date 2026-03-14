@@ -49,7 +49,6 @@ public class Usuarios implements UserDetails, Serializable {
 
     @ManyToOne
     @JoinColumn(name = "usuarios_unidade")
-//    @JsonIgnore
     private Unidades unidade;
 
     @OneToMany(mappedBy = "usuarios")
@@ -60,6 +59,8 @@ public class Usuarios implements UserDetails, Serializable {
 
     @Column(name = "usuario_status")
     private int status = 1;
+
+//  TODO Criar mais colunas - created_at, delete_at e update_at
 
     private boolean enabled = true;
 
