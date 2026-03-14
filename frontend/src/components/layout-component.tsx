@@ -48,7 +48,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
                             className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors
                                 ${location.pathname === item.path
                                     ? "bg-orange-600 text-white"
-                                    : "text-gray-400 hover:bg-gray-800 hover:text-white"
+                                    : "text-gray-400 hover:bg-gray-900 hover:text-white"
                                 }`}
                         >
                             {item.icon}
@@ -61,7 +61,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
                     <LogOutIcon className="mr-2" /> Logout
                 </Button>
             </div>
-            <div className="px-6 py-4 border-t border-gray-800 text-xs font-bold text-gray-500">
+            <div className="px-6 py-4 border-t border-gray-500 text-xs font-bold text-white">
                 Zenix © {new Date().getFullYear()}
             </div>
         </div>
@@ -123,7 +123,7 @@ export default function Layout({ children }: LayoutProps) {
                     </Sheet>
 
                     <div className="ml-auto flex items-center gap-3 relative">
-                        <span className="text-sm text-gray-300 hidden sm:block">{grupo}</span>
+                        <span className="text-sm text-white hidden sm:block">{grupo}</span>
 
                         <button
                             onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -210,7 +210,7 @@ export default function Layout({ children }: LayoutProps) {
 
                 {/* Footer — padding bottom respeita barra de navegação do iPhone */}
                 <footer
-                    className="px-6 border-t border-gray-700 text-center text-xs text-gray-500"
+                    className="px-6 border-t border-gray-500 text-center text-xs text-white"
                     style={{
                         paddingTop: "1rem",
                         paddingBottom: "max(1rem, env(safe-area-inset-bottom))"

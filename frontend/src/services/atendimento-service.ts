@@ -11,11 +11,6 @@ export async function criarAtendimentoService(dados: AtendimentoFormProps) {
     return response.data
 }
 
-export async function atualizarAtendimentoService(id: number, dados: AtendimentoFormProps) {
-    const response = await api_url.put(`/atendimentos/usuario/${id}`, dados)
-    return response.data
-}
-
 export async function atualizarAtendimentoAdminService(id: number, dados: AtendimentoFormProps) {
     const response = await api_url.put(`/atendimentos/${id}`, dados)
     return response.data

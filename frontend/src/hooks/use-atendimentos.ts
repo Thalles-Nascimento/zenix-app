@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import {
     atendimentoService,
     criarAtendimentoService,
-    atualizarAtendimentoService,
     atualizarAtendimentoAdminService,
     deletarAtendimentoService,
     ativarAtendimentoService,
@@ -48,19 +47,8 @@ export function useAtendimentos() {
             toast.error(`Erro: ${error}`)
         }
     }
-
-    // Atualiza atendimento do próprio usuário (USER e ADMIN nos próprios atendimentos)
-    const atualizarAtendimento = async (id: number, form: AtendimentoFormProps) => {
-        try {
-            await atualizarAtendimentoService(id, form)
-            toast.success("Atendimento atualizado com sucesso!")
-            await buscarAtendimentos()
-        } catch (error) {
-            toast.error(`Erro: ${error}`)
-        }
-    }
-
-    // Atualiza qualquer atendimento — exclusivo ADMIN (dashboard)
+    
+    // Atualiza qualquer atendimento — exclusivo ADMIN
     const atualizarAtendimentoAdmin = async (id: number, form: AtendimentoFormProps) => {
         try {
             await atualizarAtendimentoAdminService(id, form)
@@ -93,5 +81,5 @@ export function useAtendimentos() {
 
     const dados = periodo === 'hoje' ? dadosHoje : dadosHistorico
 
-    return { dados, carregando, periodo, setPeriodo, criarAtendimento, atualizarAtendimento, atualizarAtendimentoAdmin, deletarAtendimento, ativarAtendimento }
+    return { dados, carregando, periodo, setPeriodo, criarAtendimento, atualizarAtendimentoAdmin, deletarAtendimento, ativarAtendimento }
 }

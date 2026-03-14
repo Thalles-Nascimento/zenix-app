@@ -12,7 +12,7 @@ import { useAuth } from "../contexts/auth-context"
 import { MessageSquareWarning } from "lucide-react"
 
 export default function Atendimentos() {
-    const { dados, carregando, periodo, setPeriodo, criarAtendimento, atualizarAtendimento, deletarAtendimento, ativarAtendimento } = useAtendimentos()
+    const { dados, carregando, periodo, setPeriodo, criarAtendimento, atualizarAtendimentoAdmin, deletarAtendimento, ativarAtendimento } = useAtendimentos()
     const [atendimentoSelecionado, setAtendimentoSelecionado] = useState<DadosProps | null>(null)
     const { itensPagina, paginaAtual, totalPaginas, totalItens, setPaginaAtual } = usePaginacao(dados, 7)
     const { permissao } = useAuth()
@@ -113,7 +113,7 @@ export default function Atendimentos() {
                 atendimento={atendimentoSelecionado}
                 open={atendimentoSelecionado !== null}
                 onFechar={() => setAtendimentoSelecionado(null)}
-                onConfirmar={atualizarAtendimento}
+                onConfirmar={atualizarAtendimentoAdmin}
                 onDeletar={deletarAtendimento}
                 onReativar={ativarAtendimento}
             />

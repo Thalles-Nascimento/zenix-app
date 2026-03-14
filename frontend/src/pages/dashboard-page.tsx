@@ -44,7 +44,7 @@ export default function DashboardPage() {
         totalPaginas: totalPaginasBarbeiros,
         totalItens: totalItensBarbeiros,
         setPaginaAtual: setPaginaBarbeiros
-    } = usePaginacao(porBarbeiro, 5)
+    } = usePaginacao(porBarbeiro, 4)
 
     // Paginação — modal do barbeiro
     const {
@@ -53,7 +53,7 @@ export default function DashboardPage() {
         totalPaginas: totalPaginasModal,
         totalItens: totalItensModal,
         setPaginaAtual: setPaginaModal
-    } = usePaginacao(atendimentosBarbeiro, 10)
+    } = usePaginacao(atendimentosBarbeiro, 4)
 
     // Reseta página do modal ao trocar de barbeiro
     useEffect(() => {
@@ -209,7 +209,7 @@ export default function DashboardPage() {
                             {itensPaginaBarbeiros.length === 0 ? (
                                 <tr>
                                     <td colSpan={4} className="px-6 py-8 text-center text-gray-500 notranslate">
-                                        Nenhum atendimento no período
+                                        Nenhum barbeiro no período
                                     </td>
                                 </tr>
                             ) : (
@@ -232,7 +232,7 @@ export default function DashboardPage() {
                         paginaAtual={paginaBarbeiros}
                         totalPaginas={totalPaginasBarbeiros}
                         totalItens={totalItensBarbeiros}
-                        itensPorPagina={5}
+                        itensPorPagina={4}
                         onPaginaChange={setPaginaBarbeiros}
                     />
                 </div>
@@ -372,14 +372,17 @@ export default function DashboardPage() {
                                 )}
                             </tbody>
                         </table>
-                        <Paginacao
-                            paginaAtual={paginaModal}
-                            totalPaginas={totalPaginasModal}
-                            totalItens={totalItensModal}
-                            itensPorPagina={10}
-                            onPaginaChange={setPaginaModal}
-                        />
+                        
                     </div>
+                    {/* Refatorei os itens por página da tabela de atendimentos no modal de Barbeiros */}
+                        <Paginacao
+                                paginaAtual={paginaModal}
+                                totalPaginas={totalPaginasModal}
+                                totalItens={totalItensModal}
+                                itensPorPagina={4}
+                                onPaginaChange={setPaginaModal}
+
+                            />
                 </DialogContent>
             </Dialog>
 

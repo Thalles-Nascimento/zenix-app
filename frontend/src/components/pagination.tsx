@@ -13,7 +13,7 @@ export function Paginacao({ paginaAtual, totalPaginas, totalItens, itensPorPagin
     const fim = Math.min(paginaAtual * itensPorPagina, totalItens)
 
     return (
-        <div className="flex items-center justify-between px-2 py-3">
+        <div className="flex items-center border border-gray-600 rounded-xl justify-between px-2 py-3">
             <p className="text-gray-400 text-sm">
                 Mostrando <span className="text-white">{inicio}–{fim}</span> de <span className="text-white">{totalItens}</span>
             </p>

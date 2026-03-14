@@ -6,6 +6,7 @@ export interface ClienteDTO {
     vezesRetorno: number
 }
 
+// Verificar endpoint
 export async function buscarClientesPorTelefoneService(telefone: string): Promise<ClienteDTO[]> {
     try {
         const response = await api_url.get(`/clientes/telefone/${telefone}`)
@@ -20,5 +21,5 @@ export async function criarClienteService(nomeCliente: string, telefoneCliente: 
 }
 
 export async function atualizarRetornoService(id: number): Promise<void> {
-    await api_url.patch(`/clientes/${id}`, {})
+    await api_url.patch(`/clientes/retorno/${id}`, {})
 }

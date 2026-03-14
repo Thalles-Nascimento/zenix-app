@@ -7,6 +7,9 @@ export async function entrarFilaService(dados: FilaFormProps) {
     return response.data
 }
 
+// Criar endpoint para buscar a fila de todos os barbeiros //
+
+
 // Barbeiro busca a própria fila
 export async function buscarFilaService() {
     const response = await api_url.get('/fila')
@@ -15,12 +18,18 @@ export async function buscarFilaService() {
 
 // Barbeiro chama o próximo
 export async function chamarProximoService(id: number) {
-    const response = await api_url.patch(`/fila/${id}`, {})
+    const response = await api_url.patch(`/fila/chamar/${id}`, {})
     return response.data
 }
 
 // Barbeiro finaliza atendimento
 export async function finalizarFilaService(id: number) {
-    const response = await api_url.delete(`/fila/${id}`)
+    const response = await api_url.patch(`/fila/finalizar/${id}`)
     return response.data
 }
+
+// Barbeiro retira cliente da fila
+// export async function retirarFilaService(id: number) {
+//     const response = await api_url.delete(`/fila/${id}`)
+//     return response.data
+// }
