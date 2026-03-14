@@ -218,7 +218,7 @@ class AtendimentoServiceTests {
                 new AtendimentoResponseDTO(1L, "Memphis Depay", List.of("Barba"), 50.0, "PIX", "05/03/2026", null, 1)
         ));
 
-        var resultado = atendimentoService.listarHistorico(1L);
+        var resultado = atendimentoService.listarHistorico();
 
         assertNotNull(resultado);
         assertEquals(1, resultado.size());

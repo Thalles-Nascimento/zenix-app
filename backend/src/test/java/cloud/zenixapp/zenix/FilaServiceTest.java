@@ -134,7 +134,7 @@ class FilaServiceTest {
     void atualizarAtendimentoFila_quandoAguardando_deveRetornarSucesso() {
         when(filaRepository.findById(1L)).thenReturn(Optional.of(filaAguardando));
 
-        SucessFilaResponseDTO resultado = filaService.atualizarAtendimentoFila(1L);
+        SucessFilaResponseDTO resultado = filaService.chamarCliente(1L);
 
         assertNotNull(resultado);
         assertEquals("Memphis Depay", resultado.nomeCliente());
@@ -148,7 +148,7 @@ class FilaServiceTest {
         when(filaRepository.findById(2L)).thenReturn(Optional.of(filaEmAtendimento));
 
         assertThrows(FilaException.class, () -> {
-            filaService.atualizarAtendimentoFila(2L);
+            filaService.chamarCliente(2L);
         });
 
         verify(filaRepository, never()).paraAtendimento(any());
@@ -161,7 +161,7 @@ class FilaServiceTest {
         when(filaRepository.findById(99L)).thenReturn(Optional.empty());
 
         assertThrows(Exception.class, () -> {
-            filaService.atualizarAtendimentoFila(99L);
+            filaService.chamarCliente(99L);
         });
     }
 
