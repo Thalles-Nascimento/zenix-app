@@ -30,13 +30,14 @@ public class ClienteController {
                 .body(clienteService.save(clienteDTO));
     }
 
+    // TODO Verificar endpoint
     @GetMapping("/telefone/{numero}")
     public ResponseEntity<?> buscarClientesPorTelefone(@PathVariable String numero) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(clienteService.clientesByTelefone(numero));
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/retorno/{id}")
     public ResponseEntity<?> atualizarClienteRetorno(@PathVariable Long id){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(clienteService.atualizarRetornoCliente(id));

@@ -37,4 +37,5 @@ public class Unidades implements Serializable {
 
     @Column(name = "unidade_status", nullable = false)
     private Integer status = 1;
+    //  TODO Criar mais colunas - created_at, delete_at e update_at
 }

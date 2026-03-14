@@ -27,6 +27,7 @@ public class Atendimento implements Serializable {
     @Column(name = "atendimento_descricao", length = 120)
     private String descricao;
 
+//  TODO Transformar servico numa tabela do banco e refatorar - Campos servico e valor
     @Column(name = "atendimento_servico", length = 100)
     private List<String> servico;
 
@@ -49,5 +50,14 @@ public class Atendimento implements Serializable {
     @Column(name = "atendimento_status", nullable = false)
     private Integer status = 1;
 
+    //  TODO Criar mais colunas - created_at, delete_at e update_at
+    @Column(name = "atendimento_created_at")
+    private LocalDateTime created_at = LocalDateTime.now();
+
+    @Column(name = "atendimento_update_at")
+    private LocalDateTime update_at;
+
+    @Column(name = "atendimento_delete_at")
+    private LocalDateTime delete_at;
 
 }

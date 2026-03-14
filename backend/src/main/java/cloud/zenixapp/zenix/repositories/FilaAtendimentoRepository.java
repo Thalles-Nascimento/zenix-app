@@ -26,6 +26,11 @@ public interface FilaAtendimentoRepository extends JpaRepository<Fila, Long> {
     @Query(value = "UPDATE Fila SET status = 1 WHERE id = :id")
     void paraAtendimento(@Param("id") Long id);
 
+    //  Status vai para RETIRADO
+//    @Modifying
+//    @Query(value = "UPDATE Fila SET status = 3 WHERE id = :id")
+//    void retirarClienteFila(@Param("id") Long id);
+
     @Modifying
     @Query(value = "UPDATE Fila SET inicioAtendimento = :horaInicio WHERE id = :id")
     void marcarHoraInicio(@Param("id") Long id, @Param("horaInicio") LocalTime horaInicio);

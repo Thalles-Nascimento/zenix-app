@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
 
 
@@ -36,6 +38,7 @@ public class Fila implements Serializable {
     @Column(name = "fila_pagamento")
     private String formaPagamento;
 
+//    TODO Verificar esse campo telefone | Pode ser o id da tabela telefone_cliente - Entities -> Fila
     @Column(name = "fila_telefone")
     private String telefoneCliente;
 
@@ -54,5 +57,12 @@ public class Fila implements Serializable {
 
     @Column(name = "fila_status", nullable = false)
     private StatusFilaEnum status = StatusFilaEnum.AGUARDANDO;
+
+    //  TODO Criar mais colunas - created_at, delete_at e update_at
+    @Column(name = "fila_update_at")
+    private LocalDateTime update_at;
+
+    @Column(name = "fila_delete_at")
+    private LocalDateTime delete_at;
 
 }

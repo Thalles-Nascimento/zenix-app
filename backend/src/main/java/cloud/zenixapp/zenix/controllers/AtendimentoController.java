@@ -58,10 +58,8 @@ public class AtendimentoController {
 
     @GetMapping("/historico")
     public ResponseEntity<List<AtendimentoResponseDTO>> findHistorico(){
-        Usuarios user = (Usuarios) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
         return ResponseEntity.status(HttpStatus.OK)
-                .body(atendimentoService.listarHistorico(user.getId()));
+                .body(atendimentoService.listarHistorico());
     }
 
     /*
@@ -72,12 +70,13 @@ public class AtendimentoController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Atendimento encontrado")
     })
-    @Operation(summary = "Listar atendimentos", description = "Endpoint para listar todos os atendimentos")
-    public ResponseEntity<List<AtendimentoResponseDTO>> findAll(){
+    @Operation(summary = "Listar atendimentos do dia", description = "Endpoint para listar todos os atendimentos do dia")
+    public ResponseEntity<List<AtendimentoResponseDTO>> findAllTodayByUser(){
         return ResponseEntity.status(HttpStatus.OK)
-                .body(atendimentoService.listarAtendimentos());
+                .body(atendimentoService.listarAtendimentosHoje());
     }
 
+//    TODO Verificar - @GetMapping("/admin")
     @GetMapping("/admin")
     @Operation(summary = "Listar todos os atendimentos", description = "Endpoint para ADMIN listar todos os atendimentos do dia")
     public ResponseEntity<List<AtendimentoAdminResponseDTO>> findAllAdmin(){
@@ -114,38 +113,6 @@ public class AtendimentoController {
     public ResponseEntity<?> findById(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.listarAtendimentoPorId(id));
-    }
-
-
-    /*
-     * Endpoint para atualizar um atendimento do Banco de Dados pelo ID do Usuario
-     *
-     */
-    @PutMapping(value = "/usuario/{id}")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Atendimento atualizado"),
-            @ApiResponse(responseCode = "404", description = "Atendimento não encontrado"),
-            @ApiResponse(responseCode = "400", description = "Campos com nulos ou fora do padrão")
-    })
-    @Operation(summary = "Atualizar atendimento por ID do Usuario", description = "Endpoint para atualiza um atendimento por ID do Usuario")
-    public ResponseEntity<?> updateByUser(@PathVariable Long id, @RequestBody @Valid AtendimentoRequestDTO atendimentoRequestDTO, BindingResult result) throws NotFoundException {
-        if(result.hasErrors()){
-            if (BindingHandler.isErrorNull(result)){
-                return ResponseEntity.status(HttpStatus.OK)
-                        .body(atendimentoService.atualizarAtendimentoPorUsuario(id, atendimentoRequestDTO));
-            }
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ErrorResponseDTO(
-                            HttpStatus.BAD_REQUEST.value(),
-                            "Alguns campos estão fora do padrão",
-                            LocalDateTime.now().toInstant(ZoneOffset.of("-03:00")))
-                    );
-        }
-
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(atendimentoService.atualizarAtendimentoPorUsuario(id, atendimentoRequestDTO));
-
     }
 
     /*
