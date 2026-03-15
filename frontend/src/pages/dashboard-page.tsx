@@ -305,7 +305,7 @@ export default function DashboardPage() {
 
             {/* Modal detalhes do barbeiro */}
             <Dialog open={barbeiroSelecionado !== null} onOpenChange={() => setBarbeiroSelecionado(null)}>
-                <DialogContent className="bg-black border-gray-500 text-white w-[calc(100vw-2rem)] max-w-2xl max-h-[90vh] overflow-y-auto notranslate">
+                <DialogContent className="bg-black border-gray-500 text-white w-[calc(100vw-2rem)] max-w-2xl h-[90vh] overflow-y-auto notranslate">
                     <DialogHeader>
                         <DialogTitle className="text-white notranslate">
                             Barbeiro: <span className="text-orange-500 font-bold">{barbeiroSelecionado}</span>
