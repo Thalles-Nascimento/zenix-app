@@ -57,8 +57,7 @@ public class FilaService {
                 fila.getId(),
                 fila.getNomeCliente(),
                 fila.getServico(),
-                fila.getStatus(),
-                fila.getTelefoneCliente()
+                fila.getStatus()
         );
     }
 
@@ -82,8 +81,7 @@ public class FilaService {
                             atendimentoFila.getId(),
                             atendimentoFila.getNomeCliente(),
                             atendimentoFila.getServico(),
-                            atendimentoFila.getStatus(),
-                            atendimentoFila.getTelefoneCliente()
+                            atendimentoFila.getStatus()
                     );
                 })
                 .orElseThrow(() -> new NotFoundException("Atendimento não encontrado"));
@@ -103,8 +101,7 @@ public class FilaService {
                             atendimentoFila.getId(),
                             atendimentoFila.getNomeCliente(),
                             atendimentoFila.getServico(),
-                            atendimentoFila.getStatus(),
-                            atendimentoFila.getTelefoneCliente()
+                            atendimentoFila.getStatus()
                     );
                 })
                 .orElseThrow(() -> new NotFoundException("Atendimento não encontrado"));
