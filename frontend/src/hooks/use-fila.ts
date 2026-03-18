@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
-import { buscarFilaService, chamarProximoService, finalizarFilaService } from "../services/fila-service"
+import { buscarFilaService, chamarProximoService, finalizarFilaService, retirarFilaService } from "../services/fila-service"
 import type { FilaProps } from "../types/fila"
 
 export function useFila() {
@@ -47,5 +47,16 @@ export function useFila() {
         }
     }
 
-    return { fila, carregando, clienteSelecionado, setClienteSelecionado, chamarProximo, finalizarAtendimento }
+    const retirarClienteFila = async (id: number) => {
+        try {
+            await retirarFilaService(id)
+            toast.success("Cliente retirado!")
+            await buscarFila()
+        } catch (error) {
+            toast.error("Erro ao retirar Cliente.")
+        }
+    }
+
+
+    return { fila, carregando, clienteSelecionado, setClienteSelecionado, chamarProximo, finalizarAtendimento, retirarClienteFila }
 }
