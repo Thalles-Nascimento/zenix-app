@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
-import { Menu, Scissors, Users, DollarSign, LogOutIcon, ChartBarStacked, UserPlus, Building2, Wrench } from "lucide-react"
+import { Menu, Scissors, Users, DollarSign, LogOutIcon, ChartBarStacked, UserPlus, Building2, Wrench, WalletCards } from "lucide-react"
 import { useAuth } from "../contexts/auth-context"
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet"
 import { Button } from "./ui/button"
@@ -19,6 +19,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
     const menuItems = [
         { label: "Atendimentos", path: "/atendimentos", icon: <Scissors size={18} />, roles: ["ADMIN", "USER"] },
         { label: "Serviços",     path: "/servicos",     icon: <Wrench size={18} />, roles: ["ADMIN"] },
+        { label: "Forma de Pagamento",     path: "/pagamentos",     icon: <WalletCards size={18} />, roles: ["ADMIN"] },
         { label: "Financeiro",   path: "/financeiro",   icon: <DollarSign size={18} />, roles: ["ADMIN", "USER"] },
         { label: "Usuários",     path: "/usuarios",     icon: <UserPlus size={18} />, roles: ["ADMIN"] },
         { label: "Relatório",    path: "/dashboard",    icon: <ChartBarStacked size={18} />, roles: ["ADMIN"] },

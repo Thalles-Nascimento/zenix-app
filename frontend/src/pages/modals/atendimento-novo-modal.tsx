@@ -3,22 +3,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "../../components/ui/button"
 import { Input } from "../../components/ui/input"
 import { Label } from "../../components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select"
 import type { AtendimentoFormProps } from "../../types/atendimento"
 import { Botao } from "../../components/common/botao"
 import { ServicosMultiSelect } from "../../components/common/servicos-multiselect-component"
-import { SERVICOS } from "../../utils/servicos"
+import { PagamentoSelect } from "../../components/common/pagamento-select"
+import { useServicos } from "../../hooks/use-servicos"
 
 interface Props {
     onConfirmar: (form: AtendimentoFormProps) => void
-}
-
-const calcularTotal = (servicos: string[]): number => {
-    return servicos.reduce((acc, nome) => {
-        const servico = SERVICOS.find(s => s.nome === nome)
-        if (!servico) return acc
-        return acc + parseFloat(servico.valor.replace("R$", "").replace(",", ".").trim())
-    }, 0)
 }
 
 export function ModalNovoAtendimento({ onConfirmar }: Props) {
@@ -27,8 +19,17 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
         descricao: "", servico: [], valor: 0, formaPagamento: ""
     })
 
-    const handleServicosChange = (servicos: string[]) => {
-        setForm({ ...form, servico: servicos, valor: calcularTotal(servicos) })
+    const { servicos } = useServicos()
+
+    const calcularTotal = (nomes: string[]): number => {
+        return nomes.reduce((acc, nome) => {
+            const servico = servicos.find(s => s.servico === nome)
+            return servico ? acc + servico.valor : acc
+        }, 0)
+    }
+
+    const handleServicosChange = (nomes: string[]) => {
+        setForm({ ...form, servico: nomes, valor: calcularTotal(nomes) })
     }
 
     const handleConfirmar = () => {
@@ -50,10 +51,12 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
                 <div className="flex flex-col gap-4 mt-2">
                     <div>
                         <Label className="text-gray-300">Cliente</Label>
-                        <Input className="mt-2 bg-gray-900 border-gray-700 text-white"
+                        <Input
+                            className="mt-2 bg-gray-900 border-gray-700 text-white"
                             placeholder="Nome do cliente"
                             value={form.descricao}
-                            onChange={(e) => setForm({ ...form, descricao: e.target.value })} />
+                            onChange={(e) => setForm({ ...form, descricao: e.target.value })}
+                        />
                     </div>
                     <div>
                         <Label className="text-gray-300 mb-2">
@@ -79,16 +82,10 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
                     </div>
                     <div>
                         <Label className="text-gray-300 notranslate">Forma de Pagamento</Label>
-                        <Select onValueChange={(v) => setForm({ ...form, formaPagamento: v })}>
-                            <SelectTrigger className="w-full mt-2 bg-gray-900 border-gray-700 text-white notranslate">
-                                <SelectValue placeholder="Selecione" />
-                            </SelectTrigger>
-                            <SelectContent className="bg-black border-gray-700 text-white notranslate">
-                                <SelectItem value="DINHEIRO">Dinheiro</SelectItem>
-                                <SelectItem value="PIX">Pix</SelectItem>
-                                <SelectItem value="CARTAO">Cartão</SelectItem>
-                            </SelectContent>
-                        </Select>
+                        <PagamentoSelect
+                            value={form.formaPagamento}
+                            onValueChange={(v) => setForm({ ...form, formaPagamento: v })}
+                        />
                     </div>
                     <div className="flex gap-3 mt-2">
                         <Botao color="primary" texto="Confirmar" click={handleConfirmar} />

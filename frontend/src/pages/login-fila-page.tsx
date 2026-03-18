@@ -12,6 +12,7 @@ import { toast, Toaster } from "sonner"
 import { SuccessScreen } from "../components/successScreen-component"
 import { InputTelefone } from "../components/common/input-telefone"
 import { ServicosMultiSelect } from "../components/common/servicos-multiselect-component"
+import { PagamentoSelect } from "@/components/common/pagamento-select"
 
 export default function LoginClient() {
     const { unidadeId } = useParams()
@@ -163,16 +164,11 @@ export default function LoginClient() {
 
                             <div>
                                 <Label className="text-white">Forma de Pagamento</Label>
-                                <Select onValueChange={setFormaPagamento}>
-                                    <SelectTrigger className="bg-gray-900 mt-2 border-gray-300 text-white w-full notranslate">
-                                        <SelectValue placeholder="Selecione" />
-                                    </SelectTrigger>
-                                    <SelectContent className="border-gray-300 bg-black text-white notranslate">
-                                        <SelectItem value="DINHEIRO">Dinheiro</SelectItem>
-                                        <SelectItem value="PIX">Pix</SelectItem>
-                                        <SelectItem value="CARTAO">Cartão</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                <PagamentoSelect
+                                    value={formaPagamento}
+                                    onValueChange={setFormaPagamento}
+                                    className="mt-2 border-gray-300"
+                                />
                             </div>
 
                             <div>

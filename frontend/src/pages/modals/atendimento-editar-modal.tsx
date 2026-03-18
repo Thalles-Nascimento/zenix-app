@@ -8,6 +8,7 @@ import { ServicosMultiSelect } from "../../components/common/servicos-multiselec
 import { Input } from "@/components/ui/input"
 import { TextareaField } from "@/components/common/textarea"
 import { useServicos } from "../../hooks/use-servicos"
+import { PagamentoSelect } from "@/components/common/pagamento-select"
 
 interface Props {
     atendimento: DadosProps | null
@@ -115,16 +116,10 @@ export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirma
                     </div>
                     <div>
                         <Label className="text-gray-300">Forma de Pagamento</Label>
-                        <Select value={form.formaPagamento} onValueChange={(v) => setForm({ ...form, formaPagamento: v })}>
-                            <SelectTrigger className="mt-1 bg-gray-900 border-gray-700 text-white w-full notranslate">
-                                <SelectValue placeholder="Selecione" />
-                            </SelectTrigger>
-                            <SelectContent className="bg-black border-gray-700 text-white notranslate">
-                                <SelectItem value="DINHEIRO">Dinheiro</SelectItem>
-                                <SelectItem value="PIX">Pix</SelectItem>
-                                <SelectItem value="CARTAO">Cartão</SelectItem>
-                            </SelectContent>
-                        </Select>
+                        <PagamentoSelect
+                            value={form.formaPagamento}
+                            onValueChange={(v) => setForm({ ...form, formaPagamento: v })}
+                        />
                     </div>
                     <TextareaField
                         value={form.observacao ?? ""}

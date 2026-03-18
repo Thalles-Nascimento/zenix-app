@@ -13,6 +13,7 @@ import DashboardPage from './pages/dashboard-page'
 import UnidadesPage from './pages/unidade-page'
 import FilaPage from './pages/fila-page'
 import ServicosPage from './pages/servicos-page'
+import PagamentosPage from './pages/pagamentos-page'
 
 
 function App() {
@@ -44,6 +45,11 @@ function App() {
           <Route path='/servicos' element={
             <RotaAdmin>
               <ServicosPage/>
+            </RotaAdmin>
+          } />
+          <Route path='/pagamentos' element={
+            <RotaAdmin>
+              <PagamentosPage/>
             </RotaAdmin>
           } />
         </Route>
