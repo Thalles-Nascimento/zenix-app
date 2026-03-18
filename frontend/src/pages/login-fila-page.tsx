@@ -23,6 +23,7 @@ export default function LoginClient() {
 
     const { barbeiros } = useBarbeiros(Number(unidadeId))
     const { clientes, buscarClientes, criarCliente, buscando, atualizarRetorno } = useCliente()
+
     const { servicos } = useServicos()
 
     const [nome, setNome] = useState("")

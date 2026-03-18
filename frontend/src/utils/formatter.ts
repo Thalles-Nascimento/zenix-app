@@ -25,6 +25,7 @@ export function formatarTelefone(valor: string): string {
         .replace(/(\d{5})(\d)/, '$1-$2')
 }
 
+
 // Remove formatação: (11) 99999-9999 → 11999999999
 export function limparTelefone(telefone: string): string {
     return telefone.replace(/\D/g, '')

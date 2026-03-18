@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../components/ui/dialog"
 import { Label } from "../../components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select"
 import type { DadosProps, AtendimentoFormProps } from "../../types/atendimento"
 import { Botao } from "../../components/common/botao"
 import { ServicosMultiSelect } from "../../components/common/servicos-multiselect-component"
