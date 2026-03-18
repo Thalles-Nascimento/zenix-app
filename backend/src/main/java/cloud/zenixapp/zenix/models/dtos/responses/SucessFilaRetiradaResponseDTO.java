@@ -6,8 +6,7 @@ import java.util.List;
 
 public record SucessFilaRetiradaResponseDTO(
         int statusHttp,
-        Long id,
-        String nomeCliente
+        String message
 
 ) {
 }

@@ -24,7 +24,7 @@ public class Clientes implements Serializable {
     @Column(name = "cliente_id", nullable = false)
     private Long id;
 
-    @Column(name = "cliente_nome", length = 120)
+    @Column(name = "cliente_nome", length = 120, unique = true)
     private String nomeCliente;
 
     @ManyToOne

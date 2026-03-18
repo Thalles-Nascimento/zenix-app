@@ -1,6 +1,5 @@
 package cloud.zenixapp.zenix.repositories;
 
-import cloud.zenixapp.zenix.models.entities.Atendimento;
 import cloud.zenixapp.zenix.models.entities.Fila;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -25,11 +24,6 @@ public interface FilaAtendimentoRepository extends JpaRepository<Fila, Long> {
     @Modifying
     @Query(value = "UPDATE Fila SET status = 1 WHERE id = :id")
     void paraAtendimento(@Param("id") Long id);
-
-    //  Status vai para RETIRADO
-//    @Modifying
-//    @Query(value = "UPDATE Fila SET status = 3 WHERE id = :id")
-//    void retirarClienteFila(@Param("id") Long id);
 
     @Modifying
     @Query(value = "UPDATE Fila SET inicioAtendimento = :horaInicio WHERE id = :id")

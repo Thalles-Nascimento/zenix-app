@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLIntegrityConstraintViolationException;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -108,26 +107,25 @@ public class FilaService {
                 .orElseThrow(() -> new NotFoundException("Atendimento não encontrado"));
     }
 
-//    @Transactional
-//    public SucessFilaRetiradaResponseDTO retirarClienteFila(Long id) {
-//        return filaRepository.findById(id)
-//                .map(atendimentoFila -> {
-//                    if (atendimentoFila.getStatus() == EM_ATENDIMENTO) {
-//                        throw new FilaException("Clientes está em atendimento");
-//                    }
-//
-//                    atendimentoFila.setDelete_at(LocalDateTime.now());
-//
-//                    filaRepository.retirarClienteFila(id);
-//
-//                    return new SucessFilaRetiradaResponseDTO(
-//                            HttpStatus.OK.value(),
-//                            atendimentoFila.getId(),
-//                            atendimentoFila.getNomeCliente()
-//                    );
-//
-//
-//                })
-//                .orElseThrow(() -> new NotFoundException("Atendimento não encontrado"));
-//    }
+    @Transactional
+    public SucessFilaRetiradaResponseDTO retirarClienteFila(Long id) {
+        return filaRepository.findById(id)
+                .map(atendimentoFila -> {
+                    if (atendimentoFila.getStatus() == EM_ATENDIMENTO) {
+                        throw new FilaException("Cliente está em atendimento");
+                    }
+
+                    String statusMsg = clienteService.retiraRetornoCliente(atendimentoFila.getNomeCliente());
+
+                    filaRepository.deleteById(id);
+
+                    return new SucessFilaRetiradaResponseDTO(
+                            HttpStatus.OK.value(),
+                            statusMsg
+                    );
+
+
+                })
+                .orElseThrow(() -> new NotFoundException("Atendimento não encontrado"));
+    }
 }
