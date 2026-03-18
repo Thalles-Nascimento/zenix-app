@@ -6,7 +6,7 @@ import { Badge } from "../components/ui/badge"
 import { Spinner } from "../components/ui/spinner"
 
 export default function FilaPage() {
-    const { fila, carregando, clienteSelecionado, setClienteSelecionado, chamarProximo, finalizarAtendimento } = useFila()
+    const { fila, carregando, clienteSelecionado, setClienteSelecionado, chamarProximo, finalizarAtendimento, retirarClienteFila } = useFila()
 
     const aguardando = fila.filter(c => c.status === "AGUARDANDO")
     const emAtendimento = fila.filter(c => c.status === "EM_ATENDIMENTO")
@@ -93,6 +93,7 @@ export default function FilaPage() {
                                     </span>
 
                                     {cliente.status === "AGUARDANDO" && (
+                                    <>
                                         <button
                                             onClick={() => chamarProximo(cliente.id)}
                                             disabled={emAtendimento.length > 0}
@@ -100,6 +101,13 @@ export default function FilaPage() {
                                         >
                                             Chamar
                                         </button>
+                                        <button
+                                            onClick={() => retirarClienteFila(cliente.id)}
+                                            className="bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
+                                        >
+                                            Retirar
+                                        </button>
+                                    </>
                                     )}
 
                                     {cliente.status === "EM_ATENDIMENTO" && (
