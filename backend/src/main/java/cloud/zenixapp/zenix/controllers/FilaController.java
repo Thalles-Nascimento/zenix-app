@@ -52,10 +52,10 @@ public class FilaController {
                 .body(filaService.finalizarAtendimento(id));
     }
 
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<?> deletarClienteFila(@PathVariable Long id){
-//        return ResponseEntity.status(HttpStatus.OK)
-//                .body(filaService.retirarClienteFila(id));
-//    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletarClienteFila(@PathVariable Long id){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(filaService.retirarClienteFila(id));
+    }
 
 }
