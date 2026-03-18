@@ -75,7 +75,7 @@ export default function PagamentosPage() {
             <Toaster richColors position="top-center" />
 
             <div className="flex items-center justify-between">
-                <h1 className="text-white text-xl font-bold">Formas de Pagamento</h1>
+                <h1 className="text-white text-xl font-bold">Forma de Pagamento</h1>
                 <button
                     onClick={abrirNovo}
                     className="bg-orange-600 hover:bg-orange-500 text-white text-sm font-bold px-4 py-2 rounded-lg transition-colors"
