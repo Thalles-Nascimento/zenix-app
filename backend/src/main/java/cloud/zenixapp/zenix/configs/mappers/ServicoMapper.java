@@ -17,14 +17,12 @@ public interface ServicoMapper {
     @Mapping(target = "update_at", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "delete_at", ignore = true)
     @Mapping(target = "created_at", ignore = true)
     Servicos toServicos(ServicoRequestDTO servicoRequestDTO);
 
     @Mapping(target = "update_at", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "delete_at", ignore = true)
     @Mapping(target = "created_at", ignore = true)
     void atualizarServico(@MappingTarget Servicos servico, ServicoRequestDTO servicoRequestDTO);
 
