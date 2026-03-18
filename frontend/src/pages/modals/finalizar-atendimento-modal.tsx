@@ -1,9 +1,9 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../components/ui/dialog"
 import { Botao } from "../../components/common/botao"
 import type { FilaProps } from "../../types/fila"
-import { SERVICOS } from "../../utils/servicos"
 import { TextareaField } from "@/components/common/textarea"
 import { useState } from "react"
+import { useServicos } from "../../hooks/use-servicos"
 
 interface Props {
     cliente: FilaProps | null
@@ -13,24 +13,26 @@ interface Props {
 }
 
 export function ModalFinalizarAtendimento({ cliente, open, onFechar, onFinalizar }: Props) {
-
     const [observacao, setObservacao] = useState("")
+    const { servicos } = useServicos()
 
-    const calcularTotal = (servicos: string | string[]): string => {
-        const lista = Array.isArray(servicos) ? servicos : [servicos]
-        const total = lista.reduce((acc, nome) => {
-            const servico = SERVICOS.find(s => s.nome === nome)
-            if (!servico) return acc
-            const valor = parseFloat(servico.valor.replace("R$", "").replace(",", ".").trim())
-            return acc + valor
+    const calcularTotal = (lista: string | string[]): string => {
+        const nomes = Array.isArray(lista) ? lista : [lista]
+        const total = nomes.reduce((acc, nome) => {
+            const servico = servicos.find(s => s.servico === nome)
+            return servico ? acc + servico.valor : acc
         }, 0)
-        return total.toFixed(2).replace(".", ",")
+        return total.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
     }
 
     const handleFinalizar = () => {
         if (!cliente) return
-        const valor = parseFloat(calcularTotal(cliente.servico))
-        onFinalizar(cliente.id, valor, observacao)
+        const nomes = Array.isArray(cliente.servico) ? cliente.servico : [cliente.servico]
+        const total = nomes.reduce((acc, nome) => {
+            const servico = servicos.find(s => s.servico === nome)
+            return servico ? acc + servico.valor : acc
+        }, 0)
+        onFinalizar(cliente.id, total, observacao)
         setObservacao("")
     }
 
@@ -42,7 +44,6 @@ export function ModalFinalizarAtendimento({ cliente, open, onFechar, onFinalizar
                 </DialogHeader>
                 <div className="flex flex-col gap-4 mt-2">
                     <div className="bg-gray-900 rounded-lg border border-gray-500 p-4 flex flex-col gap-2">
-                        
                         <p className="text-white text-sm font-medium">Cliente: <span className="font-bold">{cliente?.nomeCliente}</span></p>
                         <div className="flex flex-wrap gap-1">
                             {Array.isArray(cliente?.servico)
@@ -53,8 +54,8 @@ export function ModalFinalizarAtendimento({ cliente, open, onFechar, onFinalizar
                             }
                         </div>
                         <p className="text-gray-300 text-sm">Forma de Pagamento: <span className="font-bold">{cliente?.formaPagamento}</span></p>
-                        <p className="text-orange-400 font-semibold  mt-1">
-                            Total: R$ {cliente ? calcularTotal(cliente.servico) : "0,00"}
+                        <p className="text-orange-400 font-semibold mt-1">
+                            Total: {cliente ? calcularTotal(cliente.servico) : "R$ 0,00"}
                         </p>
                     </div>
 

@@ -5,9 +5,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import type { DadosProps, AtendimentoFormProps } from "../../types/atendimento"
 import { Botao } from "../../components/common/botao"
 import { ServicosMultiSelect } from "../../components/common/servicos-multiselect-component"
-import { SERVICOS } from "../../utils/servicos"
 import { Input } from "@/components/ui/input"
 import { TextareaField } from "@/components/common/textarea"
+import { useServicos } from "../../hooks/use-servicos"
 
 interface Props {
     atendimento: DadosProps | null
@@ -18,36 +18,37 @@ interface Props {
     onReativar?: (id: number) => void
 }
 
-const calcularTotal = (servicos: string[]): number => {
-    return servicos.reduce((acc, nome) => {
-        const servico = SERVICOS.find(s => s.nome === nome)
-        if (!servico) return acc
-        return acc + parseFloat(servico.valor.replace("R$", "").replace(",", ".").trim())
-    }, 0)
-}
-
 export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirmar, onDeletar, onReativar }: Props) {
+    const { servicos } = useServicos()
+
     const [form, setForm] = useState<AtendimentoFormProps>({
-        descricao: "", servico: [], valor: 0, formaPagamento: "", observacao: ""  // ← novo
+        descricao: "", servico: [], valor: 0, formaPagamento: "", observacao: ""
     })
 
     const deletado = atendimento?.status === -1
 
+    const calcularTotal = (nomes: string[]): number => {
+        return nomes.reduce((acc, nome) => {
+            const servico = servicos.find(s => s.servico === nome)
+            return servico ? acc + servico.valor : acc
+        }, 0)
+    }
+
     useEffect(() => {
         if (atendimento) {
-            const servicos = Array.isArray(atendimento.servico) ? atendimento.servico : [atendimento.servico]
+            const lista = Array.isArray(atendimento.servico) ? atendimento.servico : [atendimento.servico]
             setForm({
                 descricao: atendimento.descricao,
-                servico: servicos,
+                servico: lista,
                 valor: atendimento.valor,
                 formaPagamento: atendimento.formaPagamento,
-                observacao: atendimento.observacao ?? ""  // ← novo
+                observacao: atendimento.observacao ?? ""
             })
         }
     }, [atendimento])
 
-    const handleServicosChange = (servicos: string[]) => {
-        setForm({ ...form, servico: servicos, valor: calcularTotal(servicos) })
+    const handleServicosChange = (lista: string[]) => {
+        setForm({ ...form, servico: lista, valor: calcularTotal(lista) })
     }
 
     const handleConfirmar = () => {
@@ -125,13 +126,11 @@ export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirma
                             </SelectContent>
                         </Select>
                     </div>
-                    
                     <TextareaField
                         value={form.observacao ?? ""}
                         onChange={(e) => setForm({ ...form, observacao: e.target.value })}
                     />
                     <div className="flex flex-col gap-2 mt-2">
-                        {/* botões existentes */}
                         {!deletado && (
                             <>
                                 <Botao texto="Salvar Alterações" color="sucess" click={handleConfirmar} />

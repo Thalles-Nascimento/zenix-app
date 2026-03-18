@@ -12,6 +12,7 @@ import FinanceiroPage from './pages/financeiro-page'
 import DashboardPage from './pages/dashboard-page'
 import UnidadesPage from './pages/unidade-page'
 import FilaPage from './pages/fila-page'
+import ServicosPage from './pages/servicos-page'
 
 
 function App() {
@@ -40,6 +41,11 @@ function App() {
               </RotaAdmin>
           } />
           <Route path='/fila' element={<FilaPage />} />
+          <Route path='/servicos' element={
+            <RotaAdmin>
+              <ServicosPage/>
+            </RotaAdmin>
+          } />
         </Route>
       </Route>
       <Route path='/*' element={<NotFoundPage/>}/>

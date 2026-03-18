@@ -6,13 +6,12 @@ import { Label } from "../components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select"
 import { useBarbeiros } from "../hooks/use-barber"
 import { useCliente } from "../hooks/use-cliente"
+import { useServicos } from "../hooks/use-servicos"
 import { entrarFilaService } from "../services/fila-service"
 import { toast, Toaster } from "sonner"
 import { SuccessScreen } from "../components/successScreen-component"
 import { InputTelefone } from "../components/common/input-telefone"
 import { ServicosMultiSelect } from "../components/common/servicos-multiselect-component"
-import { SERVICOS } from "@/utils/servicos"
-
 
 export default function LoginClient() {
     const { unidadeId } = useParams()
@@ -23,10 +22,11 @@ export default function LoginClient() {
 
     const { barbeiros } = useBarbeiros(Number(unidadeId))
     const { clientes, buscarClientes, criarCliente, buscando, atualizarRetorno } = useCliente()
+    const { servicos } = useServicos()
 
     const [nome, setNome] = useState("")
     const [nomeNovo, setNomeNovo] = useState("")
-    const [servicos, setServicos] = useState<string[]>([])
+    const [servicosSelecionados, setServicosSelecionados] = useState<string[]>([])
     const [formaPagamento, setFormaPagamento] = useState("")
     const [idBarbeiro, setIdBarbeiro] = useState<number | null>(null)
     const [carregando, setCarregando] = useState(false)
@@ -40,11 +40,15 @@ export default function LoginClient() {
         await buscarClientes(valor)
     }
 
-    // Nome efetivo: se escolheu "novo", usa o campo digitado; senão usa o selecionado
     const nomeEfetivo = nome === "__novo__" ? nomeNovo : nome
 
+    const valorTotal = servicosSelecionados.reduce((acc, nome) => {
+        const servico = servicos.find(s => s.servico === nome)
+        return servico ? acc + servico.valor : acc
+    }, 0)
+
     const entrarFila = async () => {
-        if (!nomeEfetivo || servicos.length === 0 || !formaPagamento || !telefone || !idBarbeiro) {
+        if (!nomeEfetivo || servicosSelecionados.length === 0 || !formaPagamento || !telefone || !idBarbeiro) {
             toast.error("Preencha todos os campos!")
             return
         }
@@ -52,22 +56,20 @@ export default function LoginClient() {
         try {
             setCarregando(true)
             const telefoneNumeros = telefone.replace(/\D/g, "")
-            
-            // Cria cliente novo se não existia na lista ou escolheu "sou outra pessoa"
+
             const clienteSelecionado = clientes.find(c => c.nomeCliente === nomeEfetivo)
 
             if (clienteSelecionado) {
                 try {
                     await atualizarRetorno(clienteSelecionado.id)
-                } catch {
-                }
+                } catch {}
             } else {
                 await criarCliente(nomeEfetivo, telefoneNumeros)
             }
 
             await entrarFilaService({
                 nomeCliente: nomeEfetivo,
-                servico: servicos,
+                servico: servicosSelecionados,
                 formaPagamento,
                 telefoneCliente: telefoneNumeros,
                 idBarbeiro
@@ -84,13 +86,6 @@ export default function LoginClient() {
         return <SuccessScreen nome={nomeEfetivo} />
     }
 
-    const valorTotal = servicos.reduce((acc, nome) => {
-        const servico = SERVICOS.find(s => s.nome === nome)
-        if (!servico) return acc
-        const valor = parseFloat(servico.valor.replace("R$", "").replace(",", ".").trim())
-        return acc + valor
-    }, 0)
-
     return (
         <section className="min-h-screen bg-black notranslate">
             <Toaster richColors position="top-center" />
@@ -105,7 +100,6 @@ export default function LoginClient() {
                         </h1>
                         <form className="space-y-4 md:space-y-6" onSubmit={(e) => e.preventDefault()}>
 
-                            {/* Telefone — dispara busca ao completar 11 dígitos */}
                             <div className="notranslate">
                                 <Label className="text-white">Telefone</Label>
                                 <InputTelefone value={telefone} onChange={handleTelefoneChange} />
@@ -114,7 +108,6 @@ export default function LoginClient() {
                                 )}
                             </div>
 
-                            {/* Nome — dropdown se encontrou clientes, campo livre se não */}
                             {clientes.length > 0 ? (
                                 <div className="notranslate">
                                     <Label className="text-white">
@@ -159,12 +152,15 @@ export default function LoginClient() {
                             <div>
                                 <Label className="text-white">
                                     Serviços
-                                    {servicos.length > 0 && (
-                                        <span className="ml-2 text-orange-500 text-xs">{servicos.length} selecionado(s) — VALOR TOTAL R$ {valorTotal.toFixed(2).replace(".", ",")}</span>
+                                    {servicosSelecionados.length > 0 && (
+                                        <span className="ml-2 text-orange-500 text-xs">
+                                            {servicosSelecionados.length} selecionado(s) — {valorTotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                                        </span>
                                     )}
                                 </Label>
-                                <ServicosMultiSelect selecionados={servicos} onChange={setServicos} />
+                                <ServicosMultiSelect selecionados={servicosSelecionados} onChange={setServicosSelecionados} />
                             </div>
+
                             <div>
                                 <Label className="text-white">Forma de Pagamento</Label>
                                 <Select onValueChange={setFormaPagamento}>
