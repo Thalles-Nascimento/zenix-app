@@ -1,21 +1,16 @@
 package cloud.zenixapp.zenix.services;
 
-import cloud.zenixapp.zenix.configs.exceptions.FilaException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.mappers.ClienteMapper;
-import cloud.zenixapp.zenix.models.dtos.requests.AtendimentoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ClienteSimplesResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessClienteResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.SucessAtendimentoResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Clientes;
 import cloud.zenixapp.zenix.models.entities.TelefoneCliente;
-import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.repositories.ClienteRepository;
 import cloud.zenixapp.zenix.repositories.TelefoneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -91,26 +86,23 @@ public class ClienteService {
                 .orElseThrow(() -> new NotFoundException("Cliente não encontrado!"));
     }
 
-//    @Transactional
-//    public SuccessClienteResponseDTO retiraRetornoCliente(Long id) throws NotFoundException {
-//        return clienteRepository.findById(id)
-//                .map(cliente -> {
-//                    int count = cliente.getTotalRetornos();
-//                    if (count == 1){
-//                        throw new FilaException("Não foi possivel retirar o retorno do cliente");
-//                    }
-//                    count = count - 1;
-//                    cliente.setTotalRetornos(count);
-//
-//                    clienteRepository.save(cliente);
-//                    return new SuccessClienteResponseDTO(
-//                            HttpStatus.OK.value(),
-//                            "Obrigado pelo retorno!"
-//                    );
-//
-//                })
-//                .orElseThrow(() -> new NotFoundException("Cliente não encontrado!"));
-//    }
+//    TODO Refatorar a Fila para que tenha relacionamento com o Cliente
+    @Transactional
+    public String retiraRetornoCliente(String nome) {
+        Clientes cliente = clienteRepository.findByName(nome);
+
+        int count = cliente.getTotalRetornos();
+        if (count == 1){
+            return "Cliente retirado";
+        }
+        count = count - 1;
+        cliente.setTotalRetornos(count);
+
+        clienteRepository.save(cliente);
+
+        return "Cliente retirado";
+
+    }
 
 
 }
