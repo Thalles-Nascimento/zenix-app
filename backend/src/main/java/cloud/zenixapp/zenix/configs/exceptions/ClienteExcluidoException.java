@@ -1,7 +1,7 @@
 package cloud.zenixapp.zenix.configs.exceptions;
 
-public class UnidadeExcluidoException extends RuntimeException {
-    public UnidadeExcluidoException(String message) {
+public class ClienteExcluidoException extends RuntimeException {
+    public ClienteExcluidoException(String message) {
         super(message);
     }
 }

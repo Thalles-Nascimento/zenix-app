@@ -1,10 +1,11 @@
 package cloud.zenixapp.zenix.models.dtos.responses;
 
-import cloud.zenixapp.zenix.models.entities.TelefoneCliente;
-
-public record ClienteSimplesResponseDTO(
+public record ClienteResponseDTO(
         Long id,
         String nomeCliente,
-        int vezesRetorno
+        String telefone,
+        int vezesRetorno,
+        int atendimentosMes,
+        PlanosResponseDTO plano
 ) {
 }

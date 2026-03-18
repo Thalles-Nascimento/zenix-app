@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -34,8 +35,21 @@ public class Clientes implements Serializable {
     @Column(name = "cliente_retorno")
     private int totalRetornos = 1;
 
+    @Column(name = "cliente_status", nullable = false, columnDefinition = "INT DEFAULT 0")
+    private int status = 1;
+
     @Column(name = "cliente_created")
     private LocalDateTime created_at = LocalDateTime.now();
+
+    @ManyToOne
+    @JoinColumn(name = "planos_id")
+    private Planos planos;
+
+    @Column(name = "cliente_atendimentos_mes", nullable = false, columnDefinition = "INT DEFAULT 0")
+    private int atendimentosMes;
+
+    @Column(name = "cliente_data_renovacao")
+    private LocalDate dataRenovacao;
 
     //  TODO Criar mais colunas - delete_at e update_at
 

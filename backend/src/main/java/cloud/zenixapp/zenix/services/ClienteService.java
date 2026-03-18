@@ -1,16 +1,20 @@
 package cloud.zenixapp.zenix.services;
 
+import cloud.zenixapp.zenix.configs.exceptions.ClienteExcluidoException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.mappers.ClienteMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.ClienteSimplesResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.requests.ClienteUpdateRequestDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.ClienteResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessClienteResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Clientes;
+import cloud.zenixapp.zenix.models.entities.Planos;
 import cloud.zenixapp.zenix.models.entities.TelefoneCliente;
 import cloud.zenixapp.zenix.repositories.ClienteRepository;
 import cloud.zenixapp.zenix.repositories.TelefoneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +35,9 @@ public class ClienteService {
 
     @Autowired
     private ClienteMapper clienteMapper;
+
+    @Autowired
+    private PlanosService planosService;
 
 
 //    TODO Validar save
@@ -59,7 +66,7 @@ public class ClienteService {
         );
     }
 
-    public List<ClienteSimplesResponseDTO> clientesByTelefone(String numero) {
+    public List<ClienteResponseDTO> clientesByTelefone(String numero) {
         Optional<TelefoneCliente> telefone = telefoneRepository.findByNumber(numero);
 //        TODO Validar retorno
         if (telefone.isEmpty()) {
@@ -102,6 +109,102 @@ public class ClienteService {
 
         return "Cliente retirado";
 
+    }
+
+    @Scheduled(cron = "0 0 0 1 * *")
+    @Transactional
+    public void resetarContadoresMensais() {
+        clienteRepository.resetarAtendimentosMes();
+    }
+
+    public List<ClienteResponseDTO> buscarTodosClientes() {
+        return clienteMapper.listResponseDTO(clienteRepository.findAll());
+    }
+
+    @Transactional
+    public SuccessClienteResponseDTO inserirPlano(Long id, Long idPlano) throws NotFoundException {
+        return clienteRepository.findById(id)
+                .map(cliente -> {
+                    Planos plano = planosService.buscarPlanoPorId(idPlano);
+                    cliente.setPlanos(plano);
+
+                    clienteRepository.save(cliente);
+                    return new SuccessClienteResponseDTO(
+                            HttpStatus.OK.value(),
+                            "Plano ativado!"
+                    );
+
+                })
+                .orElseThrow(() -> new NotFoundException("Cliente não encontrado!"));
+    }
+
+    @Transactional
+    public SuccessClienteResponseDTO retirarPlano(Long id){
+        return clienteRepository.findById(id)
+                .map(cliente -> {
+                    if(cliente.getStatus() == -1){
+                        throw new ClienteExcluidoException("Cliente foi excluído!");
+
+                    }
+
+                    cliente.setPlanos(null);
+                    cliente.setAtendimentosMes(0);
+                    clienteRepository.save(cliente);
+                    return new SuccessClienteResponseDTO(
+                            HttpStatus.OK.value(),
+                            "Plano retirado com sucesso"
+                    );
+                })
+                .orElseThrow(() -> new NotFoundException("Cliente não encontrado!"));
+    }
+
+    @Transactional
+    public SuccessClienteResponseDTO atualizarCliente(Long id, ClienteUpdateRequestDTO clienteUpdateDTO){
+        return clienteRepository.findById(id)
+                .map(cliente -> {
+                    if(cliente.getStatus() == -1){
+                        throw new ClienteExcluidoException("Cliente foi excluído!");
+                    }
+
+                    clienteMapper.atualizarCliente(cliente, clienteUpdateDTO);
+
+                    if (clienteUpdateDTO.telefoneCliente() != null && !clienteUpdateDTO.telefoneCliente().isBlank()) {
+                        String numero = clienteUpdateDTO.telefoneCliente().replaceAll("\\D", "");
+                        Optional<TelefoneCliente> telefone = telefoneRepository.findByNumber(numero);
+                        if (telefone.isPresent()) {
+                            cliente.setTelefoneCliente(telefone.get());
+                        } else {
+                            TelefoneCliente newTelefone = telefoneRepository.save(new TelefoneCliente(numero));
+                            cliente.setTelefoneCliente(newTelefone);
+                        }
+                    }
+
+                    clienteRepository.save(cliente);
+
+                    return new SuccessClienteResponseDTO(
+                            HttpStatus.OK.value(),
+                            "Cliente atualizado com sucesso"
+                    );
+                })
+                .orElseThrow(() -> new NotFoundException("Cliente não encontrado!"));
+    }
+
+    @Transactional
+    public SuccessClienteResponseDTO deletarCliente(Long id){
+        return clienteRepository.findById(id)
+                .map(cliente -> {
+                    if(cliente.getStatus() == -1){
+                        throw new ClienteExcluidoException("Cliente já foi excluído!");
+
+                    }
+
+                    clienteRepository.deleteLogico(id);
+                    return new SuccessClienteResponseDTO(
+                            HttpStatus.OK.value(),
+                            "Cliente deletado com sucesso"
+                    );
+                })
+                .orElseThrow(() -> new NotFoundException("Cliente não encontrado!"));
     }
 
 

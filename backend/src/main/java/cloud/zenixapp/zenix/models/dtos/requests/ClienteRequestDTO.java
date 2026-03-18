@@ -1,6 +1,5 @@
 package cloud.zenixapp.zenix.models.dtos.requests;
 
-import cloud.zenixapp.zenix.models.entities.TelefoneCliente;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
