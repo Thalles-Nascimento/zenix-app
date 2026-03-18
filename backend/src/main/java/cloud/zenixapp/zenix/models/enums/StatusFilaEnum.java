@@ -9,10 +9,7 @@ public enum StatusFilaEnum {
     EM_ATENDIMENTO("Em Atendimento"),
 
 //  FINALIZADO = 2
-    FINALIZADO("Finalizado"),
-
-//  RETIRADO = 3
-    RETIRADO("Retirado");
+    FINALIZADO("Finalizado");
 
     private String status;
 
