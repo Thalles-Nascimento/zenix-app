@@ -8,7 +8,6 @@ public record SucessFilaResponseDTO(
         Long id,
         String nomeCliente,
         List<String> servico,
-        StatusFilaEnum status,
-        String telefoneCliente
+        StatusFilaEnum status
 ) {
 }
