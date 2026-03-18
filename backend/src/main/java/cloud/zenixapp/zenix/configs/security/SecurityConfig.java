@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -46,6 +45,15 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/clientes").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/users/me").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/v1/atendimentos/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/clientes").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/clientes/planos/{idCliente}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/clientes/planos/{idCliente}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/planos").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/clientes/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/clientes/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/planos").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/planos/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/planos/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/atendimentos/usuario/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/atendimentos/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/v1/users").hasRole("ADMIN")
