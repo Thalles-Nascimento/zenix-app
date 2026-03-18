@@ -4,6 +4,7 @@ import api_url from "../enviroments/enviroments"
 // Público — cliente entra na fila (sem token)
 export async function entrarFilaService(dados: FilaFormProps) {
     const response = await api_url.post('/fila', dados)
+    console.log(response.data)
     return response.data
 }
 
@@ -29,7 +30,7 @@ export async function finalizarFilaService(id: number) {
 }
 
 // Barbeiro retira cliente da fila
-// export async function retirarFilaService(id: number) {
-//     const response = await api_url.delete(`/fila/${id}`)
-//     return response.data
-// }
+export async function retirarFilaService(id: number) {
+    const response = await api_url.delete(`/fila/${id}`)
+    return response.data
+}
