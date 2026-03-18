@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
-import { Menu, Scissors, Users, DollarSign, LogOutIcon, ChartBarStacked, UserPlus, Building2, Wrench, WalletCards } from "lucide-react"
+import { Menu, Scissors, Users, DollarSign, LogOutIcon, ChartBarStacked, UserPlus, Building2, Wrench, WalletCards, Settings, ChevronDown } from "lucide-react"
 import { useAuth } from "../contexts/auth-context"
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet"
 import { Button } from "./ui/button"
@@ -15,16 +15,26 @@ interface LayoutProps {
 function SidebarContent({ onClose }: { onClose?: () => void }) {
     const { logout, permissao } = useAuth()
     const navigate = useNavigate()
+    const location = useLocation()
+
+    const configPaths = ["/servicos", "/pagamentos", "/unidades"]
+    const [configAberto, setConfigAberto] = useState(
+        configPaths.includes(location.pathname)
+    )
 
     const menuItems = [
         { label: "Atendimentos", path: "/atendimentos", icon: <Scissors size={18} />, roles: ["ADMIN", "USER"] },
-        { label: "Serviços",     path: "/servicos",     icon: <Wrench size={18} />, roles: ["ADMIN"] },
-        { label: "Forma de Pagamento",     path: "/pagamentos",     icon: <WalletCards size={18} />, roles: ["ADMIN"] },
         { label: "Financeiro",   path: "/financeiro",   icon: <DollarSign size={18} />, roles: ["ADMIN", "USER"] },
         { label: "Usuários",     path: "/usuarios",     icon: <UserPlus size={18} />, roles: ["ADMIN"] },
         { label: "Relatório",    path: "/dashboard",    icon: <ChartBarStacked size={18} />, roles: ["ADMIN"] },
-        { label: "Unidades",     path: "/unidades",     icon: <Building2 size={18} />, roles: ["ADMIN"] },
+        
         { label: "Fila",         path: "/fila",         icon: <Users size={18} />, roles: ["ADMIN", "USER"] },
+    ]
+
+    const configItems = [
+        { label: "Unidades",     path: "/unidades",     icon: <Building2 size={18} />, roles: ["ADMIN"] },
+        { label: "Serviços",           path: "/servicos",   icon: <Wrench size={16} /> },
+        { label: "Forma de Pagamento", path: "/pagamentos", icon: <WalletCards size={16} /> },
     ]
 
     const clickButtonLogout = () => {
@@ -32,7 +42,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
         navigate("/login")
     }
 
-    const location = useLocation()
+    const isConfigAtivo = configPaths.includes(location.pathname)
 
     return (
         <div className="flex flex-col h-full bg-black text-white">
@@ -57,6 +67,47 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
                             {item.label}
                         </Link>
                     ))}
+
+                {/* Dropdown Configurações — apenas ADMIN */}
+                {permissao === "ADMIN" && (
+                    <div>
+                        <button
+                            onClick={() => setConfigAberto(prev => !prev)}
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors
+                                ${isConfigAtivo
+                                    ? "bg-orange-600 text-white"
+                                    : "text-gray-400 hover:bg-gray-900 hover:text-white"
+                                }`}
+                        >
+                            <Settings size={18} />
+                            <span className="flex-1 text-left">Gerencial</span>
+                            <ChevronDown
+                                size={16}
+                                className={`transition-transform ${configAberto ? "rotate-180" : ""}`}
+                            />
+                        </button>
+
+                        {configAberto && (
+                            <div className="ml-4 mt-1 flex flex-col gap-1 border-l border-gray-700 pl-3">
+                                {configItems.map(item => (
+                                    <Link
+                                        key={item.path}
+                                        to={item.path}
+                                        onClick={onClose}
+                                        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                                            ${location.pathname === item.path
+                                                ? "bg-orange-600 text-white"
+                                                : "text-gray-400 hover:bg-gray-900 hover:text-white"
+                                            }`}
+                                    >
+                                        {item.icon}
+                                        {item.label}
+                                    </Link>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
             </nav>
             <div className="p-4">
                 <Button variant="ghost" size="sm" onClick={clickButtonLogout}>
@@ -107,7 +158,6 @@ export default function Layout({ children }: LayoutProps) {
             {/* Conteúdo principal */}
             <div className="flex flex-col flex-1 min-w-0 md:ml-64">
 
-                {/* Navbar — padding top respeita Dynamic Island */}
                 <header
                     className="sticky top-0 z-40 flex items-center justify-between px-4 bg-black border-b border-gray-700"
                     style={{
@@ -205,12 +255,10 @@ export default function Layout({ children }: LayoutProps) {
                     </div>
                 )}
 
-                {/* Página */}
                 <main className="flex-1 py-4 px-4 min-w-0">
                     {children}
                 </main>
 
-                {/* Footer — padding bottom respeita barra de navegação do iPhone */}
                 <footer
                     className="px-6 border-t border-gray-500 text-center text-xs text-white"
                     style={{
