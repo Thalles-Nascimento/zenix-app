@@ -96,4 +96,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(value = {ServicoExcluidoException.class})
+    public ResponseEntity<ErrorResponseDTO> handleServicoExcluidoException(Exception ex) {
+        ErrorResponseDTO errorResponse = new ErrorResponseDTO(
+                HttpStatus.GONE.value(),
+                ex.getMessage(),
+                LocalDateTime.now().toInstant(ZoneOffset.of("-03:00"))
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.GONE);
+    }
+
 }
