@@ -12,5 +12,5 @@ export interface FilaProps {
     servico: string[]
     formaPagamento: string
     horario: string
-    status: 'AGUARDANDO' | 'EM_ATENDIMENTO' | 'RETIRADO'
+    status: 'AGUARDANDO' | 'EM_ATENDIMENTO'
 }
