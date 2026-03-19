@@ -12,27 +12,27 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "empresas")
+@Table(name = "tenants")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Empresas implements Serializable {
+public class Tenants implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -1234567890123456789L;
 
     @Id
-    @Column(name = "empresa_id", length = 36, updatable = false, nullable = false)
+    @Column(name = "tenant_id", length = 36, updatable = false, nullable = false)
     private String id;
 
-    @Column(name = "empresa_nome", length = 100, unique = true, nullable = false)
+    @Column(name = "tenant_name", length = 100, unique = true, nullable = false)
     private String nome;
 
-    @Column(name = "empresa_slug", length = 100, unique = true, nullable = false)
+    @Column(name = "tenant_slug", length = 50, unique = true, nullable = false)
     private String slug;
 
-    @Column(name = "empresa_status")
-    private int status = 1;
+    @Column(name = "tenant_active")
+    private Boolean active = true;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -43,7 +43,7 @@ public class Empresas implements Serializable {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    @OneToMany(mappedBy = "empresa")
+    @OneToMany(mappedBy = "tenant")
     @JsonIgnore
     private List<Unidades> unidades;
 
