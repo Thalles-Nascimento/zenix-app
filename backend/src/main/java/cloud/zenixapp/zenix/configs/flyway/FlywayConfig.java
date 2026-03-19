@@ -1,4 +1,4 @@
-package cloud.zenixapp.zenix.configs.migrationsFlyway;
+package cloud.zenixapp.zenix.configs.flyway;
 
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
