@@ -226,4 +226,11 @@ public class ClienteService {
                 .orElseThrow(() -> new NotFoundException("Cliente não encontrado!"));
     }
 
+    public void atualizarAtendimentosMes(String nome){
+        Clientes cliente = clienteRepository.findByName(nome);
+        if (cliente == null || cliente.getPlanos() == null) return;
+        cliente.setAtendimentosMes(cliente.getAtendimentosMes() + 1);
+        clienteRepository.save(cliente);
+    }
+
 }
