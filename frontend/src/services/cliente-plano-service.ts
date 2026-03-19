@@ -29,6 +29,10 @@ export async function desvincularPlanoService(idCliente: number): Promise<void> 
     await api_url.delete(`/clientes/planos/${idCliente}`)
 }
 
+export async function ativarClienteService(id: number): Promise<void> {
+    await api_url.patch(`/clientes/ativar/${id}`)
+}
+
 // ===== PLANOS =====
 export async function buscarTodosPlanosService(): Promise<PlanoDTO[]> {
     const response = await api_url.get('/planos')

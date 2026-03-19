@@ -6,13 +6,15 @@ import {
     atualizarClienteService,
     deletarClienteService,
     vincularPlanoService,
-    desvincularPlanoService
+    desvincularPlanoService,
+    ativarClienteService
 } from "../services/cliente-plano-service"
 import type { ClienteDTO } from "../types/cliente"
 
 export function useClientes() {
     const [clientes, setClientes] = useState<ClienteDTO[]>([])
     const [carregando, setCarregando] = useState(true)
+    const [filtro, setFiltro] = useState<"ativos" | "todos">("ativos")
 
     const buscar = async () => {
         try {
@@ -28,6 +30,15 @@ export function useClientes() {
     useEffect(() => {
         buscar()
     }, [])
+
+    const ativarCliente = async (id: number) => {
+        await ativarClienteService(id)
+        await buscar()
+    }
+
+    const clientesFiltrados = filtro === "ativos"
+        ? clientes.filter(c => c.status === 1)
+        : clientes
 
     const criarCliente = async (nomeCliente: string, telefoneCliente: string) => {
         await criarClienteAdminService(nomeCliente, telefoneCliente)
@@ -54,5 +65,17 @@ export function useClientes() {
         await buscar()
     }
 
-    return { clientes, carregando, criarCliente, atualizarCliente, deletarCliente, vincularPlano, desvincularPlano, recarregar: buscar }
+    return {
+        clientes: clientesFiltrados,
+        carregando,
+        filtro,
+        setFiltro,
+        criarCliente,
+        atualizarCliente,
+        deletarCliente,
+        vincularPlano,
+        desvincularPlano,
+        recarregar: buscar,
+        ativarCliente
+    }
 }
