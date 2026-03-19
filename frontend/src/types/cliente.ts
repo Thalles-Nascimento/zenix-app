@@ -11,5 +11,12 @@ export interface ClienteDTO {
     telefone: string
     vezesRetorno: number
     atendimentosMes: number
+    status: number
     plano: PlanoDTO | null
+}
+
+export interface ClienteDTOGeral {
+    id: number
+    nomeCliente: string
+    vezesRetorno: number
 }

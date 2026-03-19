@@ -1,13 +1,10 @@
+import type { ClienteDTOGeral } from "@/types/cliente"
 import api_url from "../enviroments/enviroments"
 
-export interface ClienteDTO {
-    id: number
-    nomeCliente: string
-    vezesRetorno: number
-}
+
 
 // Verificar endpoint
-export async function buscarClientesPorTelefoneService(telefone: string): Promise<ClienteDTO[]> {
+export async function buscarClientesPorTelefoneService(telefone: string): Promise<ClienteDTOGeral[]> {
     try {
         const response = await api_url.get(`/clientes/telefone/${telefone}`)
         return response.data
