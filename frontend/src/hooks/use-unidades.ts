@@ -17,6 +17,7 @@ export function useUnidades() {
         } finally {
             setCarregando(false)
         }
+        
     }
 
     useEffect(() => { buscar() }, [])
