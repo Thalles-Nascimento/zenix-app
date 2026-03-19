@@ -128,4 +128,11 @@ public class ClienteController {
 
     }
 
+    @PatchMapping("/ativar/{id}")
+    @Operation(summary = "Ativar cliente", description = "Endpoint para ativar um cliente do sistema")
+    public ResponseEntity<?> ativarCliente(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(clienteService.ativarCliente(id));
+    }
+
 }

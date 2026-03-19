@@ -1,5 +1,6 @@
 package cloud.zenixapp.zenix.services;
 
+import cloud.zenixapp.zenix.configs.exceptions.AtendimentoExcluidoException;
 import cloud.zenixapp.zenix.configs.exceptions.ClienteExcluidoException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.mappers.ClienteMapper;
@@ -7,6 +8,7 @@ import cloud.zenixapp.zenix.models.dtos.requests.ClienteRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteUpdateRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ClienteResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessClienteResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.SucessAtendimentoResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Clientes;
 import cloud.zenixapp.zenix.models.entities.Planos;
 import cloud.zenixapp.zenix.models.entities.TelefoneCliente;
@@ -207,5 +209,21 @@ public class ClienteService {
                 .orElseThrow(() -> new NotFoundException("Cliente não encontrado!"));
     }
 
+    @Transactional
+    public SuccessClienteResponseDTO ativarCliente(Long id){
+        return clienteRepository.findById(id)
+                .map(cliente -> {
+                    if(cliente.getStatus() != -1){
+                        throw new ClienteExcluidoException("Cliente já está ativo!");
+                    }
+
+                    clienteRepository.ativarCliente(id);
+                    return new SuccessClienteResponseDTO(
+                            HttpStatus.OK.value(),
+                            "Cliente ativado com sucesso"
+                    );
+                })
+                .orElseThrow(() -> new NotFoundException("Cliente não encontrado!"));
+    }
 
 }

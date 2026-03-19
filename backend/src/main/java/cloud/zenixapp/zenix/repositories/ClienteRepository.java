@@ -28,4 +28,8 @@ public interface ClienteRepository extends JpaRepository<Clientes, Long> {
     @Query(value = "UPDATE Clientes SET status = -1 WHERE id = :id")
     void deleteLogico(@Param("id") Long id);
 
+    @Modifying
+    @Query(value = "UPDATE Clientes SET status = 1 WHERE id = :id")
+    void ativarCliente(@Param("id") Long id);
+
 }

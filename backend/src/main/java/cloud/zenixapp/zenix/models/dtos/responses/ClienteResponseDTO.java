@@ -6,6 +6,7 @@ public record ClienteResponseDTO(
         String telefone,
         int vezesRetorno,
         int atendimentosMes,
+        int status,
         PlanosResponseDTO plano
 ) {
 }
