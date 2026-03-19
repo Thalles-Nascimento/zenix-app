@@ -135,4 +135,10 @@ public class ClienteController {
                 .body(clienteService.ativarCliente(id));
     }
 
+    @GetMapping("/nome")
+    public ResponseEntity<?> buscarClientesPorNome(@RequestParam String nome) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(clienteService.buscarClientePorNome(nome));
+    }
+
 }

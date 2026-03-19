@@ -233,4 +233,8 @@ public class ClienteService {
         clienteRepository.save(cliente);
     }
 
+    public List<ClienteResponseDTO> buscarClientePorNome(String nome){
+        return clienteMapper.listResponseDTO(clienteRepository.findByNameContaining(nome));
+    }
+
 }
