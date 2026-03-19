@@ -99,7 +99,7 @@ export default function PlanosPage() {
                 </button>
             </div>
 
-            <div className="bg-gray-900 rounded-xl border border-gray-700 notranslate">
+            <div className="bg-black rounded-xl border border-gray-700 notranslate">
                 <div className="overflow-x-auto rounded-xl notranslate">
                     <table className="w-full text-sm text-left text-gray-300 notranslate">
                         <thead className="text-xs text-white uppercase bg-gray-800 border-b border-gray-700 notranslate">
