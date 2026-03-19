@@ -13,16 +13,13 @@ export function limparCPF(cpf: string): string {
 }
 
 // Formata telefone brasileiro: 11999999999 → (11) 99999-9999
-export function formatarTelefone(valor: string): string {
-    const limpo = valor.replace(/\D/g, '').slice(0, 11)
-    if (limpo.length <= 10) {
-        return limpo
-            .replace(/(\d{2})(\d)/, '($1) $2')
-            .replace(/(\d{4})(\d)/, '$1-$2')
-    }
-    return limpo
-        .replace(/(\d{2})(\d)/, '($1) $2')
-        .replace(/(\d{5})(\d)/, '$1-$2')
+export const formatarTelefone = (tel: string) => {
+    if (!tel) return "—"
+    const n = tel.replace(/\D/g, "")
+    if (n.length === 13) return `+${n.slice(0,2)} (${n.slice(2,4)}) ${n.slice(4,9)}-${n.slice(9)}`
+    if (n.length === 11) return `(${n.slice(0,2)}) ${n.slice(2,7)}-${n.slice(7)}`
+    if (n.length === 10) return `(${n.slice(0,2)}) ${n.slice(2,6)}-${n.slice(6)}`
+    return tel
 }
 
 
