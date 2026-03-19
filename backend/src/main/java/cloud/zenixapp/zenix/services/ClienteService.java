@@ -99,7 +99,7 @@ public class ClienteService {
         Clientes cliente = clienteRepository.findByName(nome);
 
         int count = cliente.getTotalRetornos();
-        if (count == 1){
+        if (count == 0){
             return "Cliente retirado";
         }
         count = count - 1;
