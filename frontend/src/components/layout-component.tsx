@@ -85,7 +85,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
                                     : "text-gray-400 hover:bg-gray-900 hover:text-white"
                                 }`}
                         >
-                            <UsersRound size={18} />
+                            <Crown size={18} />
                             <span className="flex-1 text-left">Clientes e Planos</span>
                             <ChevronDown
                                 size={16}
