@@ -38,6 +38,9 @@ public class Planos implements Serializable{
     @Column(name = "planos_status")
     private int status = 1;
 
+    @Column(name = "planos_servico", length = 100)
+    private List<String> servico;
+
     @Column(name = "planos_created_at")
     private LocalDateTime created_at = LocalDateTime.now();
 

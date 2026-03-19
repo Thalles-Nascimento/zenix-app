@@ -29,6 +29,7 @@ public class PlanosService {
 
     @Transactional
     public SuccessPlanosResponseDTO inserirPlano(PlanosRequestDTO planosRequestDTO){
+        System.out.println(planosRequestDTO.servico());
         planosRepository.save(planosMapper.toPlanos(planosRequestDTO));
 
         return new SuccessPlanosResponseDTO(
