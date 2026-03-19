@@ -179,15 +179,15 @@ export default function ClientesPage() {
 
             {/* Tabela */}
             <div className="bg-gray-900 rounded-xl border border-gray-700 notranslate">
-                <div className="overflow-x-auto rounded-t-xl notranslate">
+                <div className="overflow-x-auto rounded-xl notranslate">
                     <table className="w-full text-sm text-left text-gray-300 notranslate">
                         <thead className="text-xs text-white uppercase bg-gray-800 border-b border-gray-700 notranslate">
                             <tr>
                                 <th className="px-4 py-3 notranslate">CLIENTE</th>
                                 <th className="px-4 py-3 notranslate">TELEFONE</th>
-                                <th className="px-4 py-3 notranslate">VISITAS</th>
                                 <th className="px-4 py-3 notranslate">PLANO</th>
                                 <th className="px-4 py-3 notranslate">USO DO MÊS</th>
+                                <th className="px-4 py-3 notranslate">TOTAL DE VISITAS</th>
                                 <th className="px-4 py-3 notranslate">AÇÕES</th>
                             </tr>
                         </thead>
@@ -208,9 +208,6 @@ export default function ClientesPage() {
                                             </td>
                                             <td className="px-4 py-4 notranslate text-gray-400">
                                                 {formatarTelefone(cliente.telefone ?? "")}
-                                            </td>
-                                            <td className="px-4 py-4 notranslate text-gray-300">
-                                                {cliente.vezesRetorno}x
                                             </td>
                                             <td className="px-4 py-4 notranslate">
                                                 {cliente.plano ? (
@@ -247,6 +244,9 @@ export default function ClientesPage() {
                                                     <span className="text-gray-500 text-xs">—</span>
                                                 )}
                                             </td>
+                                            <td className="px-4 py-4 notranslate text-gray-300">
+                                                {cliente.vezesRetorno}
+                                            </td>
                                             <td className="px-4 py-4 notranslate">
                                                 <div className="flex gap-2">
                                                     <button
@@ -274,7 +274,7 @@ export default function ClientesPage() {
                     paginaAtual={paginaAtual}
                     totalPaginas={totalPaginas}
                     totalItens={totalItens}
-                    itensPorPagina={8}
+                    itensPorPagina={5}
                     onPaginaChange={setPaginaAtual}
                 />
             </div>
