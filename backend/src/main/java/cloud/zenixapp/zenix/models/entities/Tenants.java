@@ -32,7 +32,7 @@ public class Tenants implements Serializable {
     private String slug;
 
     @Column(name = "tenant_active")
-    private Boolean active = true;
+    private int active = 1;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
