@@ -7,6 +7,7 @@ import cloud.zenixapp.zenix.models.dtos.requests.FilaRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.FilaResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SucessFilaResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SucessFilaRetiradaResponseDTO;
+import cloud.zenixapp.zenix.models.entities.Clientes;
 import cloud.zenixapp.zenix.models.entities.Fila;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.repositories.FilaAtendimentoRepository;
@@ -96,6 +97,8 @@ public class FilaService {
                     }
                     filaRepository.finalizarAtendimentoFila(id);
                     filaRepository.marcarHoraFinal(id, LocalTime.now());
+
+                    clienteService.atualizarAtendimentosMes(atendimentoFila.getNomeCliente());
 
                     return new SucessFilaResponseDTO(
                             atendimentoFila.getId(),
