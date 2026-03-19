@@ -2,6 +2,7 @@ export interface PlanoDTO {
     id: number
     planoDescricao: string
     valor: number
+    servico: string[]
     limiteAtendimentos: number
 }
 

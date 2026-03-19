@@ -22,13 +22,13 @@ export function usePlanos() {
         buscar()
     }, [])
 
-    const criarPlano = async (planoDescricao: string, valor: number, limiteAtendimentos: number) => {
-        await criarPlanoService({ planoDescricao, valor, limiteAtendimentos })
+    const criarPlano = async (planoDescricao: string, valor: number, servico: string[], limiteAtendimentos: number) => {
+        await criarPlanoService({ planoDescricao, valor, servico, limiteAtendimentos })
         await buscar()
     }
 
-    const atualizarPlano = async (id: number, planoDescricao: string, valor: number, limiteAtendimentos: number) => {
-        await atualizarPlanoService(id, { planoDescricao, valor, limiteAtendimentos })
+    const atualizarPlano = async (id: number, planoDescricao: string, valor: number, servico: string[], limiteAtendimentos: number) => {
+        await atualizarPlanoService(id, { planoDescricao, valor, servico, limiteAtendimentos })
         await buscar()
     }
 

@@ -38,15 +38,25 @@ export async function buscarTodosPlanosService(): Promise<PlanoDTO[]> {
     const response = await api_url.get('/planos')
     return response.data
 }
-
-export async function criarPlanoService(dados: { planoDescricao: string; valor: number; limiteAtendimentos: number }): Promise<void> {
+ 
+export async function criarPlanoService(dados: {
+    planoDescricao: string
+    valor: number
+    servico: string[]
+    limiteAtendimentos: number
+}): Promise<void> {
     await api_url.post('/planos', dados)
 }
-
-export async function atualizarPlanoService(id: number, dados: { planoDescricao: string; valor: number; limiteAtendimentos: number }): Promise<void> {
+ 
+export async function atualizarPlanoService(id: number, dados: {
+    planoDescricao: string
+    valor: number
+    servico: string[]
+    limiteAtendimentos: number
+}): Promise<void> {
     await api_url.put(`/planos/${id}`, dados)
 }
-
+ 
 export async function deletarPlanoService(id: number): Promise<void> {
     await api_url.delete(`/planos/${id}`)
 }
