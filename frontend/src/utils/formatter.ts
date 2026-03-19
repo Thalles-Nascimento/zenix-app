@@ -12,7 +12,7 @@ export function limparCPF(cpf: string): string {
     return cpf.replace(/\D/g, '')
 }
 
-// Formata telefone brasileiro: 11999999999 → (11) 99999-9999
+// Formata telefone
 export const formatarTelefone = (tel: string) => {
     if (!tel) return "—"
     const n = tel.replace(/\D/g, "")
