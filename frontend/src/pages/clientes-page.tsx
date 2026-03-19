@@ -14,19 +14,20 @@ import type { ClienteDTO } from "../types/cliente"
 import { usePaginacao } from "../hooks/use-pagination"
 import { Paginacao } from "../components/pagination"
 import { formatarTelefone } from "@/utils/formatter"
+import { ModalConfirmacao } from "@/components/common/modal-confirmacao-component"
 
 type ModalTipo = "editar" | "plano" | "novo" | null
 
 export default function ClientesPage() {
-    const { clientes, carregando, criarCliente, atualizarCliente, deletarCliente, vincularPlano, desvincularPlano } = useClientes()
+    const { clientes, carregando, filtro, setFiltro, criarCliente, atualizarCliente, deletarCliente, vincularPlano, desvincularPlano, ativarCliente } = useClientes()
     const { planos } = usePlanos()
 
     const [clienteSelecionado, setClienteSelecionado] = useState<ClienteDTO | null>(null)
     const [modalTipo, setModalTipo] = useState<ModalTipo>(null)
     const [planoSelecionado, setPlanoSelecionado] = useState("")
     const [busca, setBusca] = useState("")
+    const [confirmacaoAberta, setConfirmacaoAberta] = useState(false)
 
-    // Form criar/editar
     const [formNome, setFormNome] = useState("")
     const [formTelefone, setFormTelefone] = useState("")
 
@@ -35,7 +36,7 @@ export default function ClientesPage() {
         c.telefone?.includes(busca)
     )
 
-    const { itensPagina, paginaAtual, totalPaginas, totalItens, setPaginaAtual } = usePaginacao(clientesFiltrados, 8)
+    const { itensPagina, paginaAtual, totalPaginas, totalItens, setPaginaAtual } = usePaginacao(clientesFiltrados, 5)
 
     const formatBRL = (valor: number) =>
         valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
@@ -100,6 +101,7 @@ export default function ClientesPage() {
         try {
             await deletarCliente(clienteSelecionado.id)
             toast.success("Cliente excluído!")
+            setConfirmacaoAberta(false)
             fecharModal()
         } catch {
             toast.error("Erro ao excluir cliente.")
@@ -148,9 +150,10 @@ export default function ClientesPage() {
         <div className="flex flex-col gap-6 notranslate">
             <Toaster richColors position="top-center" />
 
+            {/* Topbar */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <h1 className="text-white text-xl font-bold">Clientes</h1>
-                <div className="flex gap-2 flex-wrap">
+                <div className="flex flex-wrap items-center gap-2">
                     <input
                         type="text"
                         placeholder="Buscar por nome ou telefone..."
@@ -158,6 +161,20 @@ export default function ClientesPage() {
                         onChange={(e) => setBusca(e.target.value)}
                         className="bg-gray-900 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 outline-none w-full sm:w-56"
                     />
+                    <button
+                        onClick={() => setFiltro("ativos")}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors
+                            ${filtro === "ativos" ? "bg-orange-700 text-white" : "bg-gray-800 text-gray-400 hover:text-white"}`}
+                    >
+                        Ativos
+                    </button>
+                    <button
+                        onClick={() => setFiltro("todos")}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors
+                            ${filtro === "todos" ? "bg-gray-600 text-white" : "bg-gray-900 text-gray-400 hover:text-white"}`}
+                    >
+                        Todos
+                    </button>
                     <button
                         onClick={abrirNovo}
                         className="bg-orange-600 hover:bg-orange-500 text-white text-sm font-bold px-4 py-2 rounded-lg transition-colors whitespace-nowrap"
@@ -178,7 +195,7 @@ export default function ClientesPage() {
             )}
 
             {/* Tabela */}
-            <div className="bg-gray-900 rounded-xl border border-gray-700 notranslate">
+            <div className="bg-black rounded-xl border border-gray-700 notranslate">
                 <div className="overflow-x-auto rounded-xl notranslate">
                     <table className="w-full text-sm text-left text-gray-300 notranslate">
                         <thead className="text-xs text-white uppercase bg-gray-800 border-b border-gray-700 notranslate">
@@ -188,21 +205,26 @@ export default function ClientesPage() {
                                 <th className="px-4 py-3 notranslate">PLANO</th>
                                 <th className="px-4 py-3 notranslate">USO DO MÊS</th>
                                 <th className="px-4 py-3 notranslate">TOTAL DE VISITAS</th>
+                                <th className="px-4 py-3 notranslate">STATUS</th>
                                 <th className="px-4 py-3 notranslate">AÇÕES</th>
                             </tr>
                         </thead>
                         <tbody>
                             {itensPagina.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="px-6 py-8 text-center text-gray-500 notranslate">
+                                    <td colSpan={7} className="px-6 py-8 text-center text-gray-500 notranslate">
                                         Nenhum cliente encontrado
                                     </td>
                                 </tr>
                             ) : (
                                 itensPagina.map(cliente => {
                                     const alerta = getAlerta(cliente)
+                                    const inativo = cliente.status === -1
                                     return (
-                                        <tr key={cliente.id} className="bg-black border-b border-gray-700 notranslate">
+                                        <tr
+                                            key={cliente.id}
+                                            className={`border-b border-gray-700 notranslate ${inativo ? "opacity-50 bg-black" : "bg-black"}`}
+                                        >
                                             <td className="px-4 py-4 notranslate font-medium text-white">
                                                 {cliente.nomeCliente}
                                             </td>
@@ -248,20 +270,30 @@ export default function ClientesPage() {
                                                 {cliente.vezesRetorno}
                                             </td>
                                             <td className="px-4 py-4 notranslate">
-                                                <div className="flex gap-2">
+                                                <span className={inativo ? "text-gray-500 text-xs" : "text-orange-500 text-xs font-semibold"}>
+                                                    {inativo ? "EXCLUÍDO" : "ATIVO"}
+                                                </span>
+                                            </td>
+                                            <td className="px-4 py-4 notranslate">
+                                                {!inativo ? (
+                                                    <div className="flex gap-2">
+                                                        <button onClick={() => abrirEditar(cliente)}
+                                                            className="bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors">
+                                                            Editar
+                                                        </button>
+                                                        <button onClick={() => abrirPlano(cliente)}
+                                                            className="bg-orange-600/30 hover:bg-orange-600/50 text-orange-400 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors border border-orange-600/30">
+                                                            Plano
+                                                        </button>
+                                                    </div>
+                                                ) : (
                                                     <button
-                                                        onClick={() => abrirEditar(cliente)}
-                                                        className="bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
+                                                        onClick={() => ativarCliente(cliente.id).then(() => toast.success("Cliente reativado!"))}
+                                                        className="bg-green-900/40 hover:bg-green-900/60 text-green-400 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors border border-green-700/40"
                                                     >
-                                                        Editar
+                                                        Reativar
                                                     </button>
-                                                    <button
-                                                        onClick={() => abrirPlano(cliente)}
-                                                        className="bg-orange-600/30 hover:bg-orange-600/50 text-orange-400 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors border border-orange-600/30"
-                                                    >
-                                                        Plano
-                                                    </button>
-                                                </div>
+                                                )}
                                             </td>
                                         </tr>
                                     )
@@ -328,7 +360,7 @@ export default function ClientesPage() {
                         </div>
                         <div className="flex flex-col gap-2 mt-2">
                             <Botao texto="Salvar Alterações" color="sucess" click={handleAtualizar} />
-                            <Botao texto="Excluir Cliente" color="delete" click={handleDeletar} />
+                            <Botao texto="Excluir Cliente" color="delete" click={() => setConfirmacaoAberta(true)} />
                             <Botao texto="Cancelar" color="cancel" click={fecharModal} />
                         </div>
                     </div>
@@ -344,7 +376,6 @@ export default function ClientesPage() {
                         </DialogTitle>
                     </DialogHeader>
 
-                    {/* Progresso atual */}
                     {clienteSelecionado?.plano && (
                         <div className="bg-gray-900 rounded-lg p-3 border border-gray-700 notranslate">
                             <div className="flex justify-between mb-2">
@@ -401,6 +432,14 @@ export default function ClientesPage() {
                     </div>
                 </DialogContent>
             </Dialog>
+
+            <ModalConfirmacao
+                open={confirmacaoAberta}
+                titulo="Excluir Cliente"
+                mensagem={`Deseja excluir o cliente "${clienteSelecionado?.nomeCliente}"? Esta ação não pode ser desfeita.`}
+                onConfirmar={handleDeletar}
+                onCancelar={() => setConfirmacaoAberta(false)}
+            />
         </div>
     )
 }
