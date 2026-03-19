@@ -31,7 +31,8 @@ public class Tenants implements Serializable {
     @Column(name = "tenant_slug", length = 50, unique = true, nullable = false)
     private String slug;
 
-    @Column(name = "tenant_active")
+//    TODO Resolver problema do Tenant_active na validação do Hibernate
+    @Column(name = "tenant_active", columnDefinition = "TINYINT(1)")
     private int active = 1;
 
     @Column(name = "created_at", updatable = false)

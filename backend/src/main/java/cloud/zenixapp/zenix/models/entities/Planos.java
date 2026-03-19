@@ -4,22 +4,18 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "planos")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Planos implements Serializable{
-
-    @Serial
-    private static final long serialVersionUID = -6394855555482873289L;
+public class Planos extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,12 +33,6 @@ public class Planos implements Serializable{
 
     @Column(name = "planos_status")
     private int status = 1;
-
-    @Column(name = "planos_created_at")
-    private LocalDateTime created_at = LocalDateTime.now();
-
-    @Column(name = "planos_update_at")
-    private LocalDateTime update_at;
 
     @OneToMany(mappedBy = "planos", fetch = FetchType.LAZY)
     @JsonIgnore

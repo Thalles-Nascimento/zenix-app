@@ -2,30 +2,26 @@ package cloud.zenixapp.zenix.models.entities;
 
 
 import cloud.zenixapp.zenix.models.enums.UsuariosRoleEnum;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name="usuarios")
 @Entity
-public class Usuarios implements UserDetails, Serializable {
-
-    @Serial
-    private static final long serialVersionUID = -6321586946159484859L;
+public class Usuarios extends BaseEntity implements UserDetails{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,6 +44,10 @@ public class Usuarios implements UserDetails, Serializable {
     private UsuariosRoleEnum grupo;
 
     @ManyToOne
+    @JoinColumn(name = "tenant_id", nullable = false, updatable = false)
+    private Tenants tenant;
+
+    @ManyToOne
     @JoinColumn(name = "usuarios_unidade")
     private Unidades unidade;
 
@@ -59,8 +59,6 @@ public class Usuarios implements UserDetails, Serializable {
 
     @Column(name = "usuario_status")
     private int status = 1;
-
-//  TODO Criar mais colunas - created_at, delete_at e update_at
 
     private boolean enabled = true;
 

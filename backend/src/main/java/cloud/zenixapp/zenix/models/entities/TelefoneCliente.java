@@ -4,21 +4,18 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "telefones_clientes")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TelefoneCliente implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = -6898958690661873289L;
+public class TelefoneCliente extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +29,6 @@ public class TelefoneCliente implements Serializable {
     @JsonIgnore
     private List<Clientes> clientes;
 
-    //  TODO Criar mais colunas - created_at, delete_at e update_at
 
     public TelefoneCliente(String telefone){
         this.telefoneCliente = telefone;

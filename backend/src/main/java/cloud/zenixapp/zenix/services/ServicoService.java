@@ -49,7 +49,7 @@ public class ServicoService {
                         throw new ServicoExcluidoException("Serviço foi excluído!");
                     }
 
-                    servico.setUpdate_at(LocalDateTime.now());
+                    servico.setUpdatedAt(LocalDateTime.now());
                     servicoMapper.atualizarServico(servico, servicoRequestDTO);
 
                     return new SuccessServicoResponseDTO(

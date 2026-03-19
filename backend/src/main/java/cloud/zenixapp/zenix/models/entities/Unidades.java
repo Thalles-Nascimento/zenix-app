@@ -4,21 +4,18 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "unidades")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Unidades implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = -6394858690665251519L;
+public class Unidades extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,11 +28,14 @@ public class Unidades implements Serializable {
     @Column(name = "unidade_endereco")
     private String endereco;
 
+    @ManyToOne
+    @JoinColumn(name = "tenant_id", nullable = false, updatable = false)
+    private Tenants tenant;
+
     @OneToMany(mappedBy = "unidade")
     @JsonIgnore
     private List<Usuarios> usuarios;
 
     @Column(name = "unidade_status", nullable = false)
     private Integer status = 1;
-    //  TODO Criar mais colunas - created_at, delete_at e update_at
 }

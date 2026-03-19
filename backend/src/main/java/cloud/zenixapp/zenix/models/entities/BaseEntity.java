@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Data
 public abstract class BaseEntity implements Serializable {
 
-    @Column(name = "tenant_id", nullable = false, updatable = false)
+    @Column(name = "tenant_id", nullable = false, updatable = false, insertable = false)
     private String tenantId;
 
     @Column(name = "created_at", updatable = false)

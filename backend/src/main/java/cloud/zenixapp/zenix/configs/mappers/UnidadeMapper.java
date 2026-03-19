@@ -14,12 +14,16 @@ import java.util.List;
 public interface UnidadeMapper {
 
 
+    @Mapping(target = "deletedAt", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "usuarios", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "id", ignore = true)
     Unidades toUnidade(UnidadeRequestDTO unidadeDTO);
 
 
+    @Mapping(target = "deletedAt", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "usuarios", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "id", ignore = true)

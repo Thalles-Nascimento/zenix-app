@@ -15,6 +15,8 @@ import java.util.List;
 public interface UsuarioMapper {
 
 
+    @Mapping(target = "deletedAt", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "atendimentos", ignore = true)
     @Mapping(target = "enabled", ignore = true)
     @Mapping(target = "filaClientes", ignore = true)

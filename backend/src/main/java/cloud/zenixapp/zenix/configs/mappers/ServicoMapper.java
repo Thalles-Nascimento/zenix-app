@@ -14,16 +14,15 @@ import java.util.List;
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface ServicoMapper {
 
-    @Mapping(target = "update_at", ignore = true)
+    @Mapping(target = "deletedAt", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "created_at", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     Servicos toServicos(ServicoRequestDTO servicoRequestDTO);
 
-    @Mapping(target = "update_at", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "created_at", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     void atualizarServico(@MappingTarget Servicos servico, ServicoRequestDTO servicoRequestDTO);
 
     List<ServicoResponseDTO> toListServicos(List<Servicos> servicosList);

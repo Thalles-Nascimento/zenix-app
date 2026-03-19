@@ -48,7 +48,7 @@ public class PagamentoService {
         return pagamentoRepository.findById(id)
                 .map(formaPagamento -> {
 
-                    formaPagamento.setUpdate_at(LocalDateTime.now());
+                    formaPagamento.setUpdatedAt(LocalDateTime.now());
                     pagamentoMapper.atualizarFormaPagamento(formaPagamento, pagamentoRequestDTO);
                     formaPagamento.setFormaPagamento(formaPagamento.getFormaPagamento().toUpperCase());
 

@@ -13,6 +13,7 @@ import java.util.List;
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface AtendimentoMapper {
 
+    @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "date", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "status", ignore = true)

@@ -14,18 +14,18 @@ import java.util.List;
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface PagamentoMapper {
 
+    @Mapping(target = "deletedAt", ignore = true)
     @Mapping(target = "formaPagamento", source = "descricao")
-    @Mapping(target = "update_at", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "created_at", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     FormaPagamento toPagamento(PagamentoRequestDTO pagamentoRequestDTO);
 
     @Mapping(target = "formaPagamento", source = "descricao")
-    @Mapping(target = "update_at", ignore = true)
+    @Mapping(target = "deletedAt", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "created_at", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     void atualizarFormaPagamento(@MappingTarget FormaPagamento pagamento, PagamentoRequestDTO pagamentoRequestDTO);
 
     @Mapping(target = "formaPagamento", source = "formaPagamento")

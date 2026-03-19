@@ -50,7 +50,7 @@ public class PlanosService {
         return planosRepository.findById(id)
                 .map(plano -> {
 
-                    plano.setUpdate_at(LocalDateTime.now());
+                    plano.setUpdatedAt(LocalDateTime.now());
                     planosMapper.atualizarPlano(plano, planosRequestDTO);
 
                     return new SuccessPlanosResponseDTO(
