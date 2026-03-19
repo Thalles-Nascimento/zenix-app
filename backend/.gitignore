@@ -5,6 +5,7 @@ target/
 !**/src/test/**/target/
 .env
 .env.local
+src.zip
 
 
 ### STS ###
