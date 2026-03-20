@@ -10,6 +10,7 @@ import { PagamentoSelect } from "../../components/common/pagamento-select"
 import { useServicos } from "../../hooks/use-servicos"
 import { buscarClientesPorNomeService } from "../../services/cliente-service"
 import type { ClienteDTO } from "../../types/cliente"
+import { useCliente } from "@/hooks/use-cliente"
 
 interface Props {
     onConfirmar: (form: AtendimentoFormProps) => void
@@ -20,6 +21,8 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
     const [form, setForm] = useState<AtendimentoFormProps>({
         descricao: "", servico: [], valor: 0, formaPagamento: ""
     })
+    const [idCliente, setIdCliente] = useState(0)
+    const { atualizarRetorno } = useCliente()
 
     const [sugestoes, setSugestoes] = useState<ClienteDTO[]>([])
     const [buscando, setBuscando] = useState(false)
@@ -73,6 +76,7 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
     const selecionarCliente = (cliente: ClienteDTO) => {
         const servicosPlano = cliente.plano?.servico ?? []
         const totalPlano = calcularTotal(servicosPlano)
+        setIdCliente(cliente.id)
 
         setForm({
             ...form,
@@ -85,8 +89,13 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
         setDropdownAberto(false)
     }
 
-    const handleConfirmar = () => {
+    const handleConfirmar = async () => {
         if (form.servico.length === 0) return
+        if (idCliente){
+            try {
+                await atualizarRetorno(idCliente)
+            } catch {}
+        }
         onConfirmar(form)
         setOpen(false)
         setForm({ descricao: "", servico: [], valor: 0, formaPagamento: "" })
@@ -134,7 +143,7 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
                                                 </span>
                                             )}
                                         </div>
-                                        <span className="text-gray-500 text-xs">{cliente.vezesRetorno}x visitas</span>
+                                        <span className="text-gray-500 text-xs">{cliente.vezesRetorno} visitas</span>
                                     </button>
                                 ))}
                             </div>
