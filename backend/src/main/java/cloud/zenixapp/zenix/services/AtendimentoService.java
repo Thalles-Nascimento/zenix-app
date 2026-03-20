@@ -37,6 +37,9 @@ public class AtendimentoService {
     @Autowired
     private AtendimentoMapper atendimentoMapper;
 
+    @Autowired
+    private ClienteService clienteService;
+
     @Transactional(propagation = Propagation.REQUIRED)
     public SucessAtendimentoResponseDTO inserirAtendimento(AtendimentoRequestDTO atendimentoDTO){
         Usuarios userAuth = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -50,6 +53,8 @@ public class AtendimentoService {
         atendimento.setObservacao(atendimentoDTO.observacao());
         atendimento.setDate(LocalDateTime.now().format(current_date));
         atendimento.setUsuarios(user);
+
+        clienteService.atualizarAtendimentosMes(atendimentoDTO.descricao());
 
         atendimentoRepository.save(atendimento);
 
