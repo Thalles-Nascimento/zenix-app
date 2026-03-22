@@ -35,7 +35,7 @@ public class Clientes implements Serializable {
     @Column(name = "cliente_retorno")
     private int totalRetornos = 0;
 
-    @Column(name = "cliente_status", nullable = false, columnDefinition = "INT DEFAULT 0")
+    @Column(name = "cliente_status", nullable = false, columnDefinition = "INT DEFAULT 1")
     private int status = 1;
 
     @Column(name = "cliente_created")

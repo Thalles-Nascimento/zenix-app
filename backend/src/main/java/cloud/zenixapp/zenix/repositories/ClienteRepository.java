@@ -24,8 +24,8 @@ public interface ClienteRepository extends JpaRepository<Clientes, Long> {
     List<Clientes> findByNameContaining(@Param("nome") String nome);
 
     @Modifying
-    @Query("UPDATE Clientes SET atendimentosMes = 0 WHERE planos IS NOT NULL")
-    void resetarAtendimentosMes();
+    @Query("UPDATE Clientes SET atendimentosMes = 0 WHERE planos IS NOT NULL AND DAY(dataRenovacao) = :dia")
+    void resetarAtendimentosMes(@Param("dia") int dia);
 
     @Modifying
     @Query(value = "UPDATE Clientes SET status = -1 WHERE id = :id")
