@@ -16,9 +16,9 @@ export function ModalConfirmacao({ open, titulo = "Confirmar ação", mensagem, 
                 <DialogHeader>
                     <DialogTitle className="text-white notranslate">{titulo}</DialogTitle>
                 </DialogHeader>
-                <p className="text-gray-300 text-sm mt-1">{mensagem}</p>
+                <p className="text-white text-sm mt-1">{mensagem}</p>
                 <div className="flex flex-col gap-2 mt-4">
-                    <Botao texto="Confirmar" color="delete" click={onConfirmar} />
+                    <Botao texto="Confirmar" color="sucess" click={onConfirmar} />
                     <Botao texto="Cancelar" color="cancel" click={onCancelar} />
                 </div>
             </DialogContent>
