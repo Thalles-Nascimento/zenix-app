@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
-import { buscarPagamentosService, criarPagamentoService, atualizarPagamentoService, deletarPagamentoService, type PagamentoDTO } from "../services/pagamento-service"
+import { buscarPagamentosService, criarPagamentoService, atualizarPagamentoService, deletarPagamentoService } from "../services/pagamento-service"
 import { toast } from "sonner"
+import type { PagamentoDTO } from "@/types/pagamento"
 
 export function usePagamentos() {
     const [pagamentos, setPagamentos] = useState<PagamentoDTO[]>([])
