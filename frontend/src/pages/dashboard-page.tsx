@@ -305,19 +305,15 @@ export default function DashboardPage() {
 
             {/* Modal detalhes do barbeiro */}
             <Dialog open={barbeiroSelecionado !== null} onOpenChange={() => setBarbeiroSelecionado(null)}>
-                <DialogContent className="bg-black border-gray-500 text-white w-[calc(100vw-2rem)] max-w-2xl h-[90vh] overflow-y-auto notranslate">
-                    <DialogHeader>
+                <DialogContent className="bg-black border-gray-500 text-white w-[calc(100vw-2rem)] max-w-2xl h-[85vh] flex flex-col notranslate">
+                    <DialogHeader className="text-left">
                         <DialogTitle className="text-white notranslate">
                             Barbeiro: <span className="text-orange-500 font-bold">{barbeiroSelecionado}</span>
                         </DialogTitle>
                     </DialogHeader>
 
                     {/* Cards resumo */}
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 notranslate">
-                        <div className="bg-black rounded-lg p-3 border border-gray-500 notranslate">
-                            <p className="text-white font-bold text-xs uppercase tracking-widest mb-1">Atendimentos</p>
-                            <p className="text-orange-500 text-xl font-bold">{atendimentosBarbeiro.length}</p>
-                        </div>
+                    <div className="grid grid-cols-2 gap-2 shrink-0 notranslate">
                         <div className="bg-black rounded-lg p-3 border border-orange-700 notranslate">
                             <p className="text-white font-bold text-xs uppercase tracking-widest mb-1">Total Gerado</p>
                             <p className="text-orange-500 text-xl font-bold">{formatBRL(totalBarbeiro)}</p>
@@ -329,60 +325,62 @@ export default function DashboardPage() {
                     </div>
 
                     {/* Tabela de atendimentos do barbeiro */}
-                    <div className="overflow-x-auto notranslate">
-                        <span className="text-white font-bold">Atendimentos</span>
+                    <div className="overflow-x-auto shrink-0 notranslate">
+                        <span className="text-white font-bold">Atendimentos: <span className="text-orange-500 text-lg font-bold">{atendimentosBarbeiro.length}</span></span>
                     </div>
-                    <div className="overflow-x-auto rounded-xl border border-gray-700 notranslate">
-                        <table className="w-full text-sm text-left text-gray-300 min-w-[400px] notranslate">
-                            <thead className="text-xs text-white uppercase bg-gray-800 border-b border-gray-700 notranslate">
-                                <tr>
-                                    <th className="px-4 py-3 notranslate">CLIENTE</th>
-                                    <th className="px-4 py-3 notranslate">SERVIÇO</th>
-                                    <th className="px-4 py-3 notranslate">VALOR</th>
-                                    <th className="px-4 py-3 notranslate">PAGAMENTO</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {itensPaginaModal.length === 0 ? (
+                    <div className="flex-1 overflow-y-auto min-h-0 notranslate">
+                        <div className="overflow-x-auto rounded-xl border border-gray-700 notranslate">
+                            <table className="w-full text-sm text-left text-gray-300 min-w-[400px] notranslate">
+                                <thead className="text-xs text-white uppercase bg-gray-800 border-b border-gray-700 notranslate">
                                     <tr>
-                                        <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
-                                            Nenhum atendimento no período
-                                        </td>
+                                        <th className="px-4 py-3 notranslate">CLIENTE</th>
+                                        <th className="px-4 py-3 notranslate">SERVIÇO</th>
+                                        <th className="px-4 py-3 notranslate">VALOR</th>
+                                        <th className="px-4 py-3 notranslate">PAGAMENTO</th>
                                     </tr>
-                                ) : (
-                                    itensPaginaModal.map(item => (
-                                        <tr
-                                            key={item.id}
-                                            className="border-b border-gray-700 hover:bg-gray-900 cursor-pointer notranslate"
-                                            onClick={() => abrirEdicao(item)}
-                                        >
-                                            <td className="px-4 py-4 notranslate font-medium text-white">
-                                                <div className="flex items-center gap-2">
-                                                    {item.descricao}
-                                                    {item.observacao && (
-                                                        <MessageSquareWarning color="#bd0000" />
-                                                    )}
-                                                </div>
+                                </thead>
+                                <tbody>
+                                    {itensPaginaModal.length === 0 ? (
+                                        <tr>
+                                            <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
+                                                Nenhum atendimento no período
                                             </td>
-                                            <td className="px-4 py-3 notranslate">{Array.isArray(item.servico) ? item.servico.join(" + ") : item.servico}</td>
-                                            <td className="px-4 py-3 notranslate text-orange-500 font-bold">{formatBRL(item.valor)}</td>
-                                            <td className="px-4 py-3 notranslate">{item.formaPagamento}</td>
                                         </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
-                        
+                                    ) : (
+                                        itensPaginaModal.map(item => (
+                                            <tr
+                                                key={item.id}
+                                                className="border-b border-gray-700 hover:bg-gray-900 cursor-pointer notranslate"
+                                                onClick={() => abrirEdicao(item)}
+                                            >
+                                                <td className="px-4 py-4 notranslate font-medium text-white">
+                                                    <div className="flex items-center gap-2">
+                                                        {item.descricao}
+                                                        {item.observacao && (
+                                                            <MessageSquareWarning color="#bd0000" />
+                                                        )}
+                                                    </div>
+                                                </td>
+                                                <td className="px-4 py-3 notranslate">{Array.isArray(item.servico) ? item.servico.join(" + ") : item.servico}</td>
+                                                <td className="px-4 py-3 notranslate text-orange-500 font-bold">{formatBRL(item.valor)}</td>
+                                                <td className="px-4 py-3 notranslate">{item.formaPagamento}</td>
+                                            </tr>
+                                        ))
+                                    )}
+                                </tbody>
+                            </table>
+                            
+                        </div>
                     </div>
                     {/* Refatorei os itens por página da tabela de atendimentos no modal de Barbeiros */}
                         <Paginacao
-                                paginaAtual={paginaModal}
-                                totalPaginas={totalPaginasModal}
-                                totalItens={totalItensModal}
-                                itensPorPagina={4}
-                                onPaginaChange={setPaginaModal}
+                            paginaAtual={paginaModal}
+                            totalPaginas={totalPaginasModal}
+                            totalItens={totalItensModal}
+                            itensPorPagina={4}
+                            onPaginaChange={setPaginaModal}
 
-                            />
+                        />
                 </DialogContent>
             </Dialog>
 
