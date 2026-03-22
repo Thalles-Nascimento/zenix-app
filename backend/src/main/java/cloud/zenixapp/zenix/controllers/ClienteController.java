@@ -91,7 +91,7 @@ public class ClienteController {
             @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
     })
     @Operation(summary = "Deletar cliente", description = "Endpoint para deletar um cliente")
-    public ResponseEntity<?> deleteAtendimento(@PathVariable Long id) {
+    public ResponseEntity<?> deleteCliente(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(clienteService.deletarCliente(id));
 
