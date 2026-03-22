@@ -12,6 +12,7 @@ export interface ClienteDTO {
     telefone: string
     vezesRetorno: number
     atendimentosMes: number
+    dataRenovacao: string
     status: number
     plano: PlanoDTO | null
 }

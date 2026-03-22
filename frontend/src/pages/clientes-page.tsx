@@ -205,7 +205,7 @@ export default function ClientesPage() {
                                 <th className="px-4 py-3 notranslate">PLANO</th>
                                 <th className="px-4 py-3 notranslate">USO DO MÊS</th>
                                 <th className="px-4 py-3 notranslate">TOTAL DE VISITAS</th>
-                                <th className="px-4 py-3 notranslate">STATUS</th>
+                                <th className="px-4 py-3 notranslate">DATA RENOVAÇÃO</th>
                                 <th className="px-4 py-3 notranslate">AÇÕES</th>
                             </tr>
                         </thead>
@@ -270,9 +270,13 @@ export default function ClientesPage() {
                                                 {cliente.vezesRetorno}
                                             </td>
                                             <td className="px-4 py-4 notranslate">
-                                                <span className={inativo ? "text-gray-500 text-xs" : "text-orange-500 text-xs font-semibold"}>
-                                                    {inativo ? "EXCLUÍDO" : "ATIVO"}
-                                                </span>
+                                                {cliente.plano ? (
+                                                    <span className="bg-orange-500/20 text-orange-400 text-xs font-semibold px-2 py-1 rounded-full border border-orange-500/30">
+                                                        {cliente.dataRenovacao}
+                                                    </span>
+                                                ) : (
+                                                    <span className="text-gray-500 text-xs">—</span>
+                                                )}
                                             </td>
                                             <td className="px-4 py-4 notranslate">
                                                 {!inativo ? (
@@ -399,9 +403,14 @@ export default function ClientesPage() {
                                     style={{ width: `${Math.min((clienteSelecionado.atendimentosMes / clienteSelecionado.plano.limiteAtendimentos) * 100, 100)}%` }}
                                 />
                             </div>
-                            <p className="text-gray-400 text-xs mt-2">
-                                Plano atual: <span className="text-orange-400 font-semibold">{clienteSelecionado.plano.planoDescricao}</span> — {formatBRL(clienteSelecionado.plano.valor)}/mês
-                            </p>
+                            <div className="flex justify-between mb-2">
+                                <p className="text-gray-400 text-xs mt-2">
+                                    Plano atual: <span className="text-orange-400 font-semibold">{clienteSelecionado.plano.planoDescricao}</span> — {formatBRL(clienteSelecionado.plano.valor)}/mês
+                                </p>
+                                <p className="text-gray-400 text-xs mt-2">
+                                    Renovação: <span className="text-orange-400 font-semibold">{clienteSelecionado.dataRenovacao}</span>
+                                </p>
+                            </div>
                         </div>
                     )}
 
