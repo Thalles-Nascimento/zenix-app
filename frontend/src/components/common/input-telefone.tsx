@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { formatarTelefone, limparTelefone } from "../../utils/formatter"
 
 interface Props {
@@ -6,8 +6,17 @@ interface Props {
     onChange: (telefoneCompleto: string) => void
 }
 
-export function InputTelefone({ onChange }: Props) {
-    const [telefoneFormatado, setTelefoneFormatado] = useState("")
+export function InputTelefone({ value, onChange }: Props) {
+     const [telefoneFormatado, setTelefoneFormatado] = useState("")
+
+    useEffect(() => {
+        if (value) {
+            const numero = value.replace(/^55/, "")
+            setTelefoneFormatado(formatarTelefone(numero))
+        } else {
+            setTelefoneFormatado("")
+        }
+    }, [value])
 
     const handleTelefone = (e: React.ChangeEvent<HTMLInputElement>) => {
         const formatado = formatarTelefone(e.target.value)
