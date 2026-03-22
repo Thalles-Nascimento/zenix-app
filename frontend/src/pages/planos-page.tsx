@@ -8,6 +8,8 @@ import { Label } from "../components/ui/label"
 import { Input } from "../components/ui/input"
 import { Botao } from "../components/common/botao"
 import { ServicosMultiSelect } from "@/components/common/servicos-multiselect-component"
+import type { PlanoDTO } from "@/types/cliente"
+import { ModalConfirmacao } from "@/components/common/modal-confirmacao-component"
 
 interface FormPlano {
     planoDescricao: string
@@ -20,8 +22,10 @@ export default function PlanosPage() {
     const { planos, carregando, criarPlano, atualizarPlano, deletarPlano } = usePlanos()
 
     const [modalAberto, setModalAberto] = useState(false)
+    const [planoSelecionado, setPlanoSelecionado] = useState<PlanoDTO | null>(null)
     const [editando, setEditando] = useState<{ id: number } | null>(null)
     const [form, setForm] = useState<FormPlano>({ planoDescricao: "", valor: "", servico: [], limiteAtendimentos: "" })
+    const [confirmacaoAberta, setConfirmacaoAberta] = useState(false)
 
     const formatBRL = (valor: number) =>
         valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
@@ -36,6 +40,11 @@ export default function PlanosPage() {
         setEditando({ id })
         setForm({ planoDescricao, valor: String(valor), servico: servico ?? [], limiteAtendimentos: String(limiteAtendimentos) })
         setModalAberto(true)
+    }
+
+    const abrirDeletar = (plano: PlanoDTO) => {
+        setPlanoSelecionado(plano)
+        setConfirmacaoAberta(true)
     }
 
     const fecharModal = () => {
@@ -78,6 +87,7 @@ export default function PlanosPage() {
         try {
             await deletarPlano(id)
             toast.success("Plano excluído!")
+            setConfirmacaoAberta(false)
         } catch {
             toast.error("Erro ao excluir plano.")
         }
@@ -145,7 +155,7 @@ export default function PlanosPage() {
                                                     Editar
                                                 </button>
                                                 <button
-                                                    onClick={() => handleDeletar(item.id)}
+                                                    onClick={() => abrirDeletar(item)}
                                                     className="bg-red-900 hover:bg-red-800 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
                                                 >
                                                     Excluir
@@ -178,7 +188,7 @@ export default function PlanosPage() {
                             />
                         </div>
                         <div>
-                            <Label className="text-gray-300">Valor Mensal (R$)</Label>
+                            <Label className="text-gray-300">Valor (R$)</Label>
                             <Input
                                 className="mt-1 bg-gray-900 border-gray-700 text-orange-400 font-semibold"
                                 placeholder="Ex: 89.90"
@@ -217,6 +227,15 @@ export default function PlanosPage() {
                     </div>
                 </DialogContent>
             </Dialog>
+            <ModalConfirmacao
+                open={confirmacaoAberta}
+                titulo="Excluir Plano"
+                mensagem={`Deseja excluir o plano "${planoSelecionado?.planoDescricao}"? Esta ação não pode ser desfeita.`}
+                onConfirmar={() => {
+                    if (!planoSelecionado) return
+                    handleDeletar(planoSelecionado?.id)}}
+                onCancelar={() => setConfirmacaoAberta(false)}
+            />
         </div>
     )
 }
