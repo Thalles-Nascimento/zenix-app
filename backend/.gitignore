@@ -6,6 +6,7 @@ target/
 .env
 .env.local
 src.zip
+${project.build.directory}/
 
 ### STS ###
 .apt_generated
