@@ -2,6 +2,7 @@ package cloud.zenixapp.zenix.services;
 
 import cloud.zenixapp.zenix.configs.exceptions.AtendimentoExcluidoException;
 import cloud.zenixapp.zenix.configs.exceptions.ClienteExcluidoException;
+import cloud.zenixapp.zenix.configs.exceptions.ClientePossuePlanoException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.mappers.ClienteMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteRequestDTO;
@@ -127,6 +128,9 @@ public class ClienteService {
     public SuccessClienteResponseDTO inserirPlano(Long id, Long idPlano) throws NotFoundException {
         return clienteRepository.findById(id)
                 .map(cliente -> {
+                    if(cliente.getAtendimentosMes() > 0){
+                        throw new ClientePossuePlanoException("Cliente possui um plano ativo");
+                    }
                     Planos plano = planosService.buscarPlanoPorId(idPlano);
                     cliente.setPlanos(plano);
 
