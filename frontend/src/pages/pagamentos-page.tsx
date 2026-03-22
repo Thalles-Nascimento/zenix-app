@@ -7,6 +7,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../components/
 import { Label } from "../components/ui/label"
 import { Input } from "../components/ui/input"
 import { Botao } from "../components/common/botao"
+import { ModalConfirmacao } from "@/components/common/modal-confirmacao-component"
+import type { PagamentoDTO } from "@/types/pagamento"
 
 export default function PagamentosPage() {
     const { pagamentos, carregando, criarPagamento, atualizarPagamento, deletarPagamento } = usePagamentos()
@@ -14,6 +16,8 @@ export default function PagamentosPage() {
     const [modalAberto, setModalAberto] = useState(false)
     const [editando, setEditando] = useState<{ id: number } | null>(null)
     const [descricao, setDescricao] = useState("")
+    const [pagamentoSelecionado, setPagamentoSelecionado] = useState<PagamentoDTO>()
+    const [confirmacaoAberta, setConfirmacaoAberta] = useState(false)
 
     const abrirNovo = () => {
         setEditando(null)
@@ -53,10 +57,16 @@ export default function PagamentosPage() {
         }
     }
 
+    const abrirDeletar = (pagamento: PagamentoDTO) => {
+        setPagamentoSelecionado(pagamento)
+        setConfirmacaoAberta(true)
+    }
+
     const handleDeletar = async (id: number) => {
         try {
             await deletarPagamento(id)
             toast.success("Forma de pagamento excluída!")
+            setConfirmacaoAberta(false)
         } catch {
             toast.error("Erro ao excluir forma de pagamento.")
         }
@@ -117,7 +127,7 @@ export default function PagamentosPage() {
                                                     Editar
                                                 </button>
                                                 <button
-                                                    onClick={() => handleDeletar(item.id)}
+                                                    onClick={() => abrirDeletar(item)}
                                                     className="bg-red-900 hover:bg-red-800 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
                                                 >
                                                     Excluir
@@ -157,6 +167,15 @@ export default function PagamentosPage() {
                     </div>
                 </DialogContent>
             </Dialog>
+            <ModalConfirmacao
+                open={confirmacaoAberta}
+                titulo="Excluir Forma de pagamento"
+                mensagem={`Deseja excluir o forma de pagamento "${pagamentoSelecionado?.formaPagamento}"? Esta ação não pode ser desfeita.`}
+                onConfirmar={() => {
+                    if (!pagamentoSelecionado) return
+                    handleDeletar(pagamentoSelecionado?.id)}}
+                onCancelar={() => setConfirmacaoAberta(false)}
+            />
         </div>
     )
 }
