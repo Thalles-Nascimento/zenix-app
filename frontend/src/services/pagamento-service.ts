@@ -1,10 +1,5 @@
+import type { PagamentoDTO } from "@/types/pagamento"
 import api_url from "../enviroments/enviroments"
-
-export interface PagamentoDTO {
-    id: number
-    formaPagamento: string
-    status: number
-}
 
 export async function buscarPagamentosService(): Promise<PagamentoDTO[]> {
     const response = await api_url.get('/pagamentos')

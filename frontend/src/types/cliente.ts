@@ -16,8 +16,3 @@ export interface ClienteDTO {
     plano: PlanoDTO | null
 }
 
-export interface ClienteDTOGeral {
-    id: number
-    nomeCliente: string
-    vezesRetorno: number
-}

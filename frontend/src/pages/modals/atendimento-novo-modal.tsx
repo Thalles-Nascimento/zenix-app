@@ -11,6 +11,7 @@ import { useServicos } from "../../hooks/use-servicos"
 import { buscarClientesPorNomeService } from "../../services/cliente-service"
 import type { ClienteDTO } from "../../types/cliente"
 import { useCliente } from "@/hooks/use-cliente"
+import { TextareaField } from "@/components/common/textarea"
 
 interface Props {
     onConfirmar: (form: AtendimentoFormProps) => void
@@ -19,7 +20,7 @@ interface Props {
 export function ModalNovoAtendimento({ onConfirmar }: Props) {
     const [open, setOpen] = useState(false)
     const [form, setForm] = useState<AtendimentoFormProps>({
-        descricao: "", servico: [], valor: 0, formaPagamento: ""
+        descricao: "", servico: [], valor: 0, formaPagamento: "", observacao: ""
     })
     const [idCliente, setIdCliente] = useState(0)
     const { atualizarRetorno } = useCliente()
@@ -75,7 +76,9 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
 
     const selecionarCliente = (cliente: ClienteDTO) => {
         const servicosPlano = cliente.plano?.servico ?? []
-        const totalPlano = calcularTotal(servicosPlano)
+        const valorPlano = cliente.plano?.valor ?? 0
+        const limitePlano = cliente.plano?.limiteAtendimentos ?? 0
+        const totalPlano = valorPlano/limitePlano
         setIdCliente(cliente.id)
 
         setForm({
@@ -98,7 +101,7 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
         }
         onConfirmar(form)
         setOpen(false)
-        setForm({ descricao: "", servico: [], valor: 0, formaPagamento: "" })
+        setForm({ descricao: "", servico: [], valor: 0, formaPagamento: "", observacao: "" })
         setSugestoes([])
     }
 
@@ -179,6 +182,10 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
                             onValueChange={(v) => setForm({ ...form, formaPagamento: v })}
                         />
                     </div>
+                    <TextareaField
+                        value={form.observacao ?? ""}
+                        onChange={(e) => setForm({ ...form, observacao: e.target.value })}
+                    />
                     <div className="flex gap-3 mt-2">
                         <Botao color="primary" texto="Confirmar" click={handleConfirmar} />
                         <Botao color="secondary" texto="Cancelar" click={() => setOpen(false)} />
