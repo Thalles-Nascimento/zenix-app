@@ -32,4 +32,10 @@ public interface FilaAtendimentoRepository extends JpaRepository<Fila, Long> {
     @Query(value = "SELECT * FROM fila_atendimentos WHERE fila_usuario_id = :id AND fila_status != 2 ORDER BY fila_horario ASC", nativeQuery = true)
     List<Fila> findByUser(@Param("id") Long id);
 
-}
+    @Modifying
+    @Query("DELETE FROM Fila f WHERE f.grupoId = :grupoId AND f.id != :id")
+    void deletarOutrosDoGrupo(@Param("grupoId") String grupoId, @Param("id") Long id);
+
+    @Modifying
+    @Query("UPDATE Fila f SET f.usuario.id = :usuarioId WHERE f.id = :id")
+    void setarUsuario(@Param("id") Long id, @Param("usuarioId") Long usuarioId);}
