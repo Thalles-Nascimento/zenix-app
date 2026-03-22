@@ -50,7 +50,7 @@ export default function ClientesPage() {
     const abrirEditar = (cliente: ClienteDTO) => {
         setClienteSelecionado(cliente)
         setFormNome(cliente.nomeCliente)
-        setFormTelefone(cliente.telefone ?? "")
+        setFormTelefone(cliente.telefone)
         setModalTipo("editar")
     }
 
@@ -115,7 +115,7 @@ export default function ClientesPage() {
             toast.success("Plano vinculado!")
             fecharModal()
         } catch {
-            toast.error("Erro ao vincular plano.")
+            toast.error("Cliente já possui um plano")
         }
     }
 
@@ -125,7 +125,7 @@ export default function ClientesPage() {
             await desvincularPlano(clienteSelecionado.id)
             toast.success("Plano removido!")
             fecharModal()
-        } catch {
+        } catch { 
             toast.error("Erro ao remover plano.")
         }
     }
