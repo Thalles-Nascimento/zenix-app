@@ -42,6 +42,16 @@ export default function LoginClient() {
         await buscarClientes(valor)
     }
 
+    const handleNomeSelecionado = (nomeCliente: string) => {
+        setNome(nomeCliente)
+        if (nomeCliente === "__novo__") return
+
+        const clienteSelecionado = clientes.find(c => c.nomeCliente === nomeCliente)
+        if (clienteSelecionado?.plano?.servico?.length) {
+            setServicosSelecionados(clienteSelecionado.plano.servico)
+        }
+    }
+
     const nomeEfetivo = nome === "__novo__" ? nomeNovo : nome
 
     const valorTotal = servicosSelecionados.reduce((acc, nome) => {
@@ -50,7 +60,7 @@ export default function LoginClient() {
     }, 0)
 
     const entrarFila = async () => {
-        if (!nomeEfetivo || servicosSelecionados.length === 0 || !formaPagamento || !telefone || !idBarbeiro) {
+        if (!nomeEfetivo || servicosSelecionados.length === 0 || !telefone || !idBarbeiro) {
             toast.error("Preencha todos os campos!")
             return
         }
@@ -115,7 +125,7 @@ export default function LoginClient() {
                                     <Label className="text-white">
                                         Selecione um cliente ou insira um novo
                                     </Label>
-                                    <Select onValueChange={setNome}>
+                                    <Select onValueChange={handleNomeSelecionado}>
                                         <SelectTrigger className="mt-2 bg-gray-900 border-gray-300 text-white w-full notranslate">
                                             <SelectValue placeholder="Selecione seu nome" />
                                         </SelectTrigger>
@@ -123,6 +133,11 @@ export default function LoginClient() {
                                             {clientes.map(c => (
                                                 <SelectItem key={c.id} value={c.nomeCliente}>
                                                     {c.nomeCliente}
+                                                    {c.plano && (
+                                                        <span className="ml-auto text-primary text-xs shrink-0">
+                                                            {c.plano?.planoDescricao}
+                                                        </span>
+                                                    )}
                                                 </SelectItem>
                                             ))}
                                             <SelectItem value="__novo__">Cadastrar novo cliente</SelectItem>
@@ -152,6 +167,7 @@ export default function LoginClient() {
                             )}
 
                             <div>
+                                
                                 <Label className="text-white">
                                     Serviços
                                     {servicosSelecionados.length > 0 && (
