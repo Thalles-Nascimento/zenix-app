@@ -4,10 +4,14 @@ import { ModalFinalizarAtendimento } from "./modals/finalizar-atendimento-modal"
 import { criarAtendimentoService } from "../services/atendimento-service"
 import { Badge } from "../components/ui/badge"
 import { Spinner } from "../components/ui/spinner"
+import { useState } from "react"
+import type { FilaProps } from "@/types/fila"
+import { ModalConfirmacao } from "@/components/common/modal-confirmacao-component"
 
 export default function FilaPage() {
     const { fila, carregando, clienteSelecionado, setClienteSelecionado, chamarProximo, finalizarAtendimento, retirarClienteFila } = useFila()
-
+    const [confirmacaoAberta, setConfirmacaoAberta] = useState(false)
+    const [filaSelecionada, setFilaSelecionada] = useState<FilaProps | null>(null)
     const aguardando = fila.filter(c => c.status === "AGUARDANDO")
     const emAtendimento = fila.filter(c => c.status === "EM_ATENDIMENTO")
 
@@ -19,18 +23,23 @@ export default function FilaPage() {
         return `${hora}:${minuto}:${seg}.${ms}`
     }
 
+    const abrirRetirarFila = (fila: FilaProps) => {
+        setFilaSelecionada(fila)
+        setConfirmacaoAberta(true)
+    }
+
     const handleFinalizar = async (id: number, valor: number, observacao: string) => {
-    const cliente = fila.find(c => c.id === id)
-    if (!cliente) return
-    await criarAtendimentoService({
-        descricao: cliente.nomeCliente,
-        servico: cliente.servico,
-        valor: valor,
-        formaPagamento: cliente.formaPagamento,
-        observacao: observacao
-    })
-    await finalizarAtendimento(id)
-}
+        const cliente = fila.find(c => c.id === id)
+        if (!cliente) return
+        await criarAtendimentoService({
+            descricao: cliente.nomeCliente,
+            servico: cliente.servico,
+            valor: valor,
+            formaPagamento: cliente.formaPagamento,
+            observacao: observacao
+        })
+        await finalizarAtendimento(id)
+    }
 
     if (carregando) {
         return (
@@ -102,7 +111,7 @@ export default function FilaPage() {
                                             Chamar
                                         </button>
                                         <button
-                                            onClick={() => retirarClienteFila(cliente.id)}
+                                            onClick={() => abrirRetirarFila(cliente)}
                                             className="bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
                                         >
                                             Retirar
@@ -124,6 +133,17 @@ export default function FilaPage() {
                     </div>
                 )}
             </div>
+            <ModalConfirmacao
+                open={confirmacaoAberta}
+                titulo="Retirar cliente da Fila"
+                mensagem={`Deseja retirar o "${filaSelecionada?.nomeCliente}" da fila? Esta ação não pode ser desfeita.`}
+                onConfirmar={() => {
+                    if (!filaSelecionada) return
+                    retirarClienteFila(filaSelecionada?.id)
+                    setConfirmacaoAberta(false)                
+                }}
+                onCancelar={() => setConfirmacaoAberta(false)}
+            />
 
             <ModalFinalizarAtendimento
                 cliente={clienteSelecionado}
