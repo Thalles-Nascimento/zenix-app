@@ -146,7 +146,7 @@ export default function FilaPage() {
             />
 
             <ModalFinalizarAtendimento
-                cliente={clienteSelecionado}
+                fila={clienteSelecionado}
                 open={clienteSelecionado !== null}
                 onFechar={() => setClienteSelecionado(null)}
                 onFinalizar={handleFinalizar}
