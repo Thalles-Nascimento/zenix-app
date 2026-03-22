@@ -54,7 +54,10 @@ public class AtendimentoService {
         atendimento.setDate(LocalDateTime.now().format(current_date));
         atendimento.setUsuarios(user);
 
-        clienteService.atualizarAtendimentosMes(atendimentoDTO.descricao());
+        if (!clienteService.buscarClientePorNome(atendimento.getDescricao()).isEmpty()){
+            clienteService.atualizarAtendimentosMes(atendimentoDTO.descricao());
+        }
+
 
         atendimentoRepository.save(atendimento);
 
@@ -118,7 +121,9 @@ public class AtendimentoService {
                         throw new AtendimentoExcluidoException("Atendimento já foi excluído!");
 
                     }
-
+                    if (!clienteService.buscarClientePorNome(atendimento.getDescricao()).isEmpty()){
+                        clienteService.retiraRetornoCliente(atendimento.getDescricao());
+                    }
                     atendimento.setDelete_at(LocalDateTime.now());
                     atendimentoRepository.deleteLogico(id);
 
