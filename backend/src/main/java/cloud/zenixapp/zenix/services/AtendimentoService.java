@@ -37,6 +37,9 @@ public class AtendimentoService {
     @Autowired
     private AtendimentoMapper atendimentoMapper;
 
+    @Autowired
+    private ClienteService clienteService;
+
     @Transactional(propagation = Propagation.REQUIRED)
     public SucessAtendimentoResponseDTO inserirAtendimento(AtendimentoRequestDTO atendimentoDTO){
         Usuarios userAuth = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -50,6 +53,11 @@ public class AtendimentoService {
         atendimento.setObservacao(atendimentoDTO.observacao());
         atendimento.setDate(LocalDateTime.now().format(current_date));
         atendimento.setUsuarios(user);
+
+        if (!clienteService.buscarClientePorNome(atendimento.getDescricao()).isEmpty()){
+            clienteService.atualizarAtendimentosMes(atendimentoDTO.descricao());
+        }
+
 
         atendimentoRepository.save(atendimento);
 
@@ -113,7 +121,9 @@ public class AtendimentoService {
                         throw new AtendimentoExcluidoException("Atendimento já foi excluído!");
 
                     }
-
+                    if (!clienteService.buscarClientePorNome(atendimento.getDescricao()).isEmpty()){
+                        clienteService.retiraRetornoCliente(atendimento.getDescricao());
+                    }
                     atendimento.setDelete_at(LocalDateTime.now());
                     atendimentoRepository.deleteLogico(id);
 

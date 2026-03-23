@@ -20,4 +20,19 @@ public interface ClienteRepository extends JpaRepository<Clientes, Long> {
     @Query(value = "SELECT * FROM clientes WHERE cliente_nome = :nome", nativeQuery = true)
     Clientes findByName(@Param("nome") String nome);
 
+    @Query(value = "SELECT * FROM clientes WHERE cliente_nome LIKE %:nome% AND cliente_status = 1", nativeQuery = true)
+    List<Clientes> findByNameContaining(@Param("nome") String nome);
+
+    @Modifying
+    @Query("UPDATE Clientes SET atendimentosMes = 0 WHERE planos IS NOT NULL AND DAY(dataRenovacao) = :dia")
+    void resetarAtendimentosMes(@Param("dia") int dia);
+
+    @Modifying
+    @Query(value = "UPDATE Clientes SET status = -1 WHERE id = :id")
+    void deleteLogico(@Param("id") Long id);
+
+    @Modifying
+    @Query(value = "UPDATE Clientes SET status = 1 WHERE id = :id")
+    void ativarCliente(@Param("id") Long id);
+
 }

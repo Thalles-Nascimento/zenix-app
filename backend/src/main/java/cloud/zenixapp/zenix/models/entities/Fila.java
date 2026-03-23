@@ -55,6 +55,12 @@ public class Fila implements Serializable {
     @Column(name = "fila_final_atendimento")
     private LocalTime fimAtendimento;
 
+    @Column(name = "fila_sem_preferencia")
+    private boolean semPreferencia = false;
+
+    @Column(name = "fila_grupo_id")
+    private String grupoId;
+
     @Column(name = "fila_status", nullable = false)
     private StatusFilaEnum status = StatusFilaEnum.AGUARDANDO;
 

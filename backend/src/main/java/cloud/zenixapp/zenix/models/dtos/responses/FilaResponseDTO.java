@@ -16,6 +16,8 @@ public record FilaResponseDTO(
 
         LocalTime horario,
 
+        boolean semPreferencia,
+
         StatusFilaEnum status
 
 ) {

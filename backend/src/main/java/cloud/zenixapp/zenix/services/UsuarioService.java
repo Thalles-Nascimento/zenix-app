@@ -70,6 +70,10 @@ public class UsuarioService {
         return access;
     }
 
+    public List<Usuarios> buscarUsuariosByUnidades(Long id){
+        return usuarioRepository.findBarbeirosByUnidade(id);
+    }
+
     @Transactional
     public SucessUsuarioResponseDTO registerUser(UsuarioRequestDTO userRegister){
         if(usuarioRepository.findByEmail(userRegister.email()) != null){
