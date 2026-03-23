@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v2/users")
 @Tag(name = "Usuário", description = "Endpoints do serviço de Usuário")
 public class UsuarioController {
 
