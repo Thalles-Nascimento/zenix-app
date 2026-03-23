@@ -15,6 +15,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
+import static jakarta.persistence.FetchType.EAGER;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
@@ -43,7 +45,7 @@ public class Usuarios extends BaseEntity implements UserDetails{
     @Column(name = "usuario_grupo")
     private UsuariosRoleEnum grupo;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "tenant_id", nullable = false, updatable = false)
     private Tenants tenant;
 
