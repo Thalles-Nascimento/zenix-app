@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
-import { Menu, Scissors, Users, DollarSign, LogOutIcon, ChartBarStacked, UserPlus, Building2, Wrench, WalletCards, Settings, ChevronDown } from "lucide-react"
+import { Menu, Scissors, Users, DollarSign, LogOutIcon, ChartBarStacked, UserPlus, Building2, Wrench, WalletCards, Settings, ChevronDown, UsersRound, Crown } from "lucide-react"
 import { useAuth } from "../contexts/auth-context"
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet"
 import { Button } from "./ui/button"
@@ -18,23 +18,28 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
     const location = useLocation()
 
     const configPaths = ["/servicos", "/pagamentos", "/unidades"]
-    const [configAberto, setConfigAberto] = useState(
-        configPaths.includes(location.pathname)
-    )
+    const clientesPaths = ["/clientes", "/planos"]
+
+    const [configAberto, setConfigAberto] = useState(configPaths.includes(location.pathname))
+    const [clientesAberto, setClientesAberto] = useState(clientesPaths.includes(location.pathname))
 
     const menuItems = [
         { label: "Atendimentos", path: "/atendimentos", icon: <Scissors size={18} />, roles: ["ADMIN", "USER"] },
         { label: "Financeiro",   path: "/financeiro",   icon: <DollarSign size={18} />, roles: ["ADMIN", "USER"] },
         { label: "Usuários",     path: "/usuarios",     icon: <UserPlus size={18} />, roles: ["ADMIN"] },
         { label: "Relatório",    path: "/dashboard",    icon: <ChartBarStacked size={18} />, roles: ["ADMIN"] },
-        
         { label: "Fila",         path: "/fila",         icon: <Users size={18} />, roles: ["ADMIN", "USER"] },
     ]
 
     const configItems = [
-        { label: "Unidades",     path: "/unidades",     icon: <Building2 size={18} />, roles: ["ADMIN"] },
         { label: "Serviços",           path: "/servicos",   icon: <Wrench size={16} /> },
         { label: "Forma de Pagamento", path: "/pagamentos", icon: <WalletCards size={16} /> },
+        { label: "Unidades",           path: "/unidades",   icon: <Building2 size={16} /> },
+    ]
+
+    const clientesItems = [
+        { label: "Clientes", path: "/clientes", icon: <UsersRound size={16} /> },
+        { label: "Planos",   path: "/planos",   icon: <Crown size={16} /> },
     ]
 
     const clickButtonLogout = () => {
@@ -43,6 +48,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
     }
 
     const isConfigAtivo = configPaths.includes(location.pathname)
+    const isClientesAtivo = clientesPaths.includes(location.pathname)
 
     return (
         <div className="flex flex-col h-full bg-black text-white">
@@ -68,6 +74,47 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
                         </Link>
                     ))}
 
+                {/* Dropdown Clientes — apenas ADMIN */}
+                {permissao === "ADMIN" && (
+                    <div>
+                        <button
+                            onClick={() => setClientesAberto(prev => !prev)}
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors
+                                ${isClientesAtivo
+                                    ? "bg-orange-600 text-white"
+                                    : "text-gray-400 hover:bg-gray-900 hover:text-white"
+                                }`}
+                        >
+                            <Crown size={18} />
+                            <span className="flex-1 text-left">Clientes e Planos</span>
+                            <ChevronDown
+                                size={16}
+                                className={`transition-transform ${clientesAberto ? "rotate-180" : ""}`}
+                            />
+                        </button>
+
+                        {clientesAberto && (
+                            <div className="ml-4 mt-1 flex flex-col gap-1 border-l border-gray-700 pl-3">
+                                {clientesItems.map(item => (
+                                    <Link
+                                        key={item.path}
+                                        to={item.path}
+                                        onClick={onClose}
+                                        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                                            ${location.pathname === item.path
+                                                ? "bg-orange-600 text-white"
+                                                : "text-gray-400 hover:bg-gray-900 hover:text-white"
+                                            }`}
+                                    >
+                                        {item.icon}
+                                        {item.label}
+                                    </Link>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
+
                 {/* Dropdown Configurações — apenas ADMIN */}
                 {permissao === "ADMIN" && (
                     <div>
@@ -80,7 +127,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
                                 }`}
                         >
                             <Settings size={18} />
-                            <span className="flex-1 text-left">Gerencial</span>
+                            <span className="flex-1 text-left">Configurações</span>
                             <ChevronDown
                                 size={16}
                                 className={`transition-transform ${configAberto ? "rotate-180" : ""}`}
@@ -147,17 +194,12 @@ export default function Layout({ children }: LayoutProps) {
     }, [permissao])
 
     return (
-        <div className="flex overflow-x-hidden bg-black text-white"
-            style={{ minHeight: "100dvh" }}
-        >
-            {/* Sidebar desktop */}
+        <div className="flex overflow-x-hidden bg-black text-white" style={{ minHeight: "100dvh" }}>
             <aside className="hidden md:flex w-64 flex-col fixed inset-y-0 left-0 border-r border-gray-700 z-30">
                 <SidebarContent />
             </aside>
 
-            {/* Conteúdo principal */}
             <div className="flex flex-col flex-1 min-w-0 md:ml-64">
-
                 <header
                     className="sticky top-0 z-40 flex items-center justify-between px-4 bg-black border-b border-gray-700"
                     style={{
@@ -176,7 +218,6 @@ export default function Layout({ children }: LayoutProps) {
 
                     <div className="ml-auto flex items-center gap-3 relative">
                         <span className="text-sm text-white hidden sm:block">{grupo}</span>
-
                         <button
                             onClick={() => setDropdownOpen(!dropdownOpen)}
                             className="w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center font-bold text-sm hover:bg-orange-500 transition-colors"
@@ -205,7 +246,6 @@ export default function Layout({ children }: LayoutProps) {
                     </div>
                 </header>
 
-                {/* Modal trocar senha */}
                 {modalSenhaOpen && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
                         <div className="bg-black border border-gray-700 rounded-xl p-6 w-full max-w-sm">

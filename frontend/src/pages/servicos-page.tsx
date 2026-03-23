@@ -7,6 +7,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../components/
 import { Label } from "../components/ui/label"
 import { Input } from "../components/ui/input"
 import { Botao } from "../components/common/botao"
+import { ModalConfirmacao } from "@/components/common/modal-confirmacao-component"
+import type { ServicoDTO } from "@/types/servico"
 
 interface FormServico {
     servico: string
@@ -19,6 +21,8 @@ export default function ServicosPage() {
     const [modalAberto, setModalAberto] = useState(false)
     const [editando, setEditando] = useState<{ id: number } | null>(null)
     const [form, setForm] = useState<FormServico>({ servico: "", valor: "" })
+    const [servicoSelecionado, setServicoSelecionado] = useState<ServicoDTO>()
+    const [confirmacaoAberta, setConfirmacaoAberta] = useState(false)
 
     const formatBRL = (valor: number) =>
         valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
@@ -33,6 +37,11 @@ export default function ServicosPage() {
         setEditando({ id })
         setForm({ servico: nome, valor: String(valor) })
         setModalAberto(true)
+    }
+
+    const abrirDeletar = (servico: ServicoDTO) => {
+        setServicoSelecionado(servico)
+        setConfirmacaoAberta(true)
     }
 
     const fecharModal = () => {
@@ -71,6 +80,7 @@ export default function ServicosPage() {
         try {
             await deletarServico(id)
             toast.success("Serviço excluído!")
+            setConfirmacaoAberta(false)
         } catch {
             toast.error("Erro ao excluir serviço.")
         }
@@ -133,7 +143,7 @@ export default function ServicosPage() {
                                                     Editar
                                                 </button>
                                                 <button
-                                                    onClick={() => handleDeletar(item.id)}
+                                                    onClick={() => abrirDeletar(item)}
                                                     className="bg-red-700 hover:bg-red-800 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
                                                 >
                                                     Excluir
@@ -182,6 +192,15 @@ export default function ServicosPage() {
                     </div>
                 </DialogContent>
             </Dialog>
+            <ModalConfirmacao
+                open={confirmacaoAberta}
+                titulo="Excluir Serviço"
+                mensagem={`Deseja excluir o serviço "${servicoSelecionado?.servico}"? Esta ação não pode ser desfeita.`}
+                onConfirmar={() => {
+                    if (!servicoSelecionado) return
+                    handleDeletar(servicoSelecionado?.id)}}
+                onCancelar={() => setConfirmacaoAberta(false)}
+            />
         </div>
     )
 }

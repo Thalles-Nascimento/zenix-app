@@ -4,12 +4,8 @@ import api_url from "../enviroments/enviroments"
 // Público — cliente entra na fila (sem token)
 export async function entrarFilaService(dados: FilaFormProps) {
     const response = await api_url.post('/fila', dados)
-    console.log(response.data)
     return response.data
 }
-
-// Criar endpoint para buscar a fila de todos os barbeiros //
-
 
 // Barbeiro busca a própria fila
 export async function buscarFilaService() {

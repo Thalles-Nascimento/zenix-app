@@ -14,6 +14,8 @@ import UnidadesPage from './pages/unidade-page'
 import FilaPage from './pages/fila-page'
 import ServicosPage from './pages/servicos-page'
 import PagamentosPage from './pages/pagamentos-page'
+import ClientesPage from './pages/clientes-page'
+import PlanosPage from './pages/planos-page'
 
 
 function App() {
@@ -50,6 +52,16 @@ function App() {
           <Route path='/pagamentos' element={
             <RotaAdmin>
               <PagamentosPage/>
+            </RotaAdmin>
+          } />
+          <Route path='/clientes' element={
+            <RotaAdmin>
+              <ClientesPage/>
+            </RotaAdmin>
+          } />
+          <Route path='/planos' element={
+            <RotaAdmin>
+              <PlanosPage/>
             </RotaAdmin>
           } />
         </Route>

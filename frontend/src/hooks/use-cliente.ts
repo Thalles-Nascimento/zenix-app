@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { atualizarRetornoService, buscarClientesPorTelefoneService, criarClienteService } from "../services/cliente-service"
-import type { ClienteDTO } from "../services/cliente-service"
+import type { ClienteDTO } from "@/types/cliente"
 
 export function useCliente() {
     const [buscando, setBuscando] = useState(false)
