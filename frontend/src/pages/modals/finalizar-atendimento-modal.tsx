@@ -4,7 +4,6 @@ import { Botao } from "../../components/common/botao"
 import type { FilaProps } from "../../types/fila"
 import { TextareaField } from "@/components/common/textarea"
 import { useServicos } from "../../hooks/use-servicos"
-import { useCliente } from "@/hooks/use-cliente"
 import type { ClienteDTO } from "@/types/cliente"
 import { buscarClientesPorNomeService } from "@/services/cliente-service"
 
@@ -18,7 +17,6 @@ interface Props {
 export function ModalFinalizarAtendimento({ fila, open, onFechar, onFinalizar }: Props) {
     const [observacao, setObservacao] = useState("")
     const { servicos } = useServicos()
-    const { clientes } = useCliente()
     const [clienteDTO, setClienteDTO] = useState<ClienteDTO | null>(null)
 
     useEffect(() => {
