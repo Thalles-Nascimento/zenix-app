@@ -14,6 +14,10 @@ public interface UsuarioRepository extends JpaRepository<Usuarios, Long> {
 
     UserDetails findByEmail(String email);
 
+    boolean existsByCpf(String cpf);
+
+    boolean existsByEmail(String email);
+
     @Query(value = "SELECT status FROM Usuarios WHERE email = :email")
     int querieStatusUser(@Param("email") String email);
 
