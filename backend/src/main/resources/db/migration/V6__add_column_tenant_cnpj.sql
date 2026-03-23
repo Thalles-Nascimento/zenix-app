@@ -1,0 +1,2 @@
+ALTER TABLE tenants
+    MODIFY COLUMN tenant_active TINYINT(1) DEFAULT 1;
