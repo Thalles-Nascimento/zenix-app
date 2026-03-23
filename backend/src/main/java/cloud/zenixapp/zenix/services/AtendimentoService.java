@@ -124,7 +124,7 @@ public class AtendimentoService {
                     if (!clienteService.buscarClientePorNome(atendimento.getDescricao()).isEmpty()){
                         clienteService.retiraRetornoCliente(atendimento.getDescricao());
                     }
-                    atendimento.setDelete_at(LocalDateTime.now());
+                    atendimento.setDeletedAt(LocalDateTime.now());
                     atendimentoRepository.deleteLogico(id);
 
                     return new SucessAtendimentoResponseDTO(
@@ -145,7 +145,7 @@ public class AtendimentoService {
                         throw new NotFoundException("Não é possível atualizar um atendimento excluído!");
                     }
 
-                    atendimento.setUpdate_at(LocalDateTime.now());
+                    atendimento.setUpdatedAt(LocalDateTime.now());
                     atendimentoMapper.atualizarAtendimento(atendimento, atendimentoRequestDTO);
 
                     return new SucessAtendimentoResponseDTO(
@@ -166,7 +166,7 @@ public class AtendimentoService {
                         throw new AtendimentoExcluidoException("Atendimento já está ativo!");
                     }
 
-                    atendimento.setDelete_at(null);
+                    atendimento.setDeletedAt(null);
 
                     atendimentoRepository.ativarAtendimento(id);
                     return new SucessAtendimentoResponseDTO(

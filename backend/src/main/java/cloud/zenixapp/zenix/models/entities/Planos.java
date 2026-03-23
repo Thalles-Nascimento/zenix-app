@@ -34,6 +34,9 @@ public class Planos extends BaseEntity{
     @Column(name = "planos_status")
     private int status = 1;
 
+    @Column(name = "planos_servico", length = 100)
+    private List<String> servico;
+
     @OneToMany(mappedBy = "planos", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Clientes> clientes;
