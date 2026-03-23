@@ -1,4 +1,7 @@
 package cloud.zenixapp.zenix.models.dtos.responses;
 
-public record CadastroResponseDTO() {
-}
+public record CadastroResponseDTO(
+        String mensagem,
+        String nomeEmpresa,
+        String email
+) {}
