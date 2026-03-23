@@ -2,6 +2,7 @@ export interface PlanoDTO {
     id: number
     planoDescricao: string
     valor: number
+    servico: string[]
     limiteAtendimentos: number
 }
 
@@ -11,12 +12,8 @@ export interface ClienteDTO {
     telefone: string
     vezesRetorno: number
     atendimentosMes: number
+    dataRenovacao: string
     status: number
     plano: PlanoDTO | null
 }
 
-export interface ClienteDTOGeral {
-    id: number
-    nomeCliente: string
-    vezesRetorno: number
-}

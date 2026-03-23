@@ -3,7 +3,9 @@ export interface FilaFormProps {
     servico: string[]
     formaPagamento: string
     telefoneCliente: string
-    idBarbeiro: number
+    idBarbeiro: number | null
+    semPreferencia: boolean
+    idUnidade: number
 }
 
 export interface FilaProps {
@@ -13,4 +15,5 @@ export interface FilaProps {
     formaPagamento: string
     horario: string
     status: 'AGUARDANDO' | 'EM_ATENDIMENTO'
+    semPreferencia: boolean
 }

@@ -7,10 +7,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../components/
 import { Label } from "../components/ui/label"
 import { Input } from "../components/ui/input"
 import { Botao } from "../components/common/botao"
+import { ServicosMultiSelect } from "@/components/common/servicos-multiselect-component"
+import type { PlanoDTO } from "@/types/cliente"
+import { ModalConfirmacao } from "@/components/common/modal-confirmacao-component"
 
 interface FormPlano {
     planoDescricao: string
     valor: string
+    servico: string[]
     limiteAtendimentos: string
 }
 
@@ -18,28 +22,39 @@ export default function PlanosPage() {
     const { planos, carregando, criarPlano, atualizarPlano, deletarPlano } = usePlanos()
 
     const [modalAberto, setModalAberto] = useState(false)
+    const [planoSelecionado, setPlanoSelecionado] = useState<PlanoDTO | null>(null)
     const [editando, setEditando] = useState<{ id: number } | null>(null)
-    const [form, setForm] = useState<FormPlano>({ planoDescricao: "", valor: "", limiteAtendimentos: "" })
+    const [form, setForm] = useState<FormPlano>({ planoDescricao: "", valor: "", servico: [], limiteAtendimentos: "" })
+    const [confirmacaoAberta, setConfirmacaoAberta] = useState(false)
 
     const formatBRL = (valor: number) =>
         valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
 
     const abrirNovo = () => {
         setEditando(null)
-        setForm({ planoDescricao: "", valor: "", limiteAtendimentos: "" })
+        setForm({ planoDescricao: "", valor: "", servico: [], limiteAtendimentos: "" })
         setModalAberto(true)
     }
 
-    const abrirEdicao = (id: number, planoDescricao: string, valor: number, limiteAtendimentos: number) => {
+    const abrirEdicao = (id: number, planoDescricao: string, valor: number, servico: string[], limiteAtendimentos: number) => {
         setEditando({ id })
-        setForm({ planoDescricao, valor: String(valor), limiteAtendimentos: String(limiteAtendimentos) })
+        setForm({ planoDescricao, valor: String(valor), servico: servico ?? [], limiteAtendimentos: String(limiteAtendimentos) })
         setModalAberto(true)
+    }
+
+    const abrirDeletar = (plano: PlanoDTO) => {
+        setPlanoSelecionado(plano)
+        setConfirmacaoAberta(true)
     }
 
     const fecharModal = () => {
         setModalAberto(false)
         setEditando(null)
-        setForm({ planoDescricao: "", valor: "", limiteAtendimentos: "" })
+        setForm({ planoDescricao: "", valor: "", servico: [], limiteAtendimentos: "" })
+    }
+
+    const handleServicosChange = (servicos: string[]) => {
+        setForm({ ...form, servico: servicos })
     }
 
     const handleSalvar = async () => {
@@ -56,10 +71,10 @@ export default function PlanosPage() {
 
         try {
             if (editando) {
-                await atualizarPlano(editando.id, form.planoDescricao.trim(), valor, limite)
+                await atualizarPlano(editando.id, form.planoDescricao.trim(), valor, form.servico, limite)
                 toast.success("Plano atualizado!")
             } else {
-                await criarPlano(form.planoDescricao.trim(), valor, limite)
+                await criarPlano(form.planoDescricao.trim(), valor, form.servico, limite)
                 toast.success("Plano criado!")
             }
             fecharModal()
@@ -72,6 +87,7 @@ export default function PlanosPage() {
         try {
             await deletarPlano(id)
             toast.success("Plano excluído!")
+            setConfirmacaoAberta(false)
         } catch {
             toast.error("Erro ao excluir plano.")
         }
@@ -104,16 +120,17 @@ export default function PlanosPage() {
                     <table className="w-full text-sm text-left text-gray-300 notranslate">
                         <thead className="text-xs text-white uppercase bg-gray-800 border-b border-gray-700 notranslate">
                             <tr>
-                                <th className="px-4 py-3 w-2/5 notranslate">PLANO</th>
-                                <th className="px-4 py-3 w-1/5 notranslate">VALOR/MÊS</th>
-                                <th className="px-4 py-3 w-1/5 notranslate">LIMITE</th>
-                                <th className="px-4 py-3 w-1/5 notranslate">AÇÕES</th>
+                                <th className="px-4 py-3 w-1/4 notranslate">PLANO</th>
+                                <th className="px-4 py-3 w-1/4 notranslate">SERVIÇOS</th>
+                                <th className="px-4 py-3 w-1/6 notranslate">VALOR/MÊS</th>
+                                <th className="px-4 py-3 w-1/6 notranslate">LIMITE</th>
+                                <th className="px-4 py-3 w-1/6 notranslate">AÇÕES</th>
                             </tr>
                         </thead>
                         <tbody>
                             {planos.length === 0 ? (
                                 <tr>
-                                    <td colSpan={4} className="px-6 py-8 text-center text-gray-500 notranslate">
+                                    <td colSpan={5} className="px-6 py-8 text-center text-gray-500 notranslate">
                                         Nenhum plano cadastrado
                                     </td>
                                 </tr>
@@ -121,18 +138,24 @@ export default function PlanosPage() {
                                 planos.map(item => (
                                     <tr key={item.id} className="bg-black border-b border-gray-700 notranslate">
                                         <td className="px-4 py-4 notranslate font-medium text-white">{item.planoDescricao}</td>
+                                        <td className="px-4 py-4 font-medium text-white notranslate">
+                                            {item.servico?.length > 0
+                                                ? item.servico.join(" + ")
+                                                : <span className="text-gray-500">—</span>
+                                            }
+                                        </td>
                                         <td className="px-4 py-4 notranslate text-orange-500 font-bold">{formatBRL(item.valor)}</td>
                                         <td className="px-4 py-4 notranslate text-gray-300">{item.limiteAtendimentos} atend./mês</td>
                                         <td className="px-4 py-4 notranslate">
                                             <div className="flex gap-2">
                                                 <button
-                                                    onClick={() => abrirEdicao(item.id, item.planoDescricao, item.valor, item.limiteAtendimentos)}
+                                                    onClick={() => abrirEdicao(item.id, item.planoDescricao, item.valor, item.servico ?? [], item.limiteAtendimentos)}
                                                     className="bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
                                                 >
                                                     Editar
                                                 </button>
                                                 <button
-                                                    onClick={() => handleDeletar(item.id)}
+                                                    onClick={() => abrirDeletar(item)}
                                                     className="bg-red-900 hover:bg-red-800 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
                                                 >
                                                     Excluir
@@ -165,12 +188,26 @@ export default function PlanosPage() {
                             />
                         </div>
                         <div>
-                            <Label className="text-gray-300">Valor Mensal (R$)</Label>
+                            <Label className="text-gray-300">Valor (R$)</Label>
                             <Input
                                 className="mt-1 bg-gray-900 border-gray-700 text-orange-400 font-semibold"
                                 placeholder="Ex: 89.90"
                                 value={form.valor}
                                 onChange={(e) => setForm({ ...form, valor: e.target.value })}
+                            />
+                        </div>
+                        <div>
+                            <Label className="text-gray-300">
+                                Serviços do Plano
+                                {form.servico.length > 0 && (
+                                    <span className="ml-2 text-orange-500 text-xs">
+                                        {form.servico.length} selecionado(s)
+                                    </span>
+                                )}
+                            </Label>
+                            <ServicosMultiSelect
+                                selecionados={form.servico}
+                                onChange={handleServicosChange}
                             />
                         </div>
                         <div>
@@ -190,6 +227,15 @@ export default function PlanosPage() {
                     </div>
                 </DialogContent>
             </Dialog>
+            <ModalConfirmacao
+                open={confirmacaoAberta}
+                titulo="Excluir Plano"
+                mensagem={`Deseja excluir o plano "${planoSelecionado?.planoDescricao}"? Esta ação não pode ser desfeita.`}
+                onConfirmar={() => {
+                    if (!planoSelecionado) return
+                    handleDeletar(planoSelecionado?.id)}}
+                onCancelar={() => setConfirmacaoAberta(false)}
+            />
         </div>
     )
 }
