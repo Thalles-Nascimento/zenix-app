@@ -88,6 +88,7 @@ export default function FilaPage() {
                                         <p className="text-white font-bold">{cliente.nomeCliente}</p>
                                         <p className="text-white text-sm">{Array.isArray(cliente.servico) ? cliente.servico.join(" + ") : cliente.servico} • {cliente.formaPagamento}</p>
                                         <p className="text-gray-300 text-xs">Entrou às {formatarHorario(cliente.horario)}</p>
+                                        {cliente.semPreferencia === true && <p className="text-gray-300 text-xs">Cliente sem preferência</p>}
                                     </div>
                                 </div>
 
