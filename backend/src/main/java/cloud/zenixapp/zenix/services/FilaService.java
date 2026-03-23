@@ -101,7 +101,7 @@ public class FilaService {
 
                     if (atendimentoFila.isSemPreferencia() && atendimentoFila.getGrupoId() != null) {
                         filaRepository.deletarOutrosDoGrupo(atendimentoFila.getGrupoId(), id);
-                        filaRepository.setarUsuario(id, userAuth.getId()); // seta o barbeiro que chamou
+                        filaRepository.setarUsuario(id, userAuth.getId());
                     }
 
                     return new SucessFilaResponseDTO(
@@ -145,6 +145,10 @@ public class FilaService {
                     }
 
                     String statusMsg = clienteService.retiraRetornoCliente(atendimentoFila.getNomeCliente());
+
+                    if (atendimentoFila.isSemPreferencia() && atendimentoFila.getGrupoId() != null) {
+                        filaRepository.deletarOutrosDoGrupo(atendimentoFila.getGrupoId(), id);
+                    }
 
                     filaRepository.deleteById(id);
 
