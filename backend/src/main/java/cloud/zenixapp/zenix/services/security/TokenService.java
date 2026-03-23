@@ -25,10 +25,25 @@ public class TokenService {
             return JWT.create()
                     .withIssuer("zenixapp")
                     .withSubject(user.getEmail())
+                    .withClaim("tenantId", user.getTenant().getId())
                     .withExpiresAt(this.expiratedToken())
                     .sign(algorithm);
         }
         catch(JWTCreationException exception){
+            throw new TokenCreateException(exception.getMessage());
+        }
+    }
+
+    public String extractTenantId(String token) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            return JWT.require(algorithm)
+                    .withIssuer("zenixapp")
+                    .build()
+                    .verify(token)
+                    .getClaim("tenantId")
+                    .asString();
+        } catch (JWTCreationException exception) {
             throw new TokenCreateException(exception.getMessage());
         }
     }
