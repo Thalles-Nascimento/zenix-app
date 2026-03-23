@@ -2,6 +2,7 @@ package cloud.zenixapp.zenix.services;
 
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.exceptions.UsuarioExcluidoException;
+import cloud.zenixapp.zenix.configs.exceptions.UsuarioJaExisteException;
 import cloud.zenixapp.zenix.configs.mappers.UnidadeMapper;
 import cloud.zenixapp.zenix.configs.mappers.UsuarioMapper;
 import cloud.zenixapp.zenix.models.dtos.responses.SucessUsuarioResponseDTO;
@@ -76,8 +77,8 @@ public class UsuarioService {
 
     @Transactional
     public SucessUsuarioResponseDTO registerUser(UsuarioRequestDTO userRegister){
-        if(usuarioRepository.findByEmail(userRegister.email()) != null){
-            return null;
+        if(usuarioRepository.existsByEmail(userRegister.email()) || usuarioRepository.existsByCpf(userRegister.cpf())){
+            throw new UsuarioJaExisteException("Usuário já cadastrado!");
         }
         String encryptPassword = new BCryptPasswordEncoder().encode(userRegister.senha());
         if (userRegister.unidade() == 0){
