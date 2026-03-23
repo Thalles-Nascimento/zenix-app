@@ -126,4 +126,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(value = {UsuarioJaExisteException.class})
+    public ResponseEntity<ErrorResponseDTO> handleUsuarioJaExisteException(Exception ex){
+        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(
+                HttpStatus.CONFLICT.value(),
+                ex.getMessage(),
+                LocalDateTime.now().toInstant(ZoneOffset.of("-03:00"))
+        );
+
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.CONFLICT);
+    }
+
 }

@@ -1,7 +1,7 @@
 package cloud.zenixapp.zenix.configs.exceptions;
 
-public class UsuarioExcluidoException extends RuntimeException {
-    public UsuarioExcluidoException(String message) {
+public class UsuarioJaExisteException extends RuntimeException {
+    public UsuarioJaExisteException(String message) {
         super(message);
     }
 }
