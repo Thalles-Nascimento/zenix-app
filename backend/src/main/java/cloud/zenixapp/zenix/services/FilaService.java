@@ -67,7 +67,6 @@ public class FilaService {
     public List<SucessFilaResponseDTO> inserirSemPreferencia(FilaRequestDTO filaDTO) {
         List<Usuarios> barbeiros = usuarioService.buscarUsuariosByUnidades(filaDTO.idUnidade());
         String grupoId = UUID.randomUUID().toString();
-        System.out.println("Estou aqui no sem preferencia: " + filaDTO.semPreferencia());
 
         return barbeiros.stream().map(barbeiro -> {
             Fila fila = new Fila();
