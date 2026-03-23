@@ -100,7 +100,7 @@ class FilaServiceTest {
         when(filaRepository.save(any())).thenReturn(filaAguardando);
 
         FilaRequestDTO dto = new FilaRequestDTO(
-                "Memphis Depay", List.of("Corte"), "+5521999999999", "PIX", 1L
+                "Memphis Depay", List.of("Corte"), "+5521999999999", "PIX", 1L, 0L, false
         );
 
         SucessFilaResponseDTO resultado = filaService.inserirAtendimentoFila(dto);
@@ -117,7 +117,7 @@ class FilaServiceTest {
         when(filaRepository.save(any())).thenReturn(filaAguardando);
 
         FilaRequestDTO dto = new FilaRequestDTO(
-                "Memphis Depay", List.of("Corte"), "+5521999999999", "PIX", 1L
+                "Memphis Depay", List.of("Corte"), "+5521999999999", "PIX", 1L, 0L, false
         );
 
         filaService.inserirAtendimentoFila(dto);
@@ -215,7 +215,7 @@ class FilaServiceTest {
         mockSecurityContext();
 
         List<FilaResponseDTO> filaEsperada = List.of(
-                new FilaResponseDTO(1L, "Memphis Depay", List.of("Corte"), "PIX", null, AGUARDANDO)
+                new FilaResponseDTO(1L, "Memphis Depay", List.of("Corte"), "PIX", null, false, AGUARDANDO)
         );
 
         when(filaRepository.findByUser(1L)).thenReturn(List.of(filaAguardando));
