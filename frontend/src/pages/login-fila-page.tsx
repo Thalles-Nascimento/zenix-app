@@ -23,7 +23,6 @@ export default function LoginClient() {
 
     const { barbeiros } = useBarbeiros(Number(unidadeId))
     const { clientes, buscarClientes, criarCliente, buscando, atualizarRetorno } = useCliente()
-
     const { servicos } = useServicos()
 
     const [nome, setNome] = useState("")
@@ -31,6 +30,7 @@ export default function LoginClient() {
     const [servicosSelecionados, setServicosSelecionados] = useState<string[]>([])
     const [formaPagamento, setFormaPagamento] = useState("")
     const [idBarbeiro, setIdBarbeiro] = useState<number | null>(null)
+    const [semPreferencia, setSemPreferencia] = useState(false)
     const [carregando, setCarregando] = useState(false)
     const [sucesso, setSucesso] = useState(false)
     const [telefone, setTelefone] = useState("")
@@ -52,6 +52,16 @@ export default function LoginClient() {
         }
     }
 
+    const handleBarbeiroSelecionado = (value: string) => {
+        if (value === "__sem_preferencia__") {
+            setIdBarbeiro(null)
+            setSemPreferencia(true)
+        } else {
+            setIdBarbeiro(Number(value))
+            setSemPreferencia(false)
+        }
+    }
+
     const nomeEfetivo = nome === "__novo__" ? nomeNovo : nome
 
     const valorTotal = servicosSelecionados.reduce((acc, nome) => {
@@ -60,7 +70,7 @@ export default function LoginClient() {
     }, 0)
 
     const entrarFila = async () => {
-        if (!nomeEfetivo || servicosSelecionados.length === 0 || !telefone || !idBarbeiro) {
+        if (!nomeEfetivo || servicosSelecionados.length === 0 || !telefone || (!idBarbeiro && !semPreferencia)) {
             toast.error("Preencha todos os campos!")
             return
         }
@@ -84,7 +94,9 @@ export default function LoginClient() {
                 servico: servicosSelecionados,
                 formaPagamento,
                 telefoneCliente: telefoneNumeros,
-                idBarbeiro
+                idBarbeiro: semPreferencia ? null : idBarbeiro,
+                semPreferencia,
+                idUnidade: Number(unidadeId)
             })
             setSucesso(true)
         } catch (error) {
@@ -167,7 +179,6 @@ export default function LoginClient() {
                             )}
 
                             <div>
-                                
                                 <Label className="text-white">
                                     Serviços
                                     {servicosSelecionados.length > 0 && (
@@ -190,7 +201,7 @@ export default function LoginClient() {
 
                             <div>
                                 <Label className="text-white">Barbeiro</Label>
-                                <Select onValueChange={(value) => setIdBarbeiro(Number(value))}>
+                                <Select onValueChange={handleBarbeiroSelecionado}>
                                     <SelectTrigger className="bg-gray-900 mt-2 border-gray-300 text-white w-full notranslate">
                                         <SelectValue placeholder="Selecione o barbeiro" />
                                     </SelectTrigger>
@@ -200,6 +211,9 @@ export default function LoginClient() {
                                                 {b.nome}
                                             </SelectItem>
                                         ))}
+                                        <SelectItem value="__sem_preferencia__">
+                                            Não tenho preferência
+                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
