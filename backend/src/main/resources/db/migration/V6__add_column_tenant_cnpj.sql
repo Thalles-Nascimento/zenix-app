@@ -1,2 +1,2 @@
 ALTER TABLE tenants
-    MODIFY COLUMN tenant_active TINYINT(1) DEFAULT 1;
+    ADD COLUMN tenant_cnpj VARCHAR(18) UNIQUE NOT NULL AFTER tenant_slug;
