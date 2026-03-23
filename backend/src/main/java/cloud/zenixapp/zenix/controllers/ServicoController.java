@@ -23,7 +23,7 @@ import java.time.ZoneOffset;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/v1/servicos")
+@RequestMapping(value = "/api/v2/servicos")
 @Tag(name = "Serviço", description = "Endpoints ddo Serviço")
 public class ServicoController {
 
