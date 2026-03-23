@@ -1,14 +1,13 @@
 package cloud.zenixapp.zenix.services;
 
-import cloud.zenixapp.zenix.configs.exceptions.AtendimentoExcluidoException;
 import cloud.zenixapp.zenix.configs.exceptions.ClienteExcluidoException;
+import cloud.zenixapp.zenix.configs.exceptions.ClientePossuePlanoException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.mappers.ClienteMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteUpdateRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ClienteResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessClienteResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.SucessAtendimentoResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Clientes;
 import cloud.zenixapp.zenix.models.entities.Planos;
 import cloud.zenixapp.zenix.models.entities.TelefoneCliente;
@@ -20,6 +19,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -113,10 +113,11 @@ public class ClienteService {
 
     }
 
-    @Scheduled(cron = "0 0 0 1 * *")
+    @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void resetarContadoresMensais() {
-        clienteRepository.resetarAtendimentosMes();
+        int diaHoje = LocalDate.now().getDayOfMonth();
+        clienteRepository.resetarAtendimentosMes(diaHoje);
     }
 
     public List<ClienteResponseDTO> buscarTodosClientes() {
@@ -127,8 +128,12 @@ public class ClienteService {
     public SuccessClienteResponseDTO inserirPlano(Long id, Long idPlano) throws NotFoundException {
         return clienteRepository.findById(id)
                 .map(cliente -> {
+                    if(cliente.getAtendimentosMes() > 0){
+                        throw new ClientePossuePlanoException("Cliente possui um plano ativo");
+                    }
                     Planos plano = planosService.buscarPlanoPorId(idPlano);
                     cliente.setPlanos(plano);
+                    cliente.setDataRenovacao(LocalDate.now().plusMonths(1));
 
                     clienteRepository.save(cliente);
                     return new SuccessClienteResponseDTO(
@@ -233,5 +238,8 @@ public class ClienteService {
         clienteRepository.save(cliente);
     }
 
+    public List<ClienteResponseDTO> buscarClientePorNome(String nome){
+        return clienteMapper.listResponseDTO(clienteRepository.findByNameContaining(nome));
+    }
 
 }

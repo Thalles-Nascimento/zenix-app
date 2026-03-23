@@ -91,7 +91,7 @@ public class ClienteController {
             @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
     })
     @Operation(summary = "Deletar cliente", description = "Endpoint para deletar um cliente")
-    public ResponseEntity<?> deleteAtendimento(@PathVariable Long id) {
+    public ResponseEntity<?> deleteCliente(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(clienteService.deletarCliente(id));
 
@@ -133,6 +133,12 @@ public class ClienteController {
     public ResponseEntity<?> ativarCliente(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(clienteService.ativarCliente(id));
+    }
+
+    @GetMapping("/nome")
+    public ResponseEntity<?> buscarClientesPorNome(@RequestParam String nome) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(clienteService.buscarClientePorNome(nome));
     }
 
 }

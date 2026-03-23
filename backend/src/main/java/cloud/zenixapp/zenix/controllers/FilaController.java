@@ -28,6 +28,11 @@ public class FilaController {
                     .body(BindingHandler.insertError(result));
         }
 
+        if (filaDTO.semPreferencia()){
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(filaService.inserirSemPreferencia(filaDTO));
+        }
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(filaService.inserirAtendimentoFila(filaDTO));
 

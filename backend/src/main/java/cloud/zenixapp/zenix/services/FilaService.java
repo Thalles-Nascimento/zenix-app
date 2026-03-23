@@ -23,6 +23,7 @@ import java.util.List;
 
 import static cloud.zenixapp.zenix.models.enums.StatusFilaEnum.AGUARDANDO;
 import static cloud.zenixapp.zenix.models.enums.StatusFilaEnum.EM_ATENDIMENTO;
+import java.util.UUID;
 
 @Service
 public class FilaService {
@@ -62,6 +63,25 @@ public class FilaService {
         );
     }
 
+    @Transactional
+    public List<SucessFilaResponseDTO> inserirSemPreferencia(FilaRequestDTO filaDTO) {
+        List<Usuarios> barbeiros = usuarioService.buscarUsuariosByUnidades(filaDTO.idUnidade());
+        String grupoId = UUID.randomUUID().toString();
+
+        return barbeiros.stream().map(barbeiro -> {
+            Fila fila = new Fila();
+            fila.setNomeCliente(filaDTO.nomeCliente());
+            fila.setServico(filaDTO.servico());
+            fila.setFormaPagamento(filaDTO.formaPagamento());
+            fila.setTelefoneCliente(filaDTO.telefoneCliente());
+            fila.setUsuario(barbeiro);
+            fila.setSemPreferencia(true);
+            fila.setGrupoId(grupoId);
+            filaRepository.save(fila);
+            return new SucessFilaResponseDTO(fila.getId(), fila.getNomeCliente(), fila.getServico(), fila.getStatus());
+        }).toList();
+    }
+
     public List<FilaResponseDTO> getFilasByUser(){
         Usuarios userAuth = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return filaMapper.toListFilaDTO(filaRepository.findByUser(userAuth.getId()));
@@ -74,9 +94,15 @@ public class FilaService {
                     if(atendimentoFila.getStatus() != AGUARDANDO){
                         throw new FilaException("Clientes está Em Atendimento ou Finalizado");
                     }
+                    Usuarios userAuth = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
                     filaRepository.paraAtendimento(id);
                     filaRepository.marcarHoraInicio(id, LocalTime.now());
+
+                    if (atendimentoFila.isSemPreferencia() && atendimentoFila.getGrupoId() != null) {
+                        filaRepository.deletarOutrosDoGrupo(atendimentoFila.getGrupoId(), id);
+                        filaRepository.setarUsuario(id, userAuth.getId());
+                    }
 
                     return new SucessFilaResponseDTO(
                             atendimentoFila.getId(),
@@ -119,6 +145,10 @@ public class FilaService {
                     }
 
                     String statusMsg = clienteService.retiraRetornoCliente(atendimentoFila.getNomeCliente());
+
+                    if (atendimentoFila.isSemPreferencia() && atendimentoFila.getGrupoId() != null) {
+                        filaRepository.deletarOutrosDoGrupo(atendimentoFila.getGrupoId(), id);
+                    }
 
                     filaRepository.deleteById(id);
 

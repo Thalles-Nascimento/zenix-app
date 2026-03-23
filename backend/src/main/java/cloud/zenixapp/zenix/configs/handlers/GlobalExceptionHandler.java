@@ -116,4 +116,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.GONE);
     }
 
+    @ExceptionHandler(value = {ClientePossuePlanoException.class})
+    public ResponseEntity<ErrorResponseDTO> handleClientePossuePlanoException(Exception ex) {
+        ErrorResponseDTO errorResponse = new ErrorResponseDTO(
+                HttpStatus.CONFLICT.value(),
+                ex.getMessage(),
+                LocalDateTime.now().toInstant(ZoneOffset.of("-03:00"))
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
 }

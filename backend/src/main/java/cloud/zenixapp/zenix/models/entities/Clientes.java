@@ -29,9 +29,9 @@ public class Clientes extends BaseEntity {
     private TelefoneCliente telefoneCliente;
 
     @Column(name = "cliente_retorno")
-    private int totalRetornos = 1;
+    private int totalRetornos = 0;
 
-    @Column(name = "cliente_status", nullable = false, columnDefinition = "INT DEFAULT 0")
+    @Column(name = "cliente_status", nullable = false, columnDefinition = "INT DEFAULT 1")
     private int status = 1;
 
     @ManyToOne
