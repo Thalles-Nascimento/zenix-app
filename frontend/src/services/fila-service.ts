@@ -7,9 +7,6 @@ export async function entrarFilaService(dados: FilaFormProps) {
     return response.data
 }
 
-// Criar endpoint para buscar a fila de todos os barbeiros //
-
-
 // Barbeiro busca a própria fila
 export async function buscarFilaService() {
     const response = await api_url.get('/fila')
