@@ -45,7 +45,7 @@ public class Usuarios extends BaseEntity implements UserDetails{
     @Column(name = "usuario_grupo")
     private UsuariosRoleEnum grupo;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = EAGER)
     @JoinColumn(name = "tenant_id", nullable = false, updatable = false)
     private Tenants tenant;
 
