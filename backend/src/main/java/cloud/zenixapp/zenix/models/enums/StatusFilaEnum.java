@@ -1,5 +1,8 @@
 package cloud.zenixapp.zenix.models.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum StatusFilaEnum {
 
 //  AGUARDANDO = 0
@@ -17,7 +20,4 @@ public enum StatusFilaEnum {
         this.status = status;
     }
 
-    public String getStatus(){
-        return this.status;
-    }
 }
