@@ -27,7 +27,7 @@ import java.time.ZoneOffset;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/v2/planos")
+@RequestMapping(value = "/api/${api.version}/planos")
 @Tag(name = "Planos", description = "Endpoints de Planos")
 public class PlanoController {
 

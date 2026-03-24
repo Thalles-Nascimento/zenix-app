@@ -23,7 +23,7 @@ import java.time.ZoneOffset;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/v2/pagamentos")
+@RequestMapping(value = "/api/${api.version}/pagamentos")
 @Tag(name = "Forma de Pagamento", description = "Endpoints de Forma de Pagamento")
 public class PagamentoController {
 
