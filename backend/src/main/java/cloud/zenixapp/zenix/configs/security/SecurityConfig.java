@@ -2,6 +2,7 @@ package cloud.zenixapp.zenix.configs.security;
 
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -27,6 +28,9 @@ public class SecurityConfig {
     @Autowired
     private SecurityFilter securityFilter;
 
+    @Value("${api-url}")
+    private String api_url;
+
     @Bean
     public SecurityFilterChain securityFilterChain(@NonNull HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
@@ -34,33 +38,33 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/api/${api.version}/users/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/${api.version}/cadastro").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/${api.version}/fila").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/${api.version}/users/barbeiros/{unidadeId}").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/${api.version}/servicos").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/${api.version}/pagamentos").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/${api.version}/clientes/telefone/{numero}").permitAll()
-                        .requestMatchers(HttpMethod.PATCH, "/api/${api.version}/clientes/retorno/{id}").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/${api.version}/clientes").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/${api.version}/users/me").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/${api.version}/atendimentos/{id}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/${api.version}/clientes").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/api/${api.version}/clientes/planos/{idCliente}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/api/${api.version}/clientes/ativar/{id}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/${api.version}/clientes/planos/{idCliente}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/${api.version}/planos").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/${api.version}/users/register").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/${api.version}/clientes/{id}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/${api.version}/clientes/{id}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/${api.version}/planos").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/${api.version}/planos/{id}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/${api.version}/planos/{id}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/${api.version}/atendimentos/usuario/{id}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/${api.version}/atendimentos/{id}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/${api.version}/users").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/${api.version}/users/{id}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/${api.version}/users/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/" + api_url + "/users/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/" + api_url + "/cadastro").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/" + api_url + "/fila").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/" + api_url + "/users/barbeiros/{unidadeId}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/" + api_url + "/servicos").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/" + api_url + "/pagamentos").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/" + api_url + "/clientes/telefone/{numero}").permitAll()
+                        .requestMatchers(HttpMethod.PATCH, "/" + api_url + "/clientes/retorno/{id}").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/" + api_url + "/clientes").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/" + api_url + "/users/me").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/" + api_url + "/atendimentos/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/" + api_url + "/clientes").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/" + api_url + "/clientes/planos/{idCliente}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/" + api_url + "/clientes/ativar/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/" + api_url + "/clientes/planos/{idCliente}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/" + api_url + "/planos").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/" + api_url + "/users/register").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/" + api_url + "/clientes/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/" + api_url + "/clientes/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/" + api_url + "/planos").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/" + api_url + "/planos/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/" + api_url + "/planos/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/" + api_url + "/atendimentos/usuario/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/" + api_url + "/atendimentos/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/" + api_url + "/users").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/" + api_url + "/users/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/" + api_url + "/users/{id}").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

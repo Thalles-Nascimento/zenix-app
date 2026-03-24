@@ -26,7 +26,7 @@ import java.time.ZoneOffset;
 import java.util.*;
 
 @RestController
-@RequestMapping(value = "/api/${api.version}/atendimentos")
+@RequestMapping(value = "/${api-url}/atendimentos")
 @Tag(name = "Atendimento", description = "Endpoints do serviço de Atendimento")
 public class AtendimentoController {
 

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.sql.SQLIntegrityConstraintViolationException;
 
 @RestController
-@RequestMapping(value = "/api/${api.version}/fila")
+@RequestMapping(value = "/${api-url}/fila")
 @Tag(name = "Fila", description = "API do serviço de Fila")
 public class FilaController {
 

@@ -25,7 +25,7 @@ import java.time.ZoneOffset;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/${api.version}/cadastro")
+@RequestMapping(value = "/${api-url}/cadastro")
 @Tag(name = "Cadastros", description = "Endpoints para realizar Cadastro")
 public class CadastroController {
 
