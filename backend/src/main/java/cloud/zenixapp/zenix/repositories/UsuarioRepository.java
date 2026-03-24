@@ -8,11 +8,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface UsuarioRepository extends JpaRepository<Usuarios, Long> {
 
     UserDetails findByEmail(String email);
+
+    @Query(value = "SELECT * FROM usuarios WHERE tenant_id = :tenant", nativeQuery = true)
+    List<Usuarios> findAllByTenants(@Param("tenant") String tenant);
 
     boolean existsByCpf(String cpf);
 
@@ -22,14 +26,20 @@ public interface UsuarioRepository extends JpaRepository<Usuarios, Long> {
     int querieStatusUser(@Param("email") String email);
 
     @Modifying
-    @Query(value = "UPDATE Usuarios SET status = -1 WHERE id = :id")
-    void deleteLogico(@Param("id") Long id);
+    @Query(value = "UPDATE usuarios SET usuario_status = -1 WHERE usuario_id = :id and tenant_id = :tenantId", nativeQuery = true)
+    void deleteLogico(@Param("id") Long id, @Param("tenantId") String tenantId);
 
     @Modifying
-    @Query(value = "UPDATE Usuarios SET status = 1 WHERE id = :id")
-    void ativarUsuario(@Param("id") Long id);
+    @Query(value = "UPDATE usuarios SET usuario_status = 1 WHERE usuario_id = :id and tenant_id = :tenantId", nativeQuery = true)
+    void ativarUsuario(@Param("id") Long id, @Param("tenantId") String tenantId);
 
     @Query("SELECT u FROM Usuarios u WHERE u.unidade.id = :unidadeId AND u.status = 1")
     List<Usuarios> findBarbeirosByUnidade(@Param("unidadeId") Long unidadeId);
+
+    @Query(value = "SELECT * FROM usuarios WHERE usuario_id = :id AND tenant_id = :tenantId", nativeQuery = true)
+    Optional<Usuarios> findByIdAndTenants(@Param("id") Long id, @Param("tenantId") String tenantId);
+
+    @Query("SELECT u FROM Usuarios u WHERE u.unidade.id = :unidadeId AND u.status = 1 AND u.tenant = :tenantId")
+    List<Usuarios> findBarbeirosByUnidadeWithTenant(@Param("unidadeId") Long unidadeId, @Param("tenantId") String tenantId);
 
 }
