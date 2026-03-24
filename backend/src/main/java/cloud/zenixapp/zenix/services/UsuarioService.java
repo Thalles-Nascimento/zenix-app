@@ -63,8 +63,8 @@ public class UsuarioService {
         var usernamePassword = new UsernamePasswordAuthenticationToken(user.email(), user.senha());
         var auth = authenticationManager.authenticate(usernamePassword);
 
-        Usuarios usuario = (Usuarios) usuarioRepository.findByEmail(user.email());
-        access.put("token", tokenService.generateToken((Usuarios) auth.getPrincipal()));
+        Usuarios usuario = (Usuarios) auth.getPrincipal();
+        access.put("token", tokenService.generateToken(usuario));
         access.put("nome", usuario.getNome());
         access.put("grupo", usuario.getGrupo().toString());
 
