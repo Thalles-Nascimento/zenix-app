@@ -20,6 +20,9 @@ public class TokenService {
 
     public String generateToken(Usuarios user){
         try {
+            if (user.getTenant() == null){
+                throw new TokenCreateException("Usuário sem tenant associado");
+            }
             Algorithm algorithm = Algorithm.HMAC256(secret);
 
             return JWT.create()
