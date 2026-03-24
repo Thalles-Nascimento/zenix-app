@@ -1,19 +1,19 @@
 package cloud.zenixapp.zenix.services;
 
+import cloud.zenixapp.zenix.configs.TenantContext;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.exceptions.UsuarioExcluidoException;
 import cloud.zenixapp.zenix.configs.exceptions.UsuarioJaExisteException;
-import cloud.zenixapp.zenix.configs.mappers.UnidadeMapper;
 import cloud.zenixapp.zenix.configs.mappers.UsuarioMapper;
-import cloud.zenixapp.zenix.models.dtos.responses.SucessUsuarioResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.requests.UsuarioRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.UsuarioLoginDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.UnidadeResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.requests.UsuarioRequestDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.SucessUsuarioResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.UsuarioResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.UsuarioResponseSimplesDTO;
+import cloud.zenixapp.zenix.models.entities.Tenants;
 import cloud.zenixapp.zenix.models.entities.Unidades;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
-import cloud.zenixapp.zenix.models.enums.UsuariosRoleEnum;
+import cloud.zenixapp.zenix.repositories.TenantRepository;
 import cloud.zenixapp.zenix.repositories.UnidadeRepository;
 import cloud.zenixapp.zenix.repositories.UsuarioRepository;
 import cloud.zenixapp.zenix.services.security.TokenService;
@@ -27,6 +27,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,9 @@ public class UsuarioService {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private TenantRepository tenantRepository;
 
     @Autowired
     private TokenService tokenService;
@@ -72,30 +76,38 @@ public class UsuarioService {
     }
 
     public List<Usuarios> buscarUsuariosByUnidades(Long id){
-        return usuarioRepository.findBarbeirosByUnidade(id);
+        return usuarioRepository.findBarbeirosByUnidadeWithTenant(id, TenantContext.getTenantId());
     }
 
     @Transactional
     public SucessUsuarioResponseDTO registerUser(UsuarioRequestDTO userRegister){
         if(usuarioRepository.existsByEmail(userRegister.email()) || usuarioRepository.existsByCpf(userRegister.cpf())){
             throw new UsuarioJaExisteException("Usuário já cadastrado!");
+
         }
+
+        String tenantId = TenantContext.getTenantId();
+        Tenants tenant = tenantRepository.findById(tenantId)
+                .orElseThrow(() -> new NotFoundException("Tenant não encontrado!"));
+
         String encryptPassword = new BCryptPasswordEncoder().encode(userRegister.senha());
-        if (userRegister.unidade() == 0){
-            UsuarioResponseDTO usuario = usuarioMapper.usuarioResponseDTO(
-                    usuarioRepository
-                            .save(new Usuarios(userRegister.nome(), userRegister.email(), encryptPassword, userRegister.cpf(), userRegister.grupo()))
-            );
-            return new SucessUsuarioResponseDTO(
-                    HttpStatus.CREATED.value(),
-                    "Usuário registrado com sucesso",
-                    usuario);
+        Usuarios newUser;
+
+        if (userRegister.unidade() == null || userRegister.unidade() == 0){
+            newUser = new Usuarios(userRegister.nome(), userRegister.email(), null, encryptPassword, userRegister.cpf(), userRegister.grupo());
+
         }
-        Unidades unidade = unidadeService.listarUnidadeByIdCompleto(userRegister.unidade());
+        else{
+            //        TODO Verificar o TenantId do Repository da Unidade
+            Unidades unidade = unidadeService.listarUnidadeByIdCompleto(userRegister.unidade());
+            newUser = new Usuarios(userRegister.nome(), userRegister.email(), unidade, encryptPassword, userRegister.cpf(), userRegister.grupo());
+        }
+
+        newUser.setTenant(tenant);
 
         UsuarioResponseDTO usuario = usuarioMapper.usuarioResponseDTO(
                 usuarioRepository
-                        .save(new Usuarios(userRegister.nome(), userRegister.email(), unidade, encryptPassword, userRegister.cpf(), userRegister.grupo()))
+                        .save(newUser)
         );
 
         return new SucessUsuarioResponseDTO(
@@ -104,17 +116,20 @@ public class UsuarioService {
             usuario);
     }
 
+    /* Método que retorna todos os usuários via endpoint privado, necessária autenticação e passar o Tenant via token*/
     public List<UsuarioResponseDTO> buscarUsuarios(){
-        return usuarioMapper.listResponseDTO(usuarioRepository.findAll());
+        return usuarioMapper.listResponseDTO(usuarioRepository.findAllByTenants(TenantContext.getTenantId()));
     }
 
+    /* Método que retorna todos os usuários por unidade via endpoint público, não necessitando autenticação e passar o Tenant via token */
     public List<UsuarioResponseSimplesDTO> buscarBarbeirosPorUnidade(Long unidadeId){
         return usuarioMapper.listResponseSimplesDTO(usuarioRepository.findBarbeirosByUnidade(unidadeId));
     }
 
     @Transactional
     public SucessUsuarioResponseDTO atualizarUsuario(Long id, UsuarioRequestDTO userDTO) throws NotFoundException {
-        return usuarioRepository.findById(id)
+        String tenantId = TenantContext.getTenantId();
+        return usuarioRepository.findByIdAndTenants(id, tenantId)
                 .map(user -> {
                     if(user.getStatus() == -1){
                         throw new NotFoundException("Usuário foi excluído!");
@@ -126,6 +141,7 @@ public class UsuarioService {
                     }
 
                     if (userDTO.unidade() != null) {
+//                        TODO Verificar o TenantId do Repository da Unidade
                         Unidades unidade = unidadeRepository.findById(userDTO.unidade())
                                 .orElseThrow(() -> new NotFoundException("Unidade não encontrada!"));
                         user.setUnidade(unidade);
@@ -143,13 +159,15 @@ public class UsuarioService {
 
     @Transactional
     public SucessUsuarioResponseDTO deletarUsuario(Long id){
-        return usuarioRepository.findById(id)
+        String tenantId = TenantContext.getTenantId();
+        return usuarioRepository.findByIdAndTenants(id, tenantId)
                 .map(user -> {
                     if(user.getStatus() == -1){
                         throw new UsuarioExcluidoException("Usuário já foi excluído!");
                     }
 
-                    usuarioRepository.deleteLogico(id);
+                    user.setDeletedAt(LocalDateTime.now());
+                    usuarioRepository.deleteLogico(id, tenantId);
                     return new SucessUsuarioResponseDTO(
                         HttpStatus.OK.value(),
                         "Usuário deletado com sucesso",
@@ -161,12 +179,14 @@ public class UsuarioService {
 
     @Transactional
     public SucessUsuarioResponseDTO ativarUsuario(Long id){
-        return usuarioRepository.findById(id)
+        String tenantId = TenantContext.getTenantId();
+        return usuarioRepository.findByIdAndTenants(id, tenantId)
                 .map(user -> {
                     if(user.getStatus() != -1){
                         throw new UsuarioExcluidoException("Usuário já está ativo!");
                     }
-                    usuarioRepository.ativarUsuario(id);
+                    user.setDeletedAt(null);
+                    usuarioRepository.ativarUsuario(id, tenantId);
                     return new SucessUsuarioResponseDTO(
                             HttpStatus.OK.value(),
                             "Usuário ativado com sucesso",
@@ -177,8 +197,9 @@ public class UsuarioService {
     }
 
     public UsuarioResponseDTO getUsuarioID(){
+        String tenantId = TenantContext.getTenantId();
         Usuarios userAuth = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return usuarioRepository.findById(userAuth.getId())
+        return usuarioRepository.findByIdAndTenants(userAuth.getId(), tenantId)
                 .map(user -> {
                     if(user.getStatus() == -1){
                         throw new UsuarioExcluidoException("Usuário foi excluído!");
@@ -189,7 +210,8 @@ public class UsuarioService {
     }
 
     public Usuarios getUsuarioById(Long id){
-        return usuarioRepository.findById(id)
+        String tenantId = TenantContext.getTenantId();
+        return usuarioRepository.findByIdAndTenants(id, tenantId)
                 .map(user -> {
                     if(user.getStatus() == -1){
                         throw new UsuarioExcluidoException("Usuário foi excluído!");
