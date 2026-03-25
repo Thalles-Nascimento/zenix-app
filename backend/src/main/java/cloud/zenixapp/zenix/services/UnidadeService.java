@@ -1,21 +1,24 @@
 package cloud.zenixapp.zenix.services;
 
+import cloud.zenixapp.zenix.configs.TenantContext;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.exceptions.UnidadeAtivaException;
 import cloud.zenixapp.zenix.configs.exceptions.UnidadeExcluidoException;
-import cloud.zenixapp.zenix.configs.exceptions.UsuarioExcluidoException;
+import cloud.zenixapp.zenix.configs.exceptions.UnidadeJaExisteException;
 import cloud.zenixapp.zenix.configs.mappers.UnidadeMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.UnidadeRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.*;
+import cloud.zenixapp.zenix.models.entities.Tenants;
 import cloud.zenixapp.zenix.models.entities.Unidades;
 import cloud.zenixapp.zenix.models.enums.UsuariosRoleEnum;
+import cloud.zenixapp.zenix.repositories.TenantRepository;
 import cloud.zenixapp.zenix.repositories.UnidadeRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -27,9 +30,24 @@ public class UnidadeService {
     @Autowired
     private UnidadeMapper unidadeMapper;
 
+    @Autowired
+    private TenantRepository tenantRepository;
+
     @Transactional
     public SuccessUnidadeResponseDTO inserirUnidade(UnidadeRequestDTO unidadeDTO){
-        Unidades unidade = unidadeRepository.save(unidadeMapper.toUnidade(unidadeDTO));
+        String tenantId = TenantContext.getTenantId();
+
+        if (unidadeRepository.buscarUnidadesPorTenant(unidadeDTO.nomeUnidade(), tenantId).isPresent()){
+            throw new UnidadeJaExisteException("Unidade " + unidadeDTO.nomeUnidade() + " já cadastrada");
+        }
+
+        Tenants tenant = tenantRepository.findById(tenantId)
+                .orElseThrow(() -> new NotFoundException("Empresa não encontrada"));
+
+        Unidades unidade = unidadeMapper.toUnidade(unidadeDTO);
+        unidade.setTenant(tenant);
+
+        unidadeRepository.save(unidade);
 
         return new SuccessUnidadeResponseDTO(
                 HttpStatus.OK.value(),
@@ -39,7 +57,7 @@ public class UnidadeService {
     }
 
     public List<UnidadeResponseDTO> listarUnidades(){
-        return unidadeMapper.toListUnidadeDTO(unidadeRepository.findAll());
+        return unidadeMapper.toListUnidadeDTO(unidadeRepository.buscarUnidadesPorTenant(TenantContext.getTenantId()));
     }
 
     public UnidadeResponseDTO listarUnidadeById(Long id){
@@ -105,6 +123,7 @@ public class UnidadeService {
                     }
 
                     unidadeMapper.atualizarUnidade(unidade, unidadeDTO);
+                    unidadeRepository.save(unidade);
 
 
                     return new SuccessUnidadeResponseDTO(
@@ -119,17 +138,18 @@ public class UnidadeService {
 
     @Transactional
     public SuccessUnidadeDeleteResponseDTO deletarUnidade(Long id){
+        String tenantId = TenantContext.getTenantId();
         return unidadeRepository.findById(id)
                 .map(unidade -> {
                     if(unidade.getStatus() == -1){
                         throw new UnidadeExcluidoException("Unidade já foi excluída!");
 
                     }
-
-                    unidadeRepository.deleteLogico(id);
+                    unidade.setDeletedAt(LocalDateTime.now());
+                    unidadeRepository.deleteLogico(id, tenantId);
                     return new SuccessUnidadeDeleteResponseDTO(
                             HttpStatus.OK.value(),
-                            "Unidade deletada com sucesso",
+                            "Unidade excluída com sucesso",
                             unidade.getNomeUnidade()
                     );
                 })
@@ -138,13 +158,14 @@ public class UnidadeService {
 
     @Transactional
     public SuccessUnidadeResponseDTO ativarUnidade(Long id){
+        String tenantId = TenantContext.getTenantId();
         return unidadeRepository.findById(id)
                 .map(unidade -> {
                     if(unidade.getStatus() != -1){
                         throw new UnidadeAtivaException("Unidade já está ativa!");
 
                     }
-                    unidadeRepository.ativarUnidade(id);
+                    unidadeRepository.ativarUnidade(id, tenantId);
 
                     return new SuccessUnidadeResponseDTO(
                             HttpStatus.OK.value(),
