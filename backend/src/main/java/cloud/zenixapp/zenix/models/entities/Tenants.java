@@ -17,7 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Tenants implements Serializable {
-
+// TODO Verificar a implementação das Tenants, pois podem existir barbearias com o mesmo nome! Caso alterar, criar Migration
     @Serial
     private static final long serialVersionUID = -1234567890123456789L;
 
