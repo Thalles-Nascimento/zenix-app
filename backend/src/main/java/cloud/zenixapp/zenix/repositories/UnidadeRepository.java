@@ -21,4 +21,7 @@ public interface UnidadeRepository extends JpaRepository<Unidades, Long> {
 
     @Query(value = "SELECT * FROM unidades WHERE unidade_nome = :nome AND tenant_id = :tenantId", nativeQuery = true)
     Optional<Unidades> buscarUnidadesPorTenant(@Param("nome") String nome, @Param("tenantId") String tenantId);
+
+    @Query(value = "SELECT * FROM unidades WHERE tenant_id = :tenantId", nativeQuery = true)
+    List<Unidades> buscarUnidadesPorTenant(@Param("tenantId") String tenantId);
 }
