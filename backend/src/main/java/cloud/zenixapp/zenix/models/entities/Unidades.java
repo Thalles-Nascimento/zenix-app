@@ -22,7 +22,7 @@ public class Unidades extends BaseEntity{
     @Column(name = "unidade_id", nullable = false)
     private Long id;
 
-    @Column(name = "unidade_nome", length = 100, unique = true)
+    @Column(name = "unidade_nome", length = 100)
     private String nomeUnidade;
 
     @Column(name = "unidade_endereco")
