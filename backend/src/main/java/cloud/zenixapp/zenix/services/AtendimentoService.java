@@ -147,6 +147,7 @@ public class AtendimentoService {
 
                     atendimento.setUpdatedAt(LocalDateTime.now());
                     atendimentoMapper.atualizarAtendimento(atendimento, atendimentoRequestDTO);
+                    atendimentoRepository.save(atendimento);
 
                     return new SucessAtendimentoResponseDTO(
                             HttpStatus.OK.value(),

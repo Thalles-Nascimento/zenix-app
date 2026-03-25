@@ -52,6 +52,7 @@ public class PlanosService {
 
                     plano.setUpdatedAt(LocalDateTime.now());
                     planosMapper.atualizarPlano(plano, planosRequestDTO);
+                    planosRepository.save(plano);
 
                     return new SuccessPlanosResponseDTO(
                             HttpStatus.OK.value(),

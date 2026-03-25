@@ -51,6 +51,7 @@ public class ServicoService {
 
                     servico.setUpdatedAt(LocalDateTime.now());
                     servicoMapper.atualizarServico(servico, servicoRequestDTO);
+                    servicoRepository.save(servico);
 
                     return new SuccessServicoResponseDTO(
                             HttpStatus.OK.value(),

@@ -51,6 +51,7 @@ public class PagamentoService {
                     formaPagamento.setUpdatedAt(LocalDateTime.now());
                     pagamentoMapper.atualizarFormaPagamento(formaPagamento, pagamentoRequestDTO);
                     formaPagamento.setFormaPagamento(formaPagamento.getFormaPagamento().toUpperCase());
+                    pagamentoRepository.save(formaPagamento);
 
                     return new SuccessPagamentoResponseDTO(
                             HttpStatus.OK.value(),
