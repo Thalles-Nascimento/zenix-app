@@ -21,11 +21,11 @@ export function Paginacao({ paginaAtual, totalPaginas, totalItens, itensPorPagin
         }, [])
 
     return (
-        <div className="sticky bottom-0 left-0 right-0 z-40 rounded-b-xl bg-black/95 border-t border-gray-800 backdrop-blur-sm">
+        <div className="sticky bottom-0 left-0 right-0 z-40 rounded-b-xl bg-gray-900 border-t border-gray-800 backdrop-blur-sm">
             <div className="flex items-center justify-between px-4 py-2 max-w-screen-xl mx-auto">
 
                 {/* Contador discreto */}
-                <span className="text-gray-600 text-xs">
+                <span className="text-white text-xs">
                     {inicio}–{fim} <span className="text-gray-700">de</span> {totalItens}
                 </span>
 
@@ -34,7 +34,7 @@ export function Paginacao({ paginaAtual, totalPaginas, totalItens, itensPorPagin
                     <button
                         onClick={() => onPaginaChange(paginaAtual - 1)}
                         disabled={paginaAtual === 1}
-                        className="w-7 h-7 flex items-center justify-center rounded-lg text-gray-500 hover:text-white disabled:opacity-25 transition-colors text-sm"
+                        className="w-7 h-7 flex items-center justify-center rounded-lg text-white hover:text-white disabled:opacity-25 transition-colors text-sm"
                     >
                         ←
                     </button>
@@ -49,7 +49,7 @@ export function Paginacao({ paginaAtual, totalPaginas, totalItens, itensPorPagin
                                     className={`w-7 h-7 rounded-full text-xs font-medium transition-colors
                                         ${paginaAtual === p
                                             ? "bg-orange-600 text-white"
-                                            : "text-gray-500 hover:text-white"
+                                            : "text-white hover:text-white"
                                         }`}
                                 >
                                     {p}
@@ -60,7 +60,7 @@ export function Paginacao({ paginaAtual, totalPaginas, totalItens, itensPorPagin
                     <button
                         onClick={() => onPaginaChange(paginaAtual + 1)}
                         disabled={paginaAtual === totalPaginas}
-                        className="w-7 h-7 flex items-center justify-center rounded-lg text-gray-500 hover:text-white disabled:opacity-25 transition-colors text-sm"
+                        className="w-7 h-7 flex items-center justify-center rounded-lg text-white hover:text-white disabled:opacity-25 transition-colors text-sm"
                     >
                         →
                     </button>

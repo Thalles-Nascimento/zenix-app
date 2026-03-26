@@ -369,18 +369,18 @@ export default function DashboardPage() {
                                     )}
                                 </tbody>
                             </table>
-                            
+                            {/* Refatorei os itens por página da tabela de atendimentos no modal de Barbeiros */}
+                            <Paginacao
+                                paginaAtual={paginaModal}
+                                totalPaginas={totalPaginasModal}
+                                totalItens={totalItensModal}
+                                itensPorPagina={4}
+                                onPaginaChange={setPaginaModal}
+
+                            />
                         </div>
                     </div>
-                    {/* Refatorei os itens por página da tabela de atendimentos no modal de Barbeiros */}
-                        <Paginacao
-                            paginaAtual={paginaModal}
-                            totalPaginas={totalPaginasModal}
-                            totalItens={totalItensModal}
-                            itensPorPagina={4}
-                            onPaginaChange={setPaginaModal}
-
-                        />
+                    
                 </DialogContent>
             </Dialog>
 

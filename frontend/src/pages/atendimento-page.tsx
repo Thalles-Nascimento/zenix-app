@@ -65,7 +65,14 @@ export default function Atendimentos() {
                         </tr>
                     </thead>
                     <tbody>
-                        {itensPagina.map(items => (
+                        {dados.length === 0 ? (
+                            <tr>
+                                <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
+                                    Nenhum atendimento encontrado.
+                                </td>
+                            </tr>
+                        ): (
+                        itensPagina.map(items => (
                             <tr
                                 key={items.id}
                                 className={`bg-black border-b border-gray-700 hover:bg-gray-900 
@@ -96,18 +103,18 @@ export default function Atendimentos() {
                                     </span>
                                 </td>
                             </tr>
-                        ))}
+                        )))}
                     </tbody>
                 </table>
-                
-            </div>
-            <Paginacao
+                <Paginacao
                     paginaAtual={paginaAtual}
                     totalPaginas={totalPaginas}
                     totalItens={totalItens}
                     itensPorPagina={7}
                     onPaginaChange={setPaginaAtual}
                 />
+            </div>
+            
 
             <ModalEditarAtendimento
                 atendimento={atendimentoSelecionado}

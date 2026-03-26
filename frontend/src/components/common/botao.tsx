@@ -14,6 +14,6 @@ export function Botao(botaoProps: BotaoProps){
         cancel:  'bg-gray-700 text-white border border-gray-750 hover:bg-gray-500',
     }
 
-    return <button type="button" className={`${estilos[botaoProps.color!]} rounded-xl px-4 py-2 outline-none mx-3`} onClick={botaoProps.click}>{botaoProps.texto}</button>
+    return <button type="button" className={`${estilos[botaoProps.color!]} rounded-xl px-4 py-2 outline-none notranslate`} onClick={botaoProps.click}>{botaoProps.texto}</button>
     
 }

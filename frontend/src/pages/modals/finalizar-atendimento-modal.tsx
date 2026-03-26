@@ -6,6 +6,7 @@ import { TextareaField } from "@/components/common/textarea"
 import { useServicos } from "../../hooks/use-servicos"
 import type { ClienteDTO } from "@/types/cliente"
 import { buscarClientesPorNomeService } from "@/services/cliente-service"
+import { useCliente } from "@/hooks/use-cliente"
 
 interface Props {
     fila: FilaProps | null
@@ -18,6 +19,7 @@ export function ModalFinalizarAtendimento({ fila, open, onFechar, onFinalizar }:
     const [observacao, setObservacao] = useState("")
     const { servicos } = useServicos()
     const [clienteDTO, setClienteDTO] = useState<ClienteDTO | null>(null)
+    const { atualizarRetorno } = useCliente()
 
     useEffect(() => {
         if (!fila?.nomeCliente) return
@@ -50,6 +52,7 @@ export function ModalFinalizarAtendimento({ fila, open, onFechar, onFinalizar }:
     const handleFinalizar = () => {
         if (!fila) return
         onFinalizar(fila.id, valorCalculado, observacao)
+        if (clienteDTO?.vezesRetorno === 0) atualizarRetorno(clienteDTO?.id ?? 0)
         setObservacao("")
     }
 
