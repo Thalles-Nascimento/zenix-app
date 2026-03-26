@@ -108,7 +108,7 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button>NOVO ATENDIMENTO</Button>
+                <Button variant="default">NOVO ATENDIMENTO</Button>
             </DialogTrigger>
             <DialogContent className="bg-black border-gray-700 text-white w-[calc(100vw-2rem)] max-w-md">
                 <DialogHeader>

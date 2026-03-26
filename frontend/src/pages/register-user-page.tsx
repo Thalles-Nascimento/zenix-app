@@ -1,10 +1,10 @@
 import { useState } from "react";
+import { Button } from '../components/ui/button'
 import { Input } from "../components/ui/input";
 import { useLogin } from '../hooks/use-login'
 import { Toaster } from "sonner";
-import { Button } from "@/components/ui/button";
 
-export default function LoginPage() {
+export default function RegisterUserPage() {
 
     const [email, setEmail] = useState<string>("");
     const [senha, setSenha] = useState<string>("");
@@ -20,17 +20,17 @@ export default function LoginPage() {
             }}
         >
             <Toaster richColors position="top-center" />
-            <div className=" items-center mb-9 text-4xl font-semibold notranslate">
-                <img className="w-88" src="/assets/imagens/logo.png" alt="logo" />
+            <div className="flex items-center mb-1 text-4xl font-semibold notranslate">
+                <img className="w-48 h-48 mr-2" src="/assets/imagens/logo.png" alt="logo" />
             </div>
-            <div className="w-full bg-gray-900 rounded-xl shadow border md:mt-0 sm:max-w-md xl:p-0 border-gray-500 notranslate">
+            <div className="w-full bg-black rounded-xl shadow border md:mt-0 sm:max-w-md xl:p-0 border-gray-500 notranslate">
                 <div className="p-6 space-y-4 md:space-y-6 sm:p-8 notranslate">
                     <h1 className="text-xl font-bold leading-tight tracking-tight text-white md:text-2xl">
-                        Faça login na sua conta.
+                        Cadastre-se no Zenix.
                     </h1>
                     <form className="space-y-4 md:space-y-6" onSubmit={(event) => event.preventDefault()}>
                         <div>
-                            <label className="block mb-2 text-sm font-medium text-white">Seu e-mail</label>
+                            <label className="bg-gray-900block mb-2 text-sm font-medium text-white">Seu e-mail</label>
                             <Input type="email" placeholder="E-mail" className="text-white bg-gray-900" onChange={(event) => setEmail(event.target.value)} />
                         </div>
                         <div>
@@ -44,7 +44,7 @@ export default function LoginPage() {
 
                         <Button
                             variant="default"
-                            className="w-full text-white font-bold rounded-xl notranslate"
+                            className="w-full notranslate"
                             onClick={() => logar(email, senha)}
                         >
                             Login

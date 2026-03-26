@@ -114,8 +114,8 @@ export default function LoginClient() {
         <section className="min-h-screen bg-black notranslate">
             <Toaster richColors position="top-center" />
             <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0 notranslate">
-                <div className="flex items-center mb-1 notranslate">
-                    <img className="w-48 h-48 mr-2" src="/assets/imagens/LogoWN.png" alt="logo" />
+                <div className=" items-center mb-2 text-4xl font-semibold notranslate">
+                    <img className="w-88" src="/assets/imagens/logo.png" alt="logo" />
                 </div>
                 <div className="w-full bg-black rounded-xl shadow border md:mt-0 sm:max-w-md xl:p-0 border-gray-500 notranslate">
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8 notranslate">
@@ -221,7 +221,7 @@ export default function LoginClient() {
                             <Button
                                 type="button"
                                 variant="default"
-                                className="w-full notranslate"
+                                className="w-full text-white notranslate"
                                 disabled={carregando}
                                 onClick={entrarFila}
                             >

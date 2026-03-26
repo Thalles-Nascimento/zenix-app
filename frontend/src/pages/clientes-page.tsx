@@ -36,7 +36,7 @@ export default function ClientesPage() {
         c.telefone?.includes(busca)
     )
 
-    const { itensPagina, paginaAtual, totalPaginas, totalItens, setPaginaAtual } = usePaginacao(clientesFiltrados, 5)
+    const { itensPagina, paginaAtual, totalPaginas, totalItens, setPaginaAtual } = usePaginacao(clientesFiltrados, 4)
 
     const formatBRL = (valor: number) =>
         valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })

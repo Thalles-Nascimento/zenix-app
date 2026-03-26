@@ -37,7 +37,7 @@ export function ModalNovaUnidade({ onConfirmar }: NovaProps) {
                     <div>
                         <Label className="text-white">Nome da Unidade</Label>
                         <Input className="mt-1 bg-gray-900 border-gray-700 text-white notranslate"
-                            placeholder="Ex: WN Barbearia Centro"
+                            placeholder="Ex: Barbearia"
                             value={form.nomeUnidade}
                             onChange={(e) => setForm({ ...form, nomeUnidade: e.target.value })} />
                     </div>

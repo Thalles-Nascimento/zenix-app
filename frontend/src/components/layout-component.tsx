@@ -52,8 +52,8 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
 
     return (
         <div className="flex flex-col h-full bg-black text-white">
-            <div className="flex items-center justify-center gap-3 px-6">
-                <img className="w-32 h-32" src="/assets/imagens/LogoWN.png" alt="logo" />
+            <div className="flex items-center justify-center gap-3 px-6 py-4">
+                <img className="w-88" src="/assets/imagens/logo.png" alt="logo" />
             </div>
             <nav className="flex flex-col gap-1 p-4 flex-1 bg-black">
                 {menuItems
@@ -216,11 +216,11 @@ export default function Layout({ children }: LayoutProps) {
                         </SheetContent>
                     </Sheet>
 
-                    <div className="ml-auto flex items-center gap-3 relative">
+                    <div className="ml-auto flex items-center justify-center gap-3 relative">
                         <span className="text-sm text-white hidden sm:block">{grupo}</span>
                         <button
                             onClick={() => setDropdownOpen(!dropdownOpen)}
-                            className="w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center font-bold text-sm hover:bg-orange-500 transition-colors"
+                            className="w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center font-bold hover:bg-orange-500 transition-colors notranslate"
                         >
                             {userName?.charAt(0).toUpperCase()}
                         </button>
@@ -295,7 +295,7 @@ export default function Layout({ children }: LayoutProps) {
                     </div>
                 )}
 
-                <main className="flex-1 py-4 px-4 min-w-0">
+                <main className="flex-1 py-4 px-4 min-w-0 notranslate">
                     {children}
                 </main>
 
