@@ -124,8 +124,6 @@ public class FilaService {
                     filaRepository.finalizarAtendimentoFila(id);
                     filaRepository.marcarHoraFinal(id, LocalTime.now());
 
-                    clienteService.atualizarAtendimentosMes(atendimentoFila.getNomeCliente());
-
                     return new SucessFilaResponseDTO(
                             atendimentoFila.getId(),
                             atendimentoFila.getNomeCliente(),
