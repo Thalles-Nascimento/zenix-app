@@ -15,6 +15,7 @@ import { usePaginacao } from "../hooks/use-pagination"
 import { Paginacao } from "../components/pagination"
 import { formatarTelefone } from "@/utils/formatter"
 import { ModalConfirmacao } from "@/components/common/modal-confirmacao-component"
+import { parseDataBrazil } from "@/utils/date"
 
 type ModalTipo = "editar" | "plano" | "novo" | null
 
@@ -272,7 +273,7 @@ export default function ClientesPage() {
                                             <td className="px-4 py-4 notranslate">
                                                 {cliente.plano ? (
                                                     <span className="bg-orange-500/20 text-orange-400 text-xs font-semibold px-2 py-1 rounded-full border border-orange-500/30">
-                                                        {cliente.dataRenovacao}
+                                                        {parseDataBrazil(cliente.dataRenovacao)}
                                                     </span>
                                                 ) : (
                                                     <span className="text-gray-500 text-xs">—</span>

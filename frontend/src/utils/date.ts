@@ -22,3 +22,9 @@ export function inicioSemana(): string {
     segunda.setDate(agora.getDate() + diff)
     return segunda.toISOString().split('T')[0]
 }
+
+// Converte "yyyy-MM-dd" para "dd/MM/yyyy"
+export function parseDataBrazil(dateStr: string): string {
+    const [dia, mes, ano] = dateStr.split("-")
+    return `${dia}/${mes}/${ano}`
+}
