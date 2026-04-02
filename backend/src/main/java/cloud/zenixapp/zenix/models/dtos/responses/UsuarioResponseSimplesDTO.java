@@ -6,7 +6,7 @@ import cloud.zenixapp.zenix.models.enums.UsuariosRoleEnum;
 import java.util.List;
 
 public record UsuarioResponseSimplesDTO(
-        Long id,
+        String id,
         String nome
 
 ) {

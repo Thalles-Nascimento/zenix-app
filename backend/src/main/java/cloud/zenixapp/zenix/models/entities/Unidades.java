@@ -17,11 +17,6 @@ import java.util.List;
 @NoArgsConstructor
 public class Unidades extends BaseEntity{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "unidade_id", nullable = false)
-    private Long id;
-
     @Column(name = "unidade_nome", length = 100)
     private String nomeUnidade;
 

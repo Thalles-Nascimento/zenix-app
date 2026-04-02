@@ -75,7 +75,7 @@ public class UsuarioService {
         return access;
     }
 
-    public List<Usuarios> buscarUsuariosByUnidades(Long id){
+    public List<Usuarios> buscarUsuariosByUnidades(String id){
         return usuarioRepository.findBarbeirosByUnidadeWithTenant(id, TenantContext.getTenantId());
     }
 
@@ -93,7 +93,7 @@ public class UsuarioService {
         String encryptPassword = new BCryptPasswordEncoder().encode(userRegister.senha());
         Usuarios newUser;
 
-        if (userRegister.unidade() == null || userRegister.unidade() == 0){
+        if (userRegister.unidade() == null){
             newUser = new Usuarios(userRegister.nome(), userRegister.email(), null, encryptPassword, userRegister.cpf(), userRegister.grupo());
 
         }
@@ -122,12 +122,12 @@ public class UsuarioService {
     }
 
     /* Método que retorna todos os usuários por unidade via endpoint público, não necessitando autenticação e passar o Tenant via token */
-    public List<UsuarioResponseSimplesDTO> buscarBarbeirosPorUnidade(Long unidadeId){
+    public List<UsuarioResponseSimplesDTO> buscarBarbeirosPorUnidade(String unidadeId){
         return usuarioMapper.listResponseSimplesDTO(usuarioRepository.findBarbeirosByUnidade(unidadeId));
     }
 
     @Transactional
-    public SucessUsuarioResponseDTO atualizarUsuario(Long id, UsuarioRequestDTO userDTO) throws NotFoundException {
+    public SucessUsuarioResponseDTO atualizarUsuario(String id, UsuarioRequestDTO userDTO) throws NotFoundException {
         String tenantId = TenantContext.getTenantId();
         return usuarioRepository.findByIdAndTenants(id, tenantId)
                 .map(user -> {
@@ -158,7 +158,7 @@ public class UsuarioService {
     }
 
     @Transactional
-    public SucessUsuarioResponseDTO deletarUsuario(Long id){
+    public SucessUsuarioResponseDTO deletarUsuario(String id){
         String tenantId = TenantContext.getTenantId();
         return usuarioRepository.findByIdAndTenants(id, tenantId)
                 .map(user -> {
@@ -178,7 +178,7 @@ public class UsuarioService {
     }
 
     @Transactional
-    public SucessUsuarioResponseDTO ativarUsuario(Long id){
+    public SucessUsuarioResponseDTO ativarUsuario(String id){
         String tenantId = TenantContext.getTenantId();
         return usuarioRepository.findByIdAndTenants(id, tenantId)
                 .map(user -> {
@@ -209,7 +209,7 @@ public class UsuarioService {
                 .orElseThrow(() -> new NotFoundException("Usuário não encontrado!"));
     }
 
-    public Usuarios getUsuarioById(Long id){
+    public Usuarios getUsuarioById(String id){
         String tenantId = TenantContext.getTenantId();
         return usuarioRepository.findByIdAndTenants(id, tenantId)
                 .map(user -> {

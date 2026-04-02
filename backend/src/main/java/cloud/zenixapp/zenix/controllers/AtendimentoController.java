@@ -94,7 +94,7 @@ public class AtendimentoController {
             @ApiResponse(responseCode = "404", description = "Atendimento não encontrado")
     })
     @Operation(summary = "Deletar atendimento", description = "Endpoint para deletar um atendimento")
-    public ResponseEntity<?> deleteAtendimento(@PathVariable Long id) {
+    public ResponseEntity<?> deleteAtendimento(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.deletarAtendimento(id));
 
@@ -110,7 +110,7 @@ public class AtendimentoController {
             @ApiResponse(responseCode = "404", description = "Atendimento não encontrado")
     })
     @Operation(summary = "Listar atendimento por ID", description = "Endpoint para lista um atendimento por ID")
-    public ResponseEntity<?> findById(@PathVariable Long id) {
+    public ResponseEntity<?> findById(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.listarAtendimentoPorId(id));
     }
@@ -126,7 +126,7 @@ public class AtendimentoController {
             @ApiResponse(responseCode = "400", description = "Campos com nulos ou fora do padrão")
     })
     @Operation(summary = "Atualizar atendimento por ID", description = "Endpoint para atualiza um atendimento por ID")
-    public ResponseEntity<?> updateByAtendimento(@PathVariable Long id, @RequestBody @Valid AtendimentoRequestDTO atendimentoRequestDTO, BindingResult result) throws NotFoundException {
+    public ResponseEntity<?> updateByAtendimento(@PathVariable String id, @RequestBody @Valid AtendimentoRequestDTO atendimentoRequestDTO, BindingResult result) throws NotFoundException {
         if(result.hasErrors()){
             if (BindingHandler.isErrorNull(result)){
                 return ResponseEntity.status(HttpStatus.OK)
@@ -148,7 +148,7 @@ public class AtendimentoController {
 
     @PatchMapping("/{id}")
     @Operation(summary = "Ativar atendimento", description = "Endpoint para ativar um atendimento do sistema")
-    public ResponseEntity<?> ativarAtendimento(@PathVariable Long id) {
+    public ResponseEntity<?> ativarAtendimento(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.ativarAtendimento(id));
     }

@@ -42,7 +42,7 @@ public class ServicoService {
     }
 
     @Transactional
-    public SuccessServicoResponseDTO atualizarServico(ServicoRequestDTO servicoRequestDTO, Long id){
+    public SuccessServicoResponseDTO atualizarServico(ServicoRequestDTO servicoRequestDTO, String id){
         return servicoRepository.findById(id)
                 .map(servico -> {
                     if (servico.getStatus() == -1){
@@ -62,7 +62,7 @@ public class ServicoService {
     }
 
     @Transactional
-    public SuccessDeleteServicoResponseDTO deletarServico(Long id) {
+    public SuccessDeleteServicoResponseDTO deletarServico(String id) {
         return servicoRepository.findById(id)
                 .map(servico -> {
                     servicoRepository.deleteById(id);

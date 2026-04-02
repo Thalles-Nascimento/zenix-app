@@ -16,11 +16,6 @@ import java.util.List;
 @NoArgsConstructor
 public class Atendimento extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "atendimento_id", nullable = false)
-    private Long id;
-
     @Column(name = "atendimento_descricao", length = 120)
     private String descricao;
 

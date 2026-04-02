@@ -77,7 +77,7 @@ public class ServicoController {
             @ApiResponse(responseCode = "404", description = "Serviço não encontrado")
     })
     @Operation(summary = "Deletar serviço", description = "Endpoint para deletar um serviço")
-    public ResponseEntity<?> deleteServico(@PathVariable Long id) {
+    public ResponseEntity<?> deleteServico(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(servicoService.deletarServico(id));
 
@@ -93,7 +93,7 @@ public class ServicoController {
 //            @ApiResponse(responseCode = "404", description = "Atendimento não encontrado")
 //    })
 //    @Operation(summary = "Listar atendimento por ID", description = "Endpoint para lista um atendimento por ID")
-//    public ResponseEntity<?> findById(@PathVariable Long id) {
+//    public ResponseEntity<?> findById(@PathVariable String id) {
 //        return ResponseEntity.status(HttpStatus.OK)
 //                .body(atendimentoService.listarAtendimentoPorId(id));
 //    }
@@ -109,7 +109,7 @@ public class ServicoController {
             @ApiResponse(responseCode = "404", description = "Serviço não encontrado"),
     })
     @Operation(summary = "Atualizar serviço por ID", description = "Endpoint para atualiza um serviço por ID")
-    public ResponseEntity<?> updateServico(@PathVariable Long id, @RequestBody @Valid ServicoRequestDTO servicoRequestDTO, BindingResult result) throws NotFoundException {
+    public ResponseEntity<?> updateServico(@PathVariable String id, @RequestBody @Valid ServicoRequestDTO servicoRequestDTO, BindingResult result) throws NotFoundException {
         if(result.hasErrors()){
             if (BindingHandler.isErrorNull(result)){
                 return ResponseEntity.status(HttpStatus.OK)

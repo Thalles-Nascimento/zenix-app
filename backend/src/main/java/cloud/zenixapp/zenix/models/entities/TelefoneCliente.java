@@ -17,11 +17,6 @@ import java.util.List;
 @NoArgsConstructor
 public class TelefoneCliente extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "telefone_id", nullable = false)
-    private Long id;
-
     @Column(name = "telefone_cliente", unique = true)
     private String telefoneCliente;
 

@@ -44,7 +44,7 @@ public class PagamentoService {
     }
 
     @Transactional
-    public SuccessPagamentoResponseDTO atualizarPagamento(PagamentoRequestDTO pagamentoRequestDTO, Long id){
+    public SuccessPagamentoResponseDTO atualizarPagamento(PagamentoRequestDTO pagamentoRequestDTO, String id){
         return pagamentoRepository.findById(id)
                 .map(formaPagamento -> {
 
@@ -62,7 +62,7 @@ public class PagamentoService {
     }
 
     @Transactional
-    public SuccessDeletePagamentoResponseDTO deletarPagamento(Long id) {
+    public SuccessDeletePagamentoResponseDTO deletarPagamento(String id) {
         return pagamentoRepository.findById(id)
                 .map(formaPagamento -> {
                     pagamentoRepository.deleteById(id);

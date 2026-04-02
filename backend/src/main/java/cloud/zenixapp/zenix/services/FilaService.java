@@ -88,7 +88,7 @@ public class FilaService {
     }
 
     @Transactional
-    public SucessFilaResponseDTO chamarCliente(Long id) {
+    public SucessFilaResponseDTO chamarCliente(String id) {
         return filaRepository.findById(id)
                 .map(atendimentoFila -> {
                     if(atendimentoFila.getStatus() != AGUARDANDO){
@@ -115,7 +115,7 @@ public class FilaService {
     }
 
     @Transactional
-    public SucessFilaResponseDTO finalizarAtendimento(Long id){
+    public SucessFilaResponseDTO finalizarAtendimento(String id){
         return filaRepository.findById(id)
                 .map(atendimentoFila -> {
                     if (atendimentoFila.getStatus() != EM_ATENDIMENTO){
@@ -137,7 +137,7 @@ public class FilaService {
     }
 
     @Transactional
-    public SucessFilaRetiradaResponseDTO retirarClienteFila(Long id) {
+    public SucessFilaRetiradaResponseDTO retirarClienteFila(String id) {
         return filaRepository.findById(id)
                 .map(atendimentoFila -> {
                     if (atendimentoFila.getStatus() == EM_ATENDIMENTO) {

@@ -91,7 +91,7 @@ public class AtendimentoService {
                 .toList();
     }
 
-    public AtendimentoResponseDTO listarAtendimentoPorId(Long id){
+    public AtendimentoResponseDTO listarAtendimentoPorId(String id){
         Usuarios user = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return atendimentoRepository.findByUserById(user.getId(), id)
                 .map((atendimento -> {
@@ -114,7 +114,7 @@ public class AtendimentoService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public SucessAtendimentoResponseDTO deletarAtendimento(Long id) {
+    public SucessAtendimentoResponseDTO deletarAtendimento(String id) {
         return atendimentoRepository.findById(id)
                 .map(atendimento -> {
                     if (atendimento.getStatus() == -1) {
@@ -138,7 +138,7 @@ public class AtendimentoService {
 
 //    TODO Restringir a edição apenas ao administrador | Restringir a chamada no método atualizar por campos não alterados
     @Transactional(propagation = Propagation.REQUIRED)
-    public SucessAtendimentoResponseDTO atualizarAtendimento(Long id, AtendimentoRequestDTO atendimentoRequestDTO) throws NotFoundException {
+    public SucessAtendimentoResponseDTO atualizarAtendimento(String id, AtendimentoRequestDTO atendimentoRequestDTO) throws NotFoundException {
         return atendimentoRepository.findByIdAtendimento(id)
                 .map(atendimento -> {
                     if(atendimento.getStatus() == -1){
@@ -160,7 +160,7 @@ public class AtendimentoService {
 
     //    TODO Restringir a ativação apenas ao administrador
     @Transactional
-    public SucessAtendimentoResponseDTO ativarAtendimento(Long id){
+    public SucessAtendimentoResponseDTO ativarAtendimento(String id){
         return atendimentoRepository.findById(id)
                 .map(atendimento -> {
                     if(atendimento.getStatus() != -1){

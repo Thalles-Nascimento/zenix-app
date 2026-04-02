@@ -9,15 +9,15 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface UnidadeRepository extends JpaRepository<Unidades, Long> {
+public interface UnidadeRepository extends JpaRepository<Unidades, String> {
 
     @Modifying
     @Query(value = "UPDATE unidades SET unidade_status = -1 WHERE unidade_id = :id AND tenant_id = :tenantId", nativeQuery = true)
-    void deleteLogico(@Param("id") Long id, @Param("tenantId") String tenantId);
+    void deleteLogico(@Param("id") String id, @Param("tenantId") String tenantId);
 
     @Modifying
     @Query(value = "UPDATE unidades SET unidade_status = 1 WHERE unidade_id = :id AND tenant_id = :tenantId", nativeQuery = true)
-    void ativarUnidade(@Param("id") Long id, @Param("tenantId")String tenantId);
+    void ativarUnidade(@Param("id") String id, @Param("tenantId")String tenantId);
 
     @Query(value = "SELECT * FROM unidades WHERE unidade_nome = :nome AND tenant_id = :tenantId", nativeQuery = true)
     Optional<Unidades> buscarUnidadesPorTenant(@Param("nome") String nome, @Param("tenantId") String tenantId);

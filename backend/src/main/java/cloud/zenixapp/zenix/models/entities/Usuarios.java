@@ -25,11 +25,6 @@ import static jakarta.persistence.FetchType.EAGER;
 @Entity
 public class Usuarios extends BaseEntity implements UserDetails{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "usuario_id", nullable = false)
-    private Long id;
-
     @Column(name = "usuario_nome")
     private String nome;
 

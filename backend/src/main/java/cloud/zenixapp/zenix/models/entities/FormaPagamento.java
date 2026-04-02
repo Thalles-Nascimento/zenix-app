@@ -14,11 +14,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FormaPagamento extends BaseEntity{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "pagamento_id", nullable = false)
-    private Long id;
-
     @Column(name = "pagamento_descricao")
     private String formaPagamento;
 

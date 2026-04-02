@@ -10,12 +10,12 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface ClienteRepository extends JpaRepository<Clientes, Long> {
+public interface ClienteRepository extends JpaRepository<Clientes, String> {
 
 //    TODO Melhorar esse retorno, deixando mais seguro -
 //     SELECT c.cliente_id, c.cliente_nome, c.cliente_retorno FROM clientes c WHERE c.telefone_id = :id
     @Query(value = "SELECT * FROM clientes WHERE telefone_id = :id", nativeQuery = true)
-    List<Clientes> findClientByNumber(@Param("id") Long id);
+    List<Clientes> findClientByNumber(@Param("id") String id);
 
     @Query(value = "SELECT * FROM clientes WHERE cliente_nome = :nome", nativeQuery = true)
     Clientes findByName(@Param("nome") String nome);
@@ -29,10 +29,10 @@ public interface ClienteRepository extends JpaRepository<Clientes, Long> {
 
     @Modifying
     @Query(value = "UPDATE Clientes SET status = -1 WHERE id = :id")
-    void deleteLogico(@Param("id") Long id);
+    void deleteLogico(@Param("id") String id);
 
     @Modifying
     @Query(value = "UPDATE Clientes SET status = 1 WHERE id = :id")
-    void ativarCliente(@Param("id") Long id);
+    void ativarCliente(@Param("id") String id);
 
 }

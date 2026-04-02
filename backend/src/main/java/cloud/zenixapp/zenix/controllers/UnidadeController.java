@@ -74,7 +74,7 @@ public class UnidadeController {
      */
     @GetMapping("/user/{id}")
     @Operation(summary = "Listar Usuarios por Unidade", description = "Endpoint para listar os usuários por unidade")
-    public ResponseEntity<UnidadeUserResponseDTO> findAllWithUser(@PathVariable Long id){
+    public ResponseEntity<UnidadeUserResponseDTO> findAllWithUser(@PathVariable String id){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(unidadeService.listarUnidadesByIdUsuario(id));
     }
@@ -90,7 +90,7 @@ public class UnidadeController {
             @ApiResponse(responseCode = "404", description = "Unidade não encontrada")
     })
     @Operation(summary = "Deletar unidade", description = "Endpoint para deletar uma unidade")
-    public ResponseEntity<?> deleteAtendimento(@PathVariable Long id) {
+    public ResponseEntity<?> deleteAtendimento(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(unidadeService.deletarUnidade(id));
 
@@ -106,7 +106,7 @@ public class UnidadeController {
             @ApiResponse(responseCode = "404", description = "Unidade não encontrada")
     })
     @Operation(summary = "Listar Unidade por ID", description = "Endpoint para lista uma unidade por ID")
-    public ResponseEntity<?> findById(@PathVariable Long id) {
+    public ResponseEntity<?> findById(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(unidadeService.listarUnidadeById(id));
     }
@@ -123,7 +123,7 @@ public class UnidadeController {
             @ApiResponse(responseCode = "400", description = "Campos com nulos ou fora do padrão")
     })
     @Operation(summary = "Atualizar unidade por ID", description = "Endpoint para atualiza uma unidade por ID")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid UnidadeRequestDTO unidadeRequestDTO, BindingResult result) throws NotFoundException {
+    public ResponseEntity<?> update(@PathVariable String id, @RequestBody @Valid UnidadeRequestDTO unidadeRequestDTO, BindingResult result) throws NotFoundException {
         if(result.hasErrors()){
             if (BindingHandler.isErrorNull(result)){
                 return ResponseEntity.status(HttpStatus.OK)
@@ -145,7 +145,7 @@ public class UnidadeController {
 
     @PatchMapping(value ="{id}")
     @Operation(summary = "Ativar unidade", description = "Endpoint para ativar uma unidade do sistema")
-    public ResponseEntity<?> ativarUsuario(@PathVariable Long id) {
+    public ResponseEntity<?> ativarUsuario(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(unidadeService.ativarUnidade(id));
     }

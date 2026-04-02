@@ -28,9 +28,9 @@ public record FilaRequestDTO(
         )
         String formaPagamento,
 
-        Long idBarbeiro,
+        String idBarbeiro,
 
-        Long idUnidade,
+        String idUnidade,
 
         boolean semPreferencia
 ) {

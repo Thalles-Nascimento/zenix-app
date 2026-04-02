@@ -81,7 +81,7 @@ public class PlanoController {
             @ApiResponse(responseCode = "404", description = "Plano não encontrado")
     })
     @Operation(summary = "Deletar plano", description = "Endpoint para deletar um plano")
-    public ResponseEntity<?> deletePagamento(@PathVariable Long id) {
+    public ResponseEntity<?> deletePagamento(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(planosService.deletarPlano(id));
 
@@ -97,7 +97,7 @@ public class PlanoController {
 //            @ApiResponse(responseCode = "404", description = "Plano não encontrado")
 //    })
 //    @Operation(summary = "Listar plano por ID", description = "Endpoint para lista um plano por ID")
-//    public ResponseEntity<?> findById(@PathVariable Long id) {
+//    public ResponseEntity<?> findById(@PathVariable String id) {
 //        return ResponseEntity.status(HttpStatus.OK)
 //                .body(planoService.listarPlanoPorId(id));
 //    }
@@ -113,7 +113,7 @@ public class PlanoController {
             @ApiResponse(responseCode = "404", description = "Plano não encontrado"),
     })
     @Operation(summary = "Atualizar plano por ID", description = "Endpoint para atualiza um plano por ID")
-    public ResponseEntity<?> updatePlano(@PathVariable Long id, @RequestBody @Valid PlanosRequestDTO planosRequestDTO, BindingResult result) throws NotFoundException {
+    public ResponseEntity<?> updatePlano(@PathVariable String id, @RequestBody @Valid PlanosRequestDTO planosRequestDTO, BindingResult result) throws NotFoundException {
         if(result.hasErrors()){
             if (BindingHandler.isErrorNull(result)){
                 return ResponseEntity.status(HttpStatus.OK)

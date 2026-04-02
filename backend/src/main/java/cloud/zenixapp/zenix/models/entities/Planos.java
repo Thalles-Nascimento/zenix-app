@@ -17,11 +17,6 @@ import java.util.List;
 @NoArgsConstructor
 public class Planos extends BaseEntity{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "planos_id", nullable = false)
-    private Long id;
-
     @Column(name = "planos_descricao", unique = true)
     private String planoDescricao;
 

@@ -45,20 +45,20 @@ public class FilaController {
     }
 
     @PatchMapping("/chamar/{id}")
-    public ResponseEntity<?> chamarClienteFila(@PathVariable Long id){
+    public ResponseEntity<?> chamarClienteFila(@PathVariable String id){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(filaService.chamarCliente(id));
     }
 
 
     @PatchMapping("/finalizar/{id}")
-    public ResponseEntity<?> finalizarAtendimentoFila(@PathVariable Long id){
+    public ResponseEntity<?> finalizarAtendimentoFila(@PathVariable String id){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(filaService.finalizarAtendimento(id));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletarClienteFila(@PathVariable Long id){
+    public ResponseEntity<?> deletarClienteFila(@PathVariable String id){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(filaService.retirarClienteFila(id));
     }

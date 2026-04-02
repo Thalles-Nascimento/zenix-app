@@ -19,11 +19,6 @@ import java.util.List;
 @NoArgsConstructor
 public class Fila extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "fila_id", nullable = false)
-    private Long id;
-
     @Column(name = "fila_client", length = 120)
     private String nomeCliente;
 

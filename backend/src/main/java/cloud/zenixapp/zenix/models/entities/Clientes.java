@@ -16,11 +16,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class Clientes extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cliente_id", nullable = false)
-    private Long id;
-
     @Column(name = "cliente_nome", length = 120, unique = true)
     private String nomeCliente;
 

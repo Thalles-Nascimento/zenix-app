@@ -77,7 +77,7 @@ public class PagamentoController {
             @ApiResponse(responseCode = "404", description = "Forma de pagamento não encontrada")
     })
     @Operation(summary = "Deletar forma de pagamento", description = "Endpoint para deletar uma forma de pagamento")
-    public ResponseEntity<?> deletePagamento(@PathVariable Long id) {
+    public ResponseEntity<?> deletePagamento(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(pagamentoService.deletarPagamento(id));
 
@@ -93,7 +93,7 @@ public class PagamentoController {
 //            @ApiResponse(responseCode = "404", description = "Atendimento não encontrado")
 //    })
 //    @Operation(summary = "Listar atendimento por ID", description = "Endpoint para lista um atendimento por ID")
-//    public ResponseEntity<?> findById(@PathVariable Long id) {
+//    public ResponseEntity<?> findById(@PathVariable String id) {
 //        return ResponseEntity.status(HttpStatus.OK)
 //                .body(atendimentoService.listarAtendimentoPorId(id));
 //    }
@@ -109,7 +109,7 @@ public class PagamentoController {
             @ApiResponse(responseCode = "404", description = "Forma de pagamento não encontrada"),
     })
     @Operation(summary = "Atualizar forma de pagamento por ID", description = "Endpoint para atualiza uma forma de pagamento por ID")
-    public ResponseEntity<?> updatePagamento(@PathVariable Long id, @RequestBody @Valid PagamentoRequestDTO pagamentoRequestDTO, BindingResult result) throws NotFoundException {
+    public ResponseEntity<?> updatePagamento(@PathVariable String id, @RequestBody @Valid PagamentoRequestDTO pagamentoRequestDTO, BindingResult result) throws NotFoundException {
         if(result.hasErrors()){
             if (BindingHandler.isErrorNull(result)){
                 return ResponseEntity.status(HttpStatus.OK)

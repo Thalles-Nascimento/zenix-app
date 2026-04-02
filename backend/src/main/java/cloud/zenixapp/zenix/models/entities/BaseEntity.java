@@ -1,17 +1,19 @@
 package cloud.zenixapp.zenix.models.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @MappedSuperclass
 @Data
 public abstract class BaseEntity implements Serializable {
+
+    @Id
+    @Column(name = "id", length = 36, updatable = false, nullable = false)
+    private String id;
 
     @Column(name = "tenant_id", nullable = false, updatable = false, insertable = false)
     private String tenantId;
@@ -27,6 +29,9 @@ public abstract class BaseEntity implements Serializable {
 
     @PrePersist
     protected void prePersist() {
+        if (this.id == null) {
+            this.id = UUID.randomUUID().toString();
+        }
         this.createdAt = LocalDateTime.now();
     }
 

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-public interface UsuarioRepository extends JpaRepository<Usuarios, Long> {
+public interface UsuarioRepository extends JpaRepository<Usuarios, String> {
 
     UserDetails findByEmail(String email);
 
@@ -27,19 +27,19 @@ public interface UsuarioRepository extends JpaRepository<Usuarios, Long> {
 
     @Modifying
     @Query(value = "UPDATE usuarios SET usuario_status = -1 WHERE usuario_id = :id and tenant_id = :tenantId", nativeQuery = true)
-    void deleteLogico(@Param("id") Long id, @Param("tenantId") String tenantId);
+    void deleteLogico(@Param("id") String id, @Param("tenantId") String tenantId);
 
     @Modifying
     @Query(value = "UPDATE usuarios SET usuario_status = 1 WHERE usuario_id = :id and tenant_id = :tenantId", nativeQuery = true)
-    void ativarUsuario(@Param("id") Long id, @Param("tenantId") String tenantId);
+    void ativarUsuario(@Param("id") String id, @Param("tenantId") String tenantId);
 
     @Query("SELECT u FROM Usuarios u WHERE u.unidade.id = :unidadeId AND u.status = 1")
-    List<Usuarios> findBarbeirosByUnidade(@Param("unidadeId") Long unidadeId);
+    List<Usuarios> findBarbeirosByUnidade(@Param("unidadeId") String unidadeId);
 
     @Query(value = "SELECT * FROM usuarios WHERE usuario_id = :id AND tenant_id = :tenantId", nativeQuery = true)
-    Optional<Usuarios> findByIdAndTenants(@Param("id") Long id, @Param("tenantId") String tenantId);
+    Optional<Usuarios> findByIdAndTenants(@Param("id") String id, @Param("tenantId") String tenantId);
 
     @Query("SELECT u FROM Usuarios u WHERE u.unidade.id = :unidadeId AND u.status = 1 AND u.tenant = :tenantId")
-    List<Usuarios> findBarbeirosByUnidadeWithTenant(@Param("unidadeId") Long unidadeId, @Param("tenantId") String tenantId);
+    List<Usuarios> findBarbeirosByUnidadeWithTenant(@Param("unidadeId") String unidadeId, @Param("tenantId") String tenantId);
 
 }

@@ -112,14 +112,14 @@ public class UsuarioController {
 
     @GetMapping("/barbeiros/{unidadeId}")
     @Operation(summary = "Listar barbeiros por unidade", description = "Endpoint público para listar barbeiros ativos de uma unidade")
-    public ResponseEntity<List<UsuarioResponseSimplesDTO>> listarBarbeirosPorUnidade(@PathVariable Long unidadeId){
+    public ResponseEntity<List<UsuarioResponseSimplesDTO>> listarBarbeirosPorUnidade(@PathVariable String unidadeId){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(usuarioService.buscarBarbeirosPorUnidade(unidadeId));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Atualizar usuário", description = "Endpoint para atualizar as informações de um usuário existente")
-    public ResponseEntity<?> atualizarUsuarios(@PathVariable Long id, @RequestBody @Valid UsuarioRequestDTO user, BindingResult result) {
+    public ResponseEntity<?> atualizarUsuarios(@PathVariable String id, @RequestBody @Valid UsuarioRequestDTO user, BindingResult result) {
         if (result.hasErrors()) {
             if (BindingHandler.isErrorNull(result)) {
                 return ResponseEntity.status(HttpStatus.OK)
@@ -140,14 +140,14 @@ public class UsuarioController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Excluir usuário", description = "Endpoint para excluir um usuário do sistema")
-    public ResponseEntity<?> deletarUsuario(@PathVariable Long id) {
+    public ResponseEntity<?> deletarUsuario(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(usuarioService.deletarUsuario(id));
     }
 
     @PatchMapping("/{id}")
     @Operation(summary = "Ativar usuário", description = "Endpoint para ativar um usuário do sistema")
-    public ResponseEntity<?> ativarUsuario(@PathVariable Long id) {
+    public ResponseEntity<?> ativarUsuario(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(usuarioService.ativarUsuario(id));
     }

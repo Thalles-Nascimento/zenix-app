@@ -60,7 +60,7 @@ public class UnidadeService {
         return unidadeMapper.toListUnidadeDTO(unidadeRepository.buscarUnidadesPorTenant(TenantContext.getTenantId()));
     }
 
-    public UnidadeResponseDTO listarUnidadeById(Long id){
+    public UnidadeResponseDTO listarUnidadeById(String id){
         return unidadeRepository.findById(id)
                 .map(unidade -> {
                     if(unidade.getStatus() == -1){
@@ -74,7 +74,7 @@ public class UnidadeService {
                 .orElseThrow(() -> new NotFoundException("Unidade não encontrada!"));
     }
 
-    public UnidadeUserResponseDTO listarUnidadesByIdUsuario(Long id){
+    public UnidadeUserResponseDTO listarUnidadesByIdUsuario(String id){
         Unidades unidade = unidadeRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Unidade não encontrada!"));
 
@@ -99,7 +99,7 @@ public class UnidadeService {
         );
     }
 
-    public Unidades listarUnidadeByIdCompleto(Long id){
+    public Unidades listarUnidadeByIdCompleto(String id){
         return unidadeRepository.findById(id)
                 .map(unidade -> {
                     if(unidade.getStatus() == -1){
@@ -114,7 +114,7 @@ public class UnidadeService {
     }
 
     @Transactional
-    public SuccessUnidadeResponseDTO atualizarUnidade(Long id, UnidadeRequestDTO unidadeDTO){
+    public SuccessUnidadeResponseDTO atualizarUnidade(String id, UnidadeRequestDTO unidadeDTO){
         return unidadeRepository.findById(id)
                 .map(unidade -> {
                     if(unidade.getStatus() == -1){
@@ -137,7 +137,7 @@ public class UnidadeService {
     }
 
     @Transactional
-    public SuccessUnidadeDeleteResponseDTO deletarUnidade(Long id){
+    public SuccessUnidadeDeleteResponseDTO deletarUnidade(String id){
         String tenantId = TenantContext.getTenantId();
         return unidadeRepository.findById(id)
                 .map(unidade -> {
@@ -157,7 +157,7 @@ public class UnidadeService {
     }
 
     @Transactional
-    public SuccessUnidadeResponseDTO ativarUnidade(Long id){
+    public SuccessUnidadeResponseDTO ativarUnidade(String id){
         String tenantId = TenantContext.getTenantId();
         return unidadeRepository.findById(id)
                 .map(unidade -> {

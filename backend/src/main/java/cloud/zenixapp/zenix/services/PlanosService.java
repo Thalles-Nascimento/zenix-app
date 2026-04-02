@@ -41,12 +41,12 @@ public class PlanosService {
         return planosMapper.toListPlanosDTO(planosRepository.findAll());
     }
 
-    public Planos buscarPlanoPorId(Long id){
+    public Planos buscarPlanoPorId(String id){
         return planosRepository.findById(id).orElseThrow(() -> new NotFoundException("Plano não encontrado!"));
     }
 
     @Transactional
-    public SuccessPlanosResponseDTO atualizarPlanos(PlanosRequestDTO planosRequestDTO, Long id){
+    public SuccessPlanosResponseDTO atualizarPlanos(PlanosRequestDTO planosRequestDTO, String id){
         return planosRepository.findById(id)
                 .map(plano -> {
 
@@ -62,7 +62,7 @@ public class PlanosService {
     }
 
     @Transactional
-    public SuccessDeletePlanosResponseDTO deletarPlano(Long id) {
+    public SuccessDeletePlanosResponseDTO deletarPlano(String id) {
         return planosRepository.findById(id)
                 .map(plano -> {
                     planosRepository.deleteById(id);

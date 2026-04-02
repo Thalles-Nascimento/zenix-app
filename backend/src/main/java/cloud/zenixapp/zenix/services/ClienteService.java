@@ -78,7 +78,7 @@ public class ClienteService {
     }
 
     @Transactional
-    public SuccessClienteResponseDTO atualizarRetornoCliente(Long id) throws NotFoundException {
+    public SuccessClienteResponseDTO atualizarRetornoCliente(String id) throws NotFoundException {
         return clienteRepository.findById(id)
                 .map(cliente -> {
                     int count = cliente.getTotalRetornos();
@@ -125,7 +125,7 @@ public class ClienteService {
     }
 
     @Transactional
-    public SuccessClienteResponseDTO inserirPlano(Long id, Long idPlano) throws NotFoundException {
+    public SuccessClienteResponseDTO inserirPlano(String id, String idPlano) throws NotFoundException {
         return clienteRepository.findById(id)
                 .map(cliente -> {
                     if(cliente.getAtendimentosMes() > 0){
@@ -146,7 +146,7 @@ public class ClienteService {
     }
 
     @Transactional
-    public SuccessClienteResponseDTO retirarPlano(Long id){
+    public SuccessClienteResponseDTO retirarPlano(String id){
         return clienteRepository.findById(id)
                 .map(cliente -> {
                     if(cliente.getStatus() == -1){
@@ -166,7 +166,7 @@ public class ClienteService {
     }
 
     @Transactional
-    public SuccessClienteResponseDTO atualizarCliente(Long id, ClienteUpdateRequestDTO clienteUpdateDTO){
+    public SuccessClienteResponseDTO atualizarCliente(String id, ClienteUpdateRequestDTO clienteUpdateDTO){
         return clienteRepository.findById(id)
                 .map(cliente -> {
                     if(cliente.getStatus() == -1){
@@ -197,7 +197,7 @@ public class ClienteService {
     }
 
     @Transactional
-    public SuccessClienteResponseDTO deletarCliente(Long id){
+    public SuccessClienteResponseDTO deletarCliente(String id){
         return clienteRepository.findById(id)
                 .map(cliente -> {
                     if(cliente.getStatus() == -1){
@@ -215,7 +215,7 @@ public class ClienteService {
     }
 
     @Transactional
-    public SuccessClienteResponseDTO ativarCliente(Long id){
+    public SuccessClienteResponseDTO ativarCliente(String id){
         return clienteRepository.findById(id)
                 .map(cliente -> {
                     if(cliente.getStatus() != -1){

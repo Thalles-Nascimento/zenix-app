@@ -14,11 +14,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Servicos extends BaseEntity{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "servico_id", nullable = false)
-    private Long id;
-
     @Column(name = "servico_descricao")
     private String servico;
 
