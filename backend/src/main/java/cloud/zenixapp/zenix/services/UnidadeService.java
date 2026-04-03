@@ -11,10 +11,10 @@ import cloud.zenixapp.zenix.models.enums.UsuariosRoleEnum;
 import cloud.zenixapp.zenix.repositories.TenantRepository;
 import cloud.zenixapp.zenix.repositories.UnidadeRepository;
 import jakarta.persistence.OptimisticLockException;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,7 +36,7 @@ public class UnidadeService {
         String tenantId = TenantContext.getTenantId();
 
         if (unidadeRepository.existsByNomeUnidadeAndTenantId(unidadeDTO.nomeUnidade(), tenantId)){
-            throw new UnidadeJaExisteException("Unidade " + unidadeDTO.nomeUnidade() + " já cadastrada");
+            throw new ExistsException("Unidade " + unidadeDTO.nomeUnidade() + " já cadastrada");
         }
 
         Tenants tenant = tenantRepository.findById(tenantId)
@@ -122,13 +122,12 @@ public class UnidadeService {
 
                     try{
                         unidadeMapper.atualizarUnidade(unidade, unidadeDTO);
+                        unidadeRepository.save(unidade);
 
                     } catch (OptimisticLockException e){
-                        throw new UnidadeOptimisticException("Erro ao atualizar unidade: " + e + ". Tente novamente!");
+                        throw new OptimisticException("Erro ao atualizar unidade: " + e + ". Tente novamente!");
 
                     }
-                    unidadeRepository.save(unidade);
-
 
                     return new SuccessUnidadeResponseDTO(
                             HttpStatus.OK.value(),
@@ -149,8 +148,14 @@ public class UnidadeService {
                         throw new UnidadeExcluidoException("Unidade já foi excluída!");
 
                     }
-                    unidade.setDeletedAt(LocalDateTime.now());
-                    unidadeRepository.deleteLogico(id, tenantId);
+                    try{
+                        unidadeRepository.deleteLogico(id, tenantId);
+
+                    } catch (OptimisticLockException e){
+                        throw new OptimisticException("Erro ao deletar: " + e + ", tente novamente!");
+
+                    }
+
                     return new SuccessUnidadeDeleteResponseDTO(
                             HttpStatus.OK.value(),
                             "Unidade excluída com sucesso",
