@@ -1,9 +1,8 @@
 package cloud.zenixapp.zenix.repositories;
 
 import cloud.zenixapp.zenix.models.entities.Unidades;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+import jakarta.persistence.LockModeType;
+import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
@@ -11,17 +10,22 @@ import java.util.Optional;
 
 public interface UnidadeRepository extends JpaRepository<Unidades, String> {
 
+    @Lock(LockModeType.OPTIMISTIC)
     @Modifying
-    @Query(value = "UPDATE unidades SET unidade_status = -1 WHERE unidade_id = :id AND tenant_id = :tenantId", nativeQuery = true)
+    @NativeQuery(value = "UPDATE unidades SET unidade_status = -1 WHERE unidade_id = :id AND tenant_id = :tenantId")
     void deleteLogico(@Param("id") String id, @Param("tenantId") String tenantId);
 
     @Modifying
-    @Query(value = "UPDATE unidades SET unidade_status = 1 WHERE unidade_id = :id AND tenant_id = :tenantId", nativeQuery = true)
+    @NativeQuery(value = "UPDATE unidades SET unidade_status = 1 WHERE unidade_id = :id AND tenant_id = :tenantId")
     void ativarUnidade(@Param("id") String id, @Param("tenantId")String tenantId);
 
-    @Query(value = "SELECT * FROM unidades WHERE unidade_nome = :nome AND tenant_id = :tenantId", nativeQuery = true)
-    Optional<Unidades> buscarUnidadesPorTenant(@Param("nome") String nome, @Param("tenantId") String tenantId);
+    boolean existsByNomeUnidadeAndTenantId(String nomeUnidade, String tenantId);
 
-    @Query(value = "SELECT * FROM unidades WHERE tenant_id = :tenantId", nativeQuery = true)
-    List<Unidades> buscarUnidadesPorTenant(@Param("tenantId") String tenantId);
+    @NativeQuery(value = "SELECT id, unidade_nome, unidade_endereco, unidade_status FROM unidades WHERE tenant_id = :tenantId")
+    List<Unidades> findUnidadesByTenant(@Param("tenantId") String tenantId);
+
+    @Lock(LockModeType.OPTIMISTIC)
+    @NativeQuery(value = "SELECT unidade_nome, unidade_endereco, unidade_status FROM unidades WHERE id = :id AND tenant_id = :tenantId")
+    Optional<Unidades> findById(@Param("id") String id, @Param("tenantId") String tenantId);
+
 }
