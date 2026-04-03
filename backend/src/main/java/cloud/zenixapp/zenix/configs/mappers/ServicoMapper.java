@@ -32,4 +32,6 @@ public interface ServicoMapper {
 
     List<ServicoResponseDTO> toListServicos(List<Servicos> servicosList);
 
+    ServicoResponseDTO toServicoDTO(Servicos servicos);
+
 }
