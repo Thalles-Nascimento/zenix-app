@@ -1,7 +1,7 @@
 package cloud.zenixapp.zenix.configs.exceptions;
 
-public class UnidadeOptimisticException extends RuntimeException {
-    public UnidadeOptimisticException(String message) {
+public class OptimisticException extends RuntimeException {
+    public OptimisticException(String message) {
         super(message);
     }
 }
