@@ -26,17 +26,17 @@ public interface UsuarioRepository extends JpaRepository<Usuarios, String> {
     int querieStatusUser(@Param("email") String email);
 
     @Modifying
-    @Query(value = "UPDATE usuarios SET usuario_status = -1 WHERE usuario_id = :id and tenant_id = :tenantId", nativeQuery = true)
+    @Query(value = "UPDATE usuarios SET usuario_status = -1 WHERE id = :id and tenant_id = :tenantId", nativeQuery = true)
     void deleteLogico(@Param("id") String id, @Param("tenantId") String tenantId);
 
     @Modifying
-    @Query(value = "UPDATE usuarios SET usuario_status = 1 WHERE usuario_id = :id and tenant_id = :tenantId", nativeQuery = true)
+    @Query(value = "UPDATE usuarios SET usuario_status = 1 WHERE id = :id and tenant_id = :tenantId", nativeQuery = true)
     void ativarUsuario(@Param("id") String id, @Param("tenantId") String tenantId);
 
     @Query("SELECT u FROM Usuarios u WHERE u.unidade.id = :unidadeId AND u.status = 1")
     List<Usuarios> findBarbeirosByUnidade(@Param("unidadeId") String unidadeId);
 
-    @Query(value = "SELECT * FROM usuarios WHERE usuario_id = :id AND tenant_id = :tenantId", nativeQuery = true)
+    @Query(value = "SELECT * FROM usuarios WHERE id = :id AND tenant_id = :tenantId", nativeQuery = true)
     Optional<Usuarios> findByIdAndTenants(@Param("id") String id, @Param("tenantId") String tenantId);
 
     @Query("SELECT u FROM Usuarios u WHERE u.unidade.id = :unidadeId AND u.status = 1 AND u.tenant = :tenantId")

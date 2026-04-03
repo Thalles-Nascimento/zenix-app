@@ -1,9 +1,9 @@
 package cloud.zenixapp.zenix.services;
 
 import cloud.zenixapp.zenix.configs.TenantContext;
+import cloud.zenixapp.zenix.configs.exceptions.ExistsException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.exceptions.UsuarioExcluidoException;
-import cloud.zenixapp.zenix.configs.exceptions.UsuarioJaExisteException;
 import cloud.zenixapp.zenix.configs.mappers.UsuarioMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.UsuarioLoginDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.UsuarioRequestDTO;
@@ -82,7 +82,7 @@ public class UsuarioService {
     @Transactional
     public SucessUsuarioResponseDTO registerUser(UsuarioRequestDTO userRegister){
         if(usuarioRepository.existsByEmail(userRegister.email()) || usuarioRepository.existsByCpf(userRegister.cpf())){
-            throw new UsuarioJaExisteException("Usuário já cadastrado!");
+            throw new ExistsException("Usuário já cadastrado!");
 
         }
 
