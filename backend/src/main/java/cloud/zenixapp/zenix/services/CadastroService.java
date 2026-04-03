@@ -1,6 +1,6 @@
 package cloud.zenixapp.zenix.services;
 
-import cloud.zenixapp.zenix.configs.exceptions.UsuarioJaExisteException;
+import cloud.zenixapp.zenix.configs.exceptions.ExistsException;
 import cloud.zenixapp.zenix.models.dtos.requests.CadastroRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.CadastroResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Tenants;
@@ -35,13 +35,13 @@ public class CadastroService {
 
         // 1. Validações
         if (usuarioRepository.existsByEmail(cadastroRequestDTO.email())) {
-            throw new UsuarioJaExisteException("E-mail já cadastrado!");
+            throw new ExistsException("E-mail já cadastrado!");
         }
         if (usuarioRepository.existsByCpf(cadastroRequestDTO.cpf())) {
-            throw new UsuarioJaExisteException("CPF já cadastrado!");
+            throw new ExistsException("CPF já cadastrado!");
         }
         if (tenantsRepository.existsByNome(cadastroRequestDTO.nomeEmpresa()) || tenantsRepository.existsByCnpj(cadastroRequestDTO.cnpj())) {
-            throw new RuntimeException("Empresa já cadastrada");
+            throw new ExistsException("Empresa já cadastrada");
         }
 
         // 2. Cria o Tenant
