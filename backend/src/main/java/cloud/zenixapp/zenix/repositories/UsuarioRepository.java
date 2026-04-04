@@ -33,12 +33,12 @@ public interface UsuarioRepository extends JpaRepository<Usuarios, String> {
     @NativeQuery(value = "UPDATE usuarios SET usuario_status = 1 WHERE id = :id and tenant_id = :tenantId")
     void ativarUsuario(@Param("id") String id, @Param("tenantId") String tenantId);
 
-    @NativeQuery("SELECT id, usuario_email FROM usuarios WHERE usuarios_unidade = :unidadeId AND usuario_status = 1")
+    @NativeQuery("SELECT id, usuario_nome FROM usuarios WHERE usuarios_unidade = :unidadeId AND usuario_status = 1")
     List<Usuarios> findBarbeirosByUnidade(@Param("unidadeId") String unidadeId);
 
 //   TODO - Refazer a Query
     @Lock(LockModeType.OPTIMISTIC)
-    @Query(value = "SELECT new Usuarios(u.nome, u.email) FROM Usuarios u WHERE u.id = :id AND u.tenantId = :tenantId AND u.status  = 1")
+    @Query(value = "SELECT u FROM Usuarios u WHERE u.id = :id AND u.tenantId = :tenantId")
     Optional<Usuarios> findById(@Param("id") String id, @Param("tenantId") String tenantId);
 
     @NativeQuery("SELECT id, usuario_email, usuario_nome, usuario_cpf, usuario_grupo, usuario_status, usuarios_unidade" +
