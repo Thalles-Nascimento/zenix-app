@@ -153,6 +153,11 @@ public class UsuarioService {
         String tenantId = TenantContext.getTenantId();
         return usuarioRepository.findById(id, tenantId)
                 .map(user -> {
+                    if (user.getStatus() == -1){
+                        throw new UsuarioExcluidoException("Usuario foi excluído");
+
+                    }
+
                     try{
                         usuarioMapper.atualizarUsuario(user, userDTO);
                         if (userDTO.senha() != null && !userDTO.senha().isBlank()) {
@@ -197,6 +202,9 @@ public class UsuarioService {
         String tenantId = TenantContext.getTenantId();
         return usuarioRepository.findById(id, tenantId)
                 .map(user -> {
+                    if (user.getStatus() == -1){
+                        throw new UsuarioExcluidoException("Usuario já foi excluído");
+                    }
 
                     try{
                         user.setDeletedAt(LocalDateTime.now());
@@ -231,6 +239,10 @@ public class UsuarioService {
         String tenantId = TenantContext.getTenantId();
         return usuarioRepository.findById(id, tenantId)
                 .map(user -> {
+                    if (user.getStatus() != -1){
+                        throw new UsuarioExcluidoException("Usuario está já ativado");
+                    }
+
 
                     try{
                         user.setDeletedAt(null);
