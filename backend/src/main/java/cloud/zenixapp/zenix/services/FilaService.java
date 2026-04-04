@@ -65,7 +65,7 @@ public class FilaService {
 
     @Transactional
     public List<SucessFilaResponseDTO> inserirSemPreferencia(FilaRequestDTO filaDTO) {
-        List<Usuarios> barbeiros = usuarioService.buscarUsuariosByUnidades(filaDTO.idUnidade());
+        List<Usuarios> barbeiros = usuarioService.buscarUsuariosByUnidadesForLoginFila(filaDTO.idUnidade());
         String grupoId = UUID.randomUUID().toString();
 
         return barbeiros.stream().map(barbeiro -> {

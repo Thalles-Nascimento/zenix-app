@@ -1,9 +1,8 @@
 package cloud.zenixapp.zenix.repositories;
 
 import cloud.zenixapp.zenix.models.entities.Usuarios;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+import jakarta.persistence.LockModeType;
+import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -15,7 +14,8 @@ public interface UsuarioRepository extends JpaRepository<Usuarios, String> {
 
     UserDetails findByEmail(String email);
 
-    @Query(value = "SELECT * FROM usuarios WHERE tenant_id = :tenant", nativeQuery = true)
+    @NativeQuery(value = "SELECT usuario_nome, usuario_email, usuario_email, usuario_cpf, usuarios_unidade, usuario_senha, usuario_grupo, usuario_status" +
+            " FROM usuarios WHERE tenant_id = :tenant")
     List<Usuarios> findAllByTenants(@Param("tenant") String tenant);
 
     boolean existsByCpf(String cpf);
@@ -23,23 +23,26 @@ public interface UsuarioRepository extends JpaRepository<Usuarios, String> {
     boolean existsByEmail(String email);
 
     @Query(value = "SELECT status FROM Usuarios WHERE email = :email")
-    int querieStatusUser(@Param("email") String email);
+    int findStatusByEmail(@Param("email") String email);
 
     @Modifying
-    @Query(value = "UPDATE usuarios SET usuario_status = -1 WHERE id = :id and tenant_id = :tenantId", nativeQuery = true)
+    @NativeQuery(value = "UPDATE usuarios SET usuario_status = -1 WHERE id = :id and tenant_id = :tenantId")
     void deleteLogico(@Param("id") String id, @Param("tenantId") String tenantId);
 
     @Modifying
-    @Query(value = "UPDATE usuarios SET usuario_status = 1 WHERE id = :id and tenant_id = :tenantId", nativeQuery = true)
+    @NativeQuery(value = "UPDATE usuarios SET usuario_status = 1 WHERE id = :id and tenant_id = :tenantId")
     void ativarUsuario(@Param("id") String id, @Param("tenantId") String tenantId);
 
-    @Query("SELECT u FROM Usuarios u WHERE u.unidade.id = :unidadeId AND u.status = 1")
+    @NativeQuery("SELECT id, usuario_email FROM usuarios WHERE usuarios_unidade = :unidadeId AND usuario_status = 1")
     List<Usuarios> findBarbeirosByUnidade(@Param("unidadeId") String unidadeId);
 
-    @Query(value = "SELECT * FROM usuarios WHERE id = :id AND tenant_id = :tenantId", nativeQuery = true)
-    Optional<Usuarios> findByIdAndTenants(@Param("id") String id, @Param("tenantId") String tenantId);
+//   TODO - Refazer a Query
+    @Lock(LockModeType.OPTIMISTIC)
+    @Query(value = "SELECT new Usuarios(u.nome, u.email) FROM Usuarios u WHERE u.id = :id AND u.tenantId = :tenantId AND u.status  = 1")
+    Optional<Usuarios> findById(@Param("id") String id, @Param("tenantId") String tenantId);
 
-    @Query("SELECT u FROM Usuarios u WHERE u.unidade.id = :unidadeId AND u.status = 1 AND u.tenant = :tenantId")
-    List<Usuarios> findBarbeirosByUnidadeWithTenant(@Param("unidadeId") String unidadeId, @Param("tenantId") String tenantId);
+    @NativeQuery("SELECT id, usuario_email, usuario_nome, usuario_cpf, usuario_grupo, usuario_status, usuarios_unidade" +
+            " FROM usuarios WHERE usuarios_unidade = :unidadeId AND usuario_status = 1 AND tenant_id = :tenantId")
+    List<Usuarios> findBarbeirosByUnidadeAndTenant(@Param("unidadeId") String unidadeId, @Param("tenantId") String tenantId);
 
 }

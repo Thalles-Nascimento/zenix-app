@@ -3,8 +3,8 @@ package cloud.zenixapp.zenix.services;
 import cloud.zenixapp.zenix.configs.TenantContext;
 import cloud.zenixapp.zenix.configs.exceptions.ExistsException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
-import cloud.zenixapp.zenix.configs.exceptions.ServicoExcluidoException;
 import cloud.zenixapp.zenix.configs.exceptions.OptimisticException;
+import cloud.zenixapp.zenix.configs.exceptions.ServicoExcluidoException;
 import cloud.zenixapp.zenix.configs.mappers.ServicoMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.ServicoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ServicoResponseDTO;
@@ -15,9 +15,11 @@ import cloud.zenixapp.zenix.repositories.ServicoRepository;
 import jakarta.persistence.OptimisticLockException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.resilience.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -53,6 +55,12 @@ public class ServicoService {
         return servicoMapper.toListServicos(servicoRepository.findAll(TenantContext.getTenantId()));
     }
 
+    @Retryable(
+            includes = OptimisticLockException.class,
+            maxRetries = 2,
+            delay = 100,
+            multiplier = 2
+    )
     @Transactional
     public SuccessServicoResponseDTO atualizarServico(ServicoRequestDTO servicoRequestDTO, String id){
         return servicoRepository.findById(id, TenantContext.getTenantId())
@@ -79,6 +87,12 @@ public class ServicoService {
                 }).orElseThrow(() -> new NotFoundException("Serviço não encontrado"));
     }
 
+    @Retryable(
+            includes = OptimisticLockException.class,
+            maxRetries = 2,
+            delay = 100,
+            multiplier = 2
+    )
     @Transactional
     public SuccessDeleteServicoResponseDTO deletarServico(String id) {
         return servicoRepository.findById(id, TenantContext.getTenantId())
@@ -88,6 +102,7 @@ public class ServicoService {
                     }
 
                     try {
+                        servico.setDeletedAt(LocalDateTime.now());
                         servicoRepository.deleteById(id);
 
                     } catch (OptimisticLockException e){

@@ -83,7 +83,7 @@ public class UsuarioController {
                     .body(BindingHandler.insertError(result));
         }
 
-        SucessUsuarioResponseDTO userRegister = usuarioService.registerUser(usuarioRequestDTO);
+        SucessUsuarioResponseDTO userRegister = usuarioService.criarNovoUsuario(usuarioRequestDTO);
 
         if(userRegister == null){
             Map<String, String> error = new HashMap<>();
@@ -119,11 +119,11 @@ public class UsuarioController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Atualizar usuário", description = "Endpoint para atualizar as informações de um usuário existente")
-    public ResponseEntity<?> atualizarUsuarios(@PathVariable String id, @RequestBody @Valid UsuarioRequestDTO user, BindingResult result) {
+    public ResponseEntity<?> atualizarUsuarios(@PathVariable String id, @RequestBody @Valid UsuarioRequestDTO userDTO, BindingResult result) {
         if (result.hasErrors()) {
             if (BindingHandler.isErrorNull(result)) {
                 return ResponseEntity.status(HttpStatus.OK)
-                        .body(usuarioService.atualizarUsuario(id, user));
+                        .body(usuarioService.atualizarUsuario(id, userDTO));
             }
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -135,7 +135,7 @@ public class UsuarioController {
         }
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(usuarioService.atualizarUsuario(id, user));
+                .body(usuarioService.atualizarUsuario(id, userDTO));
     }
 
     @DeleteMapping("/{id}")
