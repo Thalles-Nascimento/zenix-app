@@ -1,6 +1,6 @@
 package cloud.zenixapp.zenix.repositories;
 
-import cloud.zenixapp.zenix.models.dtos.responses.UsuarioResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.UsuarioSimplesResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.*;
@@ -18,7 +18,7 @@ public interface UsuarioRepository extends JpaRepository<Usuarios, String> {
     @NativeQuery(
             value = "SELECT * FROM usuarios u WHERE u.tenant_id = :tenant"
     )
-    List<Usuarios> findAllByTenants(@Param("tenant") String tenant);
+    List<UsuarioSimplesResponseDTO> findAllByTenants(@Param("tenant") String tenant);
 
     boolean existsByCpf(String cpf);
 

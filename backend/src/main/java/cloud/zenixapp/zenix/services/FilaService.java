@@ -5,9 +5,8 @@ import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.mappers.FilaMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.FilaRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.FilaResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.SucessFilaResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.SucessFilaRetiradaResponseDTO;
-import cloud.zenixapp.zenix.models.entities.Clientes;
+import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.SuccessFilaResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Fila;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.repositories.FilaAtendimentoRepository;
@@ -20,10 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.UUID;
 
 import static cloud.zenixapp.zenix.models.enums.StatusFilaEnum.AGUARDANDO;
 import static cloud.zenixapp.zenix.models.enums.StatusFilaEnum.EM_ATENDIMENTO;
-import java.util.UUID;
 
 @Service
 public class FilaService {
@@ -41,7 +40,7 @@ public class FilaService {
     private FilaMapper filaMapper;
 
     @Transactional
-    public SucessFilaResponseDTO inserirAtendimentoFila(FilaRequestDTO filaDTO) throws SQLIntegrityConstraintViolationException {
+    public SuccessFilaResponseDTO inserirAtendimentoFila(FilaRequestDTO filaDTO) throws SQLIntegrityConstraintViolationException {
         Fila fila = new Fila();
         Usuarios user = usuarioService.getUsuarioById(filaDTO.idBarbeiro());
 
@@ -55,7 +54,7 @@ public class FilaService {
         filaRepository.save(fila);
 
 
-        return new SucessFilaResponseDTO(
+        return new SuccessFilaResponseDTO(
                 fila.getId(),
                 fila.getNomeCliente(),
                 fila.getServico(),
@@ -64,7 +63,7 @@ public class FilaService {
     }
 
     @Transactional
-    public List<SucessFilaResponseDTO> inserirSemPreferencia(FilaRequestDTO filaDTO) {
+    public List<SuccessFilaResponseDTO> inserirSemPreferencia(FilaRequestDTO filaDTO) {
         List<Usuarios> barbeiros = usuarioService.buscarUsuariosByUnidadesForLoginFila(filaDTO.idUnidade());
         String grupoId = UUID.randomUUID().toString();
 
@@ -78,7 +77,7 @@ public class FilaService {
             fila.setSemPreferencia(true);
             fila.setGrupoId(grupoId);
             filaRepository.save(fila);
-            return new SucessFilaResponseDTO(fila.getId(), fila.getNomeCliente(), fila.getServico(), fila.getStatus());
+            return new SuccessFilaResponseDTO(fila.getId(), fila.getNomeCliente(), fila.getServico(), fila.getStatus());
         }).toList();
     }
 
@@ -88,7 +87,7 @@ public class FilaService {
     }
 
     @Transactional
-    public SucessFilaResponseDTO chamarCliente(String id) {
+    public SuccessFilaResponseDTO chamarCliente(String id) {
         return filaRepository.findById(id)
                 .map(atendimentoFila -> {
                     if(atendimentoFila.getStatus() != AGUARDANDO){
@@ -104,7 +103,7 @@ public class FilaService {
                         filaRepository.setarUsuario(id, userAuth.getId());
                     }
 
-                    return new SucessFilaResponseDTO(
+                    return new SuccessFilaResponseDTO(
                             atendimentoFila.getId(),
                             atendimentoFila.getNomeCliente(),
                             atendimentoFila.getServico(),
@@ -115,7 +114,7 @@ public class FilaService {
     }
 
     @Transactional
-    public SucessFilaResponseDTO finalizarAtendimento(String id){
+    public SuccessFilaResponseDTO finalizarAtendimento(String id){
         return filaRepository.findById(id)
                 .map(atendimentoFila -> {
                     if (atendimentoFila.getStatus() != EM_ATENDIMENTO){
@@ -126,7 +125,7 @@ public class FilaService {
 
                     clienteService.atualizarAtendimentosMes(atendimentoFila.getNomeCliente());
 
-                    return new SucessFilaResponseDTO(
+                    return new SuccessFilaResponseDTO(
                             atendimentoFila.getId(),
                             atendimentoFila.getNomeCliente(),
                             atendimentoFila.getServico(),
@@ -137,7 +136,7 @@ public class FilaService {
     }
 
     @Transactional
-    public SucessFilaRetiradaResponseDTO retirarClienteFila(String id) {
+    public SuccessResponseDTO retirarClienteFila(String id) {
         return filaRepository.findById(id)
                 .map(atendimentoFila -> {
                     if (atendimentoFila.getStatus() == EM_ATENDIMENTO) {
@@ -152,7 +151,7 @@ public class FilaService {
 
                     filaRepository.deleteById(id);
 
-                    return new SucessFilaRetiradaResponseDTO(
+                    return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
                             statusMsg
                     );

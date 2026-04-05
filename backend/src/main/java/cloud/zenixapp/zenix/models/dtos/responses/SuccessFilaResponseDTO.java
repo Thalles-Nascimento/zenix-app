@@ -4,7 +4,7 @@ import cloud.zenixapp.zenix.models.enums.StatusFilaEnum;
 
 import java.util.List;
 
-public record SucessFilaResponseDTO(
+public record SuccessFilaResponseDTO(
         String id,
         String nomeCliente,
         List<String> servico,

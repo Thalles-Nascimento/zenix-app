@@ -8,9 +8,10 @@ import cloud.zenixapp.zenix.configs.exceptions.UsuarioExcluidoException;
 import cloud.zenixapp.zenix.configs.mappers.UsuarioMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.UsuarioLoginDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.UsuarioRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.SucessUsuarioResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.UsuarioResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.UsuarioResponseSimplesDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.BarbeiroFilaResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.UsuarioSimplesResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Tenants;
 import cloud.zenixapp.zenix.models.entities.Unidades;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
@@ -82,7 +83,7 @@ public class UsuarioService {
     * Função para criar usuários - Barbeiros ou Administradores
     */
     @Transactional
-    public SucessUsuarioResponseDTO criarNovoUsuario(UsuarioRequestDTO userRegister){
+    public SuccessResponseDTO criarNovoUsuario(UsuarioRequestDTO userRegister){
         if(usuarioRepository.existsByEmail(userRegister.email()) || usuarioRepository.existsByCpf(userRegister.cpf())){
             throw new ExistsException("Usuário já cadastrado!");
 
@@ -107,27 +108,24 @@ public class UsuarioService {
 
         newUser.setTenant(tenant);
 
-        UsuarioResponseDTO usuario = usuarioMapper.usuarioResponseDTO(
-                usuarioRepository
-                        .save(newUser)
-        );
+        usuarioMapper.usuarioResponseDTO(usuarioRepository.save(newUser));
 
-        return new SucessUsuarioResponseDTO(
+        return new SuccessResponseDTO(
             HttpStatus.CREATED.value(),
-            "Usuário registrado com sucesso",
-            usuario);
+            "Usuário registrado com sucesso"
+        );
     }
 
     /* Função que retorna todos os usuários via endpoint privado, necessária autenticação e passar o 'Tenant' via ‘token’*/
-    public List<UsuarioResponseDTO> buscarUsuarios(){
-        return usuarioMapper.listResponseDTO(usuarioRepository.findAllByTenants(TenantContext.getTenantId()));
+    public List<UsuarioSimplesResponseDTO> buscarUsuarios(){
+        return usuarioRepository.findAllByTenants(TenantContext.getTenantId());
     }
 
     /*
     * Função que retorna todos os usuários por unidade via endpoint público, não necessitando autenticação e passar o 'Tenant' via 'token'
-    * Usado na tela de 'Login' da Fila de atendimentos
+    * Usado na tela de 'Login' da Fila
     */
-    public List<UsuarioResponseSimplesDTO> buscarBarbeirosPorUnidade(String unidadeId) {
+    public List<BarbeiroFilaResponseDTO> buscarBarbeirosPorUnidade(String unidadeId) {
         return usuarioMapper.listResponseSimplesDTO(usuarioRepository.findBarbeirosByUnidade(unidadeId));
     }
 
@@ -149,12 +147,12 @@ public class UsuarioService {
             multiplier = 2 // Evitar Retry storm - Backoff Exponential
     )
     @Transactional
-    public SucessUsuarioResponseDTO atualizarUsuario(String id, UsuarioRequestDTO userDTO) throws NotFoundException {
+    public SuccessResponseDTO atualizarUsuario(String id, UsuarioRequestDTO userDTO) throws NotFoundException {
         String tenantId = TenantContext.getTenantId();
         return usuarioRepository.findById(id, tenantId)
                 .map(user -> {
                     if (user.getStatus() == -1){
-                        throw new UsuarioExcluidoException("Usuario foi excluído");
+                        throw new UsuarioExcluidoException("Usuário foi excluído");
 
                     }
 
@@ -178,10 +176,9 @@ public class UsuarioService {
 
                     }
 
-                    return new SucessUsuarioResponseDTO(
-                        HttpStatus.OK.value(),
-                        "Usuário atualizado com sucesso",
-                        usuarioMapper.usuarioResponseDTO(user)
+                    return new SuccessResponseDTO(
+                            HttpStatus.OK.value(),
+                            "Usuário atualizado com sucesso"
                     );
 
                 })
@@ -198,12 +195,12 @@ public class UsuarioService {
             multiplier = 2 // Evitar Retry storm - Backoff Exponential
     )
     @Transactional
-    public SucessUsuarioResponseDTO deletarUsuario(String id){
+    public SuccessResponseDTO deletarUsuario(String id){
         String tenantId = TenantContext.getTenantId();
         return usuarioRepository.findById(id, tenantId)
                 .map(user -> {
                     if (user.getStatus() == -1){
-                        throw new UsuarioExcluidoException("Usuario já foi excluído");
+                        throw new UsuarioExcluidoException("Usuário já foi excluído");
                     }
 
                     try{
@@ -215,10 +212,9 @@ public class UsuarioService {
 
                     }
 
-                    return new SucessUsuarioResponseDTO(
+                    return new SuccessResponseDTO(
                         HttpStatus.OK.value(),
-                        "Usuário deletado com sucesso",
-                        null
+                        "Usuário deletado com sucesso"
                     );
                 })
                 .orElseThrow(() -> new NotFoundException("Usuário não encontrado ou excluído!"));
@@ -235,12 +231,12 @@ public class UsuarioService {
             multiplier = 2 // Evitar Retry storm - Backoff Exponential
     )
     @Transactional
-    public SucessUsuarioResponseDTO ativarUsuario(String id){
+    public SuccessResponseDTO ativarUsuario(String id){
         String tenantId = TenantContext.getTenantId();
         return usuarioRepository.findById(id, tenantId)
                 .map(user -> {
                     if (user.getStatus() != -1){
-                        throw new UsuarioExcluidoException("Usuario está já ativado");
+                        throw new UsuarioExcluidoException("Usuário está já ativado");
                     }
 
 
@@ -254,10 +250,9 @@ public class UsuarioService {
                     }
 
 
-                    return new SucessUsuarioResponseDTO(
+                    return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
-                            "Usuário ativado com sucesso",
-                            usuarioMapper.usuarioResponseDTO(user)
+                            "Usuário ativado com sucesso"
                     );
                 })
                 .orElseThrow(() -> new NotFoundException("Usuário não encontrado!"));

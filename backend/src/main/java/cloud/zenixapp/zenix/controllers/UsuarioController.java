@@ -83,7 +83,7 @@ public class UsuarioController {
                     .body(BindingHandler.insertError(result));
         }
 
-        SucessUsuarioResponseDTO userRegister = usuarioService.criarNovoUsuario(usuarioRequestDTO);
+        SuccessResponseDTO userRegister = usuarioService.criarNovoUsuario(usuarioRequestDTO);
 
         if(userRegister == null){
             Map<String, String> error = new HashMap<>();
@@ -98,7 +98,7 @@ public class UsuarioController {
 
     @GetMapping
     @Operation(summary = "Listar usuários", description = "Endpoint para listar todos os usuários cadastrados no sistema")
-    public ResponseEntity<List<UsuarioResponseDTO>> listarUsuarios(){
+    public ResponseEntity<?> listarUsuarios(){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(usuarioService.buscarUsuarios());
     }
@@ -112,7 +112,7 @@ public class UsuarioController {
 
     @GetMapping("/barbeiros/{unidadeId}")
     @Operation(summary = "Listar barbeiros por unidade", description = "Endpoint público para listar barbeiros ativos de uma unidade")
-    public ResponseEntity<List<UsuarioResponseSimplesDTO>> listarBarbeirosPorUnidade(@PathVariable String unidadeId){
+    public ResponseEntity<List<BarbeiroFilaResponseDTO>> listarBarbeirosPorUnidade(@PathVariable String unidadeId){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(usuarioService.buscarBarbeirosPorUnidade(unidadeId));
     }

@@ -4,8 +4,7 @@ import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.mappers.PagamentoMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.PagamentoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.PagamentoResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.SuccessDeletePagamentoResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.SuccessPagamentoResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.entities.FormaPagamento;
 import cloud.zenixapp.zenix.repositories.PagamentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,16 +25,15 @@ public class PagamentoService {
     private PagamentoMapper pagamentoMapper;
 
     @Transactional
-    public SuccessPagamentoResponseDTO inserirPagamento(PagamentoRequestDTO pagamentoRequestDTO){
+    public SuccessResponseDTO inserirPagamento(PagamentoRequestDTO pagamentoRequestDTO){
         FormaPagamento formaPagamento = new FormaPagamento();
         formaPagamento.setFormaPagamento(pagamentoRequestDTO.descricao().toUpperCase());
 
         pagamentoRepository.save(formaPagamento);
 
-        return new SuccessPagamentoResponseDTO(
+        return new SuccessResponseDTO(
                 HttpStatus.OK.value(),
-                "Forma de pagamento inserida com sucesso",
-                formaPagamento
+                "Forma de pagamento inserida com sucesso"
         );
     }
 
@@ -44,7 +42,7 @@ public class PagamentoService {
     }
 
     @Transactional
-    public SuccessPagamentoResponseDTO atualizarPagamento(PagamentoRequestDTO pagamentoRequestDTO, String id){
+    public SuccessResponseDTO atualizarPagamento(PagamentoRequestDTO pagamentoRequestDTO, String id){
         return pagamentoRepository.findById(id)
                 .map(formaPagamento -> {
 
@@ -53,21 +51,20 @@ public class PagamentoService {
                     formaPagamento.setFormaPagamento(formaPagamento.getFormaPagamento().toUpperCase());
                     pagamentoRepository.save(formaPagamento);
 
-                    return new SuccessPagamentoResponseDTO(
+                    return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
-                            "Forma de pagamento atualizada com sucesso",
-                            formaPagamento
+                            "Forma de pagamento atualizada com sucesso"
                     );
                 }).orElseThrow(() -> new NotFoundException("Forma de pagamento não encontrada!"));
     }
 
     @Transactional
-    public SuccessDeletePagamentoResponseDTO deletarPagamento(String id) {
+    public SuccessResponseDTO deletarPagamento(String id) {
         return pagamentoRepository.findById(id)
                 .map(formaPagamento -> {
                     pagamentoRepository.deleteById(id);
 
-                    return new SuccessDeletePagamentoResponseDTO(
+                    return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
                             "Forma de pagamento excluída com sucesso!"
                     );

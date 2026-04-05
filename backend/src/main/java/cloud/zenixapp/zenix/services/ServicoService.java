@@ -8,8 +8,7 @@ import cloud.zenixapp.zenix.configs.exceptions.ServicoExcluidoException;
 import cloud.zenixapp.zenix.configs.mappers.ServicoMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.ServicoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ServicoResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.SuccessDeleteServicoResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.SuccessServicoResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Servicos;
 import cloud.zenixapp.zenix.repositories.ServicoRepository;
 import jakarta.persistence.OptimisticLockException;
@@ -32,7 +31,7 @@ public class ServicoService {
     private ServicoMapper servicoMapper;
 
     @Transactional
-    public SuccessServicoResponseDTO inserirServico(ServicoRequestDTO servicoRequestDTO){
+    public SuccessResponseDTO inserirServico(ServicoRequestDTO servicoRequestDTO){
         String tenantId = TenantContext.getTenantId();
         if (servicoRepository.existsServicoByServicoAndTenantId(servicoRequestDTO.servico(), tenantId)){
             throw new ExistsException("Serviço já existe!");
@@ -44,10 +43,9 @@ public class ServicoService {
 
         servicoRepository.save(servico);
 
-        return new SuccessServicoResponseDTO(
+        return new SuccessResponseDTO(
                 HttpStatus.OK.value(),
-                "Serviço inserido com sucesso",
-                servicoMapper.toServicoDTO(servico)
+                "Serviço inserido com sucesso"
         );
     }
 
@@ -62,7 +60,7 @@ public class ServicoService {
             multiplier = 2
     )
     @Transactional
-    public SuccessServicoResponseDTO atualizarServico(ServicoRequestDTO servicoRequestDTO, String id){
+    public SuccessResponseDTO atualizarServico(ServicoRequestDTO servicoRequestDTO, String id){
         return servicoRepository.findById(id, TenantContext.getTenantId())
                 .map(servico -> {
                     if (servico.getStatus() == -1){
@@ -79,10 +77,9 @@ public class ServicoService {
                     }
 
 
-                    return new SuccessServicoResponseDTO(
+                    return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
-                            "Serviço atualizado com sucesso",
-                            servicoMapper.toServicoDTO(servico)
+                            "Serviço atualizado com sucesso"
                     );
                 }).orElseThrow(() -> new NotFoundException("Serviço não encontrado"));
     }
@@ -94,7 +91,7 @@ public class ServicoService {
             multiplier = 2
     )
     @Transactional
-    public SuccessDeleteServicoResponseDTO deletarServico(String id) {
+    public SuccessResponseDTO deletarServico(String id) {
         return servicoRepository.findById(id, TenantContext.getTenantId())
                 .map(servico -> {
                     if (servico.getStatus() == -1){
@@ -110,7 +107,7 @@ public class ServicoService {
 
                     }
 
-                    return new SuccessDeleteServicoResponseDTO(
+                    return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
                             "Serviço excluído com sucesso!"
                     );

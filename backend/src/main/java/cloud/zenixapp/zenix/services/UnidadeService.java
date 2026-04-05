@@ -4,7 +4,10 @@ import cloud.zenixapp.zenix.configs.TenantContext;
 import cloud.zenixapp.zenix.configs.exceptions.*;
 import cloud.zenixapp.zenix.configs.mappers.UnidadeMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.UnidadeRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.*;
+import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.UnidadeResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.UnidadeUserResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.UsuarioSimplesResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Tenants;
 import cloud.zenixapp.zenix.models.entities.Unidades;
 import cloud.zenixapp.zenix.models.enums.UsuariosRoleEnum;
@@ -16,7 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -32,7 +34,7 @@ public class UnidadeService {
     private TenantRepository tenantRepository;
 
     @Transactional
-    public SuccessUnidadeResponseDTO inserirUnidade(UnidadeRequestDTO unidadeDTO){
+    public SuccessResponseDTO inserirUnidade(UnidadeRequestDTO unidadeDTO){
         String tenantId = TenantContext.getTenantId();
 
         if (unidadeRepository.existsByNomeUnidadeAndTenantId(unidadeDTO.nomeUnidade(), tenantId)){
@@ -47,10 +49,9 @@ public class UnidadeService {
 
         unidadeRepository.save(unidade);
 
-        return new SuccessUnidadeResponseDTO(
+        return new SuccessResponseDTO(
                 HttpStatus.OK.value(),
-                "Unidade inserida com sucesso",
-                unidade
+                "Unidade inserida com sucesso"
         );
     }
 
@@ -112,7 +113,7 @@ public class UnidadeService {
     }
 
     @Transactional
-    public SuccessUnidadeResponseDTO atualizarUnidade(String id, UnidadeRequestDTO unidadeDTO){
+    public SuccessResponseDTO atualizarUnidade(String id, UnidadeRequestDTO unidadeDTO){
         return unidadeRepository.findById(id, TenantContext.getTenantId())
                 .map(unidade -> {
                     if(unidade.getStatus() == -1){
@@ -129,10 +130,9 @@ public class UnidadeService {
 
                     }
 
-                    return new SuccessUnidadeResponseDTO(
+                    return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
-                            "Unidade atualizada com sucesso",
-                            unidade
+                            "Unidade atualizada com sucesso"
                     );
 
                 })
@@ -140,7 +140,7 @@ public class UnidadeService {
     }
 
     @Transactional
-    public SuccessUnidadeDeleteResponseDTO deletarUnidade(String id){
+    public SuccessResponseDTO deletarUnidade(String id){
         String tenantId = TenantContext.getTenantId();
         return unidadeRepository.findById(id, tenantId)
                 .map(unidade -> {
@@ -156,17 +156,16 @@ public class UnidadeService {
 
                     }
 
-                    return new SuccessUnidadeDeleteResponseDTO(
+                    return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
-                            "Unidade excluída com sucesso",
-                            unidade.getNomeUnidade()
+                            "Unidade excluída com sucesso"
                     );
                 })
                 .orElseThrow(() -> new NotFoundException("Unidade não encontrada!"));
     }
 
     @Transactional
-    public SuccessUnidadeResponseDTO ativarUnidade(String id){
+    public SuccessResponseDTO ativarUnidade(String id){
         String tenantId = TenantContext.getTenantId();
         return unidadeRepository.findById(id, tenantId)
                 .map(unidade -> {
@@ -176,10 +175,9 @@ public class UnidadeService {
                     }
                     unidadeRepository.ativarUnidade(id, tenantId);
 
-                    return new SuccessUnidadeResponseDTO(
+                    return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
-                            "Unidade ativada com sucesso",
-                            unidade
+                            "Unidade ativada com sucesso"
                     );
                 })
                 .orElseThrow(() -> new NotFoundException("Unidade não encontrada!"));
