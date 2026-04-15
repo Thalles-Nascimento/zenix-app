@@ -10,6 +10,22 @@ ALTER TABLE `clientes`
 ALTER TABLE `fila_atendimentos`
     DROP COLUMN `tenant_id`;
 
+-- Removendo coluna Tenant de pagamentos
+ALTER TABLE `pagamentos`
+DROP COLUMN `tenant_id`;
+
+-- Removendo coluna Tenant de planos
+ALTER TABLE `planos`
+    DROP COLUMN `tenant_id`;
+
+-- Removendo coluna Tenant de servicos
+ALTER TABLE `servicos`
+    DROP COLUMN `tenant_id`;
+
+-- Removendo coluna Tenant de telefones_clientes
+ALTER TABLE `telefones_clientes`
+    DROP COLUMN `tenant_id`;
+
 -- Removendo Foreign Key de usuarios
 ALTER TABLE `usuarios`
     DROP FOREIGN KEY `FKeq2qjef9kg8q9gfxessikg61x`;
