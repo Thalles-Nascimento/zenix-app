@@ -1,7 +1,10 @@
 package cloud.zenixapp.zenix.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,10 +25,6 @@ public class Unidades extends BaseEntity{
 
     @Column(name = "unidade_endereco")
     private String endereco;
-
-    @ManyToOne
-    @JoinColumn(name = "tenant_id", nullable = false, updatable = false)
-    private Tenants tenant;
 
     @OneToMany(mappedBy = "unidade")
     @JsonIgnore

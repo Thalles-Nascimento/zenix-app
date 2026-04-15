@@ -15,8 +15,9 @@ public abstract class BaseEntity implements Serializable {
     @Column(name = "id", length = 36, updatable = false, nullable = false)
     private String id;
 
-    @Column(name = "tenant_id", nullable = false, updatable = false, insertable = false)
-    private String tenantId;
+    @ManyToOne
+    @JoinColumn(name = "tenant_id", nullable = false, updatable = false)
+    private Tenants tenant;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

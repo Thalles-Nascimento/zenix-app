@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Tenants implements Serializable {
 // TODO Verificar a implementação das Tenants, pois podem existir barbearias com o mesmo nome! Caso alterar, criar Migration
+//  TODO Colocar a opção de desativar conta que irá excluir o Tenant e todos os dados vinculados à ele
     @Serial
     private static final long serialVersionUID = -1234567890123456789L;
 
@@ -48,7 +50,39 @@ public class Tenants implements Serializable {
 
     @OneToMany(mappedBy = "tenant")
     @JsonIgnore
+    private List<Atendimento> atendimentos;
+
+    @OneToMany(mappedBy = "tenant")
+    @JsonIgnore
+    private List<Clientes> clientes;
+
+    @OneToMany(mappedBy = "tenant")
+    @JsonIgnore
+    private List<Fila> filas;
+
+    @OneToMany(mappedBy = "tenant")
+    @JsonIgnore
+    private List<FormaPagamento> formaPagamentos;
+
+    @OneToMany(mappedBy = "tenant")
+    @JsonIgnore
+    private List<Planos> planos;
+
+    @OneToMany(mappedBy = "tenant")
+    @JsonIgnore
+    private List<Servicos> servicos;
+
+    @OneToMany(mappedBy = "tenant")
+    @JsonIgnore
+    private List<TelefoneCliente> telefoneClientes;
+
+    @OneToMany(mappedBy = "tenant")
+    @JsonIgnore
     private List<Unidades> unidades;
+
+    @OneToMany(mappedBy = "tenant")
+    @JsonIgnore
+    private List<Usuarios> usuarios;
 
     @PrePersist
     protected void prePersist() {
