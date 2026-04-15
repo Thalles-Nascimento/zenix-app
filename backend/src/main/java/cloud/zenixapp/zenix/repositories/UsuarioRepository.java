@@ -15,10 +15,10 @@ public interface UsuarioRepository extends JpaRepository<Usuarios, String> {
 
     UserDetails findByEmail(String email);
 
-    @NativeQuery(
-            value = "SELECT * FROM usuarios u WHERE u.tenant_id = :tenant"
+    @Query(
+            value = "SELECT u FROM Usuarios u WHERE u.tenant = :tenant"
     )
-    List<UsuarioSimplesResponseDTO> findAllByTenants(@Param("tenant") String tenant);
+    List<Usuarios> findAllByTenants(@Param("tenant") String tenant);
 
     boolean existsByCpf(String cpf);
 
@@ -49,7 +49,7 @@ public interface UsuarioRepository extends JpaRepository<Usuarios, String> {
 //   TODO - Refazer a Query
     @Lock(LockModeType.OPTIMISTIC)
     @Query(
-            value = "SELECT u FROM Usuarios u WHERE u.id = :id AND u.tenantId = :tenantId"
+            value = "SELECT u FROM Usuarios u WHERE u.id = :id AND u.tenant = :tenantId"
     )
     Optional<Usuarios> findById(@Param("id") String id, @Param("tenantId") String tenantId);
 

@@ -56,7 +56,6 @@ public class CadastroService {
         unidade.setNomeUnidade(cadastroRequestDTO.nomeUnidade());
         unidade.setEndereco(cadastroRequestDTO.enderecoUnidade());
         unidade.setTenant(tenant);
-        unidade.setTenantId(tenant.getId());
         unidadeRepository.save(unidade);
 
         // 4. Cria o Usuário ADMIN
@@ -68,7 +67,6 @@ public class CadastroService {
         usuario.setGrupo(UsuariosRoleEnum.ADMIN);
         usuario.setUnidade(unidade);
         usuario.setTenant(tenant);
-        usuario.setTenantId(tenant.getId());
         usuarioRepository.save(usuario);
 
         return new CadastroResponseDTO(

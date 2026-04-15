@@ -17,7 +17,7 @@ public interface ServicoMapper {
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "tenantId", ignore = true)
+    @Mapping(target = "tenant", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     Servicos toServicos(ServicoRequestDTO servicoRequestDTO);
@@ -25,7 +25,7 @@ public interface ServicoMapper {
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "tenantId", ignore = true)
+    @Mapping(target = "tenant", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     void atualizarServico(@MappingTarget Servicos servico, ServicoRequestDTO servicoRequestDTO);

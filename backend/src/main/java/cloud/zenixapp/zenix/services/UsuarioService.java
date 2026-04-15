@@ -8,10 +8,9 @@ import cloud.zenixapp.zenix.configs.exceptions.UsuarioExcluidoException;
 import cloud.zenixapp.zenix.configs.mappers.UsuarioMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.UsuarioLoginDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.UsuarioRequestDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.BarbeiroFilaResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.UsuarioResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.BarbeiroFilaResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.UsuarioSimplesResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Tenants;
 import cloud.zenixapp.zenix.models.entities.Unidades;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
@@ -117,7 +116,7 @@ public class UsuarioService {
     }
 
     /* Função que retorna todos os usuários via endpoint privado, necessária autenticação e passar o 'Tenant' via ‘token’*/
-    public List<UsuarioSimplesResponseDTO> buscarUsuarios(){
+    public List<Usuarios> buscarUsuarios(){
         return usuarioRepository.findAllByTenants(TenantContext.getTenantId());
     }
 

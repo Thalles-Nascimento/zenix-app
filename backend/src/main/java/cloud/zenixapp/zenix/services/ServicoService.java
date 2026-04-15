@@ -10,7 +10,9 @@ import cloud.zenixapp.zenix.models.dtos.requests.ServicoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ServicoResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Servicos;
+import cloud.zenixapp.zenix.models.entities.Tenants;
 import cloud.zenixapp.zenix.repositories.ServicoRepository;
+import cloud.zenixapp.zenix.repositories.TenantRepository;
 import jakarta.persistence.OptimisticLockException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,6 +32,9 @@ public class ServicoService {
     @Autowired
     private ServicoMapper servicoMapper;
 
+    @Autowired
+    private TenantRepository tenantRepository;
+
     @Transactional
     public SuccessResponseDTO inserirServico(ServicoRequestDTO servicoRequestDTO){
         String tenantId = TenantContext.getTenantId();
@@ -39,7 +44,10 @@ public class ServicoService {
         }
 
         Servicos servico = servicoMapper.toServicos(servicoRequestDTO);
-        servico.setTenantId(tenantId);
+        Tenants tenant = tenantRepository.findById(tenantId)
+                .orElseThrow(() -> new NotFoundException("Tenant não encontrado!"));
+
+        servico.setTenant(tenant);
 
         servicoRepository.save(servico);
 

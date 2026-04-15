@@ -18,7 +18,7 @@ public interface PagamentoMapper {
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "tenantId", ignore = true)
+    @Mapping(target = "tenant", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     FormaPagamento toPagamento(PagamentoRequestDTO pagamentoRequestDTO);
@@ -27,7 +27,7 @@ public interface PagamentoMapper {
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "tenantId", ignore = true)
+    @Mapping(target = "tenant", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     void atualizarFormaPagamento(@MappingTarget FormaPagamento pagamento, PagamentoRequestDTO pagamentoRequestDTO);

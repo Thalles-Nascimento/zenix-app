@@ -14,9 +14,8 @@ import java.util.List;
 public interface UnidadeMapper {
 
 
-    @Mapping(target = "tenant", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "tenantId", ignore = true)
+    @Mapping(target = "tenant", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "usuarios", ignore = true)
@@ -25,9 +24,8 @@ public interface UnidadeMapper {
     Unidades toUnidade(UnidadeRequestDTO unidadeDTO);
 
 
-    @Mapping(target = "tenant", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "tenantId", ignore = true)
+    @Mapping(target = "tenant", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "usuarios", ignore = true)
