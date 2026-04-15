@@ -1,9 +1,10 @@
 package cloud.zenixapp.zenix.repositories;
 
-import cloud.zenixapp.zenix.models.dtos.responses.UsuarioSimplesResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
-import jakarta.persistence.LockModeType;
-import org.springframework.data.jpa.repository.*;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.NativeQuery;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -15,8 +16,8 @@ public interface UsuarioRepository extends JpaRepository<Usuarios, String> {
 
     UserDetails findByEmail(String email);
 
-    @Query(
-            value = "SELECT u FROM Usuarios u WHERE u.tenant = :tenant"
+    @NativeQuery(
+            value = "SELECT * FROM usuarios u WHERE u.tenant_id = :tenant"
     )
     List<Usuarios> findAllByTenants(@Param("tenant") String tenant);
 
@@ -46,10 +47,9 @@ public interface UsuarioRepository extends JpaRepository<Usuarios, String> {
     )
     List<Usuarios> findBarbeirosByUnidade(@Param("unidadeId") String unidadeId);
 
-//   TODO - Refazer a Query
-    @Lock(LockModeType.OPTIMISTIC)
-    @Query(
-            value = "SELECT u FROM Usuarios u WHERE u.id = :id AND u.tenant = :tenantId"
+//  @Lock(LockModeType.OPTIMISTIC)
+    @NativeQuery(
+            value = "SELECT * FROM usuarios u WHERE u.id = :id AND u.tenant_id = :tenantId"
     )
     Optional<Usuarios> findById(@Param("id") String id, @Param("tenantId") String tenantId);
 

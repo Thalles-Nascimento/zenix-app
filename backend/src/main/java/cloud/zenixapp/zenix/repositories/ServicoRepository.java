@@ -1,9 +1,7 @@
 package cloud.zenixapp.zenix.repositories;
 
 import cloud.zenixapp.zenix.models.entities.Servicos;
-import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.data.repository.query.Param;
 
@@ -14,7 +12,6 @@ public interface ServicoRepository extends JpaRepository<Servicos, String> {
 
     boolean existsServicoByServicoAndTenantId(String servico, String tenantId);
 
-    @Lock(LockModeType.OPTIMISTIC)
     @NativeQuery(value = "SELECT servico_descricao, servico_valor, servico_status FROM servicos WHERE id = :id AND tenant_id = :tenantId")
     Optional<Servicos> findById(@Param("id") String id, @Param("tenantId") String tenantId);
 

@@ -7,7 +7,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
-@EnableResilientMethods
 public class ZenixApplication {
 
 	public static void main(String[] args) {

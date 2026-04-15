@@ -3,7 +3,6 @@ package cloud.zenixapp.zenix.services;
 import cloud.zenixapp.zenix.configs.TenantContext;
 import cloud.zenixapp.zenix.configs.exceptions.ExistsException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
-import cloud.zenixapp.zenix.configs.exceptions.OptimisticException;
 import cloud.zenixapp.zenix.configs.exceptions.UsuarioExcluidoException;
 import cloud.zenixapp.zenix.configs.mappers.UsuarioMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.UsuarioLoginDTO;
@@ -18,12 +17,10 @@ import cloud.zenixapp.zenix.repositories.TenantRepository;
 import cloud.zenixapp.zenix.repositories.UnidadeRepository;
 import cloud.zenixapp.zenix.repositories.UsuarioRepository;
 import cloud.zenixapp.zenix.services.security.TokenService;
-import jakarta.persistence.OptimisticLockException;
 import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.resilience.annotation.Retryable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -61,21 +58,30 @@ public class UsuarioService {
 
 
     public Map<String, String> loginUser(@NonNull UsuarioLoginDTO user){
-        if (usuarioRepository.findStatusByEmail(user.email()) == -1){
-            throw new UsuarioExcluidoException("Usuário foi excluído!");
+        if (usuarioRepository.existsByEmail(user.email())){
+            if(usuarioRepository.findStatusByEmail(user.email()) == -1){
+                throw new UsuarioExcluidoException("Usuário foi excluído!");
+
+            }
+
+            Map<String, String> access = new HashMap<>();
+
+            var usernamePassword = new UsernamePasswordAuthenticationToken(user.email(), user.senha());
+            var auth = authenticationManager.authenticate(usernamePassword);
+
+            Usuarios usuario = (Usuarios) auth.getPrincipal();
+            access.put("token", tokenService.generateToken(usuario));
+            access.put("nome", usuario.getNome());
+            access.put("grupo", usuario.getGrupo().toString());
+
+            return access;
         }
 
-        Map<String, String> access = new HashMap<>();
+        else{
+            throw new NotFoundException("Usuário não encontrado!");
+        }
 
-        var usernamePassword = new UsernamePasswordAuthenticationToken(user.email(), user.senha());
-        var auth = authenticationManager.authenticate(usernamePassword);
 
-        Usuarios usuario = (Usuarios) auth.getPrincipal();
-        access.put("token", tokenService.generateToken(usuario));
-        access.put("nome", usuario.getNome());
-        access.put("grupo", usuario.getGrupo().toString());
-
-        return access;
     }
 
     /*
@@ -139,12 +145,12 @@ public class UsuarioService {
      */
 //  Retry Pattern - lidar com indisponibilidade temporária
 //  Dentro do Spring Boot o Retryable é Síncrono, ou seja, executa novamente na mesma Thread utilizando o mesmo Tenant
-    @Retryable(
-            includes = OptimisticLockException.class,
-            maxRetries = 3,
-            delay = 100,
-            multiplier = 2 // Evitar Retry storm - Backoff Exponential
-    )
+//    @Retryable(
+//            includes = OptimisticLockException.class,
+//            maxRetries = 3,
+//            delay = 100,
+//            multiplier = 2 // Evitar Retry storm - Backoff Exponential
+//    )
     @Transactional
     public SuccessResponseDTO atualizarUsuario(String id, UsuarioRequestDTO userDTO) throws NotFoundException {
         String tenantId = TenantContext.getTenantId();
@@ -155,25 +161,19 @@ public class UsuarioService {
 
                     }
 
-                    try{
-                        usuarioMapper.atualizarUsuario(user, userDTO);
-                        if (userDTO.senha() != null && !userDTO.senha().isBlank()) {
-                            user.setSenha(new BCryptPasswordEncoder().encode(userDTO.senha()));
-                        }
-
-                        if (userDTO.unidade() != null) {
-//                        TODO Verificar o TenantId do Repository da Unidade
-                            Unidades unidade = unidadeRepository.findById(userDTO.unidade())
-                                    .orElseThrow(() -> new NotFoundException("Unidade não encontrada!"));
-                            user.setUnidade(unidade);
-                        }
-
-                        usuarioRepository.save(user);
-
-                    } catch (OptimisticLockException e){
-                        throw new OptimisticException("Erro ao atualizar!");
-
+                    usuarioMapper.atualizarUsuario(user, userDTO);
+                    if (userDTO.senha() != null && !userDTO.senha().isBlank()) {
+                        user.setSenha(new BCryptPasswordEncoder().encode(userDTO.senha()));
                     }
+
+                    if (userDTO.unidade() != null) {
+//                        TODO Verificar o TenantId do Repository da Unidade
+                        Unidades unidade = unidadeRepository.findById(userDTO.unidade())
+                                .orElseThrow(() -> new NotFoundException("Unidade não encontrada!"));
+                        user.setUnidade(unidade);
+                    }
+
+                    usuarioRepository.save(user);
 
                     return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
@@ -187,12 +187,6 @@ public class UsuarioService {
     /*
      * Função que deleta um usuário
      */
-    @Retryable(
-            includes = OptimisticLockException.class,
-            maxRetries = 3,
-            delay = 100,
-            multiplier = 2 // Evitar Retry storm - Backoff Exponential
-    )
     @Transactional
     public SuccessResponseDTO deletarUsuario(String id){
         String tenantId = TenantContext.getTenantId();
@@ -202,14 +196,8 @@ public class UsuarioService {
                         throw new UsuarioExcluidoException("Usuário já foi excluído");
                     }
 
-                    try{
-                        user.setDeletedAt(LocalDateTime.now());
-                        usuarioRepository.deleteLogico(id, tenantId);
-
-                    } catch (OptimisticLockException e){
-                        throw new OptimisticException("Erro ao deletar!");
-
-                    }
+                    user.setDeletedAt(LocalDateTime.now());
+                    usuarioRepository.deleteLogico(id, tenantId);
 
                     return new SuccessResponseDTO(
                         HttpStatus.OK.value(),
@@ -223,12 +211,6 @@ public class UsuarioService {
     /*
      * Função que ativa um usuário
      */
-    @Retryable(
-            includes = OptimisticLockException.class,
-            maxRetries = 3,
-            delay = 100,
-            multiplier = 2 // Evitar Retry storm - Backoff Exponential
-    )
     @Transactional
     public SuccessResponseDTO ativarUsuario(String id){
         String tenantId = TenantContext.getTenantId();
@@ -237,17 +219,8 @@ public class UsuarioService {
                     if (user.getStatus() != -1){
                         throw new UsuarioExcluidoException("Usuário está já ativado");
                     }
-
-
-                    try{
-                        user.setDeletedAt(null);
-                        usuarioRepository.ativarUsuario(id, tenantId);
-
-                    } catch (OptimisticLockException e){
-                        throw new OptimisticException("Erro ao deletar!");
-
-                    }
-
+                    user.setDeletedAt(null);
+                    usuarioRepository.ativarUsuario(id, tenantId);
 
                     return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
