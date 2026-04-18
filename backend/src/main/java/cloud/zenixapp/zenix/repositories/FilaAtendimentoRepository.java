@@ -36,6 +36,4 @@ public interface FilaAtendimentoRepository extends JpaRepository<Fila, Long> {
     @Query("DELETE FROM Fila f WHERE f.grupoId = :grupoId AND f.id != :id")
     void deletarOutrosDoGrupo(@Param("grupoId") String grupoId, @Param("id") Long id);
 
-    @Modifying
-    @Query("UPDATE Fila f SET f.usuario.id = :usuarioId WHERE f.id = :id")
-    void setarUsuario(@Param("id") Long id, @Param("usuarioId") Long usuarioId);}
+}
