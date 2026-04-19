@@ -42,6 +42,25 @@ public class FilaService {
     @Transactional
     public SucessFilaResponseDTO inserirAtendimentoFila(FilaRequestDTO filaDTO) throws SQLIntegrityConstraintViolationException {
         Fila fila = new Fila();
+
+        if(filaDTO.semPreferencia()){
+            fila.setNomeCliente(filaDTO.nomeCliente());
+            fila.setServico(filaDTO.servico());
+            fila.setFormaPagamento(filaDTO.formaPagamento());
+            fila.setTelefoneCliente(filaDTO.telefoneCliente());
+            fila.setSemPreferencia(true);
+            fila.setUsuario(null);
+
+            filaRepository.save(fila);
+
+            return new SucessFilaResponseDTO(
+                    fila.getId(),
+                    fila.getNomeCliente(),
+                    fila.getServico(),
+                    fila.getStatus()
+            );
+        }
+
         Usuarios user = usuarioService.getUsuarioById(filaDTO.idBarbeiro());
 
         fila.setNomeCliente(filaDTO.nomeCliente());
@@ -62,26 +81,6 @@ public class FilaService {
         );
     }
 
-    @Transactional
-    public List<SucessFilaResponseDTO> inserirSemPreferencia(FilaRequestDTO filaDTO) {
-        List<Usuarios> barbeiros = usuarioService.buscarUsuariosByUnidades(filaDTO.idUnidade());
-        String grupoId = UUID.randomUUID().toString();
-
-        return barbeiros.stream()
-                .map(barbeiro -> {
-                    Fila fila = new Fila();
-                    fila.setNomeCliente(filaDTO.nomeCliente());
-                    fila.setServico(filaDTO.servico());
-                    fila.setFormaPagamento(filaDTO.formaPagamento());
-                    fila.setTelefoneCliente(filaDTO.telefoneCliente());
-                    fila.setUsuario(barbeiro);
-                    fila.setSemPreferencia(true);
-                    fila.setGrupoId(grupoId);
-                    filaRepository.save(fila);
-                    return new SucessFilaResponseDTO(fila.getId(), fila.getNomeCliente(), fila.getServico(), fila.getStatus());
-                })
-                .toList();
-    }
 
     public List<FilaResponseDTO> getFilasByUser(){
         Usuarios userAuth = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -96,11 +95,13 @@ public class FilaService {
                         throw new FilaException("Clientes está Em Atendimento ou Finalizado");
                     }
 
+                    Usuarios userAuth = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
                     filaRepository.paraAtendimento(id);
                     filaRepository.marcarHoraInicio(id, LocalTime.now());
 
-                    if (atendimentoFila.isSemPreferencia() && atendimentoFila.getGrupoId() != null) {
-                        filaRepository.deletarOutrosDoGrupo(atendimentoFila.getGrupoId(), id);
+                    if (atendimentoFila.isSemPreferencia()) {
+                        filaRepository.setarUsuario(id, userAuth.getId());
                     }
 
                     return new SucessFilaResponseDTO(
