@@ -144,10 +144,6 @@ public class FilaService {
 
                     String statusMsg = clienteService.retiraRetornoCliente(atendimentoFila.getNomeCliente());
 
-                    if (atendimentoFila.isSemPreferencia() && atendimentoFila.getGrupoId() != null) {
-                        filaRepository.deletarOutrosDoGrupo(atendimentoFila.getGrupoId(), id);
-                    }
-
                     filaRepository.deleteById(id);
 
                     return new SucessFilaRetiradaResponseDTO(
