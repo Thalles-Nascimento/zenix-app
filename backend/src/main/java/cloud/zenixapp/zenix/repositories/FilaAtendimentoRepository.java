@@ -30,7 +30,12 @@ public interface FilaAtendimentoRepository extends JpaRepository<Fila, Long> {
     @Query(value = "UPDATE Fila SET inicioAtendimento = :horaInicio WHERE id = :id")
     void marcarHoraInicio(@Param("id") Long id, @Param("horaInicio") LocalTime horaInicio);
 
-    @NativeQuery(value = "SELECT * FROM fila_atendimentos WHERE (fila_usuario_id = :id OR fila_usuario_id IS NULL) and fila_status < 2 ORDER BY fila_horario ASC")
+    @NativeQuery(
+            value = "SELECT * " +
+                    "FROM fila_atendimentos " +
+                    "WHERE (fila_usuario_id = :id OR fila_usuario_id IS NULL) " +
+                    "and fila_status < 2 " +
+                    "ORDER BY fila_horario ASC")
     List<Fila> findByUser(@Param("id") Long id);
 
     @Modifying

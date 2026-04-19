@@ -16,13 +16,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalTime;
 import java.util.List;
 
 import static cloud.zenixapp.zenix.models.enums.StatusFilaEnum.AGUARDANDO;
 import static cloud.zenixapp.zenix.models.enums.StatusFilaEnum.EM_ATENDIMENTO;
-import java.util.UUID;
 
 @Service
 public class FilaService {
@@ -40,7 +38,7 @@ public class FilaService {
     private FilaMapper filaMapper;
 
     @Transactional
-    public SucessFilaResponseDTO inserirAtendimentoFila(FilaRequestDTO filaDTO) throws SQLIntegrityConstraintViolationException {
+    public SucessFilaResponseDTO inserirAtendimentoFila(FilaRequestDTO filaDTO){
         Fila fila = new Fila();
 
         if(filaDTO.semPreferencia()){
@@ -93,15 +91,16 @@ public class FilaService {
                 .map(atendimentoFila -> {
                     if(atendimentoFila.getStatus() != AGUARDANDO){
                         throw new FilaException("Clientes está Em Atendimento ou Finalizado");
-                    }
 
-                    Usuarios userAuth = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+                    }
 
                     filaRepository.paraAtendimento(id);
                     filaRepository.marcarHoraInicio(id, LocalTime.now());
 
                     if (atendimentoFila.isSemPreferencia()) {
+                        Usuarios userAuth = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
                         filaRepository.setarUsuario(id, userAuth.getId());
+
                     }
 
                     return new SucessFilaResponseDTO(
