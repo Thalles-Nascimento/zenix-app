@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { listarHistorico } from "../services/atendimento-service"
-import type { DadosProps } from "../types/atendimento"
+import type { DadosProps, TotalCliente } from "../types/atendimento"
 import { hoje, inicioSemana, parseData } from "../utils/date"
 
 
@@ -37,8 +37,6 @@ export function useFinanceiro() {
         .filter(a => parseData(a.date) === hoje())
         .reduce((acc, a) => acc + a.valor, 0)
 
-    console.log(hoje())
-
     const totalSemana = atendimentos
         .filter(a => {
             const data = parseData(a.date)
@@ -60,13 +58,18 @@ export function useFinanceiro() {
 
     const totalPeriodo = atendimentosFiltrados.reduce((acc, a) => acc + a.valor, 0)
 
-    // Totais por forma de pagamento
-    const porFormaPagamento = Object.entries(
-        atendimentosFiltrados.reduce((acc: Record<string, number>, a) => {
-            acc[a.formaPagamento] = (acc[a.formaPagamento] ?? 0) + a.valor
+    // Totais por clientes
+    const porClientes = Object.entries(
+        atendimentosFiltrados.reduce((acc: Record<string, TotalCliente>, a) => {
+            if (!acc[a.descricao]) acc[a.descricao] = { quantidade: 0, total: 0 }
+            console.log(acc)
+            acc[a.descricao].quantidade += 1
+            acc[a.descricao].total += a.valor
             return acc
         }, {})
-    ).map(([forma, total]) => ({ forma, total })).sort((a, b) => b.total - a.total)
+    ).map(([cliente, dados]) => ({ cliente, ...dados }))
+    .sort((a, b) => b.total - a.total)
+    
 
     // Dados para o gráfico
     const dadosGrafico = Object.values(
@@ -90,7 +93,7 @@ export function useFinanceiro() {
         totalMes,
         totalPeriodo,
         ticketMedio,
-        porFormaPagamento,
+        porClientes,
         atendimentosFiltrados,
         dadosGrafico,
         filtroInicio,

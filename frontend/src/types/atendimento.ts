@@ -16,3 +16,8 @@ export interface AtendimentoFormProps {
     formaPagamento: string
     observacao?: string
 }
+
+export interface TotalCliente{
+    quantidade: number
+    total: number
+}

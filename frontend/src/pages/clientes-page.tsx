@@ -13,7 +13,7 @@ import { InputTelefone } from "../components/common/input-telefone"
 import type { ClienteDTO } from "../types/cliente"
 import { usePaginacao } from "../hooks/use-pagination"
 import { Paginacao } from "../components/pagination"
-import { formatarTelefone } from "@/utils/formatter"
+import { formatarTelefone, formatarTelefoneCliente } from "@/utils/formatter"
 import { ModalConfirmacao } from "@/components/common/modal-confirmacao-component"
 import { parseDataBrazil } from "@/utils/date"
 
@@ -230,7 +230,7 @@ export default function ClientesPage() {
                                                 {cliente.nomeCliente}
                                             </td>
                                             <td className="px-4 py-4 notranslate text-gray-400">
-                                                {formatarTelefone(cliente.telefone ?? "")}
+                                                {formatarTelefoneCliente(cliente.telefone ?? "")}
                                             </td>
                                             <td className="px-4 py-4 notranslate">
                                                 {cliente.plano ? (
