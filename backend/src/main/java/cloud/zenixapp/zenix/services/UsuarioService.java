@@ -7,12 +7,12 @@ import cloud.zenixapp.zenix.configs.exceptions.UsuarioExcluidoException;
 import cloud.zenixapp.zenix.configs.mappers.UsuarioMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.UsuarioLoginDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.UsuarioRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.BarbeiroFilaResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.UsuarioResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Tenants;
 import cloud.zenixapp.zenix.models.entities.Unidades;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
+import cloud.zenixapp.zenix.models.interfaces.UsuarioSimples;
 import cloud.zenixapp.zenix.repositories.TenantRepository;
 import cloud.zenixapp.zenix.repositories.UnidadeRepository;
 import cloud.zenixapp.zenix.repositories.UsuarioRepository;
@@ -130,8 +130,8 @@ public class UsuarioService {
     * Função que retorna todos os usuários por unidade via endpoint público, não necessitando autenticação e passar o 'Tenant' via 'token'
     * Usado na tela de 'Login' da Fila
     */
-    public List<BarbeiroFilaResponseDTO> buscarBarbeirosPorUnidade(String unidadeId) {
-        return usuarioMapper.listResponseSimplesDTO(usuarioRepository.findBarbeirosByUnidade(unidadeId));
+    public List<UsuarioSimples> buscarBarbeirosPorUnidade(String unidadeId) {
+        return usuarioRepository.findBarbeirosByUnidade(unidadeId);
     }
 
     /* Função que retorna todos os usuários por unidade e TenantId - Usado no FilaService */

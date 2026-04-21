@@ -4,7 +4,8 @@ package cloud.zenixapp.zenix.controllers;
 import cloud.zenixapp.zenix.configs.handlers.BindingHandler;
 import cloud.zenixapp.zenix.models.dtos.requests.UsuarioLoginDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.UsuarioRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.*;
+import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.services.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,7 +23,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -112,7 +112,7 @@ public class UsuarioController {
 
     @GetMapping("/barbeiros/{unidadeId}")
     @Operation(summary = "Listar barbeiros por unidade", description = "Endpoint público para listar barbeiros ativos de uma unidade")
-    public ResponseEntity<List<BarbeiroFilaResponseDTO>> listarBarbeirosPorUnidade(@PathVariable String unidadeId){
+    public ResponseEntity<?> listarBarbeirosPorUnidade(@PathVariable String unidadeId){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(usuarioService.buscarBarbeirosPorUnidade(unidadeId));
     }
