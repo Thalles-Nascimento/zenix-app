@@ -135,12 +135,6 @@ public class UsuarioService {
         return usuarioRepository.findBarbeirosByUnidade(unidadeId);
     }
 
-    /* Função que retorna todos os usuários por unidade e TenantId - Usado no FilaService */
-    public List<Usuarios> buscarUsuariosByUnidadesForLoginFila(String unidadeId){
-        return usuarioRepository.findBarbeirosByUnidadeAndTenant(unidadeId, TenantContext.getTenantId());
-    }
-
-
     /*
      * Função que atualiza um usuário
      */

@@ -67,10 +67,4 @@ public interface UsuarioRepository extends JpaRepository<Usuarios, String> {
     )
     Optional<Usuarios> findById(@Param("id") String id, @Param("tenantId") String tenantId);
 
-    @NativeQuery(
-            value = "SELECT id, usuario_email, usuario_nome, usuario_cpf, usuario_grupo, usuario_status, usuarios_unidade" +
-            " FROM usuarios WHERE usuarios_unidade = :unidadeId AND usuario_status = 1 AND tenant_id = :tenantId"
-    )
-    List<Usuarios> findBarbeirosByUnidadeAndTenant(@Param("unidadeId") String unidadeId, @Param("tenantId") String tenantId);
-
 }
