@@ -1,6 +1,7 @@
 package cloud.zenixapp.zenix.repositories;
 
 import cloud.zenixapp.zenix.models.entities.Usuarios;
+import cloud.zenixapp.zenix.models.interfaces.UsuarioSimples;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.NativeQuery;
@@ -43,9 +44,9 @@ public interface UsuarioRepository extends JpaRepository<Usuarios, String> {
     void ativarUsuario(@Param("id") String id, @Param("tenantId") String tenantId);
 
     @NativeQuery(
-            value = "SELECT id, usuario_nome FROM usuarios WHERE usuarios_unidade = :unidadeId AND usuario_status = 1"
+            value = "SELECT id, usuario_nome AS nome FROM usuarios WHERE usuarios_unidade = :unidadeId AND usuario_status = 1"
     )
-    List<Usuarios> findBarbeirosByUnidade(@Param("unidadeId") String unidadeId);
+    List<UsuarioSimples> findBarbeirosByUnidade(@Param("unidadeId") String unidadeId);
 
 //  @Lock(LockModeType.OPTIMISTIC)
     @NativeQuery(
