@@ -13,6 +13,7 @@ import cloud.zenixapp.zenix.models.entities.Tenants;
 import cloud.zenixapp.zenix.models.entities.Unidades;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.models.interfaces.UsuarioSimples;
+import cloud.zenixapp.zenix.models.interfaces.UsuariosProjection;
 import cloud.zenixapp.zenix.repositories.TenantRepository;
 import cloud.zenixapp.zenix.repositories.UnidadeRepository;
 import cloud.zenixapp.zenix.repositories.UsuarioRepository;
@@ -122,7 +123,7 @@ public class UsuarioService {
     }
 
     /* Função que retorna todos os usuários via endpoint privado, necessária autenticação e passar o 'Tenant' via ‘token’*/
-    public List<Usuarios> buscarUsuarios(){
+    public List<UsuariosProjection> buscarUsuarios(){
         return usuarioRepository.findAllByTenants(TenantContext.getTenantId());
     }
 

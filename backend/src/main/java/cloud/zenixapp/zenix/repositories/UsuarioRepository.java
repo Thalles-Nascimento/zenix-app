@@ -2,6 +2,7 @@ package cloud.zenixapp.zenix.repositories;
 
 import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.models.interfaces.UsuarioSimples;
+import cloud.zenixapp.zenix.models.interfaces.UsuariosProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.NativeQuery;
@@ -18,9 +19,21 @@ public interface UsuarioRepository extends JpaRepository<Usuarios, String> {
     UserDetails findByEmail(String email);
 
     @NativeQuery(
-            value = "SELECT * FROM usuarios u WHERE u.tenant_id = :tenant"
+            value = "SELECT u.id," +
+                    "u.usuario_nome AS nome," +
+                    "u.usuario_email AS email," +
+                    "u.usuario_cpf AS cpf," +
+                    "u.usuario_grupo AS grupo," +
+                    "un.id AS unidadeId," +
+                    "un.unidade_nome AS unidadeNome," +
+                    "un.unidade_endereco AS unidadeEndereco," +
+                    "un.unidade_status AS unidadeStatus," +
+                    "u.usuario_status AS status" +
+                    " FROM usuarios u " +
+                    " INNER JOIN unidades un ON u.usuarios_unidade = un.id" +
+                    " WHERE u.tenant_id = :tenant;"
     )
-    List<Usuarios> findAllByTenants(@Param("tenant") String tenant);
+    List<UsuariosProjection> findAllByTenants(@Param("tenant") String tenant);
 
     boolean existsByCpf(String cpf);
 
