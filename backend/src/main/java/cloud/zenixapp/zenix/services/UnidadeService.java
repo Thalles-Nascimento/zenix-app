@@ -100,8 +100,8 @@ public class UnidadeService {
         );
     }
 
-    public Unidades listarUnidadeByIdCompleto(String id){
-        return unidadeRepository.findById(id)
+    public Unidades listarUnidadeByIdCompleto(String id, String tenantId){
+        return unidadeRepository.findById(id, tenantId)
                 .map(unidade -> {
                     if(unidade.getStatus() == -1){
                         throw new UnidadeExcluidoException("Unidade foi excluída!");

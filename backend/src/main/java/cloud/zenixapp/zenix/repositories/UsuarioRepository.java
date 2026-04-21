@@ -1,8 +1,8 @@
 package cloud.zenixapp.zenix.repositories;
 
 import cloud.zenixapp.zenix.models.entities.Usuarios;
-import cloud.zenixapp.zenix.models.interfaces.UsuarioSimples;
-import cloud.zenixapp.zenix.models.interfaces.UsuariosProjection;
+import cloud.zenixapp.zenix.models.interfaces.UsuarioSimplesView;
+import cloud.zenixapp.zenix.models.interfaces.UsuariosProjectionView;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.NativeQuery;
@@ -33,7 +33,7 @@ public interface UsuarioRepository extends JpaRepository<Usuarios, String> {
                     " INNER JOIN unidades un ON u.usuarios_unidade = un.id" +
                     " WHERE u.tenant_id = :tenant;"
     )
-    List<UsuariosProjection> findAllByTenants(@Param("tenant") String tenant);
+    List<UsuariosProjectionView> findAllByTenants(@Param("tenant") String tenant);
 
     boolean existsByCpf(String cpf);
 
@@ -59,7 +59,7 @@ public interface UsuarioRepository extends JpaRepository<Usuarios, String> {
     @NativeQuery(
             value = "SELECT id, usuario_nome AS nome FROM usuarios WHERE usuarios_unidade = :unidadeId AND usuario_status = 1"
     )
-    List<UsuarioSimples> findBarbeirosByUnidade(@Param("unidadeId") String unidadeId);
+    List<UsuarioSimplesView> findBarbeirosByUnidade(@Param("unidadeId") String unidadeId);
 
 //  @Lock(LockModeType.OPTIMISTIC)
     @NativeQuery(

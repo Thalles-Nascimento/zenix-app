@@ -12,8 +12,8 @@ import cloud.zenixapp.zenix.models.dtos.responses.UsuarioResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Tenants;
 import cloud.zenixapp.zenix.models.entities.Unidades;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
-import cloud.zenixapp.zenix.models.interfaces.UsuarioSimples;
-import cloud.zenixapp.zenix.models.interfaces.UsuariosProjection;
+import cloud.zenixapp.zenix.models.interfaces.UsuarioSimplesView;
+import cloud.zenixapp.zenix.models.interfaces.UsuariosProjectionView;
 import cloud.zenixapp.zenix.repositories.TenantRepository;
 import cloud.zenixapp.zenix.repositories.UnidadeRepository;
 import cloud.zenixapp.zenix.repositories.UsuarioRepository;
@@ -107,8 +107,7 @@ public class UsuarioService {
 
         }
         else{
-            //        TODO Verificar o TenantId do Repository da Unidade
-            Unidades unidade = unidadeService.listarUnidadeByIdCompleto(userRegister.unidade());
+            Unidades unidade = unidadeService.listarUnidadeByIdCompleto(userRegister.unidade(), tenantId);
             newUser = new Usuarios(userRegister.nome(), userRegister.email(), unidade, encryptPassword, userRegister.cpf(), userRegister.grupo());
         }
 
@@ -123,7 +122,7 @@ public class UsuarioService {
     }
 
     /* Função que retorna todos os usuários via endpoint privado, necessária autenticação e passar o 'Tenant' via ‘token’*/
-    public List<UsuariosProjection> buscarUsuarios(){
+    public List<UsuariosProjectionView> buscarUsuarios(){
         return usuarioRepository.findAllByTenants(TenantContext.getTenantId());
     }
 
@@ -131,7 +130,7 @@ public class UsuarioService {
     * Função que retorna todos os usuários por unidade via endpoint público, não necessitando autenticação e passar o 'Tenant' via 'token'
     * Usado na tela de 'Login' da Fila
     */
-    public List<UsuarioSimples> buscarBarbeirosPorUnidade(String unidadeId) {
+    public List<UsuarioSimplesView> buscarBarbeirosPorUnidade(String unidadeId) {
         return usuarioRepository.findBarbeirosByUnidade(unidadeId);
     }
 
