@@ -90,7 +90,7 @@ public class FilaService {
         return filaRepository.findById(id)
                 .map(atendimentoFila -> {
                     if(atendimentoFila.getStatus() != AGUARDANDO){
-                        throw new FilaException("Clientes está Em Atendimento ou Finalizado");
+                        throw new FilaException("Cliente está Em Atendimento ou Finalizado");
 
                     }
 
