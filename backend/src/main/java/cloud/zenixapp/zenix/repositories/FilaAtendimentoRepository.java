@@ -34,9 +34,9 @@ public interface FilaAtendimentoRepository extends JpaRepository<Fila, Long> {
             value = "SELECT * " +
                     "FROM fila_atendimentos " +
                     "WHERE (fila_usuario_id = :id OR fila_usuario_id IS NULL) " +
-                    "and fila_status < 2 " +
+                    "AND fila_status < 2 AND fila_unidade_id = :unidadeId " +
                     "ORDER BY fila_horario ASC")
-    List<Fila> findByUser(@Param("id") Long id);
+    List<Fila> findByUser(@Param("id") Long id, @Param("unidadeId") Long unidadeId);
 
     @Modifying
     @Query("UPDATE Fila f SET f.usuario.id = :usuarioId WHERE f.id = :id")

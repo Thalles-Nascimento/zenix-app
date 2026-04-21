@@ -67,4 +67,8 @@ public class Fila implements Serializable {
     @Column(name = "fila_delete_at")
     private LocalDateTime delete_at;
 
+    @Column(name = "fila_unidade_id", nullable = false)
+    private Long unidadeId;
+
+
 }
