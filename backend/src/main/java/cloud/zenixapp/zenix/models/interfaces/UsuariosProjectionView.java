@@ -1,6 +1,6 @@
 package cloud.zenixapp.zenix.models.interfaces;
 
-public interface UsuariosProjection {
+public interface UsuariosProjectionView {
     String getId();
     String getNome();
     String getEmail();
