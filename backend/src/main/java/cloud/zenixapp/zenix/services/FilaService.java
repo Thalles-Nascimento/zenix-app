@@ -5,8 +5,8 @@ import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.mappers.FilaMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.FilaRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.FilaResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessFilaResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Fila;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.repositories.FilaAtendimentoRepository;
@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.UUID;
 
 import static cloud.zenixapp.zenix.models.enums.StatusFilaEnum.AGUARDANDO;
 import static cloud.zenixapp.zenix.models.enums.StatusFilaEnum.EM_ATENDIMENTO;
@@ -42,6 +41,25 @@ public class FilaService {
     @Transactional
     public SuccessFilaResponseDTO inserirAtendimentoFila(FilaRequestDTO filaDTO) throws SQLIntegrityConstraintViolationException {
         Fila fila = new Fila();
+
+        if(filaDTO.semPreferencia()){
+            fila.setNomeCliente(filaDTO.nomeCliente());
+            fila.setServico(filaDTO.servico());
+            fila.setFormaPagamento(filaDTO.formaPagamento());
+            fila.setTelefoneCliente(filaDTO.telefoneCliente());
+            fila.setSemPreferencia(true);
+            fila.setUsuario(null);
+
+            filaRepository.save(fila);
+
+            return new SuccessFilaResponseDTO(
+                    fila.getId(),
+                    fila.getNomeCliente(),
+                    fila.getServico(),
+                    fila.getStatus()
+            );
+        }
+
         Usuarios user = usuarioService.getUsuarioById(filaDTO.idBarbeiro());
 
         fila.setNomeCliente(filaDTO.nomeCliente());
@@ -62,25 +80,6 @@ public class FilaService {
         );
     }
 
-    @Transactional
-    public List<SuccessFilaResponseDTO> inserirSemPreferencia(FilaRequestDTO filaDTO) {
-        List<Usuarios> barbeiros = usuarioService.buscarUsuariosByUnidadesForLoginFila(filaDTO.idUnidade());
-        String grupoId = UUID.randomUUID().toString();
-
-        return barbeiros.stream().map(barbeiro -> {
-            Fila fila = new Fila();
-            fila.setNomeCliente(filaDTO.nomeCliente());
-            fila.setServico(filaDTO.servico());
-            fila.setFormaPagamento(filaDTO.formaPagamento());
-            fila.setTelefoneCliente(filaDTO.telefoneCliente());
-            fila.setUsuario(barbeiro);
-            fila.setSemPreferencia(true);
-            fila.setGrupoId(grupoId);
-            filaRepository.save(fila);
-            return new SuccessFilaResponseDTO(fila.getId(), fila.getNomeCliente(), fila.getServico(), fila.getStatus());
-        }).toList();
-    }
-
     public List<FilaResponseDTO> getFilasByUser(){
         Usuarios userAuth = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return filaMapper.toListFilaDTO(filaRepository.findByUser(userAuth.getId()));
@@ -91,15 +90,14 @@ public class FilaService {
         return filaRepository.findById(id)
                 .map(atendimentoFila -> {
                     if(atendimentoFila.getStatus() != AGUARDANDO){
-                        throw new FilaException("Clientes está Em Atendimento ou Finalizado");
+                        throw new FilaException("Cliente está Em Atendimento ou Finalizado");
                     }
-                    Usuarios userAuth = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
                     filaRepository.paraAtendimento(id);
                     filaRepository.marcarHoraInicio(id, LocalTime.now());
 
-                    if (atendimentoFila.isSemPreferencia() && atendimentoFila.getGrupoId() != null) {
-                        filaRepository.deletarOutrosDoGrupo(atendimentoFila.getGrupoId(), id);
+                    if (atendimentoFila.isSemPreferencia()) {
+                        Usuarios userAuth = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
                         filaRepository.setarUsuario(id, userAuth.getId());
                     }
 
@@ -144,10 +142,6 @@ public class FilaService {
                     }
 
                     String statusMsg = clienteService.retiraRetornoCliente(atendimentoFila.getNomeCliente());
-
-                    if (atendimentoFila.isSemPreferencia() && atendimentoFila.getGrupoId() != null) {
-                        filaRepository.deletarOutrosDoGrupo(atendimentoFila.getGrupoId(), id);
-                    }
 
                     filaRepository.deleteById(id);
 
