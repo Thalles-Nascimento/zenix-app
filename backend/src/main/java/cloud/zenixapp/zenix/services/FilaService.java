@@ -47,6 +47,7 @@ public class FilaService {
             fila.setFormaPagamento(filaDTO.formaPagamento());
             fila.setTelefoneCliente(filaDTO.telefoneCliente());
             fila.setSemPreferencia(true);
+            fila.setUnidadeId(filaDTO.idUnidade());
             fila.setUsuario(null);
 
             filaRepository.save(fila);
@@ -65,6 +66,7 @@ public class FilaService {
         fila.setServico(filaDTO.servico());
         fila.setFormaPagamento(filaDTO.formaPagamento());
         fila.setTelefoneCliente(filaDTO.telefoneCliente());
+        fila.setUnidadeId(fila.getUnidadeId());
         fila.setUsuario(user);
 
 
@@ -82,7 +84,8 @@ public class FilaService {
 
     public List<FilaResponseDTO> getFilasByUser(){
         Usuarios userAuth = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return filaMapper.toListFilaDTO(filaRepository.findByUser(userAuth.getId()));
+        Long idUnidade = userAuth.getUnidade().getId();
+        return filaMapper.toListFilaDTO(filaRepository.findByUser(userAuth.getId(), idUnidade));
     }
 
     @Transactional
