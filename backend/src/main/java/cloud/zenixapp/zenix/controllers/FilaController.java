@@ -2,6 +2,7 @@ package cloud.zenixapp.zenix.controllers;
 
 import cloud.zenixapp.zenix.configs.handlers.BindingHandler;
 import cloud.zenixapp.zenix.models.dtos.requests.FilaRequestDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.FilaResponseDTO;
 import cloud.zenixapp.zenix.services.FilaService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -12,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/${api-url}/fila")
@@ -34,7 +36,7 @@ public class FilaController {
     }
 
     @GetMapping
-    public ResponseEntity<?> buscarClientesFila(){
+    public ResponseEntity<List<FilaResponseDTO>> buscarClientesFila(){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(filaService.getFilasByUser());
     }

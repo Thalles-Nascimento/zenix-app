@@ -1,1 +1,2 @@
-ALTER TABLE `fila_atendimentos` DROP COLUMN fila_grupo_id;
+ALTER TABLE `fila_atendimentos` ADD INDEX idx_horario (fila_horario);
+
