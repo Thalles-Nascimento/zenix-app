@@ -14,6 +14,7 @@ import cloud.zenixapp.zenix.models.dtos.responses.UsuarioSimplesResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Tenants;
 import cloud.zenixapp.zenix.models.entities.Unidades;
 import cloud.zenixapp.zenix.models.enums.UsuariosRoleEnum;
+import cloud.zenixapp.zenix.models.interfaces.UnidadeSimplesView;
 import cloud.zenixapp.zenix.repositories.TenantRepository;
 import cloud.zenixapp.zenix.repositories.UnidadeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,15 +62,15 @@ public class UnidadeService {
         return unidadeMapper.toListUnidadeDTO(unidadeRepository.findUnidadesByTenant(TenantContext.getTenantId()));
     }
 
-    public UnidadeResponseDTO listarUnidadeById(String id){
-        return unidadeRepository.findById(id)
+    public Unidades listarUnidadeById(String id){
+        return unidadeRepository.findById(id, TenantContext.getTenantId())
                 .map(unidade -> {
                     if(unidade.getStatus() == -1){
                         throw new UnidadeExcluidoException("Unidade foi excluída!");
 
                     }
 
-                    return unidadeMapper.toDTO(unidade);
+                    return unidadeMapper.fromUnidadesViewToUnidades(unidade);
 
                 })
                 .orElseThrow(() -> new NotFoundException("Unidade não encontrada!"));
@@ -102,13 +103,13 @@ public class UnidadeService {
 
     public Unidades listarUnidadeByIdCompleto(String id, String tenantId){
         return unidadeRepository.findById(id, tenantId)
-                .map(unidade -> {
-                    if(unidade.getStatus() == -1){
+                .map(unidadeView -> {
+                    if(unidadeView.getStatus() == -1){
                         throw new UnidadeExcluidoException("Unidade foi excluída!");
 
                     }
 
-                    return unidade;
+                    return unidadeMapper.fromUnidadesViewToUnidades(unidadeView);
 
                 })
                 .orElseThrow(() -> new NotFoundException("Unidade não encontrada!"));
@@ -117,11 +118,13 @@ public class UnidadeService {
     @Transactional
     public SuccessResponseDTO atualizarUnidade(String id, UnidadeRequestDTO unidadeDTO){
         return unidadeRepository.findById(id, TenantContext.getTenantId())
-                .map(unidade -> {
-                    if(unidade.getStatus() == -1){
+                .map(unidadeView -> {
+                    if(unidadeView.getStatus() == -1){
                         throw new NotFoundException("Unidade foi excluída!");
 
                     }
+
+                    Unidades unidade = unidadeMapper.fromUnidadesViewToUnidades(unidadeView);
 
                     unidadeMapper.atualizarUnidade(unidade, unidadeDTO);
                     unidadeRepository.save(unidade);

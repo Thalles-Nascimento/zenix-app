@@ -1,12 +1,11 @@
 package cloud.zenixapp.zenix.configs.mappers;
 
 import cloud.zenixapp.zenix.models.dtos.requests.UnidadeRequestDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.ClienteResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.UnidadeResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Unidades;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import cloud.zenixapp.zenix.models.interfaces.UnidadeSimplesView;
+import org.mapstruct.*;
 
 import java.util.List;
 
@@ -23,6 +22,15 @@ public interface UnidadeMapper {
     @Mapping(target = "id", ignore = true)
     Unidades toUnidade(UnidadeRequestDTO unidadeDTO);
 
+    @Mapping(target = "nomeUnidade", source = "nome")
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "tenant", ignore = true)
+    @Mapping(target = "deletedAt", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "usuarios", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    Unidades fromUnidadesViewToUnidades(UnidadeSimplesView unidadeView);
 
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "tenant", ignore = true)
