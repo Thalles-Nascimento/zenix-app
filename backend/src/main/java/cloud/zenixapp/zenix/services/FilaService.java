@@ -66,7 +66,7 @@ public class FilaService {
         fila.setServico(filaDTO.servico());
         fila.setFormaPagamento(filaDTO.formaPagamento());
         fila.setTelefoneCliente(filaDTO.telefoneCliente());
-        fila.setUnidadeId(fila.getUnidadeId());
+        fila.setUnidadeId(filaDTO.idUnidade());
         fila.setUsuario(user);
 
 
