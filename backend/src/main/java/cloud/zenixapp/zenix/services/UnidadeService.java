@@ -8,7 +8,6 @@ import cloud.zenixapp.zenix.configs.exceptions.UnidadeExcluidoException;
 import cloud.zenixapp.zenix.configs.mappers.UnidadeMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.UnidadeRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.UnidadeResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.UnidadeUserResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.UsuarioSimplesResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Tenants;
