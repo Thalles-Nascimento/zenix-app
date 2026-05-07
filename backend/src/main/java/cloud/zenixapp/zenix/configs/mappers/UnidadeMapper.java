@@ -23,13 +23,13 @@ public interface UnidadeMapper {
     Unidades toUnidade(UnidadeRequestDTO unidadeDTO);
 
     @Mapping(target = "nomeUnidade", source = "nome")
-    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "updatedAt", source = "updateAt")
     @Mapping(target = "tenant", ignore = true)
-    @Mapping(target = "deletedAt", ignore = true)
+    @Mapping(target = "deletedAt", source = "deleteAt")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "usuarios", ignore = true)
     @Mapping(target = "status", ignore = true)
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "id", source = "id")
     Unidades fromUnidadesViewToUnidades(UnidadeSimplesView unidadeView);
 
     @Mapping(target = "updatedAt", ignore = true)

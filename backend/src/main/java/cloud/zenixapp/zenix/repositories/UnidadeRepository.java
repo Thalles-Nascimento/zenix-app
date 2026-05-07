@@ -13,11 +13,11 @@ import java.util.Optional;
 public interface UnidadeRepository extends JpaRepository<Unidades, String> {
 
     @Modifying
-    @NativeQuery(value = "UPDATE unidades SET unidade_status = -1 WHERE unidade_id = :id AND tenant_id = :tenantId")
+    @NativeQuery(value = "UPDATE unidades SET unidade_status = -1 WHERE id = :id AND tenant_id = :tenantId")
     void deleteLogico(@Param("id") String id, @Param("tenantId") String tenantId);
 
     @Modifying
-    @NativeQuery(value = "UPDATE unidades SET unidade_status = 1 WHERE unidade_id = :id AND tenant_id = :tenantId")
+    @NativeQuery(value = "UPDATE unidades SET unidade_status = 1 WHERE id = :id AND tenant_id = :tenantId")
     void ativarUnidade(@Param("id") String id, @Param("tenantId")String tenantId);
 
     boolean existsByNomeUnidadeAndTenantId(String nomeUnidade, String tenantId);
@@ -29,7 +29,9 @@ public interface UnidadeRepository extends JpaRepository<Unidades, String> {
             value = "SELECT un.id AS id, " +
             "un.unidade_nome AS nome," +
             "un.unidade_endereco AS endereco," +
-            "un.unidade_status AS status " +
+            "un.unidade_status AS status," +
+            "un.updated_at AS updateAt," +
+            "un.deleted_at AS deleteAt " +
             "FROM unidades un WHERE un.id = :id AND un.tenant_id = :tenantId")
     Optional<UnidadeSimplesView> findById(@Param("id") String id, @Param("tenantId") String tenantId);
 

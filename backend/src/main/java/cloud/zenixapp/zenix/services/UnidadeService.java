@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -62,7 +63,7 @@ public class UnidadeService {
         return unidadeMapper.toListUnidadeDTO(unidadeRepository.findUnidadesByTenant(TenantContext.getTenantId()));
     }
 
-    public Unidades listarUnidadeById(String id){
+    public UnidadeSimplesView listarUnidadeById(String id){
         return unidadeRepository.findById(id, TenantContext.getTenantId())
                 .map(unidade -> {
                     if(unidade.getStatus() == -1){
@@ -70,7 +71,7 @@ public class UnidadeService {
 
                     }
 
-                    return unidadeMapper.fromUnidadesViewToUnidades(unidade);
+                    return unidade;
 
                 })
                 .orElseThrow(() -> new NotFoundException("Unidade não encontrada!"));
@@ -149,6 +150,8 @@ public class UnidadeService {
                     }
 
                     unidadeRepository.deleteLogico(id, tenantId);
+                    Unidades unidadeEntity = unidadeMapper.fromUnidadesViewToUnidades(unidade);
+                    unidadeEntity.setDeletedAt(LocalDateTime.now());
 
                     return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
