@@ -2,13 +2,10 @@ package cloud.zenixapp.zenix.controllers;
 
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.handlers.BindingHandler;
-import cloud.zenixapp.zenix.configs.mappers.AtendimentoMapper;
-import cloud.zenixapp.zenix.models.dtos.requests.AtendimentoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.UnidadeRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.*;
-import cloud.zenixapp.zenix.models.entities.Usuarios;
+import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.UnidadeUserResponseDTO;
 import cloud.zenixapp.zenix.models.interfaces.UnidadeSimplesView;
-import cloud.zenixapp.zenix.services.AtendimentoService;
 import cloud.zenixapp.zenix.services.UnidadeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -18,7 +15,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 

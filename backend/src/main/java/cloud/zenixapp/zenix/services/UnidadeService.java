@@ -59,8 +59,8 @@ public class UnidadeService {
         );
     }
 
-    public List<UnidadeResponseDTO> listarUnidades(){
-        return unidadeMapper.toListUnidadeDTO(unidadeRepository.findUnidadesByTenant(TenantContext.getTenantId()));
+    public List<UnidadeSimplesView> listarUnidades(){
+        return unidadeRepository.findUnidadesByTenant(TenantContext.getTenantId());
     }
 
     public UnidadeSimplesView listarUnidadeById(String id){
@@ -149,9 +149,11 @@ public class UnidadeService {
 
                     }
 
-                    unidadeRepository.deleteLogico(id, tenantId);
                     Unidades unidadeEntity = unidadeMapper.fromUnidadesViewToUnidades(unidade);
                     unidadeEntity.setDeletedAt(LocalDateTime.now());
+                    unidadeRepository.save(unidadeEntity);
+
+                    unidadeRepository.deleteLogico(id, tenantId);
 
                     return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
@@ -170,6 +172,10 @@ public class UnidadeService {
                         throw new UnidadeAtivaException("Unidade já está ativa!");
 
                     }
+                    Unidades unidadeEntity = unidadeMapper.fromUnidadesViewToUnidades(unidade);
+                    unidadeEntity.setDeletedAt(null);
+                    unidadeRepository.save(unidadeEntity);
+
                     unidadeRepository.ativarUnidade(id, tenantId);
 
                     return new SuccessResponseDTO(
