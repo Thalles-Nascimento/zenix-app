@@ -7,6 +7,7 @@ import cloud.zenixapp.zenix.models.dtos.requests.AtendimentoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.UnidadeRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.*;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
+import cloud.zenixapp.zenix.models.interfaces.UnidadeSimplesView;
 import cloud.zenixapp.zenix.services.AtendimentoService;
 import cloud.zenixapp.zenix.services.UnidadeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -63,7 +64,7 @@ public class UnidadeController {
             @ApiResponse(responseCode = "200", description = "Unidade encontrada")
     })
     @Operation(summary = "Listar Unidades", description = "Endpoint para listar todas as unidades")
-    public ResponseEntity<List<UnidadeResponseDTO>> findAll(){
+    public ResponseEntity<List<UnidadeSimplesView>> findAll(){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(unidadeService.listarUnidades());
     }
