@@ -22,8 +22,15 @@ public interface UnidadeRepository extends JpaRepository<Unidades, String> {
 
     boolean existsByNomeUnidadeAndTenantId(String nomeUnidade, String tenantId);
 
-    @NativeQuery(value = "SELECT * FROM unidades WHERE tenant_id = :tenantId")
-    List<Unidades> findUnidadesByTenant(@Param("tenantId") String tenantId);
+    @NativeQuery(
+            value = "SELECT un.id AS id," +
+            "un.unidade_nome AS nome," +
+            "un.unidade_endereco AS endereco," +
+            "un.unidade_status AS status," +
+            "un.updated_at AS updateAt," +
+            "un.deleted_at AS deleteAt " +
+            "FROM unidades un WHERE tenant_id = :tenantId")
+    List<UnidadeSimplesView> findUnidadesByTenant(@Param("tenantId") String tenantId);
 
     @NativeQuery(
             value = "SELECT un.id AS id, " +
