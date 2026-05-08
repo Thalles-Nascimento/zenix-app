@@ -11,6 +11,7 @@ import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Servicos;
 import cloud.zenixapp.zenix.models.entities.Tenants;
 import cloud.zenixapp.zenix.models.interfaces.ServicosSimplesView;
+import cloud.zenixapp.zenix.models.interfaces.ServicosView;
 import cloud.zenixapp.zenix.repositories.ServicoRepository;
 import cloud.zenixapp.zenix.repositories.TenantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,16 +60,16 @@ public class ServicoService {
         return servicoRepository.findAll(TenantContext.getTenantId());
     }
 
+    public ServicosView listarServicoPorId(String id){
+        return servicoRepository.findById(id, TenantContext.getTenantId())
+                .orElseThrow(() -> new NotFoundException("Serviço não encontrado"));
+    }
+
 
     @Transactional
     public SuccessResponseDTO atualizarServico(ServicoRequestDTO servicoRequestDTO, String id){
         return servicoRepository.findById(id, TenantContext.getTenantId())
                 .map(servicoView -> {
-                    if (servicoView.getStatus() == -1){
-                        throw new ServicoExcluidoException("Serviço foi excluído!");
-
-                    }
-
                     Servicos servico = servicoMapper.fromServicosViewToServicos(servicoView);
 
                     servicoMapper.atualizarServico(servico, servicoRequestDTO);
