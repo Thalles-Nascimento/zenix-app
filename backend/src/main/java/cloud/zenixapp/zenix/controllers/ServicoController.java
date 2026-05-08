@@ -2,10 +2,9 @@ package cloud.zenixapp.zenix.controllers;
 
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.handlers.BindingHandler;
-import cloud.zenixapp.zenix.configs.mappers.ServicoMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.ServicoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.ServicoResponseDTO;
+import cloud.zenixapp.zenix.models.interfaces.ServicosSimplesView;
 import cloud.zenixapp.zenix.services.ServicoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -30,8 +29,6 @@ public class ServicoController {
     @Autowired
     private ServicoService servicoService;
 
-    @Autowired
-    private ServicoMapper servicoMapper;
 
     /*
     *Endpoint para inserção de um serviço no Banco de Dados
@@ -62,7 +59,7 @@ public class ServicoController {
             @ApiResponse(responseCode = "200", description = "Serviços encontrado")
     })
     @Operation(summary = "Listar serviços", description = "Endpoint para listar todos os serviços")
-    public ResponseEntity<List<ServicoResponseDTO>> findAllServicos(){
+    public ResponseEntity<List<ServicosSimplesView>> findAllServicos(){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(servicoService.buscarTodosServicos());
     }

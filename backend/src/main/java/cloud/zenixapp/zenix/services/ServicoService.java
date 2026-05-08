@@ -10,6 +10,7 @@ import cloud.zenixapp.zenix.models.dtos.responses.ServicoResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Servicos;
 import cloud.zenixapp.zenix.models.entities.Tenants;
+import cloud.zenixapp.zenix.models.interfaces.ServicosSimplesView;
 import cloud.zenixapp.zenix.repositories.ServicoRepository;
 import cloud.zenixapp.zenix.repositories.TenantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,19 +55,21 @@ public class ServicoService {
         );
     }
 
-    public List<ServicoResponseDTO> buscarTodosServicos(){
-        return servicoMapper.toListServicos(servicoRepository.findAll(TenantContext.getTenantId()));
+    public List<ServicosSimplesView> buscarTodosServicos(){
+        return servicoRepository.findAll(TenantContext.getTenantId());
     }
 
 
     @Transactional
     public SuccessResponseDTO atualizarServico(ServicoRequestDTO servicoRequestDTO, String id){
         return servicoRepository.findById(id, TenantContext.getTenantId())
-                .map(servico -> {
-                    if (servico.getStatus() == -1){
+                .map(servicoView -> {
+                    if (servicoView.getStatus() == -1){
                         throw new ServicoExcluidoException("Serviço foi excluído!");
 
                     }
+
+                    Servicos servico = servicoMapper.fromServicosViewToServicos(servicoView);
 
                     servicoMapper.atualizarServico(servico, servicoRequestDTO);
                     servicoRepository.save(servico);
@@ -81,15 +84,11 @@ public class ServicoService {
 
     @Transactional
     public SuccessResponseDTO deletarServico(String id) {
-        return servicoRepository.findById(id, TenantContext.getTenantId())
-                .map(servico -> {
-                    if (servico.getStatus() == -1){
-                        throw new ServicoExcluidoException("Serviço foi excluído!");
-                    }
+        String tenantId = TenantContext.getTenantId();
+        return servicoRepository.findById(id, tenantId)
+                .map(servicoView -> {
 
-                    servico.setDeletedAt(LocalDateTime.now());
-                    servicoRepository.deleteById(id);
-
+                    servicoRepository.deleteByIdAndTenantId(id, tenantId);
 
                     return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
