@@ -84,16 +84,16 @@ public class ServicoController {
      * Endpoint para buscar um serviço do Banco de Dados pelo ID
      *
      */
-//    @GetMapping(value = "/{id}")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "Atendimento encontrado"),
-//            @ApiResponse(responseCode = "404", description = "Atendimento não encontrado")
-//    })
-//    @Operation(summary = "Listar atendimento por ID", description = "Endpoint para lista um atendimento por ID")
-//    public ResponseEntity<?> findById(@PathVariable String id) {
-//        return ResponseEntity.status(HttpStatus.OK)
-//                .body(atendimentoService.listarAtendimentoPorId(id));
-//    }
+    @GetMapping(value = "/{id}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Servico encontrado"),
+            @ApiResponse(responseCode = "404", description = "Servico não encontrado")
+    })
+    @Operation(summary = "Listar serviço por ID", description = "Endpoint para lista um serviço por ID")
+    public ResponseEntity<?> findById(@PathVariable String id) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(servicoService.listarServicoPorId(id));
+    }
 
 
     /*
