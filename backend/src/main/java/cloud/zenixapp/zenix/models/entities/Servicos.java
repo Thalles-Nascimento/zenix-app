@@ -20,6 +20,7 @@ public class Servicos extends BaseEntity{
     @Column(name = "servico_valor")
     private Double valor;
 
+//  TODO Análise do campo Status
     @Column(name = "servico_status")
     private int status = 1;
 

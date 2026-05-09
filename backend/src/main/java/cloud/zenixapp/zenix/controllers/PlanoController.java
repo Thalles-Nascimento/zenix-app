@@ -2,14 +2,11 @@ package cloud.zenixapp.zenix.controllers;
 
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.handlers.BindingHandler;
-import cloud.zenixapp.zenix.configs.mappers.PagamentoMapper;
 import cloud.zenixapp.zenix.configs.mappers.PlanosMapper;
-import cloud.zenixapp.zenix.models.dtos.requests.PagamentoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.PlanosRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.PagamentoResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.PlanosResponseDTO;
-import cloud.zenixapp.zenix.services.PagamentoService;
+import cloud.zenixapp.zenix.models.interfaces.PlanosView;
 import cloud.zenixapp.zenix.services.PlanosService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -66,7 +63,7 @@ public class PlanoController {
             @ApiResponse(responseCode = "200", description = "Planos encontrados")
     })
     @Operation(summary = "Listar planos", description = "Endpoint para listar todos os planos")
-    public ResponseEntity<List<PlanosResponseDTO>> findAllPlanos(){
+    public ResponseEntity<List<PlanosView>> findAllPlanos(){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(planosService.buscarTodosPlanos());
     }
