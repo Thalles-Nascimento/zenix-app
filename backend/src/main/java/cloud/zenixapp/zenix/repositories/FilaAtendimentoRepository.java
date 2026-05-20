@@ -3,6 +3,7 @@ package cloud.zenixapp.zenix.repositories;
 import cloud.zenixapp.zenix.models.entities.Fila;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -29,13 +30,16 @@ public interface FilaAtendimentoRepository extends JpaRepository<Fila, Long> {
     @Query(value = "UPDATE Fila SET inicioAtendimento = :horaInicio WHERE id = :id")
     void marcarHoraInicio(@Param("id") Long id, @Param("horaInicio") LocalTime horaInicio);
 
-    @Query(value = "SELECT * FROM fila_atendimentos WHERE fila_usuario_id = :id AND fila_status != 2 ORDER BY fila_horario ASC", nativeQuery = true)
-    List<Fila> findByUser(@Param("id") Long id);
-
-    @Modifying
-    @Query("DELETE FROM Fila f WHERE f.grupoId = :grupoId AND f.id != :id")
-    void deletarOutrosDoGrupo(@Param("grupoId") String grupoId, @Param("id") Long id);
+    @NativeQuery(
+            value = "SELECT * " +
+                    "FROM fila_atendimentos " +
+                    "WHERE (fila_usuario_id = :id OR fila_usuario_id IS NULL) " +
+                    "AND fila_status < 2 AND fila_unidade_id = :unidadeId " +
+                    "ORDER BY fila_horario ASC")
+    List<Fila> findByUser(@Param("id") Long id, @Param("unidadeId") Long unidadeId);
 
     @Modifying
     @Query("UPDATE Fila f SET f.usuario.id = :usuarioId WHERE f.id = :id")
-    void setarUsuario(@Param("id") Long id, @Param("usuarioId") Long usuarioId);}
+    void setarUsuario(@Param("id") Long id, @Param("usuarioId") Long usuarioId);
+
+}
