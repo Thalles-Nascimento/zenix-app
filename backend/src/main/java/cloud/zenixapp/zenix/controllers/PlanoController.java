@@ -2,14 +2,11 @@ package cloud.zenixapp.zenix.controllers;
 
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.handlers.BindingHandler;
-import cloud.zenixapp.zenix.configs.mappers.PagamentoMapper;
 import cloud.zenixapp.zenix.configs.mappers.PlanosMapper;
-import cloud.zenixapp.zenix.models.dtos.requests.PagamentoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.PlanosRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.PagamentoResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.PlanosResponseDTO;
-import cloud.zenixapp.zenix.services.PagamentoService;
+import cloud.zenixapp.zenix.models.interfaces.PlanosView;
 import cloud.zenixapp.zenix.services.PlanosService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -27,7 +24,7 @@ import java.time.ZoneOffset;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/v1/planos")
+@RequestMapping(value = "/${api-url}/planos")
 @Tag(name = "Planos", description = "Endpoints de Planos")
 public class PlanoController {
 
@@ -66,7 +63,7 @@ public class PlanoController {
             @ApiResponse(responseCode = "200", description = "Planos encontrados")
     })
     @Operation(summary = "Listar planos", description = "Endpoint para listar todos os planos")
-    public ResponseEntity<List<PlanosResponseDTO>> findAllPlanos(){
+    public ResponseEntity<List<PlanosView>> findAllPlanos(){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(planosService.buscarTodosPlanos());
     }
@@ -81,7 +78,7 @@ public class PlanoController {
             @ApiResponse(responseCode = "404", description = "Plano não encontrado")
     })
     @Operation(summary = "Deletar plano", description = "Endpoint para deletar um plano")
-    public ResponseEntity<?> deletePagamento(@PathVariable Long id) {
+    public ResponseEntity<?> deletePagamento(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(planosService.deletarPlano(id));
 
@@ -97,7 +94,7 @@ public class PlanoController {
 //            @ApiResponse(responseCode = "404", description = "Plano não encontrado")
 //    })
 //    @Operation(summary = "Listar plano por ID", description = "Endpoint para lista um plano por ID")
-//    public ResponseEntity<?> findById(@PathVariable Long id) {
+//    public ResponseEntity<?> findById(@PathVariable String id) {
 //        return ResponseEntity.status(HttpStatus.OK)
 //                .body(planoService.listarPlanoPorId(id));
 //    }
@@ -113,7 +110,7 @@ public class PlanoController {
             @ApiResponse(responseCode = "404", description = "Plano não encontrado"),
     })
     @Operation(summary = "Atualizar plano por ID", description = "Endpoint para atualiza um plano por ID")
-    public ResponseEntity<?> updatePlano(@PathVariable Long id, @RequestBody @Valid PlanosRequestDTO planosRequestDTO, BindingResult result) throws NotFoundException {
+    public ResponseEntity<?> updatePlano(@PathVariable String id, @RequestBody @Valid PlanosRequestDTO planosRequestDTO, BindingResult result) throws NotFoundException {
         if(result.hasErrors()){
             if (BindingHandler.isErrorNull(result)){
                 return ResponseEntity.status(HttpStatus.OK)

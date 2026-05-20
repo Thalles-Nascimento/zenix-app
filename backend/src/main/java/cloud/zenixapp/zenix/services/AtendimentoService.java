@@ -6,7 +6,7 @@ import cloud.zenixapp.zenix.configs.mappers.AtendimentoMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.AtendimentoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.AtendimentoAdminResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.AtendimentoResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.SucessAtendimentoResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Atendimento;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.repositories.AtendimentoRepository;
@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -41,7 +40,7 @@ public class AtendimentoService {
     private ClienteService clienteService;
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public SucessAtendimentoResponseDTO inserirAtendimento(AtendimentoRequestDTO atendimentoDTO){
+    public SuccessResponseDTO inserirAtendimento(AtendimentoRequestDTO atendimentoDTO){
         Usuarios userAuth = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Usuarios user = usuarioRepository.getReferenceById(userAuth.getId());
         Atendimento atendimento = new Atendimento();
@@ -61,7 +60,7 @@ public class AtendimentoService {
 
         atendimentoRepository.save(atendimento);
 
-        return new SucessAtendimentoResponseDTO(
+        return new SuccessResponseDTO(
                 HttpStatus.CREATED.value(),
                 "Atendimento inserido com sucesso!"
         );
@@ -91,7 +90,7 @@ public class AtendimentoService {
                 .toList();
     }
 
-    public AtendimentoResponseDTO listarAtendimentoPorId(Long id){
+    public AtendimentoResponseDTO listarAtendimentoPorId(String id){
         Usuarios user = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return atendimentoRepository.findByUserById(user.getId(), id)
                 .map((atendimento -> {
@@ -114,7 +113,7 @@ public class AtendimentoService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public SucessAtendimentoResponseDTO deletarAtendimento(Long id) {
+    public SuccessResponseDTO deletarAtendimento(String id) {
         return atendimentoRepository.findById(id)
                 .map(atendimento -> {
                     if (atendimento.getStatus() == -1) {
@@ -124,10 +123,10 @@ public class AtendimentoService {
                     if (!clienteService.buscarClientePorNome(atendimento.getDescricao()).isEmpty()){
                         clienteService.retiraRetornoCliente(atendimento.getDescricao());
                     }
-                    atendimento.setDelete_at(LocalDateTime.now());
+                    atendimento.setDeletedAt(LocalDateTime.now());
                     atendimentoRepository.deleteLogico(id);
 
-                    return new SucessAtendimentoResponseDTO(
+                    return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
                             "Atendimento excluído com sucesso!"
                     );
@@ -138,17 +137,18 @@ public class AtendimentoService {
 
 //    TODO Restringir a edição apenas ao administrador | Restringir a chamada no método atualizar por campos não alterados
     @Transactional(propagation = Propagation.REQUIRED)
-    public SucessAtendimentoResponseDTO atualizarAtendimento(Long id, AtendimentoRequestDTO atendimentoRequestDTO) throws NotFoundException {
+    public SuccessResponseDTO atualizarAtendimento(String id, AtendimentoRequestDTO atendimentoRequestDTO) throws NotFoundException {
         return atendimentoRepository.findByIdAtendimento(id)
                 .map(atendimento -> {
                     if(atendimento.getStatus() == -1){
                         throw new NotFoundException("Não é possível atualizar um atendimento excluído!");
                     }
 
-                    atendimento.setUpdate_at(LocalDateTime.now());
+                    atendimento.setUpdatedAt(LocalDateTime.now());
                     atendimentoMapper.atualizarAtendimento(atendimento, atendimentoRequestDTO);
+                    atendimentoRepository.save(atendimento);
 
-                    return new SucessAtendimentoResponseDTO(
+                    return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
                             "Atendimento atualizado com sucesso!"
                     );
@@ -159,17 +159,17 @@ public class AtendimentoService {
 
     //    TODO Restringir a ativação apenas ao administrador
     @Transactional
-    public SucessAtendimentoResponseDTO ativarAtendimento(Long id){
+    public SuccessResponseDTO ativarAtendimento(String id){
         return atendimentoRepository.findById(id)
                 .map(atendimento -> {
                     if(atendimento.getStatus() != -1){
                         throw new AtendimentoExcluidoException("Atendimento já está ativo!");
                     }
 
-                    atendimento.setDelete_at(null);
+                    atendimento.setDeletedAt(null);
 
                     atendimentoRepository.ativarAtendimento(id);
-                    return new SucessAtendimentoResponseDTO(
+                    return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
                             "Atendimento ativado com sucesso"
                     );

@@ -2,12 +2,10 @@ package cloud.zenixapp.zenix.controllers;
 
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.handlers.BindingHandler;
-import cloud.zenixapp.zenix.configs.mappers.AtendimentoMapper;
-import cloud.zenixapp.zenix.models.dtos.requests.AtendimentoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.UnidadeRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.*;
-import cloud.zenixapp.zenix.models.entities.Usuarios;
-import cloud.zenixapp.zenix.services.AtendimentoService;
+import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.UnidadeUserResponseDTO;
+import cloud.zenixapp.zenix.models.interfaces.UnidadeSimplesView;
 import cloud.zenixapp.zenix.services.UnidadeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -17,7 +15,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +23,7 @@ import java.time.ZoneOffset;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/v1/unidades")
+@RequestMapping(value = "/${api-url}/unidades")
 @Tag(name = "Unidades", description = "Endpoints do serviço de Unidade")
 public class UnidadeController {
 
@@ -63,7 +60,7 @@ public class UnidadeController {
             @ApiResponse(responseCode = "200", description = "Unidade encontrada")
     })
     @Operation(summary = "Listar Unidades", description = "Endpoint para listar todas as unidades")
-    public ResponseEntity<List<UnidadeResponseDTO>> findAll(){
+    public ResponseEntity<List<UnidadeSimplesView>> findAll(){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(unidadeService.listarUnidades());
     }
@@ -74,7 +71,7 @@ public class UnidadeController {
      */
     @GetMapping("/user/{id}")
     @Operation(summary = "Listar Usuarios por Unidade", description = "Endpoint para listar os usuários por unidade")
-    public ResponseEntity<UnidadeUserResponseDTO> findAllWithUser(@PathVariable Long id){
+    public ResponseEntity<UnidadeUserResponseDTO> findAllWithUser(@PathVariable String id){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(unidadeService.listarUnidadesByIdUsuario(id));
     }
@@ -90,7 +87,7 @@ public class UnidadeController {
             @ApiResponse(responseCode = "404", description = "Unidade não encontrada")
     })
     @Operation(summary = "Deletar unidade", description = "Endpoint para deletar uma unidade")
-    public ResponseEntity<?> deleteAtendimento(@PathVariable Long id) {
+    public ResponseEntity<?> deleteAtendimento(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(unidadeService.deletarUnidade(id));
 
@@ -106,7 +103,7 @@ public class UnidadeController {
             @ApiResponse(responseCode = "404", description = "Unidade não encontrada")
     })
     @Operation(summary = "Listar Unidade por ID", description = "Endpoint para lista uma unidade por ID")
-    public ResponseEntity<?> findById(@PathVariable Long id) {
+    public ResponseEntity<?> findById(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(unidadeService.listarUnidadeById(id));
     }
@@ -123,7 +120,7 @@ public class UnidadeController {
             @ApiResponse(responseCode = "400", description = "Campos com nulos ou fora do padrão")
     })
     @Operation(summary = "Atualizar unidade por ID", description = "Endpoint para atualiza uma unidade por ID")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid UnidadeRequestDTO unidadeRequestDTO, BindingResult result) throws NotFoundException {
+    public ResponseEntity<?> update(@PathVariable String id, @RequestBody @Valid UnidadeRequestDTO unidadeRequestDTO, BindingResult result) throws NotFoundException {
         if(result.hasErrors()){
             if (BindingHandler.isErrorNull(result)){
                 return ResponseEntity.status(HttpStatus.OK)
@@ -145,7 +142,7 @@ public class UnidadeController {
 
     @PatchMapping(value ="{id}")
     @Operation(summary = "Ativar unidade", description = "Endpoint para ativar uma unidade do sistema")
-    public ResponseEntity<?> ativarUsuario(@PathVariable Long id) {
+    public ResponseEntity<?> ativarUsuario(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(unidadeService.ativarUnidade(id));
     }

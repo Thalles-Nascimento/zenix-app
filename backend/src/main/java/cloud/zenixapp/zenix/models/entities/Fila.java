@@ -4,29 +4,20 @@ import cloud.zenixapp.zenix.models.enums.StatusFilaEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "fila_atendimentos")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Fila implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = -6394858690661873289L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "fila_id", nullable = false)
-    private Long id;
+public class Fila extends BaseEntity {
 
     @Column(name = "fila_client", length = 120)
     private String nomeCliente;
@@ -59,16 +50,5 @@ public class Fila implements Serializable {
 
     @Column(name = "fila_status", nullable = false)
     private StatusFilaEnum status = StatusFilaEnum.AGUARDANDO;
-
-    //  TODO Criar mais colunas - created_at, delete_at e update_at
-    @Column(name = "fila_update_at")
-    private LocalDateTime update_at;
-
-    @Column(name = "fila_delete_at")
-    private LocalDateTime delete_at;
-
-    @Column(name = "fila_unidade_id", nullable = false)
-    private Long unidadeId;
-
 
 }

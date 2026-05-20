@@ -25,9 +25,12 @@ public interface ClienteMapper {
     @Mapping(target = "planos", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "dataRenovacao", ignore = true)
-    @Mapping(target = "created_at", ignore = true)
     @Mapping(target = "atendimentosMes", ignore = true)
     @Mapping(target = "telefoneCliente", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "tenant", ignore = true)
+    @Mapping(target = "deletedAt", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     void atualizarCliente(@MappingTarget Clientes clientes, ClienteUpdateRequestDTO clienteUpdateRequestDTO);
 
 }

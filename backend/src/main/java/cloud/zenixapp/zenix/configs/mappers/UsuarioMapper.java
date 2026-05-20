@@ -2,7 +2,6 @@ package cloud.zenixapp.zenix.configs.mappers;
 
 import cloud.zenixapp.zenix.models.dtos.requests.UsuarioRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.UsuarioResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.UsuarioResponseSimplesDTO;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -15,6 +14,10 @@ import java.util.List;
 public interface UsuarioMapper {
 
 
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "tenant", ignore = true)
+    @Mapping(target = "deletedAt", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "atendimentos", ignore = true)
     @Mapping(target = "enabled", ignore = true)
     @Mapping(target = "filaClientes", ignore = true)
@@ -30,6 +33,5 @@ public interface UsuarioMapper {
 
     List<UsuarioResponseDTO> listResponseDTO(List<Usuarios> usuariosList);
 
-    List<UsuarioResponseSimplesDTO> listResponseSimplesDTO(List<Usuarios> usuariosList);
 
 }

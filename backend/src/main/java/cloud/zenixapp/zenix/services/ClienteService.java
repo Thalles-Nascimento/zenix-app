@@ -7,7 +7,7 @@ import cloud.zenixapp.zenix.configs.mappers.ClienteMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteUpdateRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ClienteResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.SuccessClienteResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Clientes;
 import cloud.zenixapp.zenix.models.entities.Planos;
 import cloud.zenixapp.zenix.models.entities.TelefoneCliente;
@@ -44,7 +44,7 @@ public class ClienteService {
 
 //    TODO Validar save
     @Transactional
-    public SuccessClienteResponseDTO save(ClienteRequestDTO clienteDTO){
+    public SuccessResponseDTO save(ClienteRequestDTO clienteDTO){
         Clientes cliente = new Clientes();
         cliente.setNomeCliente(clienteDTO.nomeCliente());
 //        TODO Refatorar o uso de repository
@@ -53,7 +53,7 @@ public class ClienteService {
         if (telefone.isPresent()){
             cliente.setTelefoneCliente(telefone.get());
             clienteRepository.save(cliente);
-            return new SuccessClienteResponseDTO(
+            return new SuccessResponseDTO(
                     HttpStatus.CREATED.value(),
                     "Cliente inserido com Sucesso"
             );
@@ -62,7 +62,7 @@ public class ClienteService {
         cliente.setTelefoneCliente(newTelefone);
         clienteRepository.save(cliente);
 
-        return new SuccessClienteResponseDTO(
+        return new SuccessResponseDTO(
                 HttpStatus.CREATED.value(),
                 "Cliente inserido com Sucesso"
         );
@@ -78,7 +78,7 @@ public class ClienteService {
     }
 
     @Transactional
-    public SuccessClienteResponseDTO atualizarRetornoCliente(Long id) throws NotFoundException {
+    public SuccessResponseDTO atualizarRetornoCliente(String id) throws NotFoundException {
         return clienteRepository.findById(id)
                 .map(cliente -> {
                     int count = cliente.getTotalRetornos();
@@ -86,7 +86,7 @@ public class ClienteService {
                     cliente.setTotalRetornos(count);
 
                     clienteRepository.save(cliente);
-                    return new SuccessClienteResponseDTO(
+                    return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
                             "Obrigado pelo retorno!"
                     );
@@ -125,7 +125,7 @@ public class ClienteService {
     }
 
     @Transactional
-    public SuccessClienteResponseDTO inserirPlano(Long id, Long idPlano) throws NotFoundException {
+    public SuccessResponseDTO inserirPlano(String id, String idPlano) throws NotFoundException {
         return clienteRepository.findById(id)
                 .map(cliente -> {
                     if(cliente.getAtendimentosMes() > 0){
@@ -136,7 +136,7 @@ public class ClienteService {
                     cliente.setDataRenovacao(LocalDate.now().plusMonths(1));
 
                     clienteRepository.save(cliente);
-                    return new SuccessClienteResponseDTO(
+                    return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
                             "Plano ativado!"
                     );
@@ -146,7 +146,7 @@ public class ClienteService {
     }
 
     @Transactional
-    public SuccessClienteResponseDTO retirarPlano(Long id){
+    public SuccessResponseDTO retirarPlano(String id){
         return clienteRepository.findById(id)
                 .map(cliente -> {
                     if(cliente.getStatus() == -1){
@@ -157,7 +157,7 @@ public class ClienteService {
                     cliente.setPlanos(null);
                     cliente.setAtendimentosMes(0);
                     clienteRepository.save(cliente);
-                    return new SuccessClienteResponseDTO(
+                    return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
                             "Plano retirado com sucesso"
                     );
@@ -166,7 +166,7 @@ public class ClienteService {
     }
 
     @Transactional
-    public SuccessClienteResponseDTO atualizarCliente(Long id, ClienteUpdateRequestDTO clienteUpdateDTO){
+    public SuccessResponseDTO atualizarCliente(String id, ClienteUpdateRequestDTO clienteUpdateDTO){
         return clienteRepository.findById(id)
                 .map(cliente -> {
                     if(cliente.getStatus() == -1){
@@ -188,7 +188,7 @@ public class ClienteService {
 
                     clienteRepository.save(cliente);
 
-                    return new SuccessClienteResponseDTO(
+                    return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
                             "Cliente atualizado com sucesso"
                     );
@@ -197,7 +197,7 @@ public class ClienteService {
     }
 
     @Transactional
-    public SuccessClienteResponseDTO deletarCliente(Long id){
+    public SuccessResponseDTO deletarCliente(String id){
         return clienteRepository.findById(id)
                 .map(cliente -> {
                     if(cliente.getStatus() == -1){
@@ -206,7 +206,7 @@ public class ClienteService {
                     }
 
                     clienteRepository.deleteLogico(id);
-                    return new SuccessClienteResponseDTO(
+                    return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
                             "Cliente deletado com sucesso"
                     );
@@ -215,7 +215,7 @@ public class ClienteService {
     }
 
     @Transactional
-    public SuccessClienteResponseDTO ativarCliente(Long id){
+    public SuccessResponseDTO ativarCliente(String id){
         return clienteRepository.findById(id)
                 .map(cliente -> {
                     if(cliente.getStatus() != -1){
@@ -223,7 +223,7 @@ public class ClienteService {
                     }
 
                     clienteRepository.ativarCliente(id);
-                    return new SuccessClienteResponseDTO(
+                    return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
                             "Cliente ativado com sucesso"
                     );

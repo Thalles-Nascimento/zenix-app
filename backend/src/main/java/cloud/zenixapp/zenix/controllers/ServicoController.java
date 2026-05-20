@@ -2,10 +2,9 @@ package cloud.zenixapp.zenix.controllers;
 
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.handlers.BindingHandler;
-import cloud.zenixapp.zenix.configs.mappers.ServicoMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.ServicoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.ServicoResponseDTO;
+import cloud.zenixapp.zenix.models.interfaces.ServicosSimplesView;
 import cloud.zenixapp.zenix.services.ServicoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -23,15 +22,13 @@ import java.time.ZoneOffset;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/v1/servicos")
+@RequestMapping(value = "/${api-url}/servicos")
 @Tag(name = "Serviço", description = "Endpoints ddo Serviço")
 public class ServicoController {
 
     @Autowired
     private ServicoService servicoService;
 
-    @Autowired
-    private ServicoMapper servicoMapper;
 
     /*
     *Endpoint para inserção de um serviço no Banco de Dados
@@ -62,7 +59,7 @@ public class ServicoController {
             @ApiResponse(responseCode = "200", description = "Serviços encontrado")
     })
     @Operation(summary = "Listar serviços", description = "Endpoint para listar todos os serviços")
-    public ResponseEntity<List<ServicoResponseDTO>> findAllServicos(){
+    public ResponseEntity<List<ServicosSimplesView>> findAllServicos(){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(servicoService.buscarTodosServicos());
     }
@@ -77,7 +74,7 @@ public class ServicoController {
             @ApiResponse(responseCode = "404", description = "Serviço não encontrado")
     })
     @Operation(summary = "Deletar serviço", description = "Endpoint para deletar um serviço")
-    public ResponseEntity<?> deleteServico(@PathVariable Long id) {
+    public ResponseEntity<?> deleteServico(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(servicoService.deletarServico(id));
 
@@ -87,16 +84,16 @@ public class ServicoController {
      * Endpoint para buscar um serviço do Banco de Dados pelo ID
      *
      */
-//    @GetMapping(value = "/{id}")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "Atendimento encontrado"),
-//            @ApiResponse(responseCode = "404", description = "Atendimento não encontrado")
-//    })
-//    @Operation(summary = "Listar atendimento por ID", description = "Endpoint para lista um atendimento por ID")
-//    public ResponseEntity<?> findById(@PathVariable Long id) {
-//        return ResponseEntity.status(HttpStatus.OK)
-//                .body(atendimentoService.listarAtendimentoPorId(id));
-//    }
+    @GetMapping(value = "/{id}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Servico encontrado"),
+            @ApiResponse(responseCode = "404", description = "Servico não encontrado")
+    })
+    @Operation(summary = "Listar serviço por ID", description = "Endpoint para lista um serviço por ID")
+    public ResponseEntity<?> findById(@PathVariable String id) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(servicoService.listarServicoPorId(id));
+    }
 
 
     /*
@@ -109,7 +106,7 @@ public class ServicoController {
             @ApiResponse(responseCode = "404", description = "Serviço não encontrado"),
     })
     @Operation(summary = "Atualizar serviço por ID", description = "Endpoint para atualiza um serviço por ID")
-    public ResponseEntity<?> updateServico(@PathVariable Long id, @RequestBody @Valid ServicoRequestDTO servicoRequestDTO, BindingResult result) throws NotFoundException {
+    public ResponseEntity<?> updateServico(@PathVariable String id, @RequestBody @Valid ServicoRequestDTO servicoRequestDTO, BindingResult result) throws NotFoundException {
         if(result.hasErrors()){
             if (BindingHandler.isErrorNull(result)){
                 return ResponseEntity.status(HttpStatus.OK)

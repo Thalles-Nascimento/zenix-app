@@ -3,26 +3,18 @@ package cloud.zenixapp.zenix.models.entities;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.LocalDateTime;
+
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "atendimentos")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Atendimento implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = -632158690661873289L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "atendimento_id", nullable = false)
-    private Long id;
+public class Atendimento extends BaseEntity {
 
     @Column(name = "atendimento_descricao", length = 120)
     private String descricao;
@@ -49,15 +41,5 @@ public class Atendimento implements Serializable {
 
     @Column(name = "atendimento_status", nullable = false)
     private Integer status = 1;
-
-    //  TODO Criar mais colunas - created_at, delete_at e update_at
-    @Column(name = "atendimento_created_at")
-    private LocalDateTime created_at = LocalDateTime.now();
-
-    @Column(name = "atendimento_update_at")
-    private LocalDateTime update_at;
-
-    @Column(name = "atendimento_delete_at")
-    private LocalDateTime delete_at;
 
 }
