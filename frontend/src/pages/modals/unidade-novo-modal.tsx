@@ -1,0 +1,59 @@
+// ─── unidade-novo-modal.tsx ───────────────────────────────────────────────
+import { useState } from "react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../components/ui/dialog"
+import { Button } from "../../components/ui/button"
+import { Input } from "../../components/ui/input"
+import { Label } from "../../components/ui/label"
+import { Botao } from "../../components/common/botao"
+import type { UnidadeFormProps } from "../../types/usuario"
+
+interface NovaProps {
+    onConfirmar: (form: UnidadeFormProps) => void
+}
+
+const formInicial: UnidadeFormProps = { nomeUnidade: "", endereco: "" }
+
+export function ModalNovaUnidade({ onConfirmar }: NovaProps) {
+    const [open, setOpen] = useState(false)
+    const [form, setForm] = useState<UnidadeFormProps>(formInicial)
+
+    const handleConfirmar = () => {
+        if (!form.nomeUnidade || !form.endereco) return
+        onConfirmar(form)
+        setOpen(false)
+        setForm(formInicial)
+    }
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button>NOVA UNIDADE</Button>
+            </DialogTrigger>
+            <DialogContent className="bg-black border-gray-500 text-white w-[calc(100vw-2rem)] max-w-md max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                    <DialogTitle className="text-white">Nova Unidade</DialogTitle>
+                </DialogHeader>
+                <div className="flex flex-col gap-4 mt-2 notranslate">
+                    <div>
+                        <Label className="text-white">Nome da Unidade</Label>
+                        <Input className="mt-1 bg-gray-900 border-gray-700 text-white notranslate"
+                            placeholder="Ex: WN Barbearia Centro"
+                            value={form.nomeUnidade}
+                            onChange={(e) => setForm({ ...form, nomeUnidade: e.target.value })} />
+                    </div>
+                    <div>
+                        <Label className="text-white">Endereço</Label>
+                        <Input className="mt-1 bg-gray-900 border-gray-700 text-white notranslate"
+                            placeholder="Ex: Centro"
+                            value={form.endereco}
+                            onChange={(e) => setForm({ ...form, endereco: e.target.value })} />
+                    </div>
+                    <div className="flex gap-3 mt-2 notranslate">
+                        <Botao color="primary" texto="Confirmar" click={handleConfirmar} />
+                        <Botao color="secondary" texto="Cancelar" click={() => setOpen(false)} />
+                    </div>
+                </div>
+            </DialogContent>
+        </Dialog>
+    )
+}
