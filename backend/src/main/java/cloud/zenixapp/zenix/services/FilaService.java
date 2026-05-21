@@ -39,7 +39,7 @@ public class FilaService {
     private FilaMapper filaMapper;
 
     @Transactional
-    public SuccessFilaResponseDTO inserirAtendimentoFila(FilaRequestDTO filaDTO) throws SQLIntegrityConstraintViolationException {
+    public SuccessFilaResponseDTO inserirAtendimentoFila(FilaRequestDTO filaDTO) {
         Fila fila = new Fila();
 
         if(filaDTO.semPreferencia()){
