@@ -1,18 +1,20 @@
 package cloud.zenixapp.zenix.services;
 
+import cloud.zenixapp.zenix.configs.TenantContext;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.mappers.PagamentoMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.PagamentoRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.PagamentoResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.entities.FormaPagamento;
+import cloud.zenixapp.zenix.models.entities.Tenants;
+import cloud.zenixapp.zenix.models.interfaces.FormaPagamentoView;
 import cloud.zenixapp.zenix.repositories.PagamentoRepository;
+import cloud.zenixapp.zenix.repositories.TenantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -24,10 +26,18 @@ public class PagamentoService {
     @Autowired
     private PagamentoMapper pagamentoMapper;
 
+    @Autowired
+    private TenantRepository tenantRepository;
+
     @Transactional
     public SuccessResponseDTO inserirPagamento(PagamentoRequestDTO pagamentoRequestDTO){
         FormaPagamento formaPagamento = new FormaPagamento();
         formaPagamento.setFormaPagamento(pagamentoRequestDTO.descricao().toUpperCase());
+
+        Tenants tenant = tenantRepository.findById(TenantContext.getTenantId())
+                .orElseThrow(() -> new NotFoundException("Tenant não encontrado"));
+
+        formaPagamento.setTenant(tenant);
 
         pagamentoRepository.save(formaPagamento);
 
@@ -37,8 +47,8 @@ public class PagamentoService {
         );
     }
 
-    public List<PagamentoResponseDTO> buscarTodasFormaPagamento(){
-        return pagamentoMapper.toListFormaPagamento(pagamentoRepository.findAll());
+    public List<FormaPagamentoView> buscarTodasFormaPagamento(){
+        return pagamentoRepository.findAll(TenantContext.getTenantId());
     }
 
     @Transactional

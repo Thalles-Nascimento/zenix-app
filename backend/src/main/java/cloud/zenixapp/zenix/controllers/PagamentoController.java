@@ -5,7 +5,7 @@ import cloud.zenixapp.zenix.configs.handlers.BindingHandler;
 import cloud.zenixapp.zenix.configs.mappers.PagamentoMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.PagamentoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.PagamentoResponseDTO;
+import cloud.zenixapp.zenix.models.interfaces.FormaPagamentoView;
 import cloud.zenixapp.zenix.services.PagamentoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -62,7 +62,7 @@ public class PagamentoController {
             @ApiResponse(responseCode = "200", description = "Forma de pagamento encontrada")
     })
     @Operation(summary = "Listar formas de pagamento", description = "Endpoint para listar todos as formas de pagamento")
-    public ResponseEntity<List<PagamentoResponseDTO>> findAllPagamentos(){
+    public ResponseEntity<List<FormaPagamentoView>> findAllPagamentos(){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(pagamentoService.buscarTodasFormaPagamento());
     }
