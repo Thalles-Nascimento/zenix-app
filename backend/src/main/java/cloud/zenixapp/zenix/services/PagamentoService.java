@@ -53,8 +53,10 @@ public class PagamentoService {
 
     @Transactional
     public SuccessResponseDTO atualizarPagamento(PagamentoRequestDTO pagamentoRequestDTO, String id){
-        return pagamentoRepository.findById(id)
-                .map(formaPagamento -> {
+        return pagamentoRepository.findById(id, TenantContext.getTenantId())
+                .map(formaPagamentoView -> {
+
+                    FormaPagamento formaPagamento = pagamentoMapper.fromFormaPagamentoViewtoPagamento(formaPagamentoView);
 
                     pagamentoMapper.atualizarFormaPagamento(formaPagamento, pagamentoRequestDTO);
                     formaPagamento.setFormaPagamento(formaPagamento.getFormaPagamento().toUpperCase());
@@ -69,9 +71,10 @@ public class PagamentoService {
 
     @Transactional
     public SuccessResponseDTO deletarPagamento(String id) {
-        return pagamentoRepository.findById(id)
+        return pagamentoRepository.findById(id, TenantContext.getTenantId())
                 .map(formaPagamento -> {
-                    pagamentoRepository.deleteById(id);
+
+                    pagamentoRepository.deleteById(formaPagamento.getId());
 
                     return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
