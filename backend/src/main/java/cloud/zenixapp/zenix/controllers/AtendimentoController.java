@@ -8,6 +8,7 @@ import cloud.zenixapp.zenix.models.dtos.responses.AtendimentoAdminResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.AtendimentoResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
+import cloud.zenixapp.zenix.models.interfaces.AtendimentoProjectionView;
 import cloud.zenixapp.zenix.services.AtendimentoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -71,7 +72,7 @@ public class AtendimentoController {
             @ApiResponse(responseCode = "200", description = "Atendimento encontrado")
     })
     @Operation(summary = "Listar atendimentos do dia", description = "Endpoint para listar todos os atendimentos do dia")
-    public ResponseEntity<List<AtendimentoResponseDTO>> findAllTodayByUser(){
+    public ResponseEntity<List<AtendimentoProjectionView>> findAllTodayByUser(){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.listarAtendimentosHoje());
     }
