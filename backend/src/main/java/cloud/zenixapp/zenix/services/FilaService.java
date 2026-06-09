@@ -1,5 +1,6 @@
 package cloud.zenixapp.zenix.services;
 
+import cloud.zenixapp.zenix.configs.TenantContext;
 import cloud.zenixapp.zenix.configs.exceptions.FilaException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.mappers.FilaMapper;
@@ -8,15 +9,16 @@ import cloud.zenixapp.zenix.models.dtos.responses.FilaResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessFilaResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Fila;
+import cloud.zenixapp.zenix.models.entities.Tenants;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.repositories.FilaAtendimentoRepository;
+import cloud.zenixapp.zenix.repositories.TenantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -38,9 +40,16 @@ public class FilaService {
     @Autowired
     private FilaMapper filaMapper;
 
+    @Autowired
+    private TenantRepository tenantRepository;
+
     @Transactional
     public SuccessFilaResponseDTO inserirAtendimentoFila(FilaRequestDTO filaDTO) {
-        Fila fila = new Fila();
+
+        Tenants tenant = tenantRepository.findById(TenantContext.getTenantId())
+                .orElseThrow(() -> new NotFoundException("Tenant não encontrado"));
+
+        Fila fila = new Fila(); // Verificar a existência do atendimento na fila!
 
         if(filaDTO.semPreferencia()){
             fila.setNomeCliente(filaDTO.nomeCliente());
@@ -48,6 +57,7 @@ public class FilaService {
             fila.setFormaPagamento(filaDTO.formaPagamento());
             fila.setTelefoneCliente(filaDTO.telefoneCliente());
             fila.setSemPreferencia(true);
+            fila.setTenant(tenant);
             fila.setUsuario(null);
 
             filaRepository.save(fila);
@@ -67,7 +77,7 @@ public class FilaService {
         fila.setFormaPagamento(filaDTO.formaPagamento());
         fila.setTelefoneCliente(filaDTO.telefoneCliente());
         fila.setUsuario(user);
-
+        fila.setTenant(tenant);
 
         filaRepository.save(fila);
 
