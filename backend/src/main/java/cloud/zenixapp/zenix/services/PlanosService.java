@@ -78,7 +78,7 @@ public class PlanosService {
         return planosRepository.findById(id, TenantContext.getTenantId())
                 .map(plano -> {
 
-                    planosRepository.deleteById(id);
+                    planosRepository.deleteById(id); // TODO refazer o delete
 
                     return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
