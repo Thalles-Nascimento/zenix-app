@@ -97,48 +97,42 @@ public class FilaService {
     }
 
     @Transactional
-    public SuccessFilaResponseDTO chamarCliente(String id) {
-        return filaRepository.findById(id)
+    public SuccessResponseDTO chamarCliente(String id) {
+        return filaRepository.findById(id, TenantContext.getTenantId())
                 .map(atendimentoFila -> {
-                    if(atendimentoFila.getStatus() != AGUARDANDO){
-                        throw new FilaException("Cliente está Em Atendimento ou Finalizado");
+                    if(atendimentoFila.getStatus() != 0){
+                        throw new FilaException("Cliente está em atendimento ou já foi finalizado");
                     }
 
-                    filaRepository.paraAtendimento(id);
-                    filaRepository.marcarHoraInicio(id, LocalTime.now());
+                    filaRepository.paraAtendimento(atendimentoFila.getId(), TenantContext.getTenantId(), LocalTime.now());
 
-                    if (atendimentoFila.isSemPreferencia()) {
+                    if (atendimentoFila.getSemPreferencia()) {
                         Usuarios userAuth = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-                        filaRepository.setarUsuario(id, userAuth.getId());
+                        filaRepository.setarUsuario(atendimentoFila.getId(), TenantContext.getTenantId(), userAuth.getId());
                     }
 
-                    return new SuccessFilaResponseDTO(
-                            atendimentoFila.getId(),
-                            atendimentoFila.getNomeCliente(),
-                            atendimentoFila.getServico(),
-                            atendimentoFila.getStatus()
+                    return new SuccessResponseDTO(
+                            HttpStatus.OK.value(),
+                            "Cliente chamado!"
                     );
                 })
                 .orElseThrow(() -> new NotFoundException("Atendimento não encontrado"));
     }
 
     @Transactional
-    public SuccessFilaResponseDTO finalizarAtendimento(String id){
-        return filaRepository.findById(id)
+    public SuccessResponseDTO finalizarAtendimento(String id){
+        return filaRepository.findById(id, TenantContext.getTenantId())
                 .map(atendimentoFila -> {
-                    if (atendimentoFila.getStatus() != EM_ATENDIMENTO){
+                    if (atendimentoFila.getStatus() != 1){
                         throw new FilaException("Clientes já Finalizado ou está Aguardando");
                     }
-                    filaRepository.finalizarAtendimentoFila(id);
-                    filaRepository.marcarHoraFinal(id, LocalTime.now());
+                    filaRepository.finalizarAtendimentoFila(atendimentoFila.getId(), TenantContext.getTenantId(), LocalTime.now());
 
                     clienteService.atualizarAtendimentosMes(atendimentoFila.getNomeCliente());
 
-                    return new SuccessFilaResponseDTO(
-                            atendimentoFila.getId(),
-                            atendimentoFila.getNomeCliente(),
-                            atendimentoFila.getServico(),
-                            atendimentoFila.getStatus()
+                    return new SuccessResponseDTO(
+                            HttpStatus.OK.value(),
+                            "Atendimento finalizado!"
                     );
                 })
                 .orElseThrow(() -> new NotFoundException("Atendimento não encontrado"));
@@ -146,15 +140,15 @@ public class FilaService {
 
     @Transactional
     public SuccessResponseDTO retirarClienteFila(String id) {
-        return filaRepository.findById(id)
+        return filaRepository.findById(id, TenantContext.getTenantId())
                 .map(atendimentoFila -> {
-                    if (atendimentoFila.getStatus() == EM_ATENDIMENTO) {
+                    if (atendimentoFila.getStatus() == 1) {
                         throw new FilaException("Cliente está em atendimento");
                     }
 
                     String statusMsg = clienteService.retiraRetornoCliente(atendimentoFila.getNomeCliente());
 
-                    filaRepository.deleteById(id);
+                    filaRepository.deleteById(atendimentoFila.getId());
 
                     return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
