@@ -234,8 +234,7 @@ public class UsuarioService {
     }
 
     public Usuarios getUsuarioById(String id){
-        String tenantId = TenantContext.getTenantId();
-        return usuarioRepository.findById(id, tenantId)
+        return usuarioRepository.findById(id, TenantContext.getTenantId())
                 .orElseThrow(() -> new NotFoundException("Usuário não encontrado!"));
     }
 

@@ -1,5 +1,6 @@
 package cloud.zenixapp.zenix.services;
 
+import cloud.zenixapp.zenix.configs.TenantContext;
 import cloud.zenixapp.zenix.configs.exceptions.AtendimentoExcluidoException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.mappers.AtendimentoMapper;
@@ -8,8 +9,10 @@ import cloud.zenixapp.zenix.models.dtos.responses.AtendimentoAdminResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.AtendimentoResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Atendimento;
+import cloud.zenixapp.zenix.models.entities.Tenants;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.repositories.AtendimentoRepository;
+import cloud.zenixapp.zenix.repositories.TenantRepository;
 import cloud.zenixapp.zenix.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,7 +34,7 @@ public class AtendimentoService {
     private final DateTimeFormatter current_date = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private UsuarioService usuarioService;
 
     @Autowired
     private AtendimentoMapper atendimentoMapper;
@@ -39,10 +42,16 @@ public class AtendimentoService {
     @Autowired
     private ClienteService clienteService;
 
+    @Autowired
+    private TenantRepository tenantRepository;
+
     @Transactional(propagation = Propagation.REQUIRED)
     public SuccessResponseDTO inserirAtendimento(AtendimentoRequestDTO atendimentoDTO){
+        Tenants tenant = tenantRepository.findById(TenantContext.getTenantId())
+                .orElseThrow(() -> new NotFoundException("Tenant não encontrado!"));
+
         Usuarios userAuth = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Usuarios user = usuarioRepository.getReferenceById(userAuth.getId());
+
         Atendimento atendimento = new Atendimento();
 
         atendimento.setDescricao(atendimentoDTO.descricao());
@@ -51,7 +60,8 @@ public class AtendimentoService {
         atendimento.setFormaPagamento(atendimentoDTO.formaPagamento());
         atendimento.setObservacao(atendimentoDTO.observacao());
         atendimento.setDate(LocalDateTime.now().format(current_date));
-        atendimento.setUsuarios(user);
+        atendimento.setUsuarios(usuarioService.getUsuarioById(userAuth.getId()));
+        atendimento.setTenant(tenant);
 
         if (!clienteService.buscarClientePorNome(atendimento.getDescricao()).isEmpty()){
             clienteService.atualizarAtendimentosMes(atendimentoDTO.descricao());
