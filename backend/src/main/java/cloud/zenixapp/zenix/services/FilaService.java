@@ -11,6 +11,7 @@ import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Fila;
 import cloud.zenixapp.zenix.models.entities.Tenants;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
+import cloud.zenixapp.zenix.models.interfaces.FilaProjectionView;
 import cloud.zenixapp.zenix.repositories.FilaAtendimentoRepository;
 import cloud.zenixapp.zenix.repositories.TenantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,9 +91,9 @@ public class FilaService {
         );
     }
 
-    public List<FilaResponseDTO> getFilasByUser(){
+    public List<FilaProjectionView> getFilasByUser(){
         Usuarios userAuth = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return filaMapper.toListFilaDTO(filaRepository.findByUser(userAuth.getId()));
+        return filaRepository.findByUser(userAuth.getId(), TenantContext.getTenantId());
     }
 
     @Transactional

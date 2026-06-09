@@ -1,6 +1,7 @@
 package cloud.zenixapp.zenix.repositories;
 
 import cloud.zenixapp.zenix.models.entities.Fila;
+import cloud.zenixapp.zenix.models.interfaces.FilaProjectionView;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.NativeQuery;
@@ -31,12 +32,19 @@ public interface FilaAtendimentoRepository extends JpaRepository<Fila, String> {
     void marcarHoraInicio(@Param("id") String id, @Param("horaInicio") LocalTime horaInicio);
 
     @NativeQuery(
-            value = "SELECT * " +
-                    "FROM fila_atendimentos " +
-                    "WHERE (fila_usuario_id = :id OR fila_usuario_id IS NULL) " +
-                    "and fila_status < 2 " +
-                    "ORDER BY fila_horario ASC")
-    List<Fila> findByUser(@Param("id") String id);
+            value = "SELECT " +
+                    "f.id AS id," +
+                    "f.fila_client AS nomeCliente," +
+                    "f.fila_servico AS servico," +
+                    "f.fila_pagamento AS formaPagamento," +
+                    "f.fila_horario AS horario," +
+                    "f.fila_status AS status," +
+                    "f.fila_sem_preferencia AS semPreferencia " +
+                    "FROM fila_atendimentos f " +
+                    "WHERE (f.fila_usuario_id = :id OR f.fila_usuario_id IS NULL) " +
+                    "and f.fila_status < 2 AND f.tenant_id = :tenantId " +
+                    "ORDER BY f.fila_horario ASC")
+    List<FilaProjectionView> findByUser(@Param("id") String id, @Param("tenantId") String tenantId);
 
     @Modifying
     @Query("UPDATE Fila f SET f.usuario.id = :usuarioId WHERE f.id = :id")
