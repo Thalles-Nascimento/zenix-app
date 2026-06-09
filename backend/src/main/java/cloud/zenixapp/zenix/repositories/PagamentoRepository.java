@@ -14,8 +14,8 @@ public interface PagamentoRepository extends JpaRepository<FormaPagamento, Strin
     @NativeQuery(
             value = "SELECT " +
                     "p.id AS id, " +
-                    "p.pagamentos_descricao AS pagamento, " +
-                    "p.pagamentos_status AS status " +
+                    "p.pagamento_descricao AS pagamento, " +
+                    "p.pagamento_status AS status " +
                     "FROM pagamentos p " +
                     "WHERE p.tenant_id = :tenantId")
     List<FormaPagamentoView> findAll(@Param("tenantId") String tenantId);
@@ -23,8 +23,8 @@ public interface PagamentoRepository extends JpaRepository<FormaPagamento, Strin
     @NativeQuery(
             value = "SELECT " +
                     "p.id AS id, " +
-                    "p.pagamentos_descricao AS pagamento, " +
-                    "p.pagamentos_status AS status " +
+                    "p.pagamento_descricao AS pagamento, " +
+                    "p.pagamento_status AS status " +
                     "FROM pagamentos p " +
                     "WHERE p.id = :id AND p.tenant_id = :tenantId")
     Optional<FormaPagamentoView> findById(@Param("id") String id, @Param("tenantId") String tenantId);
