@@ -11,6 +11,7 @@ import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Atendimento;
 import cloud.zenixapp.zenix.models.entities.Tenants;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
+import cloud.zenixapp.zenix.models.interfaces.AtendimentoProjectionView;
 import cloud.zenixapp.zenix.repositories.AtendimentoRepository;
 import cloud.zenixapp.zenix.repositories.TenantRepository;
 import cloud.zenixapp.zenix.repositories.UsuarioRepository;
@@ -76,9 +77,9 @@ public class AtendimentoService {
         );
     }
 
-    public List<AtendimentoResponseDTO> listarAtendimentosHoje(){
+    public List<AtendimentoProjectionView> listarAtendimentosHoje(){
         Usuarios user = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return atendimentoMapper.listResponseDTO(atendimentoRepository.findByUserDate(user.getId(), LocalDateTime.now().format(current_date)));
+        return atendimentoRepository.findByUserDate(user.getId(), LocalDateTime.now().format(current_date), TenantContext.getTenantId());
     }
 
 //    TODO Criar uma tela no frontend para visualizar esses atendimentos abaixo
