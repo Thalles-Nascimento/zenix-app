@@ -100,12 +100,9 @@ public class AtendimentoService {
                 .orElseThrow(() -> new NotFoundException("Atendimento não encontrado!"));
     }
 
-    public List<AtendimentoResponseDTO> listarHistorico(){
-        Usuarios user = (Usuarios) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
-        return atendimentoMapper.listResponseDTO(
-                atendimentoRepository.findByUser(user.getId())
-        );
+    public List<AtendimentoProjectionView> listarHistorico(){
+        Usuarios user = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return atendimentoRepository.findByUser(user.getId(), TenantContext.getTenantId());
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
