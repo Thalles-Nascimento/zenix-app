@@ -9,14 +9,18 @@ import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 public interface AtendimentoRepository extends JpaRepository<Atendimento, String> {
 
     @Modifying
-    @Query(value = "UPDATE Atendimento SET status = -1 WHERE id = :id")
-    void deleteLogico(@Param("id") String id);
+    @NativeQuery(
+            value = "UPDATE atendimentos a " +
+                    "SET a.atendimento_status = -1, a.deleted_at = :deleteTime " +
+                    "WHERE a.id = :id AND a.tenant_id = :tenantId")
+    void deleteLogico(@Param("id") String id, @Param("deleteTime") LocalDateTime deleteTime, @Param("tenantId") String tenantId);
 
     @NativeQuery(
             value = "SELECT " +
@@ -66,8 +70,11 @@ public interface AtendimentoRepository extends JpaRepository<Atendimento, String
     Optional<Atendimento> findByIdAtendimento(@Param("id") String id);
 
     @Modifying
-    @Query(value = "UPDATE Atendimento SET status = 1 WHERE id = :id")
-    void ativarAtendimento(@Param("id") String id);
+    @NativeQuery(
+            value = "UPDATE atendimentos a " +
+                    "SET a.atendimento_status = 1, a.deleted_at = null " +
+                    "WHERE a.id = :id AND a.tenant_id = :tenantId")
+    void ativarAtendimento(@Param("id") String id, @Param("tenantId") String tenantId);
 
     @NativeQuery(
             value = "SELECT " +
@@ -84,5 +91,19 @@ public interface AtendimentoRepository extends JpaRepository<Atendimento, String
                     "INNER JOIN usuarios u ON a.usuario_id = u.id " +
                     "WHERE a.tenant_id = :tenantId")
     List<AtendimentoAndUsuarioProjectionView> findAll(@Param("tenantId") String tenantId);
+
+    @NativeQuery(
+            value = "SELECT " +
+                    "a.id AS id, " +
+                    "a.atendimento_descricao AS descricao," +
+                    "a.atendimento_servico AS servico," +
+                    "a.atendimento_valor AS valor," +
+                    "a.atendimento_pagamento AS formaPagamento," +
+                    "a.atendimento_data AS data," +
+                    "a.atendimento_observacao AS observacao," +
+                    "a.atendimento_status AS status " +
+                    "FROM atendimentos a " +
+                    "WHERE a.id = :id AND a.tenant_id = :tenantId")
+    Optional<AtendimentoProjectionView> findById(@Param("id") String id, @Param("tenantId") String tenantId);
 
 }

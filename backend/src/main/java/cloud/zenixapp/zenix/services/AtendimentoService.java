@@ -5,7 +5,6 @@ import cloud.zenixapp.zenix.configs.exceptions.AtendimentoExcluidoException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.mappers.AtendimentoMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.AtendimentoRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.AtendimentoResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Atendimento;
 import cloud.zenixapp.zenix.models.entities.Tenants;
@@ -107,7 +106,7 @@ public class AtendimentoService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public SuccessResponseDTO deletarAtendimento(String id) {
-        return atendimentoRepository.findById(id)
+        return atendimentoRepository.findById(id, TenantContext.getTenantId())
                 .map(atendimento -> {
                     if (atendimento.getStatus() == -1) {
                         throw new AtendimentoExcluidoException("Atendimento já foi excluído!");
@@ -116,8 +115,8 @@ public class AtendimentoService {
                     if (!clienteService.buscarClientePorNome(atendimento.getDescricao()).isEmpty()){
                         clienteService.retiraRetornoCliente(atendimento.getDescricao());
                     }
-                    atendimento.setDeletedAt(LocalDateTime.now());
-                    atendimentoRepository.deleteLogico(id);
+
+                    atendimentoRepository.deleteLogico(id, LocalDateTime.now(), TenantContext.getTenantId());
 
                     return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
@@ -153,15 +152,14 @@ public class AtendimentoService {
     //    TODO Restringir a ativação apenas ao administrador
     @Transactional
     public SuccessResponseDTO ativarAtendimento(String id){
-        return atendimentoRepository.findById(id)
+        return atendimentoRepository.findById(id, TenantContext.getTenantId())
                 .map(atendimento -> {
                     if(atendimento.getStatus() != -1){
                         throw new AtendimentoExcluidoException("Atendimento já está ativo!");
                     }
 
-                    atendimento.setDeletedAt(null);
+                    atendimentoRepository.ativarAtendimento(id, TenantContext.getTenantId());
 
-                    atendimentoRepository.ativarAtendimento(id);
                     return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
                             "Atendimento ativado com sucesso"
