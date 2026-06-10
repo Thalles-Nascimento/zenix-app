@@ -8,6 +8,7 @@ import cloud.zenixapp.zenix.models.dtos.responses.AtendimentoAdminResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.AtendimentoResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
+import cloud.zenixapp.zenix.models.interfaces.AtendimentoAndUsuarioProjectionView;
 import cloud.zenixapp.zenix.models.interfaces.AtendimentoProjectionView;
 import cloud.zenixapp.zenix.services.AtendimentoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -80,7 +81,7 @@ public class AtendimentoController {
 //    TODO Verificar - @GetMapping("/admin")
     @GetMapping("/admin")
     @Operation(summary = "Listar todos os atendimentos", description = "Endpoint para ADMIN listar todos os atendimentos do dia")
-    public ResponseEntity<List<AtendimentoAdminResponseDTO>> findAllAdmin(){
+    public ResponseEntity<List<AtendimentoAndUsuarioProjectionView>> findAllAdmin(){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.listarTodosAtendimentos());
     }

@@ -1,6 +1,7 @@
 package cloud.zenixapp.zenix.repositories;
 
 import cloud.zenixapp.zenix.models.entities.Atendimento;
+import cloud.zenixapp.zenix.models.interfaces.AtendimentoAndUsuarioProjectionView;
 import cloud.zenixapp.zenix.models.interfaces.AtendimentoProjectionView;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -37,7 +38,7 @@ public interface AtendimentoRepository extends JpaRepository<Atendimento, String
                     "a.atendimento_servico AS servico," +
                     "a.atendimento_valor AS valor," +
                     "a.atendimento_pagamento AS formaPagamento," +
-                    "a.atendimento_data AS 'data'," +
+                    "a.atendimento_data AS data," +
                     "a.atendimento_observacao AS observacao," +
                     "a.atendimento_status AS status " +
                     "FROM atendimentos a " +
@@ -52,5 +53,21 @@ public interface AtendimentoRepository extends JpaRepository<Atendimento, String
     @Modifying
     @Query(value = "UPDATE Atendimento SET status = 1 WHERE id = :id")
     void ativarAtendimento(@Param("id") String id);
+
+    @NativeQuery(
+            value = "SELECT " +
+                    "a.id AS id, " +
+                    "a.atendimento_descricao AS descricao," +
+                    "a.atendimento_servico AS servico," +
+                    "a.atendimento_valor AS valor," +
+                    "a.atendimento_pagamento AS formaPagamento," +
+                    "a.atendimento_data AS data," +
+                    "a.atendimento_observacao AS observacao," +
+                    "u.usuario_nome AS nomeUsuario," +
+                    "a.atendimento_status AS status " +
+                    "FROM atendimentos a " +
+                    "INNER JOIN usuarios u ON a.usuario_id = u.id " +
+                    "WHERE a.tenant_id = :tenantId")
+    List<AtendimentoAndUsuarioProjectionView> findAll(@Param("tenantId") String tenantId);
 
 }

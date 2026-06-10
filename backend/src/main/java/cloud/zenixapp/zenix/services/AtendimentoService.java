@@ -5,16 +5,15 @@ import cloud.zenixapp.zenix.configs.exceptions.AtendimentoExcluidoException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.mappers.AtendimentoMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.AtendimentoRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.AtendimentoAdminResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.AtendimentoResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Atendimento;
 import cloud.zenixapp.zenix.models.entities.Tenants;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
+import cloud.zenixapp.zenix.models.interfaces.AtendimentoAndUsuarioProjectionView;
 import cloud.zenixapp.zenix.models.interfaces.AtendimentoProjectionView;
 import cloud.zenixapp.zenix.repositories.AtendimentoRepository;
 import cloud.zenixapp.zenix.repositories.TenantRepository;
-import cloud.zenixapp.zenix.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -83,22 +82,8 @@ public class AtendimentoService {
     }
 
 //    TODO Criar uma tela no frontend para visualizar esses atendimentos abaixo
-    public List<AtendimentoAdminResponseDTO> listarTodosAtendimentos(){
-        return atendimentoRepository
-                .findAll()
-                .stream()
-                .map(a -> new AtendimentoAdminResponseDTO(
-                        a.getId(),
-                        a.getDescricao(),
-                        a.getServico(),
-                        a.getValor(),
-                        a.getFormaPagamento(),
-                        a.getDate(),
-                        a.getStatus(),
-                        a.getObservacao(),
-                        a.getUsuarios().getNome()
-                ))
-                .toList();
+    public List<AtendimentoAndUsuarioProjectionView> listarTodosAtendimentos(){
+        return atendimentoRepository.findAll(TenantContext.getTenantId());
     }
 
     public AtendimentoResponseDTO listarAtendimentoPorId(String id){
