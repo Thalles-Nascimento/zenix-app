@@ -27,9 +27,18 @@ public interface AtendimentoRepository extends JpaRepository<Atendimento, String
     List<Atendimento> findByUser(@Param("id") String id);
 
     @NativeQuery(
-            value = "SELECT * FROM atendimentos WHERE usuario_id = :idUser and atendimento_id = :id"
-    )
-    Optional<Atendimento> findByUserById(@Param("idUser") String idUser, @Param("id") String id);
+            value = "SELECT " +
+                    "a.id AS id, " +
+                    "a.atendimento_descricao AS descricao," +
+                    "a.atendimento_servico AS servico," +
+                    "a.atendimento_valor AS valor," +
+                    "a.atendimento_pagamento AS formaPagamento," +
+                    "a.atendimento_data AS data," +
+                    "a.atendimento_observacao AS observacao," +
+                    "a.atendimento_status AS status " +
+                    "FROM atendimentos a " +
+                    "WHERE a.usuario_id = :idUser AND a.id = :idAtendimento AND a.tenant_id = :tenantId")
+    Optional<AtendimentoProjectionView> findByUserById(@Param("idUser") String idUser, @Param("idAtendimento") String idAtendimento, @Param("tenantId") String tenantId);
 
     @NativeQuery(
             value = "SELECT " +
