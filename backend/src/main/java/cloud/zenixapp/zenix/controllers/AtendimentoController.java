@@ -106,15 +106,15 @@ public class AtendimentoController {
      * Endpoint para buscar um atendimento do Banco de Dados pelo ID
      *
      */
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/{idAtendimento}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Atendimento encontrado"),
             @ApiResponse(responseCode = "404", description = "Atendimento não encontrado")
     })
     @Operation(summary = "Listar atendimento por ID", description = "Endpoint para lista um atendimento por ID")
-    public ResponseEntity<?> findById(@PathVariable String id) {
+    public ResponseEntity<AtendimentoProjectionView> findById(@PathVariable String idAtendimento) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(atendimentoService.listarAtendimentoPorId(id));
+                .body(atendimentoService.listarAtendimentoPorId(idAtendimento));
     }
 
     /*
