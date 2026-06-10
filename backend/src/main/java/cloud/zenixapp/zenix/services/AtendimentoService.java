@@ -86,15 +86,15 @@ public class AtendimentoService {
         return atendimentoRepository.findAll(TenantContext.getTenantId());
     }
 
-    public AtendimentoResponseDTO listarAtendimentoPorId(String id){
+    public AtendimentoProjectionView listarAtendimentoPorId(String idAtendimento){
         Usuarios user = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return atendimentoRepository.findByUserById(user.getId(), id)
+
+        return atendimentoRepository.findByUserById(user.getId(), idAtendimento, TenantContext.getTenantId())
                 .map((atendimento -> {
-                    AtendimentoResponseDTO atendimentoResponseDTO = atendimentoMapper.responseDTO(atendimento);
-                    if(atendimentoResponseDTO.status() == -1){
+                    if(atendimento.getStatus() == -1){
                         throw new NotFoundException("Atendimento foi excluído!");
                     }
-                    return atendimentoResponseDTO;
+                    return atendimento;
 
                 }))
                 .orElseThrow(() -> new NotFoundException("Atendimento não encontrado!"));
