@@ -4,10 +4,7 @@ import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.handlers.BindingHandler;
 import cloud.zenixapp.zenix.configs.mappers.AtendimentoMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.AtendimentoRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.AtendimentoAdminResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.AtendimentoResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
-import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.models.interfaces.AtendimentoAndUsuarioProjectionView;
 import cloud.zenixapp.zenix.models.interfaces.AtendimentoProjectionView;
 import cloud.zenixapp.zenix.services.AtendimentoService;
@@ -19,13 +16,12 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/${api-url}/atendimentos")
@@ -59,7 +55,7 @@ public class AtendimentoController {
     }
 
     @GetMapping("/historico")
-    public ResponseEntity<List<AtendimentoResponseDTO>> findHistorico(){
+    public ResponseEntity<List<AtendimentoProjectionView>> findHistorico(){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.listarHistorico());
     }
