@@ -9,9 +9,6 @@ import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.lang.annotation.Native;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,9 +19,18 @@ public interface AtendimentoRepository extends JpaRepository<Atendimento, String
     void deleteLogico(@Param("id") String id);
 
     @NativeQuery(
-            value = "SELECT * FROM atendimentos WHERE usuario_id = :id"
-    )
-    List<Atendimento> findByUser(@Param("id") String id);
+            value = "SELECT " +
+                    "a.id AS id, " +
+                    "a.atendimento_descricao AS descricao," +
+                    "a.atendimento_servico AS servico," +
+                    "a.atendimento_valor AS valor," +
+                    "a.atendimento_pagamento AS formaPagamento," +
+                    "a.atendimento_data AS data," +
+                    "a.atendimento_observacao AS observacao," +
+                    "a.atendimento_status AS status " +
+                    "FROM atendimentos a " +
+                    "WHERE a.usuario_id = :idUser AND a.tenant_id = :tenantId")
+    List<AtendimentoProjectionView> findByUser(@Param("idUser") String idUser, @Param("tenantId") String tenantId);
 
     @NativeQuery(
             value = "SELECT " +
