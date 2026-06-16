@@ -31,7 +31,8 @@ public interface AtendimentoRepository extends JpaRepository<Atendimento, String
                     "a.atendimento_pagamento AS formaPagamento," +
                     "a.atendimento_data AS data," +
                     "a.atendimento_observacao AS observacao," +
-                    "a.atendimento_status AS status " +
+                    "a.atendimento_status AS status, " +
+                    "a.updated_at AS updatedAt " +
                     "FROM atendimentos a " +
                     "WHERE a.usuario_id = :idUser AND a.tenant_id = :tenantId")
     List<AtendimentoProjectionView> findByUser(@Param("idUser") String idUser, @Param("tenantId") String tenantId);
@@ -45,7 +46,8 @@ public interface AtendimentoRepository extends JpaRepository<Atendimento, String
                     "a.atendimento_pagamento AS formaPagamento," +
                     "a.atendimento_data AS data," +
                     "a.atendimento_observacao AS observacao," +
-                    "a.atendimento_status AS status " +
+                    "a.atendimento_status AS status, " +
+                    "a.updated_at AS updatedAt " +
                     "FROM atendimentos a " +
                     "WHERE a.usuario_id = :idUser AND a.id = :idAtendimento AND a.tenant_id = :tenantId")
     Optional<AtendimentoProjectionView> findByUserById(@Param("idUser") String idUser, @Param("idAtendimento") String idAtendimento, @Param("tenantId") String tenantId);
@@ -59,15 +61,12 @@ public interface AtendimentoRepository extends JpaRepository<Atendimento, String
                     "a.atendimento_pagamento AS formaPagamento," +
                     "a.atendimento_data AS data," +
                     "a.atendimento_observacao AS observacao," +
-                    "a.atendimento_status AS status " +
+                    "a.atendimento_status AS status, " +
+                    "a.updated_at AS updatedAt " +
                     "FROM atendimentos a " +
                     "WHERE a.usuario_id = :id and a.atendimento_data = :data AND a.tenant_id = :tenantId")
     List<AtendimentoProjectionView> findByUserDate(@Param("id") String id, @Param("data") String data, @Param("tenantId") String tenantId);
 
-    @NativeQuery(
-            value = "SELECT * FROM atendimentos WHERE atendimento_id = :id"
-    )
-    Optional<Atendimento> findByIdAtendimento(@Param("id") String id);
 
     @Modifying
     @NativeQuery(
@@ -101,7 +100,8 @@ public interface AtendimentoRepository extends JpaRepository<Atendimento, String
                     "a.atendimento_pagamento AS formaPagamento," +
                     "a.atendimento_data AS data," +
                     "a.atendimento_observacao AS observacao," +
-                    "a.atendimento_status AS status " +
+                    "a.atendimento_status AS status," +
+                    "a.updated_at AS updatedAt " +
                     "FROM atendimentos a " +
                     "WHERE a.id = :id AND a.tenant_id = :tenantId")
     Optional<AtendimentoProjectionView> findById(@Param("id") String id, @Param("tenantId") String tenantId);
