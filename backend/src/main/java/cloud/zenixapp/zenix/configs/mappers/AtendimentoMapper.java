@@ -3,6 +3,7 @@ package cloud.zenixapp.zenix.configs.mappers;
 import cloud.zenixapp.zenix.models.dtos.requests.AtendimentoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.AtendimentoResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Atendimento;
+import cloud.zenixapp.zenix.models.interfaces.AtendimentoProjectionView;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -27,5 +28,15 @@ public interface AtendimentoMapper {
     AtendimentoResponseDTO responseDTO(Atendimento atendimento);
 
     List<AtendimentoResponseDTO> listResponseDTO(List<Atendimento> atendimentosList);
+
+    @Mapping(target = "tenant", ignore = true)
+    @Mapping(target = "updatedAt", source = "updatedAt")
+    @Mapping(target = "deletedAt", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "date", source = "data")
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "usuarios", source = "usuarioId")
+    Atendimento viewToEntity(AtendimentoProjectionView atendimentoView);
 
 }
