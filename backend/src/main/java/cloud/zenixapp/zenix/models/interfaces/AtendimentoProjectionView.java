@@ -1,6 +1,8 @@
 package cloud.zenixapp.zenix.models.interfaces;
 
 
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface AtendimentoProjectionView {
@@ -11,5 +13,6 @@ public interface AtendimentoProjectionView {
     String getFormaPagamento();
     String getData();
     String getObservacao();
+    LocalDateTime getUpdatedAt();
     int getStatus();
 }
