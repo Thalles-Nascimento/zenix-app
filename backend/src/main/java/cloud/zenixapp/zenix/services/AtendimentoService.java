@@ -116,7 +116,7 @@ public class AtendimentoService {
                         clienteService.retiraRetornoCliente(atendimento.getDescricao());
                     }
 
-                    atendimentoRepository.deleteLogico(id, LocalDateTime.now(), TenantContext.getTenantId());
+                    atendimentoRepository.deleteLogico(atendimento.getId(), LocalDateTime.now(), TenantContext.getTenantId());
 
                     return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
@@ -129,15 +129,18 @@ public class AtendimentoService {
 
 //    TODO Restringir a edição apenas ao administrador | Restringir a chamada no método atualizar por campos não alterados
     @Transactional(propagation = Propagation.REQUIRED)
-    public SuccessResponseDTO atualizarAtendimento(String id, AtendimentoRequestDTO atendimentoRequestDTO) throws NotFoundException {
-        return atendimentoRepository.findByIdAtendimento(id)
-                .map(atendimento -> {
-                    if(atendimento.getStatus() == -1){
+    public SuccessResponseDTO atualizarAtendimento(String id, AtendimentoRequestDTO atendimentoRequestDTO){
+        return atendimentoRepository.findById(id, TenantContext.getTenantId())
+                .map(atendimentoView -> {
+                    if(atendimentoView.getStatus() == -1){
                         throw new NotFoundException("Não é possível atualizar um atendimento excluído!");
                     }
 
-                    atendimento.setUpdatedAt(LocalDateTime.now());
+                    Atendimento atendimento = atendimentoMapper.viewToEntity(atendimentoView);
+                    System.out.println(atendimento);
+
                     atendimentoMapper.atualizarAtendimento(atendimento, atendimentoRequestDTO);
+
                     atendimentoRepository.save(atendimento);
 
                     return new SuccessResponseDTO(
@@ -158,7 +161,7 @@ public class AtendimentoService {
                         throw new AtendimentoExcluidoException("Atendimento já está ativo!");
                     }
 
-                    atendimentoRepository.ativarAtendimento(id, TenantContext.getTenantId());
+                    atendimentoRepository.ativarAtendimento(atendimento.getId(), TenantContext.getTenantId());
 
                     return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
