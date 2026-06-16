@@ -12,7 +12,7 @@ const formatBRL = (valor: number) =>
 export default function FinanceiroPage() {
     const {
         carregando, totalDia, totalSemana, totalMes, totalPeriodo,
-        ticketMedio, porFormaPagamento, atendimentosFiltrados,
+        ticketMedio, porClientes, atendimentosFiltrados,
         dadosGrafico, filtroInicio, filtroFim, setFiltroInicio, setFiltroFim, 
         comissaoBarbeiro, comissaoDia, comissaoSemana, comissaoMes
     } = useFinanceiro()
@@ -34,7 +34,7 @@ export default function FinanceiroPage() {
             <h1 className="text-white text-xl font-bold">Financeiro</h1>
 
             {/* Filtro por período */}
-            <div className="flex flex-wrap items-center gap-3 bg-gray-900 rounded-xl border border-gray-700 p-4 notranslate">
+            <div className="flex flex-wrap items-center gap-3 bg-black rounded-xl border border-gray-700 p-4 notranslate">
                 <span className="text-white text-sm font-medium w-full sm:w-auto">Filtrar por período:</span>
                 <div className="flex items-center gap-2 notranslate">
                     <label className="text-gray-400 text-sm">De</label>
@@ -139,24 +139,28 @@ export default function FinanceiroPage() {
                 </div>
 
                 <div className="bg-black rounded-xl border border-gray-500 p-5 notranslate">
-                    <p className="text-white text-xs uppercase tracking-widest mb-4">Por Forma de Pagamento</p>
-                    {porFormaPagamento.length === 0 ? (
+                    <p className="text-white text-xs uppercase tracking-widest mb-4">Clientes</p>
+                    {porClientes.length === 0 ? (
                         <p className="text-gray-500 text-sm">Nenhum dado</p>
                     ) : (
-                        <div className="flex flex-col gap-4 notranslate">
-                            {porFormaPagamento.map(item => (
-                                <div key={item.forma}>
-                                    <div className="flex justify-between mb-1 notranslate">
-                                        <span className="text-white text-sm">{item.forma}</span>
-                                        <span className="text-orange-500 text-sm font-bold">{formatBRL(item.total)}</span>
-                                    </div>
-                                    <div className="w-full bg-gray-700 rounded-full h-1.5 notranslate">
-                                        <div
-                                            className="bg-orange-500 h-1.5 rounded-full"
-                                            style={{
-                                                width: `${(item.total / (atendimentosFiltrados.reduce((acc, a) => acc + a.valor, 0) || 1)) * 100}%`
-                                            }}
-                                        />
+                        <div className="flex flex-col gap-3">
+                            {porClientes.map((item, index) => (
+                                <div key={item.cliente} className="flex items-center gap-3">
+                                    <span className="text-orange-500 font-bold w-5 text-sm">{index + 1}º</span>
+                                    <div className="flex-1">
+                                        <div className="flex justify-between mb-1">
+                                            <span className="text-white text-sm">{item.cliente}</span>
+                                            <div className="flex gap-3">
+                                                <span className="text-gray-400 text-sm">Atendimentos: {item.quantidade}</span>
+                                                <span className="text-orange-400 text-sm font-semibold">{formatBRL(item.total)}</span>
+                                            </div>
+                                        </div>
+                                        <div className="w-full bg-gray-700 rounded-full h-1.5">
+                                            <div
+                                                className="bg-orange-500 h-1.5 rounded-full"
+                                                style={{ width: `${(item.total / totalPeriodo) * 100}%`}}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             ))}

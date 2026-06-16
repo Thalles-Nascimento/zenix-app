@@ -75,6 +75,11 @@ export default function LoginClient() {
             return
         }
 
+        if (telefone.length != 13){
+            toast.error("Telefone inválido!")
+            return
+        }
+
         try {
             setCarregando(true)
             const telefoneNumeros = telefone.replace(/\D/g, "")

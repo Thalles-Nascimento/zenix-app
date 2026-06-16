@@ -19,8 +19,7 @@ export default function FilaPage() {
         if (!horario) return ""
         const [hora, minuto, segundo] = horario.split(":")
         const seg = segundo?.split(".")[0] ?? "00"
-        const ms = segundo?.split(".")[1]?.slice(0, 3) ?? "000"
-        return `${hora}:${minuto}:${seg}.${ms}`
+        return `${hora}:${minuto}:${seg}`
     }
 
     const abrirRetirarFila = (fila: FilaProps) => {
@@ -88,7 +87,7 @@ export default function FilaPage() {
                                         <p className="text-white font-bold">{cliente.nomeCliente}</p>
                                         <p className="text-white text-sm">{Array.isArray(cliente.servico) ? cliente.servico.join(" + ") : cliente.servico} • {cliente.formaPagamento}</p>
                                         <p className="text-gray-300 text-xs">Entrou às {formatarHorario(cliente.horario)}</p>
-                                        {cliente.semPreferencia === true && <p className="text-gray-300 text-xs">Cliente sem preferência</p>}
+                                        {cliente.semPreferencia === true && <p className="text-orange-500 text-xs">Cliente sem preferência</p>}
                                     </div>
                                 </div>
 

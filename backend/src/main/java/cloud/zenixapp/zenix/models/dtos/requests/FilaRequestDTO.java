@@ -30,6 +30,7 @@ public record FilaRequestDTO(
 
         Long idBarbeiro,
 
+        @NotNull(message = "Campo não pode ser nulo!")
         Long idUnidade,
 
         boolean semPreferencia
