@@ -14,5 +14,6 @@ public interface AtendimentoProjectionView {
     String getData();
     String getObservacao();
     LocalDateTime getUpdatedAt();
+    String getUsuarioId();
     int getStatus();
 }

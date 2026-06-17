@@ -137,7 +137,7 @@ public class AtendimentoService {
                     }
 
                     Atendimento atendimento = atendimentoMapper.viewToEntity(atendimentoView);
-                    System.out.println(atendimento);
+                    atendimento.setUsuarios(usuarioService.getUsuarioById(atendimentoView.getUsuarioId()));
 
                     atendimentoMapper.atualizarAtendimento(atendimento, atendimentoRequestDTO);
 

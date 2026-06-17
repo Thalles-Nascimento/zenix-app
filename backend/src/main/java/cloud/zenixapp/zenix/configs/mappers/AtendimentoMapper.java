@@ -36,7 +36,7 @@ public interface AtendimentoMapper {
     @Mapping(target = "date", source = "data")
     @Mapping(target = "id", source = "id")
     @Mapping(target = "status", ignore = true)
-    @Mapping(target = "usuarios", source = "usuarioId")
+    @Mapping(target = "usuarios", ignore = true)
     Atendimento viewToEntity(AtendimentoProjectionView atendimentoView);
 
 }
