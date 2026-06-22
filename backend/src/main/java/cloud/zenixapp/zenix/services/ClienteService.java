@@ -51,13 +51,11 @@ public class ClienteService {
 //    TODO Validar save
     @Transactional
     public SuccessResponseDTO save(ClienteRequestDTO clienteDTO){
+        Tenants tenant = tenantRepository.findById(TenantContext.getTenantId())
+                .orElseThrow(() -> new NotFoundException("Tenant não encontrado"));
+
         Clientes cliente = new Clientes();
         cliente.setNomeCliente(clienteDTO.nomeCliente());
-
-        Tenants tenant = tenantRepository.
-                findById(TenantContext.getTenantId()).
-                orElseThrow(() -> new NotFoundException("Tenant não encontrado"));
-
         cliente.setTenant(tenant);
 
         Optional<TelefoneCliente> telefone = clienteRepository.findByNumber(clienteDTO.telefoneCliente());
@@ -65,13 +63,17 @@ public class ClienteService {
         if (telefone.isPresent()){
             cliente.setTelefoneCliente(telefone.get());
             clienteRepository.save(cliente);
+
             return new SuccessResponseDTO(
                     HttpStatus.CREATED.value(),
                     "Cliente inserido com Sucesso"
             );
         }
-        TelefoneCliente newTelefone = telefoneRepository.save(new TelefoneCliente(clienteDTO.telefoneCliente()));
-        cliente.setTelefoneCliente(newTelefone);
+        TelefoneCliente telefoneNovo = new TelefoneCliente();
+        telefoneNovo.setTelefoneCliente(clienteDTO.telefoneCliente());
+        telefoneNovo.setTenant(tenant);
+
+        cliente.setTelefoneCliente(telefoneRepository.save(telefoneNovo));
         clienteRepository.save(cliente);
 
         return new SuccessResponseDTO(
