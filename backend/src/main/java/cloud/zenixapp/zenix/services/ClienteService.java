@@ -1,5 +1,6 @@
 package cloud.zenixapp.zenix.services;
 
+import cloud.zenixapp.zenix.configs.TenantContext;
 import cloud.zenixapp.zenix.configs.exceptions.ClienteExcluidoException;
 import cloud.zenixapp.zenix.configs.exceptions.ClientePossuePlanoException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
@@ -11,8 +12,10 @@ import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Clientes;
 import cloud.zenixapp.zenix.models.entities.Planos;
 import cloud.zenixapp.zenix.models.entities.TelefoneCliente;
+import cloud.zenixapp.zenix.models.entities.Tenants;
 import cloud.zenixapp.zenix.repositories.ClienteRepository;
 import cloud.zenixapp.zenix.repositories.TelefoneRepository;
+import cloud.zenixapp.zenix.repositories.TenantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -41,13 +44,22 @@ public class ClienteService {
     @Autowired
     private PlanosService planosService;
 
+    @Autowired
+    private TenantRepository tenantRepository;
+
 
 //    TODO Validar save
     @Transactional
     public SuccessResponseDTO save(ClienteRequestDTO clienteDTO){
         Clientes cliente = new Clientes();
         cliente.setNomeCliente(clienteDTO.nomeCliente());
-//        TODO Refatorar o uso de repository
+
+        Tenants tenant = tenantRepository.
+                findById(TenantContext.getTenantId()).
+                orElseThrow(() -> new NotFoundException("Tenant não encontrado"));
+
+        cliente.setTenant(tenant);
+
         Optional<TelefoneCliente> telefone = clienteRepository.findByNumber(clienteDTO.telefoneCliente());
 
         if (telefone.isPresent()){
