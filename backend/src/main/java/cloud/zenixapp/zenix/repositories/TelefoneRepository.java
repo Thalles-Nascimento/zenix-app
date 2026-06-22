@@ -10,7 +10,4 @@ import java.util.Optional;
 
 public interface TelefoneRepository extends JpaRepository<TelefoneCliente, String> {
 
-    @Query(value = "SELECT * FROM telefones_clientes WHERE telefone_cliente = :number", nativeQuery = true)
-    Optional<TelefoneCliente> findByNumber(@Param("number") String number);
-
 }

@@ -48,7 +48,7 @@ public class ClienteService {
         Clientes cliente = new Clientes();
         cliente.setNomeCliente(clienteDTO.nomeCliente());
 //        TODO Refatorar o uso de repository
-        Optional<TelefoneCliente> telefone = telefoneRepository.findByNumber(clienteDTO.telefoneCliente());
+        Optional<TelefoneCliente> telefone = clienteRepository.findByNumber(clienteDTO.telefoneCliente());
 
         if (telefone.isPresent()){
             cliente.setTelefoneCliente(telefone.get());
@@ -69,7 +69,7 @@ public class ClienteService {
     }
 
     public List<ClienteResponseDTO> clientesByTelefone(String numero) {
-        Optional<TelefoneCliente> telefone = telefoneRepository.findByNumber(numero);
+        Optional<TelefoneCliente> telefone = clienteRepository.findByNumber(numero);
 //        TODO Validar retorno
         if (telefone.isEmpty()) {
             return Collections.emptyList();
@@ -177,7 +177,7 @@ public class ClienteService {
 
                     if (clienteUpdateDTO.telefoneCliente() != null && !clienteUpdateDTO.telefoneCliente().isBlank()) {
                         String numero = clienteUpdateDTO.telefoneCliente().replaceAll("\\D", "");
-                        Optional<TelefoneCliente> telefone = telefoneRepository.findByNumber(numero);
+                        Optional<TelefoneCliente> telefone = clienteRepository.findByNumber(numero);
                         if (telefone.isPresent()) {
                             cliente.setTelefoneCliente(telefone.get());
                         } else {

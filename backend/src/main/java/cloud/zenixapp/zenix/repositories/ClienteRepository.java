@@ -35,4 +35,7 @@ public interface ClienteRepository extends JpaRepository<Clientes, String> {
     @Query(value = "UPDATE Clientes SET status = 1 WHERE id = :id")
     void ativarCliente(@Param("id") String id);
 
+    @Query(value = "SELECT * FROM telefones_clientes WHERE telefone_cliente = :number", nativeQuery = true)
+    Optional<TelefoneCliente> findByNumber(@Param("number") String number);
+
 }
