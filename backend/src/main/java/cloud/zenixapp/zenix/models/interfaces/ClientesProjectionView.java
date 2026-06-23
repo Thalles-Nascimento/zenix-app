@@ -1,12 +1,13 @@
 package cloud.zenixapp.zenix.models.interfaces;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public interface ClientesProjectionView {
     String getId();
     String getNome();
-    String getEndereco();
-    LocalDateTime getUpdateAt();
-    LocalDateTime getDeleteAt();
+    String getTelefone();
+    LocalDate getDataRenovacao();
+    int getAtendimentoMes();
+    int getRetorno();
     int getStatus();
 }
