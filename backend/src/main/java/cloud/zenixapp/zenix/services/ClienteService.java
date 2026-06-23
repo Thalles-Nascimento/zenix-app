@@ -14,7 +14,6 @@ import cloud.zenixapp.zenix.models.entities.Planos;
 import cloud.zenixapp.zenix.models.entities.TelefoneCliente;
 import cloud.zenixapp.zenix.models.entities.Tenants;
 import cloud.zenixapp.zenix.models.interfaces.ClientesProjectionView;
-import cloud.zenixapp.zenix.models.interfaces.TelefoneProjectionView;
 import cloud.zenixapp.zenix.repositories.ClienteRepository;
 import cloud.zenixapp.zenix.repositories.TelefoneRepository;
 import cloud.zenixapp.zenix.repositories.TenantRepository;
@@ -26,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,11 +57,10 @@ public class ClienteService {
         cliente.setNomeCliente(clienteDTO.nomeCliente());
         cliente.setTenant(tenant);
 
-        Optional<TelefoneProjectionView> telefone = clienteRepository.findByNumber(clienteDTO.telefoneCliente(), TenantContext.getTenantId());
+        Optional<TelefoneCliente> telefone = clienteRepository.findByNumber(clienteDTO.telefoneCliente(), TenantContext.getTenantId());
 
         if (telefone.isPresent()){
-            TelefoneCliente telefoneCliente = clienteMapper.toTelefone(telefone.get());
-            cliente.setTelefoneCliente(telefoneCliente);
+            cliente.setTelefoneCliente(telefone.get());
             clienteRepository.save(cliente);
 
             return new SuccessResponseDTO(
@@ -90,13 +87,19 @@ public class ClienteService {
 
     @Transactional
     public SuccessResponseDTO atualizarRetornoCliente(String id) throws NotFoundException {
-        return clienteRepository.findById(id)
-                .map(cliente -> {
-                    int count = cliente.getTotalRetornos();
+        return clienteRepository.findById(id, TenantContext.getTenantId())
+                .map(clienteView -> {
+                    int count = clienteView.getRetorno();
                     count = count + 1;
+                    Clientes cliente = clienteMapper.toClientes(clienteView);
+                    Optional<TelefoneCliente> telefone = clienteRepository.findByNumber(clienteView.getTelefone(), TenantContext.getTenantId());
+
+                    if (telefone.isPresent()){cliente.setTelefoneCliente(telefone.get());}
+
                     cliente.setTotalRetornos(count);
 
                     clienteRepository.save(cliente);
+
                     return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
                             "Obrigado pelo retorno!"
@@ -106,7 +109,6 @@ public class ClienteService {
                 .orElseThrow(() -> new NotFoundException("Cliente não encontrado!"));
     }
 
-//    TODO Refatorar a Fila para que tenha relacionamento com o Cliente
     @Transactional
     public String retiraRetornoCliente(String nome) {
         Clientes cliente = clienteRepository.findByName(nome);
@@ -188,10 +190,9 @@ public class ClienteService {
 
                     if (clienteUpdateDTO.telefoneCliente() != null && !clienteUpdateDTO.telefoneCliente().isBlank()) {
                         String numero = clienteUpdateDTO.telefoneCliente().replaceAll("\\D", "");
-                        Optional<TelefoneProjectionView> telefone = clienteRepository.findByNumber(numero, TenantContext.getTenantId());
+                        Optional<TelefoneCliente> telefone = clienteRepository.findByNumber(numero, TenantContext.getTenantId());
                         if (telefone.isPresent()) {
-                            TelefoneCliente telefoneCliente = clienteMapper.toTelefone(telefone.get());
-                            cliente.setTelefoneCliente(telefoneCliente);
+                            cliente.setTelefoneCliente(telefone.get());
                         } else {
                             TelefoneCliente newTelefone = telefoneRepository.save(new TelefoneCliente(numero));
                             cliente.setTelefoneCliente(newTelefone);
