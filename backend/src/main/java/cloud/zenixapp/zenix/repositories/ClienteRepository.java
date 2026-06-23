@@ -36,8 +36,8 @@ public interface ClienteRepository extends JpaRepository<Clientes, String> {
     List<Clientes> findByNameContaining(@Param("nome") String nome);
 
     @Modifying
-    @Query("UPDATE Clientes SET atendimentosMes = 0 WHERE planos IS NOT NULL AND DAY(dataRenovacao) = :dia")
-    void resetarAtendimentosMes(@Param("dia") int dia);
+    @NativeQuery("UPDATE clientes SET atendimentosMes = 0 WHERE tenant_id = :tenantId planos_id IS NOT NULL AND DAY(cliente_data_renovacao) = :dia")
+    void resetarAtendimentosMes(@Param("dia") int dia, @Param("tenantId") String tenantId);
 
     @Modifying
     @NativeQuery(

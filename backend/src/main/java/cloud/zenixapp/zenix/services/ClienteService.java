@@ -139,7 +139,7 @@ public class ClienteService {
     @Transactional
     public void resetarContadoresMensais() {
         int diaHoje = LocalDate.now().getDayOfMonth();
-        clienteRepository.resetarAtendimentosMes(diaHoje);
+        clienteRepository.resetarAtendimentosMes(diaHoje, TenantContext.getTenantId());
     }
 
     public List<ClienteResponseDTO> buscarTodosClientes() {
