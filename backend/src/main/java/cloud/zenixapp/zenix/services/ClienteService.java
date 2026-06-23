@@ -235,7 +235,7 @@ public class ClienteService {
                         throw new ClienteExcluidoException("Cliente já está ativo!");
                     }
 
-                    clienteRepository.ativarCliente(id);
+                    clienteRepository.ativarCliente(id, TenantContext.getTenantId());
                     return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
                             "Cliente ativado com sucesso"

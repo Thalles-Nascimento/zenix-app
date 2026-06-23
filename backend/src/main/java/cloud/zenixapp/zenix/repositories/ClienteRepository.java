@@ -34,8 +34,11 @@ public interface ClienteRepository extends JpaRepository<Clientes, String> {
     void deleteLogico(@Param("id") String id, @Param("deleteTime") LocalDateTime deleteTime, @Param("tenantId") String tenantId);
 
     @Modifying
-    @Query(value = "UPDATE Clientes SET status = 1 WHERE id = :id")
-    void ativarCliente(@Param("id") String id);
+    @NativeQuery(
+            value = "UPDATE clientes c " +
+                    "SET c.cliente_status = 1, c.deleted_at = null " +
+                    "WHERE c.id = :id AND c.tenant_id = :tenantId")
+    void ativarCliente(@Param("id") String id, @Param("tenantId") String tenantId);
 
     @NativeQuery(
             value = "SELECT " +
