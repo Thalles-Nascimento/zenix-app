@@ -13,6 +13,8 @@ import cloud.zenixapp.zenix.models.entities.Clientes;
 import cloud.zenixapp.zenix.models.entities.Planos;
 import cloud.zenixapp.zenix.models.entities.TelefoneCliente;
 import cloud.zenixapp.zenix.models.entities.Tenants;
+import cloud.zenixapp.zenix.models.interfaces.ClientesProjectionView;
+import cloud.zenixapp.zenix.models.interfaces.TelefoneProjectionView;
 import cloud.zenixapp.zenix.repositories.ClienteRepository;
 import cloud.zenixapp.zenix.repositories.TelefoneRepository;
 import cloud.zenixapp.zenix.repositories.TenantRepository;
@@ -47,8 +49,6 @@ public class ClienteService {
     @Autowired
     private TenantRepository tenantRepository;
 
-
-//    TODO Validar save
     @Transactional
     public SuccessResponseDTO save(ClienteRequestDTO clienteDTO){
         Tenants tenant = tenantRepository.findById(TenantContext.getTenantId())
@@ -58,10 +58,11 @@ public class ClienteService {
         cliente.setNomeCliente(clienteDTO.nomeCliente());
         cliente.setTenant(tenant);
 
-        Optional<TelefoneCliente> telefone = clienteRepository.findByNumber(clienteDTO.telefoneCliente());
+        Optional<TelefoneProjectionView> telefone = clienteRepository.findByNumber(clienteDTO.telefoneCliente(), TenantContext.getTenantId());
 
         if (telefone.isPresent()){
-            cliente.setTelefoneCliente(telefone.get());
+            TelefoneCliente telefoneCliente = clienteMapper.toTelefone(telefone.get());
+            cliente.setTelefoneCliente(telefoneCliente);
             clienteRepository.save(cliente);
 
             return new SuccessResponseDTO(
@@ -82,13 +83,8 @@ public class ClienteService {
         );
     }
 
-    public List<ClienteResponseDTO> clientesByTelefone(String numero) {
-        Optional<TelefoneCliente> telefone = clienteRepository.findByNumber(numero);
-//        TODO Validar retorno
-        if (telefone.isEmpty()) {
-            return Collections.emptyList();
-        }
-        return clienteMapper.listResponseDTO(clienteRepository.findClientByNumber(telefone.get().getId()));
+    public List<ClientesProjectionView> clientesByTelefone(String numero) {
+        return clienteRepository.findClientByNumber(numero, TenantContext.getTenantId());
     }
 
     @Transactional
@@ -191,9 +187,10 @@ public class ClienteService {
 
                     if (clienteUpdateDTO.telefoneCliente() != null && !clienteUpdateDTO.telefoneCliente().isBlank()) {
                         String numero = clienteUpdateDTO.telefoneCliente().replaceAll("\\D", "");
-                        Optional<TelefoneCliente> telefone = clienteRepository.findByNumber(numero);
+                        Optional<TelefoneProjectionView> telefone = clienteRepository.findByNumber(numero, TenantContext.getTenantId());
                         if (telefone.isPresent()) {
-                            cliente.setTelefoneCliente(telefone.get());
+                            TelefoneCliente telefoneCliente = clienteMapper.toTelefone(telefone.get());
+                            cliente.setTelefoneCliente(telefoneCliente);
                         } else {
                             TelefoneCliente newTelefone = telefoneRepository.save(new TelefoneCliente(numero));
                             cliente.setTelefoneCliente(newTelefone);
