@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,8 +27,11 @@ public interface ClienteRepository extends JpaRepository<Clientes, String> {
     void resetarAtendimentosMes(@Param("dia") int dia);
 
     @Modifying
-    @Query(value = "UPDATE Clientes SET status = -1 WHERE id = :id")
-    void deleteLogico(@Param("id") String id);
+    @NativeQuery(
+            value = "UPDATE clientes c " +
+                    "SET c.cliente_status = -1, c.deleted_at = :deleteTime " +
+                    "WHERE c.id = :id AND c.tenant_id = :tenantId")
+    void deleteLogico(@Param("id") String id, @Param("deleteTime") LocalDateTime deleteTime, @Param("tenantId") String tenantId);
 
     @Modifying
     @Query(value = "UPDATE Clientes SET status = 1 WHERE id = :id")
