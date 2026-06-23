@@ -7,6 +7,7 @@ public interface ClientesProjectionView {
     String getId();
     String getNome();
     String getTelefone();
+    String getPlanosId();
     LocalDate getDataRenovacao();
     LocalDateTime getUpdatedAt();
     int getAtendimentoMes();

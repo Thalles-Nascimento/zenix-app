@@ -14,6 +14,7 @@ import cloud.zenixapp.zenix.models.entities.Planos;
 import cloud.zenixapp.zenix.models.entities.TelefoneCliente;
 import cloud.zenixapp.zenix.models.entities.Tenants;
 import cloud.zenixapp.zenix.models.interfaces.ClientesProjectionView;
+import cloud.zenixapp.zenix.models.interfaces.ClientesSimplesView;
 import cloud.zenixapp.zenix.repositories.ClienteRepository;
 import cloud.zenixapp.zenix.repositories.TelefoneRepository;
 import cloud.zenixapp.zenix.repositories.TenantRepository;
@@ -50,14 +51,15 @@ public class ClienteService {
 
     @Transactional
     public SuccessResponseDTO save(ClienteRequestDTO clienteDTO){
-        Tenants tenant = tenantRepository.findById(TenantContext.getTenantId())
+        String tenantId = TenantContext.getTenantId();
+        Tenants tenant = tenantRepository.findById(tenantId)
                 .orElseThrow(() -> new NotFoundException("Tenant não encontrado"));
 
         Clientes cliente = new Clientes();
         cliente.setNomeCliente(clienteDTO.nomeCliente());
         cliente.setTenant(tenant);
 
-        Optional<TelefoneCliente> telefone = clienteRepository.findByNumber(clienteDTO.telefoneCliente(), TenantContext.getTenantId());
+        Optional<TelefoneCliente> telefone = clienteRepository.findByNumber(clienteDTO.telefoneCliente(), tenantId);
 
         if (telefone.isPresent()){
             cliente.setTelefoneCliente(telefone.get());
@@ -87,12 +89,14 @@ public class ClienteService {
 
     @Transactional
     public SuccessResponseDTO atualizarRetornoCliente(String id) throws NotFoundException {
-        return clienteRepository.findById(id, TenantContext.getTenantId())
+        String tenantId = TenantContext.getTenantId();
+        return clienteRepository.findById(id, tenantId)
                 .map(clienteView -> {
                     int count = clienteView.getRetorno();
                     count = count + 1;
                     Clientes cliente = clienteMapper.toClientes(clienteView);
-                    Optional<TelefoneCliente> telefone = clienteRepository.findByNumber(clienteView.getTelefone(), TenantContext.getTenantId());
+                    Optional<TelefoneCliente> telefone = clienteRepository.
+                            findByNumber(clienteView.getTelefone(), tenantId);
 
                     if (telefone.isPresent()){cliente.setTelefoneCliente(telefone.get());}
 
@@ -110,10 +114,15 @@ public class ClienteService {
     }
 
     @Transactional
-    public String retiraRetornoCliente(String nome) {
-        Clientes cliente = clienteRepository.findByName(nome);
+    public String retiraRetornoCliente(String nome, String tenantId) {
+        ClientesProjectionView clienteView = clienteRepository.findByName(nome, tenantId);
 
-        int count = cliente.getTotalRetornos();
+        Clientes cliente = clienteMapper.toClientes(clienteView);
+        Optional<TelefoneCliente> telefone = clienteRepository.findByNumber(clienteView.getTelefone(), tenantId);
+
+        if (telefone.isPresent()){cliente.setTelefoneCliente(telefone.get());}
+
+        int count = clienteView.getRetorno();
         if (count == 0){
             return "Cliente retirado";
         }
@@ -245,10 +254,14 @@ public class ClienteService {
                 .orElseThrow(() -> new NotFoundException("Cliente não encontrado!"));
     }
 
-    public void atualizarAtendimentosMes(String nome){
-        Clientes cliente = clienteRepository.findByName(nome);
-        if (cliente == null || cliente.getPlanos() == null) return;
-        cliente.setAtendimentosMes(cliente.getAtendimentosMes() + 1);
+    public void atualizarAtendimentosMes(String nome, String tenantId){
+        ClientesProjectionView clienteView = clienteRepository.findByName(nome, tenantId);
+
+        if (clienteView == null || clienteView.getPlanosId() == null) return;
+
+        Clientes cliente = clienteMapper.toClientes(clienteView);
+        cliente.setAtendimentosMes(clienteView.getAtendimentoMes() + 1);
+
         clienteRepository.save(cliente);
     }
 

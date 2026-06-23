@@ -98,17 +98,18 @@ public class FilaService {
 
     @Transactional
     public SuccessResponseDTO chamarCliente(String id) {
-        return filaRepository.findById(id, TenantContext.getTenantId())
+        String tenantId = TenantContext.getTenantId();
+        return filaRepository.findById(id, tenantId)
                 .map(atendimentoFila -> {
                     if(atendimentoFila.getStatus() != 0){
                         throw new FilaException("Cliente está em atendimento ou já foi finalizado");
                     }
 
-                    filaRepository.paraAtendimento(atendimentoFila.getId(), TenantContext.getTenantId(), LocalTime.now());
+                    filaRepository.paraAtendimento(atendimentoFila.getId(), tenantId, LocalTime.now());
 
                     if (atendimentoFila.getSemPreferencia()) {
                         Usuarios userAuth = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-                        filaRepository.setarUsuario(atendimentoFila.getId(), TenantContext.getTenantId(), userAuth.getId());
+                        filaRepository.setarUsuario(atendimentoFila.getId(), tenantId, userAuth.getId());
                     }
 
                     return new SuccessResponseDTO(
@@ -121,14 +122,15 @@ public class FilaService {
 
     @Transactional
     public SuccessResponseDTO finalizarAtendimento(String id){
-        return filaRepository.findById(id, TenantContext.getTenantId())
+        String tenantId = TenantContext.getTenantId();
+        return filaRepository.findById(id, tenantId)
                 .map(atendimentoFila -> {
                     if (atendimentoFila.getStatus() != 1){
                         throw new FilaException("Clientes já Finalizado ou está Aguardando");
                     }
-                    filaRepository.finalizarAtendimentoFila(atendimentoFila.getId(), TenantContext.getTenantId(), LocalTime.now());
+                    filaRepository.finalizarAtendimentoFila(atendimentoFila.getId(), tenantId, LocalTime.now());
 
-                    clienteService.atualizarAtendimentosMes(atendimentoFila.getNomeCliente());
+                    clienteService.atualizarAtendimentosMes(atendimentoFila.getNomeCliente(), tenantId);
 
                     return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
@@ -140,13 +142,14 @@ public class FilaService {
 
     @Transactional
     public SuccessResponseDTO retirarClienteFila(String id) {
-        return filaRepository.findById(id, TenantContext.getTenantId())
+        String tenantId = TenantContext.getTenantId();
+        return filaRepository.findById(id, tenantId)
                 .map(atendimentoFila -> {
                     if (atendimentoFila.getStatus() == 1) {
                         throw new FilaException("Cliente está em atendimento");
                     }
 
-                    String statusMsg = clienteService.retiraRetornoCliente(atendimentoFila.getNomeCliente());
+                    String statusMsg = clienteService.retiraRetornoCliente(atendimentoFila.getNomeCliente(), tenantId);
 
                     filaRepository.deleteById(atendimentoFila.getId());
 

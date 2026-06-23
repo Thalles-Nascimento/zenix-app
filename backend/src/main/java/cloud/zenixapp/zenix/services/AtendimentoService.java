@@ -46,7 +46,8 @@ public class AtendimentoService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public SuccessResponseDTO inserirAtendimento(AtendimentoRequestDTO atendimentoDTO){
-        Tenants tenant = tenantRepository.findById(TenantContext.getTenantId())
+        String tenantId = TenantContext.getTenantId();
+        Tenants tenant = tenantRepository.findById(tenantId)
                 .orElseThrow(() -> new NotFoundException("Tenant não encontrado!"));
 
         Usuarios userAuth = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -63,7 +64,7 @@ public class AtendimentoService {
         atendimento.setTenant(tenant);
 
         if (!clienteService.buscarClientePorNome(atendimento.getDescricao()).isEmpty()){
-            clienteService.atualizarAtendimentosMes(atendimentoDTO.descricao());
+            clienteService.atualizarAtendimentosMes(atendimentoDTO.descricao(), tenantId);
         }
 
 
@@ -106,17 +107,18 @@ public class AtendimentoService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public SuccessResponseDTO deletarAtendimento(String id) {
-        return atendimentoRepository.findById(id, TenantContext.getTenantId())
+        String tenantId = TenantContext.getTenantId();
+        return atendimentoRepository.findById(id, tenantId)
                 .map(atendimento -> {
                     if (atendimento.getStatus() == -1) {
                         throw new AtendimentoExcluidoException("Atendimento já foi excluído!");
 
                     }
                     if (!clienteService.buscarClientePorNome(atendimento.getDescricao()).isEmpty()){
-                        clienteService.retiraRetornoCliente(atendimento.getDescricao());
+                        clienteService.retiraRetornoCliente(atendimento.getDescricao(), tenantId);
                     }
 
-                    atendimentoRepository.deleteLogico(atendimento.getId(), LocalDateTime.now(), TenantContext.getTenantId());
+                    atendimentoRepository.deleteLogico(atendimento.getId(), LocalDateTime.now(), tenantId);
 
                     return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
@@ -155,13 +157,14 @@ public class AtendimentoService {
     //    TODO Restringir a ativação apenas ao administrador
     @Transactional
     public SuccessResponseDTO ativarAtendimento(String id){
-        return atendimentoRepository.findById(id, TenantContext.getTenantId())
+        String tenantId = TenantContext.getTenantId();
+        return atendimentoRepository.findById(id, tenantId)
                 .map(atendimento -> {
                     if(atendimento.getStatus() != -1){
                         throw new AtendimentoExcluidoException("Atendimento já está ativo!");
                     }
 
-                    atendimentoRepository.ativarAtendimento(atendimento.getId(), TenantContext.getTenantId());
+                    atendimentoRepository.ativarAtendimento(atendimento.getId(), tenantId);
 
                     return new SuccessResponseDTO(
                             HttpStatus.OK.value(),

@@ -3,7 +3,7 @@ package cloud.zenixapp.zenix.configs.mappers;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteUpdateRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ClienteResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Clientes;
-import cloud.zenixapp.zenix.models.interfaces.ClientesSimplesView;
+import cloud.zenixapp.zenix.models.interfaces.ClientesProjectionView;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -40,6 +40,6 @@ public interface ClienteMapper {
     @Mapping(target = "tenant", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    Clientes toClientes(ClientesSimplesView clientesSimplesView);
+    Clientes toClientes(ClientesProjectionView clientesSimplesView);
 
 }
