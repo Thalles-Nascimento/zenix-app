@@ -2,8 +2,11 @@ package cloud.zenixapp.zenix.repositories;
 
 import cloud.zenixapp.zenix.models.entities.Clientes;
 import cloud.zenixapp.zenix.models.entities.TelefoneCliente;
+import cloud.zenixapp.zenix.models.interfaces.ClientesProjectionView;
+import cloud.zenixapp.zenix.models.interfaces.TelefoneProjectionView;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -11,11 +14,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ClienteRepository extends JpaRepository<Clientes, String> {
-
-//    TODO Melhorar esse retorno, deixando mais seguro -
-//     SELECT c.cliente_id, c.cliente_nome, c.cliente_retorno FROM clientes c WHERE c.telefone_id = :id
-    @Query(value = "SELECT * FROM clientes WHERE telefone_id = :id", nativeQuery = true)
-    List<Clientes> findClientByNumber(@Param("id") String id);
 
     @Query(value = "SELECT * FROM clientes WHERE cliente_nome = :nome", nativeQuery = true)
     Clientes findByName(@Param("nome") String nome);
@@ -35,7 +33,26 @@ public interface ClienteRepository extends JpaRepository<Clientes, String> {
     @Query(value = "UPDATE Clientes SET status = 1 WHERE id = :id")
     void ativarCliente(@Param("id") String id);
 
-    @Query(value = "SELECT * FROM telefones_clientes WHERE telefone_cliente = :number", nativeQuery = true)
-    Optional<TelefoneCliente> findByNumber(@Param("number") String number);
+    @NativeQuery(
+            value = "SELECT " +
+                    "tc.id AS id," +
+                    "tc.telefone_cliente AS telefone " +
+                    "FROM telefones_clientes tc " +
+                    "WHERE tc.telefone_cliente = :number AND tc.tenant_id = :tenantId")
+    Optional<TelefoneProjectionView> findByNumber(@Param("number") String number, @Param("tenantId") String tenantId);
+
+    @NativeQuery(
+            value = "SELECT " +
+                    "c.id AS id," +
+                    "c.cliente_nome AS nome," +
+                    "tc.telefone_cliente AS telefone," +
+                    "c.cliente_data_renovacao AS dataRenovacao," +
+                    "c.cliente_atendimentos_mes AS atendimentoMes," +
+                    "c.cliente_retorno AS retorno," +
+                    "c.cliente_status AS status " +
+                    "FROM clientes c " +
+                    "INNER JOIN telefones_clientes tc ON c.telefone_id = tc.id " +
+                    "WHERE tc.telefone_cliente = :telefone AND c.tenant_id = :tenantId")
+    List<ClientesProjectionView> findClientByNumber(@Param("telefone") String telefone, @Param("tenantId") String tenantId);
 
 }
