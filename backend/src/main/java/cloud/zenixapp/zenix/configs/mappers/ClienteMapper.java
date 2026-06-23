@@ -4,7 +4,9 @@ import cloud.zenixapp.zenix.models.dtos.requests.ClienteUpdateRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.UnidadeRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ClienteResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Clientes;
+import cloud.zenixapp.zenix.models.entities.TelefoneCliente;
 import cloud.zenixapp.zenix.models.entities.Unidades;
+import cloud.zenixapp.zenix.models.interfaces.TelefoneProjectionView;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -32,5 +34,13 @@ public interface ClienteMapper {
     @Mapping(target = "deletedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     void atualizarCliente(@MappingTarget Clientes clientes, ClienteUpdateRequestDTO clienteUpdateRequestDTO);
+
+    @Mapping(target = "telefoneCliente", source = "telefone")
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "tenant", ignore = true)
+    @Mapping(target = "deletedAt", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "clientes", ignore = true)
+    TelefoneCliente toTelefone(TelefoneProjectionView telefoneProjectionView);
 
 }
