@@ -142,8 +142,8 @@ public class ClienteService {
         clienteRepository.resetarAtendimentosMes(diaHoje, TenantContext.getTenantId());
     }
 
-    public List<ClienteResponseDTO> buscarTodosClientes() {
-        return clienteMapper.listResponseDTO(clienteRepository.findAll());
+    public List<ClientesProjectionView> buscarTodosClientes() {
+        return clienteRepository.findAll(TenantContext.getTenantId());
     }
 
     @Transactional

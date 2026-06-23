@@ -6,6 +6,7 @@ import cloud.zenixapp.zenix.models.dtos.requests.ClienteRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteUpdateRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ClienteResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
+import cloud.zenixapp.zenix.models.interfaces.ClientesProjectionView;
 import cloud.zenixapp.zenix.services.ClienteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -63,7 +64,7 @@ public class ClienteController {
             @ApiResponse(responseCode = "200", description = "Clientes encontrados")
     })
     @Operation(summary = "Listar clientes", description = "Endpoint para listar todos os clientes")
-    public ResponseEntity<List<ClienteResponseDTO>> findAllClientes(){
+    public ResponseEntity<List<ClientesProjectionView>> findAllClientes(){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(clienteService.buscarTodosClientes());
     }

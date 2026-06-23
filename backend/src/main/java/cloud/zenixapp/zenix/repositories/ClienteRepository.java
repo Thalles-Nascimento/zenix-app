@@ -86,6 +86,21 @@ public interface ClienteRepository extends JpaRepository<Clientes, String> {
                     "c.cliente_status AS status " +
                     "FROM clientes c " +
                     "INNER JOIN telefones_clientes tc ON c.telefone_id = tc.id " +
+                    "WHERE c.tenant_id = :tenantId")
+    List<ClientesProjectionView> findAll(@Param("tenantId") String tenantId);
+
+    @NativeQuery(
+            value = "SELECT " +
+                    "c.id AS id," +
+                    "c.cliente_nome AS nome," +
+                    "tc.telefone_cliente AS telefone," +
+                    "c.cliente_data_renovacao AS dataRenovacao," +
+                    "c.cliente_atendimentos_mes AS atendimentoMes," +
+                    "c.cliente_retorno AS retorno," +
+                    "c.updated_at AS updatedAt," +
+                    "c.cliente_status AS status " +
+                    "FROM clientes c " +
+                    "INNER JOIN telefones_clientes tc ON c.telefone_id = tc.id " +
                     "WHERE c.id = :id AND c.tenant_id = :tenantId AND c.cliente_status = 1")
     Optional<ClientesProjectionView> findById(@Param("id") String id, @Param("tenantId") String tenantId);
 
