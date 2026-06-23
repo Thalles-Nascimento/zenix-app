@@ -3,7 +3,7 @@ package cloud.zenixapp.zenix.models.interfaces;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public interface ClientesProjectionView {
+public interface ClientesSimplesView {
     String getId();
     String getNome();
     String getTelefone();
