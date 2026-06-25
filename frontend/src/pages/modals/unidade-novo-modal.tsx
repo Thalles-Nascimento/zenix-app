@@ -11,14 +11,14 @@ interface NovaProps {
     onConfirmar: (form: UnidadeFormProps) => void
 }
 
-const formInicial: UnidadeFormProps = { nomeUnidade: "", endereco: "" }
+const formInicial: UnidadeFormProps = { nome: "", endereco: "" }
 
 export function ModalNovaUnidade({ onConfirmar }: NovaProps) {
     const [open, setOpen] = useState(false)
     const [form, setForm] = useState<UnidadeFormProps>(formInicial)
 
     const handleConfirmar = () => {
-        if (!form.nomeUnidade || !form.endereco) return
+        if (!form.nome || !form.endereco) return
         onConfirmar(form)
         setOpen(false)
         setForm(formInicial)
@@ -38,8 +38,8 @@ export function ModalNovaUnidade({ onConfirmar }: NovaProps) {
                         <Label className="text-white">Nome da Unidade</Label>
                         <Input className="mt-1 bg-gray-900 border-gray-700 text-white notranslate"
                             placeholder="Ex: WN Barbearia Centro"
-                            value={form.nomeUnidade}
-                            onChange={(e) => setForm({ ...form, nomeUnidade: e.target.value })} />
+                            value={form.nome}
+                            onChange={(e) => setForm({ ...form, nome: e.target.value })} />
                     </div>
                     <div>
                         <Label className="text-white">Endereço</Label>

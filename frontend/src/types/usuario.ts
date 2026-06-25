@@ -20,13 +20,13 @@ export interface UsuarioFormProps {
 
 export interface UnidadeProps {
     id: number
-    nomeUnidade: string,
+    nome: string,
     endereco: string,
     status: number
 }
 
 export interface UnidadeFormProps {
-    nomeUnidade: string
+    nome: string
     endereco: string
 }
 
@@ -40,7 +40,7 @@ export interface UsuarioSimplificadoProps {
 
 export interface UnidadeDetalheProps {
     id: number
-    nomeUnidade: string
+    nome: string
     endereco: string
     status: number
     usuarios: UsuarioSimplificadoProps[]
