@@ -172,15 +172,24 @@ public class ClienteService {
 
     @Transactional
     public SuccessResponseDTO retirarPlano(String id){
-        return clienteRepository.findById(id)
-                .map(cliente -> {
-                    if(cliente.getStatus() == -1){
+        String tenantId = TenantContext.getTenantId();
+        return clienteRepository.findById(id, tenantId)
+                .map(clienteView -> {
+                    if(clienteView.getStatus() == -1){
                         throw new ClienteExcluidoException("Cliente foi excluído!");
 
                     }
 
+                    Clientes cliente = clienteMapper.toClientes(clienteView);
+
+                    Optional<TelefoneCliente> telefone = clienteRepository.findByNumber(clienteView.getTelefone(), tenantId);
+
+                    telefone.ifPresent(cliente::setTelefoneCliente);
+
                     cliente.setPlanos(null);
                     cliente.setAtendimentosMes(0);
+                    cliente.setDataRenovacao(null);
+
                     clienteRepository.save(cliente);
                     return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
