@@ -2,6 +2,7 @@ package cloud.zenixapp.zenix.controllers;
 
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.handlers.BindingHandler;
+import cloud.zenixapp.zenix.models.dtos.requests.ClientePlanoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteUpdateRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ClienteResponseDTO;
@@ -70,7 +71,7 @@ public class ClienteController {
     }
 
     @PatchMapping("/planos/{idCliente}")
-    public ResponseEntity<?> vincularPlano(@PathVariable String idCliente, @RequestBody String idPlano){
+    public ResponseEntity<?> vincularPlano(@PathVariable String idCliente, @RequestBody ClientePlanoRequestDTO idPlano){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(clienteService.inserirPlano(idCliente, idPlano));
     }

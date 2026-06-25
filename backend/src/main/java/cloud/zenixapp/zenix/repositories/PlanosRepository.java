@@ -33,4 +33,10 @@ public interface PlanosRepository extends JpaRepository<Planos, String> {
                     "WHERE p.id = :id AND p.tenant_id = :tenantId")
     Optional<PlanosView> findById(@Param("id") String id, @Param("tenantId") String tenantId);
 
+    @NativeQuery(
+            value = "SELECT * " +
+                    "FROM planos p " +
+                    "WHERE p.id = :id AND p.tenant_id = :tenantId")
+    Optional<Planos> findPlanosById(@Param("id") String id, @Param("tenantId") String tenantId);
+
 }

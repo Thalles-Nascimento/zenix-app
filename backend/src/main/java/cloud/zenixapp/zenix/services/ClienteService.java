@@ -5,6 +5,7 @@ import cloud.zenixapp.zenix.configs.exceptions.ClienteExcluidoException;
 import cloud.zenixapp.zenix.configs.exceptions.ClientePossuePlanoException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.mappers.ClienteMapper;
+import cloud.zenixapp.zenix.models.dtos.requests.ClientePlanoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteUpdateRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ClienteResponseDTO;
@@ -14,7 +15,6 @@ import cloud.zenixapp.zenix.models.entities.Planos;
 import cloud.zenixapp.zenix.models.entities.TelefoneCliente;
 import cloud.zenixapp.zenix.models.entities.Tenants;
 import cloud.zenixapp.zenix.models.interfaces.ClientesProjectionView;
-import cloud.zenixapp.zenix.models.interfaces.ClientesSimplesView;
 import cloud.zenixapp.zenix.repositories.ClienteRepository;
 import cloud.zenixapp.zenix.repositories.TelefoneRepository;
 import cloud.zenixapp.zenix.repositories.TenantRepository;
@@ -95,10 +95,6 @@ public class ClienteService {
                     int count = clienteView.getRetorno();
                     count = count + 1;
                     Clientes cliente = clienteMapper.toClientes(clienteView);
-                    Optional<TelefoneCliente> telefone = clienteRepository.
-                            findByNumber(clienteView.getTelefone(), tenantId);
-
-                    if (telefone.isPresent()){cliente.setTelefoneCliente(telefone.get());}
 
                     cliente.setTotalRetornos(count);
 
@@ -118,9 +114,6 @@ public class ClienteService {
         ClientesProjectionView clienteView = clienteRepository.findByName(nome, tenantId);
 
         Clientes cliente = clienteMapper.toClientes(clienteView);
-        Optional<TelefoneCliente> telefone = clienteRepository.findByNumber(clienteView.getTelefone(), tenantId);
-
-        if (telefone.isPresent()){cliente.setTelefoneCliente(telefone.get());}
 
         int count = clienteView.getRetorno();
         if (count == 0){
@@ -147,17 +140,27 @@ public class ClienteService {
     }
 
     @Transactional
-    public SuccessResponseDTO inserirPlano(String id, String idPlano) throws NotFoundException {
-        return clienteRepository.findById(id)
-                .map(cliente -> {
-                    if(cliente.getAtendimentosMes() > 0){
+    public SuccessResponseDTO inserirPlano(String id, ClientePlanoRequestDTO requestDTO) throws NotFoundException {
+        String tenantId = TenantContext.getTenantId();
+        return clienteRepository.findById(id, tenantId)
+                .map(clientesView -> {
+                    if(clientesView.getPlanosId() != null){
                         throw new ClientePossuePlanoException("Cliente possui um plano ativo");
                     }
-                    Planos plano = planosService.buscarPlanoPorId(idPlano);
+
+                    Planos plano = planosService.buscarPlanoPorId(requestDTO.idPlano());
+                    Clientes cliente = clienteMapper.toClientes(clientesView);
+
+                    Optional<TelefoneCliente> telefone = clienteRepository.findByNumber(clientesView.getTelefone(), tenantId);
+
+                    telefone.ifPresent(cliente::setTelefoneCliente);
+
                     cliente.setPlanos(plano);
                     cliente.setDataRenovacao(LocalDate.now().plusMonths(1));
 
+
                     clienteRepository.save(cliente);
+
                     return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
                             "Plano ativado!"

@@ -1,5 +1,7 @@
 package cloud.zenixapp.zenix.models.interfaces;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 

@@ -14,11 +14,6 @@ public interface ClienteMapper {
     @IterableMapping(elementTargetType = ClienteResponseDTO.class)
     List<ClienteResponseDTO> listResponseDTO(List<Clientes> clientesList);
 
-    @Mapping(target = "telefone", source = "telefoneCliente.telefoneCliente")
-    @Mapping(target = "vezesRetorno", source = "totalRetornos")
-    @Mapping(target = "plano", source = "planos")
-    ClienteResponseDTO toClienteResponseDTO(Clientes cliente);
-
     @Mapping(target = "totalRetornos", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "planos", ignore = true)
@@ -32,14 +27,14 @@ public interface ClienteMapper {
     @Mapping(target = "createdAt", ignore = true)
     void atualizarCliente(@MappingTarget Clientes clientes, ClienteUpdateRequestDTO clienteUpdateRequestDTO);
 
+    @Mapping(target = "telefoneCliente.telefoneCliente", source = "telefone")
     @Mapping(target = "totalRetornos", source = "retorno")
-    @Mapping(target = "planos", ignore = true)
+    @Mapping(target = "planos.id", source = "planosId")
     @Mapping(target = "nomeCliente", source = "nome")
     @Mapping(target = "atendimentosMes", source = "atendimentoMes")
     @Mapping(target = "updatedAt", source = "updatedAt")
     @Mapping(target = "tenant", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    Clientes toClientes(ClientesProjectionView clientesSimplesView);
-
+    Clientes toClientes(ClientesProjectionView clientesView);
 }

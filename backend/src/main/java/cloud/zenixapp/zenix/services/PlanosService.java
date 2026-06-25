@@ -52,7 +52,7 @@ public class PlanosService {
     }
 
     public Planos buscarPlanoPorId(String id){
-        return planosRepository.findById(id)
+        return planosRepository.findPlanosById(id, TenantContext.getTenantId())
                 .orElseThrow(() -> new NotFoundException("Plano não encontrado!"));
     }
 
