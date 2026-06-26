@@ -88,7 +88,7 @@ public class ClienteService {
     }
 
     @Transactional
-    public SuccessResponseDTO atualizarRetornoCliente(String id) throws NotFoundException {
+    public SuccessResponseDTO atualizarRetornoCliente(String id) {
         String tenantId = TenantContext.getTenantId();
         return clienteRepository.findById(id, tenantId)
                 .map(clienteView -> {
@@ -111,11 +111,11 @@ public class ClienteService {
 
     @Transactional
     public String retiraRetornoCliente(String nome, String tenantId) {
-        ClientesProjectionView clienteView = clienteRepository.findByName(nome, tenantId);
+        Optional<ClientesProjectionView> clienteView = clienteRepository.findByName(nome, tenantId);
 
-        Clientes cliente = clienteMapper.toClientes(clienteView);
+        Clientes cliente = clienteMapper.toClientes(clienteView.get());
 
-        int count = clienteView.getRetorno();
+        int count = clienteView.get().getRetorno();
         if (count == 0){
             return "Cliente retirado";
         }
@@ -151,9 +151,8 @@ public class ClienteService {
                     Planos plano = planosService.buscarPlanoPorId(requestDTO.idPlano());
                     Clientes cliente = clienteMapper.toClientes(clientesView);
 
-                    Optional<TelefoneCliente> telefone = clienteRepository.findByNumber(clientesView.getTelefone(), tenantId);
-
-                    telefone.ifPresent(cliente::setTelefoneCliente);
+                    clienteRepository.findByNumber(clientesView.getTelefone(), tenantId)
+                            .ifPresent(cliente::setTelefoneCliente);
 
                     cliente.setPlanos(plano);
                     cliente.setDataRenovacao(LocalDate.now().plusMonths(1));
@@ -175,16 +174,11 @@ public class ClienteService {
         String tenantId = TenantContext.getTenantId();
         return clienteRepository.findById(id, tenantId)
                 .map(clienteView -> {
-                    if(clienteView.getStatus() == -1){
-                        throw new ClienteExcluidoException("Cliente foi excluído!");
-
-                    }
 
                     Clientes cliente = clienteMapper.toClientes(clienteView);
 
-                    Optional<TelefoneCliente> telefone = clienteRepository.findByNumber(clienteView.getTelefone(), tenantId);
-
-                    telefone.ifPresent(cliente::setTelefoneCliente);
+                    clienteRepository.findByNumber(clienteView.getTelefone(), tenantId)
+                            .ifPresent(cliente::setTelefoneCliente);
 
                     cliente.setPlanos(null);
                     cliente.setAtendimentosMes(0);
@@ -201,23 +195,30 @@ public class ClienteService {
 
     @Transactional
     public SuccessResponseDTO atualizarCliente(String id, ClienteUpdateRequestDTO clienteUpdateDTO){
-        return clienteRepository.findById(id)
-                .map(cliente -> {
-                    if(cliente.getStatus() == -1){
-                        throw new ClienteExcluidoException("Cliente foi excluído!");
+        String tenantId = TenantContext.getTenantId();
+        return clienteRepository.findByIdSimples(id, tenantId)
+                .map(clienteView -> {
+                    if(clienteView.getStatus() == -1) {
+                        throw new ClienteExcluidoException("Cliente já foi excluído!");
                     }
+
+                    Clientes cliente = clienteMapper.toClienteSimples(clienteView);
+
+                    clienteRepository.findByNumber(clienteView.getTelefone(), tenantId)
+                            .ifPresent(cliente::setTelefoneCliente);
 
                     clienteMapper.atualizarCliente(cliente, clienteUpdateDTO);
 
                     if (clienteUpdateDTO.telefoneCliente() != null && !clienteUpdateDTO.telefoneCliente().isBlank()) {
                         String numero = clienteUpdateDTO.telefoneCliente().replaceAll("\\D", "");
-                        Optional<TelefoneCliente> telefone = clienteRepository.findByNumber(numero, TenantContext.getTenantId());
-                        if (telefone.isPresent()) {
-                            cliente.setTelefoneCliente(telefone.get());
-                        } else {
-                            TelefoneCliente newTelefone = telefoneRepository.save(new TelefoneCliente(numero));
-                            cliente.setTelefoneCliente(newTelefone);
-                        }
+                        TelefoneCliente telefone = clienteRepository.findByNumber(numero, tenantId)
+                                .orElseGet(() -> {
+                                    TelefoneCliente telefoneNovo = new TelefoneCliente(numero);
+                                    telefoneNovo.setTenant(tenantRepository.findById(tenantId).get());
+                                    return telefoneRepository.save(telefoneNovo);
+                                });
+
+                        cliente.setTelefoneCliente(telefone);
                     }
 
                     clienteRepository.save(cliente);
@@ -232,14 +233,13 @@ public class ClienteService {
 
     @Transactional
     public SuccessResponseDTO deletarCliente(String id){
-        return clienteRepository.findById(id)
+        String tenantId = TenantContext.getTenantId();
+        return clienteRepository.findByIdSimples(id, tenantId)
                 .map(cliente -> {
-                    if(cliente.getStatus() == -1){
+                    if(cliente.getStatus() == -1) {
                         throw new ClienteExcluidoException("Cliente já foi excluído!");
-
                     }
-
-                    clienteRepository.deleteLogico(id, LocalDateTime.now(),TenantContext.getTenantId());
+                    clienteRepository.deleteLogico(cliente.getId(), LocalDateTime.now(),tenantId);
 
                     return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
@@ -251,13 +251,14 @@ public class ClienteService {
 
     @Transactional
     public SuccessResponseDTO ativarCliente(String id){
-        return clienteRepository.findById(id)
+        String tenantId = TenantContext.getTenantId();
+        return clienteRepository.findByIdSimples(id, tenantId)
                 .map(cliente -> {
-                    if(cliente.getStatus() != -1){
-                        throw new ClienteExcluidoException("Cliente já está ativo!");
+                    if (cliente.getStatus() != -1){
+                        throw new RuntimeException("Cliente já está ativo");
                     }
 
-                    clienteRepository.ativarCliente(id, TenantContext.getTenantId());
+                    clienteRepository.ativarCliente(cliente.getId(), tenantId);
                     return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
                             "Cliente ativado com sucesso"
@@ -267,18 +268,21 @@ public class ClienteService {
     }
 
     public void atualizarAtendimentosMes(String nome, String tenantId){
-        ClientesProjectionView clienteView = clienteRepository.findByName(nome, tenantId);
+        Optional<ClientesProjectionView> clienteView = clienteRepository.findByName(nome, tenantId);
 
-        if (clienteView == null || clienteView.getPlanosId() == null) return;
+        if (clienteView.isEmpty() || clienteView.get().getPlanosId() == null) return;
 
-        Clientes cliente = clienteMapper.toClientes(clienteView);
-        cliente.setAtendimentosMes(clienteView.getAtendimentoMes() + 1);
+        Clientes cliente = clienteMapper.toClientes(clienteView.get());
+        cliente.setAtendimentosMes(clienteView.get().getAtendimentoMes() + 1);
+
+        Planos plano = planosService.buscarPlanoPorId(clienteView.get().getPlanosId());
+        cliente.setPlanos(plano);
 
         clienteRepository.save(cliente);
     }
 
-    public List<ClienteResponseDTO> buscarClientePorNome(String nome){
-        return clienteMapper.listResponseDTO(clienteRepository.findByNameContaining(nome));
+    public List<ClientesProjectionView> buscarClientePorNome(String nome){
+        return clienteRepository.findByNameContaining(nome, TenantContext.getTenantId());
     }
 
 }
