@@ -17,8 +17,8 @@ export function PagamentoSelect({ value, onValueChange, className }: Props) {
             </SelectTrigger>
             <SelectContent className="bg-black border-gray-700 text-white notranslate">
                 {pagamentos.map(p => (
-                    <SelectItem key={p.id} value={p.formaPagamento} className="notranslate">
-                        {p.formaPagamento}
+                    <SelectItem key={p.id} value={p.pagamento} className="notranslate">
+                        {p.pagamento}
                     </SelectItem>
                 ))}
             </SelectContent>
