@@ -181,6 +181,7 @@ public class UsuarioService {
     /*
      * Função que deleta um usuário
      */
+//    TODO verificar os métodos de Atualizar, Deletar e Ativar usuário
     @Transactional
     public SuccessResponseDTO deletarUsuario(String id){
         String tenantId = TenantContext.getTenantId();
@@ -224,6 +225,7 @@ public class UsuarioService {
                 .orElseThrow(() -> new NotFoundException("Usuário não encontrado!"));
     }
 
+//  TODO estudar método abaixo
     public UsuarioResponseDTO getUsuarioID(){
         String tenantId = TenantContext.getTenantId();
         Usuarios userAuth = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
