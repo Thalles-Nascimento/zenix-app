@@ -76,6 +76,7 @@ public class UnidadeService {
                 .orElseThrow(() -> new NotFoundException("Unidade não encontrada!"));
     }
 
+//  TODO ajustar o método abaixo
     public UnidadeUserResponseDTO listarUnidadesByIdUsuario(String id){
         Unidades unidade = unidadeRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Unidade não encontrada!"));
@@ -138,6 +139,7 @@ public class UnidadeService {
                 .orElseThrow(() -> new NotFoundException("Unidade não encontrada!"));
     }
 
+//  TODO ajustar o método abaixo
     @Transactional
     public SuccessResponseDTO deletarUnidade(String id){
         String tenantId = TenantContext.getTenantId();

@@ -32,6 +32,7 @@ public interface UnidadeRepository extends JpaRepository<Unidades, String> {
             "FROM unidades un WHERE tenant_id = :tenantId")
     List<UnidadeSimplesView> findUnidadesByTenant(@Param("tenantId") String tenantId);
 
+//  TODO retirar o delete_at da consulta
     @NativeQuery(
             value = "SELECT un.id AS id, " +
             "un.unidade_nome AS nome," +
