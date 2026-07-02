@@ -60,6 +60,7 @@ public class ServicoService {
         return servicoRepository.findAll(TenantContext.getTenantId());
     }
 
+//  TODO Refazer a projeção - retirar o deleted_at
     public ServicosView listarServicoPorId(String id){
         return servicoRepository.findById(id, TenantContext.getTenantId())
                 .orElseThrow(() -> new NotFoundException("Serviço não encontrado"));
