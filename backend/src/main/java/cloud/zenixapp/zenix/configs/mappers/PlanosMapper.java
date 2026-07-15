@@ -38,7 +38,7 @@ public interface PlanosMapper {
     @Mapping(target = "clientes", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "updatedAt", source = "updatedAt")
     @Mapping(target = "tenant", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
