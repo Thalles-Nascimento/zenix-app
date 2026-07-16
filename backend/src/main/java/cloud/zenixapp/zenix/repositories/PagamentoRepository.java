@@ -15,6 +15,7 @@ public interface PagamentoRepository extends JpaRepository<FormaPagamento, Strin
             value = "SELECT " +
                     "p.id AS id, " +
                     "p.pagamento_descricao AS pagamento, " +
+                    "p.updated_at AS updatedAt, " +
                     "p.pagamento_status AS status " +
                     "FROM pagamentos p " +
                     "WHERE p.tenant_id = :tenantId")
@@ -23,7 +24,8 @@ public interface PagamentoRepository extends JpaRepository<FormaPagamento, Strin
     @NativeQuery(
             value = "SELECT " +
                     "p.id AS id, " +
-                    "p.pagamento_descricao AS pagamento, " +
+                    "p.pagamento_descricao AS pagamento," +
+                    "p.updated_at AS updatedAt, " +
                     "p.pagamento_status AS status " +
                     "FROM pagamentos p " +
                     "WHERE p.id = :id AND p.tenant_id = :tenantId")
