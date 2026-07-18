@@ -97,6 +97,8 @@ public class ClienteService {
                     Clientes cliente = clienteMapper.toClientes(clienteView);
 
                     cliente.setTotalRetornos(count);
+                    clienteRepository.findByNumber(clienteView.getTelefone(), tenantId)
+                            .ifPresent(cliente::setTelefoneCliente);
 
                     clienteRepository.save(cliente);
 
@@ -121,6 +123,8 @@ public class ClienteService {
         }
         count = count - 1;
         cliente.setTotalRetornos(count);
+        clienteRepository.findByNumber(clienteView.get().getTelefone(), tenantId)
+                .ifPresent(cliente::setTelefoneCliente);
 
         clienteRepository.save(cliente);
 

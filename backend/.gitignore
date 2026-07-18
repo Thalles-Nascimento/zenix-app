@@ -8,6 +8,9 @@ target/
 src.zip
 ${project.build.directory}/
 
+PROJECT_CONTEXT.md
+/.mvn/maven.config
+
 ### STS ###
 .apt_generated
 .classpath
