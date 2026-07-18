@@ -4,7 +4,7 @@ export interface DadosProps {
     servico: string[]
     valor: number
     formaPagamento: string
-    date: string
+    data: string
     status: number
     observacao?: string
 }
@@ -13,7 +13,7 @@ export interface AtendimentoFormProps {
     descricao: string
     servico: string[]
     valor: number
-    pagamento: string
+    formaPagamento: string
     observacao?: string
 }
 

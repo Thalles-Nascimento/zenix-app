@@ -96,7 +96,7 @@ export default function Atendimentos() {
                                     {items.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
                                 </td>
                                 <td className="px-4 py-4">{items.formaPagamento}</td>
-                                <td className="px-4 py-4">{items.date}</td>
+                                <td className="px-4 py-4">{items.data}</td>
                                 <td className="px-4 py-4">
                                     <span className={items.status === 1 ? "text-orange-500 font-semibold" : "text-gray-500"}>
                                         {items.status === 1 ? "REALIZADO" : "EXCLUÍDO"}

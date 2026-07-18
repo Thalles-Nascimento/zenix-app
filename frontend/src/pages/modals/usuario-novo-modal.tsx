@@ -78,7 +78,7 @@ export function ModalNovoUsuario({ onConfirmar }: Props) {
                             </SelectTrigger>
                             <SelectContent className="bg-black border-gray-700 text-white notranslate">
                                 {unidades.map(u => (
-                                    <SelectItem key={u.id} value={String(u.id)}>{u.nomeUnidade}</SelectItem>
+                                    <SelectItem key={u.id} value={String(u.id)}>{u.unidadeNome}</SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>

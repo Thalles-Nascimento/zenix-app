@@ -20,7 +20,7 @@ interface Props {
 export function ModalNovoAtendimento({ onConfirmar }: Props) {
     const [open, setOpen] = useState(false)
     const [form, setForm] = useState<AtendimentoFormProps>({
-        descricao: "", servico: [], valor: 0, pagamento: "", observacao: ""
+        descricao: "", servico: [], valor: 0, formaPagamento: "", observacao: ""
     })
     const [idCliente, setIdCliente] = useState(0)
     const { atualizarRetorno } = useCliente()
@@ -101,7 +101,7 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
         }
         onConfirmar(form)
         setOpen(false)
-        setForm({ descricao: "", servico: [], valor: 0, pagamento: "", observacao: "" })
+        setForm({ descricao: "", servico: [], valor: 0, formaPagamento: "", observacao: "" })
         setSugestoes([])
     }
 
@@ -178,8 +178,8 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
                     <div>
                         <Label className="text-gray-300 notranslate">Forma de Pagamento</Label>
                         <PagamentoSelect
-                            value={form.pagamento}
-                            onValueChange={(v) => setForm({ ...form, pagamento: v })}
+                            value={form.formaPagamento}
+                            onValueChange={(v) => setForm({ ...form, formaPagamento: v })}
                         />
                     </div>
                     <TextareaField

@@ -82,8 +82,8 @@ export default function UsersPage() {
                                         {grupoConfig[items.grupo]?.label ?? items.grupo}
                                     </span>
                                 </td>
-                                <td className="px-4 py-4 notranslate">{items.unidade?.nomeUnidade ?? '--'}</td>
-                                <td className="px-4 py-4 notranslate">
+                                <td className="px-4 py-4 notranslate">{items.unidade?.unidadeNome ?? '--'}</td>
+                                <td className="px-4 py-4 notranslate">  
                                     <span className={items.status === 1 ? "text-orange-500 font-semibold" : "text-gray-500"}>
                                         {items.status === 1 ? "ATIVO" : "EXCLUÍDO"}
                                     </span>

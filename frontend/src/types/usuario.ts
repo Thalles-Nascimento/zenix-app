@@ -20,7 +20,7 @@ export interface UsuarioFormProps {
 
 export interface UnidadeProps {
     id: number
-    nome: string,
+    unidadeNome: string,
     endereco: string,
     status: number
 }
