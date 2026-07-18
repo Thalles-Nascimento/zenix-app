@@ -1,8 +1,7 @@
 package cloud.zenixapp.zenix.models.dtos.responses;
 
-public record SuccessDeleteServicoResponseDTO(
+public record SuccessResponseDTO(
         int status,
         String message
-
 ) {
 }

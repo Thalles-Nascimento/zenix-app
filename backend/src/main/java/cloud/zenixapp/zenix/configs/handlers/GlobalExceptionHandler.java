@@ -2,7 +2,6 @@ package cloud.zenixapp.zenix.configs.handlers;
 
 import cloud.zenixapp.zenix.configs.exceptions.*;
 import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -118,6 +117,27 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = {ClientePossuePlanoException.class})
     public ResponseEntity<ErrorResponseDTO> handleClientePossuePlanoException(Exception ex) {
+        ErrorResponseDTO errorResponse = new ErrorResponseDTO(
+                HttpStatus.CONFLICT.value(),
+                ex.getMessage(),
+                LocalDateTime.now().toInstant(ZoneOffset.of("-03:00"))
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(value = {ExistsException.class})
+    public ResponseEntity<ErrorResponseDTO> handleExistsException(Exception ex){
+        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(
+                HttpStatus.CONFLICT.value(),
+                ex.getMessage(),
+                LocalDateTime.now().toInstant(ZoneOffset.of("-03:00"))
+        );
+
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(value = {OptimisticException.class})
+    public ResponseEntity<ErrorResponseDTO> handlerOptimisticException(Exception ex) {
         ErrorResponseDTO errorResponse = new ErrorResponseDTO(
                 HttpStatus.CONFLICT.value(),
                 ex.getMessage(),

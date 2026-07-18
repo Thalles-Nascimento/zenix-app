@@ -2,10 +2,12 @@ package cloud.zenixapp.zenix.controllers;
 
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.handlers.BindingHandler;
+import cloud.zenixapp.zenix.models.dtos.requests.ClientePlanoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteUpdateRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ClienteResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
+import cloud.zenixapp.zenix.models.interfaces.ClientesProjectionView;
 import cloud.zenixapp.zenix.services.ClienteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -23,7 +25,7 @@ import java.time.ZoneOffset;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/v1/clientes")
+@RequestMapping(value = "/${api-url}/clientes")
 @Tag(name = "Cliente", description = "API do serviço de Cliente")
 public class ClienteController {
 
@@ -49,7 +51,7 @@ public class ClienteController {
     }
 
     @PatchMapping("/retorno/{id}")
-    public ResponseEntity<?> atualizarClienteRetorno(@PathVariable Long id){
+    public ResponseEntity<?> atualizarClienteRetorno(@PathVariable String id){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(clienteService.atualizarRetornoCliente(id));
     }
@@ -63,19 +65,19 @@ public class ClienteController {
             @ApiResponse(responseCode = "200", description = "Clientes encontrados")
     })
     @Operation(summary = "Listar clientes", description = "Endpoint para listar todos os clientes")
-    public ResponseEntity<List<ClienteResponseDTO>> findAllClientes(){
+    public ResponseEntity<List<ClientesProjectionView>> findAllClientes(){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(clienteService.buscarTodosClientes());
     }
 
     @PatchMapping("/planos/{idCliente}")
-    public ResponseEntity<?> vincularPlano(@PathVariable Long idCliente, @RequestBody Long idPlano){
+    public ResponseEntity<?> vincularPlano(@PathVariable String idCliente, @RequestBody ClientePlanoRequestDTO idPlano){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(clienteService.inserirPlano(idCliente, idPlano));
     }
 
     @DeleteMapping("/planos/{idCliente}")
-    public ResponseEntity<?> desvincularPlano(@PathVariable Long idCliente){
+    public ResponseEntity<?> desvincularPlano(@PathVariable String idCliente){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(clienteService.retirarPlano(idCliente));
     }
@@ -91,7 +93,7 @@ public class ClienteController {
             @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
     })
     @Operation(summary = "Deletar cliente", description = "Endpoint para deletar um cliente")
-    public ResponseEntity<?> deleteCliente(@PathVariable Long id) {
+    public ResponseEntity<?> deleteCliente(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(clienteService.deletarCliente(id));
 
@@ -108,7 +110,7 @@ public class ClienteController {
             @ApiResponse(responseCode = "400", description = "Campos com nulos ou fora do padrão")
     })
     @Operation(summary = "Atualizar cliente por ID", description = "Endpoint para atualiza um cliente por ID")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid ClienteUpdateRequestDTO clienteUpdateRequestDTO, BindingResult result) throws NotFoundException {
+    public ResponseEntity<?> update(@PathVariable String id, @RequestBody @Valid ClienteUpdateRequestDTO clienteUpdateRequestDTO, BindingResult result) throws NotFoundException {
         if(result.hasErrors()){
             if (BindingHandler.isErrorNull(result)){
                 return ResponseEntity.status(HttpStatus.OK)
@@ -130,7 +132,7 @@ public class ClienteController {
 
     @PatchMapping("/ativar/{id}")
     @Operation(summary = "Ativar cliente", description = "Endpoint para ativar um cliente do sistema")
-    public ResponseEntity<?> ativarCliente(@PathVariable Long id) {
+    public ResponseEntity<?> ativarCliente(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(clienteService.ativarCliente(id));
     }

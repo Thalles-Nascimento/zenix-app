@@ -1,15 +1,19 @@
 package cloud.zenixapp.zenix.services;
 
+import cloud.zenixapp.zenix.configs.TenantContext;
 import cloud.zenixapp.zenix.configs.exceptions.FilaException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.mappers.FilaMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.FilaRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.FilaResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.SucessFilaResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.SucessFilaRetiradaResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.SuccessFilaResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Fila;
+import cloud.zenixapp.zenix.models.entities.Tenants;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
+import cloud.zenixapp.zenix.models.interfaces.FilaProjectionView;
 import cloud.zenixapp.zenix.repositories.FilaAtendimentoRepository;
+import cloud.zenixapp.zenix.repositories.TenantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,9 +41,16 @@ public class FilaService {
     @Autowired
     private FilaMapper filaMapper;
 
+    @Autowired
+    private TenantRepository tenantRepository;
+
     @Transactional
-    public SucessFilaResponseDTO inserirAtendimentoFila(FilaRequestDTO filaDTO){
-        Fila fila = new Fila();
+    public SuccessFilaResponseDTO inserirAtendimentoFila(FilaRequestDTO filaDTO) {
+
+        Tenants tenant = tenantRepository.findById(TenantContext.getTenantId())
+                .orElseThrow(() -> new NotFoundException("Tenant não encontrado"));
+
+        Fila fila = new Fila(); // Verificar a existência do atendimento na fila!
 
         if(filaDTO.semPreferencia()){
             fila.setNomeCliente(filaDTO.nomeCliente());
@@ -47,12 +58,12 @@ public class FilaService {
             fila.setFormaPagamento(filaDTO.formaPagamento());
             fila.setTelefoneCliente(filaDTO.telefoneCliente());
             fila.setSemPreferencia(true);
-            fila.setUnidadeId(filaDTO.idUnidade());
+            fila.setTenant(tenant);
             fila.setUsuario(null);
 
             filaRepository.save(fila);
 
-            return new SucessFilaResponseDTO(
+            return new SuccessFilaResponseDTO(
                     fila.getId(),
                     fila.getNomeCliente(),
                     fila.getServico(),
@@ -66,14 +77,13 @@ public class FilaService {
         fila.setServico(filaDTO.servico());
         fila.setFormaPagamento(filaDTO.formaPagamento());
         fila.setTelefoneCliente(filaDTO.telefoneCliente());
-        fila.setUnidadeId(filaDTO.idUnidade());
         fila.setUsuario(user);
-
+        fila.setTenant(tenant);
 
         filaRepository.save(fila);
 
 
-        return new SucessFilaResponseDTO(
+        return new SuccessFilaResponseDTO(
                 fila.getId(),
                 fila.getNomeCliente(),
                 fila.getServico(),
@@ -81,74 +91,69 @@ public class FilaService {
         );
     }
 
-
-    public List<FilaResponseDTO> getFilasByUser(){
+    public List<FilaProjectionView> getFilasByUser(){
         Usuarios userAuth = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Long idUnidade = userAuth.getUnidade().getId();
-        return filaMapper.toListFilaDTO(filaRepository.findByUser(userAuth.getId(), idUnidade));
+        return filaRepository.findByUser(userAuth.getId(), TenantContext.getTenantId());
     }
 
     @Transactional
-    public SucessFilaResponseDTO chamarCliente(Long id) {
-        return filaRepository.findById(id)
+    public SuccessResponseDTO chamarCliente(String id) {
+        String tenantId = TenantContext.getTenantId();
+        return filaRepository.findById(id, tenantId)
                 .map(atendimentoFila -> {
-                    if(atendimentoFila.getStatus() != AGUARDANDO){
-                        throw new FilaException("Cliente está Em Atendimento ou Finalizado");
-
+                    if(atendimentoFila.getStatus() != 0){
+                        throw new FilaException("Cliente está em atendimento ou já foi finalizado");
                     }
 
-                    filaRepository.paraAtendimento(id);
-                    filaRepository.marcarHoraInicio(id, LocalTime.now());
+                    filaRepository.paraAtendimento(atendimentoFila.getId(), tenantId, LocalTime.now());
 
-                    if (atendimentoFila.isSemPreferencia()) {
+                    if (atendimentoFila.getSemPreferencia()) {
                         Usuarios userAuth = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-                        filaRepository.setarUsuario(id, userAuth.getId());
-
+                        filaRepository.setarUsuario(atendimentoFila.getId(), tenantId, userAuth.getId());
                     }
 
-                    return new SucessFilaResponseDTO(
-                            atendimentoFila.getId(),
-                            atendimentoFila.getNomeCliente(),
-                            atendimentoFila.getServico(),
-                            atendimentoFila.getStatus()
+                    return new SuccessResponseDTO(
+                            HttpStatus.OK.value(),
+                            "Cliente chamado!"
                     );
                 })
                 .orElseThrow(() -> new NotFoundException("Atendimento não encontrado"));
     }
 
     @Transactional
-    public SucessFilaResponseDTO finalizarAtendimento(Long id){
-        return filaRepository.findById(id)
+    public SuccessResponseDTO finalizarAtendimento(String id){
+        String tenantId = TenantContext.getTenantId();
+        return filaRepository.findById(id, tenantId)
                 .map(atendimentoFila -> {
-                    if (atendimentoFila.getStatus() != EM_ATENDIMENTO){
+                    if (atendimentoFila.getStatus() != 1){
                         throw new FilaException("Clientes já Finalizado ou está Aguardando");
                     }
-                    filaRepository.finalizarAtendimentoFila(id);
-                    filaRepository.marcarHoraFinal(id, LocalTime.now());
+                    filaRepository.finalizarAtendimentoFila(atendimentoFila.getId(), tenantId, LocalTime.now());
 
-                    return new SucessFilaResponseDTO(
-                            atendimentoFila.getId(),
-                            atendimentoFila.getNomeCliente(),
-                            atendimentoFila.getServico(),
-                            atendimentoFila.getStatus()
+                    clienteService.atualizarAtendimentosMes(atendimentoFila.getNomeCliente(), tenantId);
+
+                    return new SuccessResponseDTO(
+                            HttpStatus.OK.value(),
+                            "Atendimento finalizado!"
                     );
                 })
                 .orElseThrow(() -> new NotFoundException("Atendimento não encontrado"));
     }
 
     @Transactional
-    public SucessFilaRetiradaResponseDTO retirarClienteFila(Long id) {
-        return filaRepository.findById(id)
+    public SuccessResponseDTO retirarClienteFila(String id) {
+        String tenantId = TenantContext.getTenantId();
+        return filaRepository.findById(id, tenantId)
                 .map(atendimentoFila -> {
-                    if (atendimentoFila.getStatus() == EM_ATENDIMENTO) {
+                    if (atendimentoFila.getStatus() == 1) {
                         throw new FilaException("Cliente está em atendimento");
                     }
 
-                    String statusMsg = clienteService.retiraRetornoCliente(atendimentoFila.getNomeCliente());
+                    String statusMsg = clienteService.retiraRetornoCliente(atendimentoFila.getNomeCliente(), tenantId);
 
-                    filaRepository.deleteById(id);
+                    filaRepository.deleteById(atendimentoFila.getId());
 
-                    return new SucessFilaRetiradaResponseDTO(
+                    return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
                             statusMsg
                     );

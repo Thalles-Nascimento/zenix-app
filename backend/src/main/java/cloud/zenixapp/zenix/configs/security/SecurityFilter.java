@@ -1,5 +1,6 @@
 package cloud.zenixapp.zenix.configs.security;
 
+import cloud.zenixapp.zenix.configs.TenantContext;
 import cloud.zenixapp.zenix.repositories.UsuarioRepository;
 import cloud.zenixapp.zenix.services.security.TokenService;
 import jakarta.servlet.FilterChain;
@@ -29,15 +30,24 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         var token = this.recoverToken(request);
-        if(token != null){
-            var subject = tokenService.validateToken(token);
-            UserDetails user = usuarioRepository.findByEmail(subject);
+        try {
+            if(token != null){
+                var subject = tokenService.validateToken(token);
+                UserDetails user = usuarioRepository.findByEmail(subject);
 
-            var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                String tenantId = tokenService.extractTenantId(token);
+                TenantContext.setTenantId(tenantId);
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+
+            filterChain.doFilter(request, response);
+
+        } finally {
+            TenantContext.clear();
+
         }
-        filterChain.doFilter(request, response);
     }
 
     public String recoverToken(HttpServletRequest request) {

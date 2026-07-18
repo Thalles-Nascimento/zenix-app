@@ -5,7 +5,7 @@ import cloud.zenixapp.zenix.configs.handlers.BindingHandler;
 import cloud.zenixapp.zenix.configs.mappers.PagamentoMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.PagamentoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.PagamentoResponseDTO;
+import cloud.zenixapp.zenix.models.interfaces.FormaPagamentoView;
 import cloud.zenixapp.zenix.services.PagamentoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -23,7 +23,7 @@ import java.time.ZoneOffset;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/v1/pagamentos")
+@RequestMapping(value = "/${api-url}/pagamentos")
 @Tag(name = "Forma de Pagamento", description = "Endpoints de Forma de Pagamento")
 public class PagamentoController {
 
@@ -62,7 +62,7 @@ public class PagamentoController {
             @ApiResponse(responseCode = "200", description = "Forma de pagamento encontrada")
     })
     @Operation(summary = "Listar formas de pagamento", description = "Endpoint para listar todos as formas de pagamento")
-    public ResponseEntity<List<PagamentoResponseDTO>> findAllPagamentos(){
+    public ResponseEntity<List<FormaPagamentoView>> findAllPagamentos(){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(pagamentoService.buscarTodasFormaPagamento());
     }
@@ -77,7 +77,7 @@ public class PagamentoController {
             @ApiResponse(responseCode = "404", description = "Forma de pagamento não encontrada")
     })
     @Operation(summary = "Deletar forma de pagamento", description = "Endpoint para deletar uma forma de pagamento")
-    public ResponseEntity<?> deletePagamento(@PathVariable Long id) {
+    public ResponseEntity<?> deletePagamento(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(pagamentoService.deletarPagamento(id));
 
@@ -93,7 +93,7 @@ public class PagamentoController {
 //            @ApiResponse(responseCode = "404", description = "Atendimento não encontrado")
 //    })
 //    @Operation(summary = "Listar atendimento por ID", description = "Endpoint para lista um atendimento por ID")
-//    public ResponseEntity<?> findById(@PathVariable Long id) {
+//    public ResponseEntity<?> findById(@PathVariable String id) {
 //        return ResponseEntity.status(HttpStatus.OK)
 //                .body(atendimentoService.listarAtendimentoPorId(id));
 //    }
@@ -109,7 +109,7 @@ public class PagamentoController {
             @ApiResponse(responseCode = "404", description = "Forma de pagamento não encontrada"),
     })
     @Operation(summary = "Atualizar forma de pagamento por ID", description = "Endpoint para atualiza uma forma de pagamento por ID")
-    public ResponseEntity<?> updatePagamento(@PathVariable Long id, @RequestBody @Valid PagamentoRequestDTO pagamentoRequestDTO, BindingResult result) throws NotFoundException {
+    public ResponseEntity<?> updatePagamento(@PathVariable String id, @RequestBody @Valid PagamentoRequestDTO pagamentoRequestDTO, BindingResult result) throws NotFoundException {
         if(result.hasErrors()){
             if (BindingHandler.isErrorNull(result)){
                 return ResponseEntity.status(HttpStatus.OK)

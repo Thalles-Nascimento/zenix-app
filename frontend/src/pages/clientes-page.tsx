@@ -33,7 +33,7 @@ export default function ClientesPage() {
     const [formTelefone, setFormTelefone] = useState("")
 
     const clientesFiltrados = clientes.filter(c =>
-        c.nomeCliente.toLowerCase().includes(busca.toLowerCase()) ||
+        c.nome.toLowerCase().includes(busca.toLowerCase()) ||
         c.telefone?.includes(busca)
     )
 
@@ -50,14 +50,14 @@ export default function ClientesPage() {
 
     const abrirEditar = (cliente: ClienteDTO) => {
         setClienteSelecionado(cliente)
-        setFormNome(cliente.nomeCliente)
+        setFormNome(cliente.nome)
         setFormTelefone(cliente.telefone)
         setModalTipo("editar")
     }
 
     const abrirPlano = (cliente: ClienteDTO) => {
         setClienteSelecionado(cliente)
-        setPlanoSelecionado(cliente.plano ? String(cliente.plano.id) : "")
+        setPlanoSelecionado(cliente.planoId ? String(cliente.planoId.id) : "")
         setModalTipo("plano")
     }
 
@@ -132,9 +132,9 @@ export default function ClientesPage() {
     }
 
     const getAlerta = (cliente: ClienteDTO) => {
-        if (!cliente.plano) return null
-        const percentual = cliente.atendimentosMes / cliente.plano.limiteAtendimentos
-        if (cliente.atendimentosMes >= cliente.plano.limiteAtendimentos) return "limite"
+        if (!cliente.planoId) return null
+        const percentual = cliente.atendimentoMes / cliente.planoId.atendimentos
+        if (cliente.atendimentoMes >= cliente.planoId.atendimentos) return "limite"
         if (percentual >= 0.8) return "aviso"
         return null
     }
@@ -227,22 +227,22 @@ export default function ClientesPage() {
                                             className={`border-b border-gray-700 notranslate ${inativo ? "opacity-50 bg-black" : "bg-black"}`}
                                         >
                                             <td className="px-4 py-4 notranslate font-medium text-white">
-                                                {cliente.nomeCliente}
+                                                {cliente.nome}
                                             </td>
                                             <td className="px-4 py-4 notranslate text-gray-400">
                                                 {formatarTelefoneCliente(cliente.telefone ?? "")}
                                             </td>
                                             <td className="px-4 py-4 notranslate">
-                                                {cliente.plano ? (
+                                                {cliente.planoId ? (
                                                     <span className="bg-orange-500/20 text-orange-400 text-xs font-semibold px-2 py-1 rounded-full border border-orange-500/30">
-                                                        {cliente.plano.planoDescricao}
+                                                        {cliente.planoId.descricao}
                                                     </span>
                                                 ) : (
                                                     <span className="text-gray-500 text-xs">Avulso</span>
                                                 )}
                                             </td>
                                             <td className="px-4 py-4 notranslate">
-                                                {cliente.plano ? (
+                                                {cliente.planoId ? (
                                                     <div className="flex items-center gap-2">
                                                         <div className="w-20 bg-gray-700 rounded-full h-1.5">
                                                             <div
@@ -251,7 +251,7 @@ export default function ClientesPage() {
                                                                     alerta === "aviso" ? "bg-yellow-500" :
                                                                     "bg-green-500"
                                                                 }`}
-                                                                style={{ width: `${Math.min((cliente.atendimentosMes / cliente.plano.limiteAtendimentos) * 100, 100)}%` }}
+                                                                style={{ width: `${Math.min((cliente.atendimentoMes / cliente.planoId.atendimentos) * 100, 100)}%` }}
                                                             />
                                                         </div>
                                                         <span className={`text-xs font-medium ${
@@ -259,7 +259,7 @@ export default function ClientesPage() {
                                                             alerta === "aviso" ? "text-yellow-400" :
                                                             "text-gray-400"
                                                         }`}>
-                                                            {cliente.atendimentosMes}/{cliente.plano.limiteAtendimentos}
+                                                            {cliente.atendimentoMes}/{cliente.planoId.atendimentos}
                                                             {alerta === "limite" && " ⚠"}
                                                         </span>
                                                     </div>
@@ -268,10 +268,10 @@ export default function ClientesPage() {
                                                 )}
                                             </td>
                                             <td className="px-4 py-4 notranslate text-gray-300">
-                                                {cliente.vezesRetorno}
+                                                {cliente.retorno}
                                             </td>
                                             <td className="px-4 py-4 notranslate">
-                                                {cliente.plano ? (
+                                                {cliente.planoId ? (
                                                     <span className="bg-orange-500/20 text-orange-400 text-xs font-semibold px-2 py-1 rounded-full border border-orange-500/30">
                                                         {parseDataBrazil(cliente.dataRenovacao)}
                                                     </span>
@@ -377,11 +377,11 @@ export default function ClientesPage() {
                 <DialogContent className="bg-black border-gray-700 text-white w-[calc(100vw-2rem)] max-w-md notranslate">
                     <DialogHeader>
                         <DialogTitle className="text-white notranslate">
-                            Plano — <span className="text-orange-500">{clienteSelecionado?.nomeCliente}</span>
+                            Plano — <span className="text-orange-500">{clienteSelecionado?.nome}</span>
                         </DialogTitle>
                     </DialogHeader>
 
-                    {clienteSelecionado?.plano && (
+                    {clienteSelecionado?.planoId && (
                         <div className="bg-gray-900 rounded-lg p-3 border border-gray-700 notranslate">
                             <div className="flex justify-between mb-2">
                                 <p className="text-gray-400 text-xs uppercase tracking-widest">Uso do Mês</p>
@@ -390,7 +390,7 @@ export default function ClientesPage() {
                                     getAlerta(clienteSelecionado) === "aviso" ? "text-yellow-400" :
                                     "text-green-400"
                                 }`}>
-                                    {clienteSelecionado.atendimentosMes}/{clienteSelecionado.plano.limiteAtendimentos}
+                                    {clienteSelecionado.atendimentoMes}/{clienteSelecionado.planoId.atendimentos}
                                     {getAlerta(clienteSelecionado) === "limite" && " — LIMITE ⚠"}
                                 </p>
                             </div>
@@ -401,12 +401,12 @@ export default function ClientesPage() {
                                         getAlerta(clienteSelecionado) === "aviso" ? "bg-yellow-500" :
                                         "bg-green-500"
                                     }`}
-                                    style={{ width: `${Math.min((clienteSelecionado.atendimentosMes / clienteSelecionado.plano.limiteAtendimentos) * 100, 100)}%` }}
+                                    style={{ width: `${Math.min((clienteSelecionado.atendimentoMes / clienteSelecionado.planoId.atendimentos) * 100, 100)}%` }}
                                 />
                             </div>
                             <div className="flex justify-between mb-2">
                                 <p className="text-gray-400 text-xs mt-2">
-                                    Plano atual: <span className="text-orange-400 font-semibold">{clienteSelecionado.plano.planoDescricao}</span> — {formatBRL(clienteSelecionado.plano.valor)}/mês
+                                    Plano atual: <span className="text-orange-400 font-semibold">{clienteSelecionado.planoId.descricao}</span> — {formatBRL(clienteSelecionado.planoId.valor)}/mês
                                 </p>
                                 <p className="text-gray-400 text-xs mt-2">
                                     Renovação: <span className="text-orange-400 font-semibold">{clienteSelecionado.dataRenovacao}</span>
@@ -417,7 +417,7 @@ export default function ClientesPage() {
 
                     <div className="notranslate">
                         <Label className="text-gray-300">
-                            {clienteSelecionado?.plano ? "Trocar Plano" : "Vincular Plano"}
+                            {clienteSelecionado?.planoId ? "Trocar Plano" : "Vincular Plano"}
                         </Label>
                         <Select value={planoSelecionado} onValueChange={setPlanoSelecionado}>
                             <SelectTrigger className="mt-1 bg-gray-900 border-gray-700 text-white w-full notranslate">
@@ -426,7 +426,7 @@ export default function ClientesPage() {
                             <SelectContent className="bg-black border-gray-700 text-white notranslate">
                                 {planos.map(p => (
                                     <SelectItem key={p.id} value={String(p.id)} className="notranslate">
-                                        {p.planoDescricao} — {formatBRL(p.valor)} ({p.limiteAtendimentos} atend./mês)
+                                        {p.descricao} — {formatBRL(p.valor)} ({p.atendimentos} atend./mês)
                                     </SelectItem>
                                 ))}
                             </SelectContent>
@@ -435,7 +435,7 @@ export default function ClientesPage() {
 
                     <div className="flex flex-col gap-2 mt-2">
                         <Botao texto="Salvar Plano" color="sucess" click={handleVincular} />
-                        {clienteSelecionado?.plano && (
+                        {clienteSelecionado?.planoId && (
                             <Botao texto="Remover Plano" color="delete" click={handleDesvincular} />
                         )}
                         <Botao texto="Cancelar" color="cancel" click={fecharModal} />
@@ -446,7 +446,7 @@ export default function ClientesPage() {
             <ModalConfirmacao
                 open={confirmacaoAberta}
                 titulo="Excluir Cliente"
-                mensagem={`Deseja excluir o cliente "${clienteSelecionado?.nomeCliente}"? Esta ação não pode ser desfeita.`}
+                mensagem={`Deseja excluir o cliente "${clienteSelecionado?.nome}"? Esta ação não pode ser desfeita.`}
                 onConfirmar={handleDeletar}
                 onCancelar={() => setConfirmacaoAberta(false)}
             />

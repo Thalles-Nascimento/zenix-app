@@ -3,7 +3,7 @@ package cloud.zenixapp.zenix.models.dtos.responses;
 import java.util.List;
 
 public record AtendimentoResponseDTO(
-        Long id,
+        String id,
 
         String descricao,
 

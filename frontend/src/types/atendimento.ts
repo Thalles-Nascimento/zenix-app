@@ -13,7 +13,7 @@ export interface AtendimentoFormProps {
     descricao: string
     servico: string[]
     valor: number
-    formaPagamento: string
+    pagamento: string
     observacao?: string
 }
 

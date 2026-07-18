@@ -46,9 +46,9 @@ export default function LoginClient() {
         setNome(nomeCliente)
         if (nomeCliente === "__novo__") return
 
-        const clienteSelecionado = clientes.find(c => c.nomeCliente === nomeCliente)
-        if (clienteSelecionado?.plano?.servico?.length) {
-            setServicosSelecionados(clienteSelecionado.plano.servico)
+        const clienteSelecionado = clientes.find(c => c.nome === nomeCliente)
+        if (clienteSelecionado?.planoId?.servico?.length) {
+            setServicosSelecionados(clienteSelecionado.planoId.servico)
         }
     }
 
@@ -84,7 +84,7 @@ export default function LoginClient() {
             setCarregando(true)
             const telefoneNumeros = telefone.replace(/\D/g, "")
 
-            const clienteSelecionado = clientes.find(c => c.nomeCliente === nomeEfetivo)
+            const clienteSelecionado = clientes.find(c => c.nome === nomeEfetivo)
 
             if (clienteSelecionado) {
                 try {
@@ -148,11 +148,11 @@ export default function LoginClient() {
                                         </SelectTrigger>
                                         <SelectContent className="bg-black border-gray-300 text-white notranslate">
                                             {clientes.map(c => (
-                                                <SelectItem key={c.id} value={c.nomeCliente}>
-                                                    {c.nomeCliente}
-                                                    {c.plano && (
+                                                <SelectItem key={c.id} value={c.nome}>
+                                                    {c.nome}
+                                                    {c.planoId && (
                                                         <span className="ml-auto text-primary text-xs shrink-0">
-                                                            {c.plano?.planoDescricao}
+                                                            {c.planoId?.descricao}
                                                         </span>
                                                     )}
                                                 </SelectItem>

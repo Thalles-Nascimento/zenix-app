@@ -4,7 +4,7 @@ import cloud.zenixapp.zenix.configs.exceptions.FilaException;
 import cloud.zenixapp.zenix.configs.mappers.FilaMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.FilaRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.FilaResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.SucessFilaResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.SuccessFilaResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Fila;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.repositories.FilaAtendimentoRepository;
@@ -103,7 +103,7 @@ class FilaServiceTest {
                 "Memphis Depay", List.of("Corte"), "+5521999999999", "PIX", 1L, 0L, false
         );
 
-        SucessFilaResponseDTO resultado = filaService.inserirAtendimentoFila(dto);
+        SuccessFilaResponseDTO resultado = filaService.inserirAtendimentoFila(dto);
 
         assertNotNull(resultado);
         assertEquals(AGUARDANDO, resultado.status());
@@ -134,7 +134,7 @@ class FilaServiceTest {
     void atualizarAtendimentoFila_quandoAguardando_deveRetornarSucesso() {
         when(filaRepository.findById(1L)).thenReturn(Optional.of(filaAguardando));
 
-        SucessFilaResponseDTO resultado = filaService.chamarCliente(1L);
+        SuccessFilaResponseDTO resultado = filaService.chamarCliente(1L);
 
         assertNotNull(resultado);
         assertEquals("Memphis Depay", resultado.nomeCliente());
@@ -174,7 +174,7 @@ class FilaServiceTest {
     void finalizarAtendimento_quandoEmAtendimento_deveRetornarSucesso() {
         when(filaRepository.findById(2L)).thenReturn(Optional.of(filaEmAtendimento));
 
-        SucessFilaResponseDTO resultado = filaService.finalizarAtendimento(2L);
+        SuccessFilaResponseDTO resultado = filaService.finalizarAtendimento(2L);
 
         assertNotNull(resultado);
         assertEquals("Nathan", resultado.nomeCliente());

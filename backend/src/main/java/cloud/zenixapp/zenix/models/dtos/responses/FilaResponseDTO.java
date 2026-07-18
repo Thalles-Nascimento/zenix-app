@@ -6,7 +6,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 public record FilaResponseDTO(
-        Long id,
+        String id,
 
         String nomeCliente,
 

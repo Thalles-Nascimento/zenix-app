@@ -8,9 +8,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface TelefoneRepository extends JpaRepository<TelefoneCliente, Long> {
-
-    @Query(value = "SELECT * FROM telefones_clientes WHERE telefone_cliente = :number", nativeQuery = true)
-    Optional<TelefoneCliente> findByNumber(@Param("number") String number);
+public interface TelefoneRepository extends JpaRepository<TelefoneCliente, String> {
 
 }

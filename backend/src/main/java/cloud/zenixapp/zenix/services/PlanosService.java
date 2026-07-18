@@ -1,15 +1,16 @@
 package cloud.zenixapp.zenix.services;
 
+import cloud.zenixapp.zenix.configs.TenantContext;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
-import cloud.zenixapp.zenix.configs.mappers.PagamentoMapper;
 import cloud.zenixapp.zenix.configs.mappers.PlanosMapper;
-import cloud.zenixapp.zenix.models.dtos.requests.PagamentoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.PlanosRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.*;
-import cloud.zenixapp.zenix.models.entities.FormaPagamento;
+import cloud.zenixapp.zenix.models.dtos.responses.PlanosResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Planos;
-import cloud.zenixapp.zenix.repositories.PagamentoRepository;
+import cloud.zenixapp.zenix.models.entities.Tenants;
+import cloud.zenixapp.zenix.models.interfaces.PlanosView;
 import cloud.zenixapp.zenix.repositories.PlanosRepository;
+import cloud.zenixapp.zenix.repositories.TenantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -27,33 +28,45 @@ public class PlanosService {
     @Autowired
     private PlanosMapper planosMapper;
 
-    @Transactional
-    public SuccessPlanosResponseDTO inserirPlano(PlanosRequestDTO planosRequestDTO){
-        planosRepository.save(planosMapper.toPlanos(planosRequestDTO));
+    @Autowired
+    private TenantRepository tenantRepository;
 
-        return new SuccessPlanosResponseDTO(
+    @Transactional
+    public SuccessResponseDTO inserirPlano(PlanosRequestDTO planosRequestDTO){
+        Planos plano = planosMapper.toPlanos(planosRequestDTO);
+
+        Tenants tenant = tenantRepository.findById(TenantContext.getTenantId())
+                        .orElseThrow(() -> new NotFoundException("Tenant não encontrado"));
+
+        plano.setTenant(tenant);
+        planosRepository.save(plano);
+
+        return new SuccessResponseDTO(
                 HttpStatus.OK.value(),
                 "Plano inserido com sucesso"
         );
     }
 
-    public List<PlanosResponseDTO> buscarTodosPlanos(){
-        return planosMapper.toListPlanosDTO(planosRepository.findAll());
+    public List<PlanosView> buscarTodosPlanos(){
+        return planosRepository.findAll(TenantContext.getTenantId());
     }
 
-    public Planos buscarPlanoPorId(Long id){
-        return planosRepository.findById(id).orElseThrow(() -> new NotFoundException("Plano não encontrado!"));
+    public Planos buscarPlanoPorId(String id){
+        return planosRepository.findPlanosById(id, TenantContext.getTenantId())
+                .orElseThrow(() -> new NotFoundException("Plano não encontrado!"));
     }
 
     @Transactional
-    public SuccessPlanosResponseDTO atualizarPlanos(PlanosRequestDTO planosRequestDTO, Long id){
-        return planosRepository.findById(id)
-                .map(plano -> {
+    public SuccessResponseDTO atualizarPlanos(PlanosRequestDTO planosRequestDTO, String id){
+        return planosRepository.findById(id, TenantContext.getTenantId())
+                .map(planoView -> {
 
-                    plano.setUpdate_at(LocalDateTime.now());
+                    Planos plano = planosMapper.fromPlanosViewtoPlanos(planoView);
+
                     planosMapper.atualizarPlano(plano, planosRequestDTO);
+                    planosRepository.save(plano);
 
-                    return new SuccessPlanosResponseDTO(
+                    return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
                             "Plano atualizado com sucesso"
                     );
@@ -61,12 +74,13 @@ public class PlanosService {
     }
 
     @Transactional
-    public SuccessDeletePlanosResponseDTO deletarPlano(Long id) {
-        return planosRepository.findById(id)
+    public SuccessResponseDTO deletarPlano(String id) {
+        return planosRepository.findById(id, TenantContext.getTenantId())
                 .map(plano -> {
-                    planosRepository.deleteById(id);
 
-                    return new SuccessDeletePlanosResponseDTO(
+                    planosRepository.deleteById(id); // TODO refazer o delete
+
+                    return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
                             "Plano excluído com sucesso!"
                     );

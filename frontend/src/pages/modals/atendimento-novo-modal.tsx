@@ -20,7 +20,7 @@ interface Props {
 export function ModalNovoAtendimento({ onConfirmar }: Props) {
     const [open, setOpen] = useState(false)
     const [form, setForm] = useState<AtendimentoFormProps>({
-        descricao: "", servico: [], valor: 0, formaPagamento: "", observacao: ""
+        descricao: "", servico: [], valor: 0, pagamento: "", observacao: ""
     })
     const [idCliente, setIdCliente] = useState(0)
     const { atualizarRetorno } = useCliente()
@@ -75,15 +75,15 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
     }
 
     const selecionarCliente = (cliente: ClienteDTO) => {
-        const servicosPlano = cliente.plano?.servico ?? []
-        const valorPlano = cliente.plano?.valor ?? 0
-        const limitePlano = cliente.plano?.limiteAtendimentos ?? 0
+        const servicosPlano = cliente.planoId?.servico ?? []
+        const valorPlano = cliente.planoId?.valor ?? 0
+        const limitePlano = cliente.planoId?.atendimentos ?? 0
         const totalPlano = valorPlano/limitePlano
         setIdCliente(cliente.id)
 
         setForm({
             ...form,
-            descricao: cliente.nomeCliente,
+            descricao: cliente.nome,
             servico: servicosPlano.length > 0 ? servicosPlano : form.servico,
             valor: servicosPlano.length > 0 ? totalPlano : form.valor,
         })
@@ -101,7 +101,7 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
         }
         onConfirmar(form)
         setOpen(false)
-        setForm({ descricao: "", servico: [], valor: 0, formaPagamento: "", observacao: "" })
+        setForm({ descricao: "", servico: [], valor: 0, pagamento: "", observacao: "" })
         setSugestoes([])
     }
 
@@ -139,14 +139,14 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
                                         className="w-full flex items-center justify-between px-3 py-2.5 text-sm text-left hover:bg-gray-800 transition-colors"
                                     >
                                         <div className="flex flex-col">
-                                            <span className="text-white font-medium">{cliente.nomeCliente}</span>
-                                            {cliente.plano && (
+                                            <span className="text-white font-medium">{cliente.nome}</span>
+                                            {cliente.planoId && (
                                                 <span className="text-orange-400 text-xs">
-                                                    {cliente.plano.planoDescricao}
+                                                    {cliente.planoId.descricao}
                                                 </span>
                                             )}
                                         </div>
-                                        <span className="text-gray-500 text-xs">{cliente.vezesRetorno} visitas</span>
+                                        <span className="text-gray-500 text-xs">{cliente.retorno} visitas</span>
                                     </button>
                                 ))}
                             </div>
@@ -178,8 +178,8 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
                     <div>
                         <Label className="text-gray-300 notranslate">Forma de Pagamento</Label>
                         <PagamentoSelect
-                            value={form.formaPagamento}
-                            onValueChange={(v) => setForm({ ...form, formaPagamento: v })}
+                            value={form.pagamento}
+                            onValueChange={(v) => setForm({ ...form, pagamento: v })}
                         />
                     </div>
                     <TextareaField
