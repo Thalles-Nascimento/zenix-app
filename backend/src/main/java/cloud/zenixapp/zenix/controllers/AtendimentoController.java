@@ -74,7 +74,10 @@ public class AtendimentoController {
                 .body(atendimentoService.listarAtendimentosHoje());
     }
 
-//    TODO Verificar - @GetMapping("/admin")
+    /*
+     * Endpoint para buscar um atendimento do Banco de Dados para a visualização de relatórios do ADMIN
+     *
+     */
     @GetMapping("/admin")
     @Operation(summary = "Listar todos os atendimentos", description = "Endpoint para ADMIN listar todos os atendimentos do dia")
     public ResponseEntity<List<AtendimentoAndUsuarioProjectionView>> findAllAdmin(){
