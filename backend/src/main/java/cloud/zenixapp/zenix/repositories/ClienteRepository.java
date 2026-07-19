@@ -47,9 +47,9 @@ public interface ClienteRepository extends JpaRepository<Clientes, String> {
                     "LEFT JOIN telefones_clientes tc ON c.telefone_id = tc.id " +
                     "WHERE c.cliente_nome LIKE %:nome% AND c.tenant_id = :tenantId AND c.cliente_status = 1")
     List<ClientesProjectionView> findByNameContaining(@Param("nome") String nome, @Param("tenantId") String tenantId);
-//WHERE cliente_nome LIKE %:nome% AND cliente_status = 1
+
     @Modifying
-    @NativeQuery("UPDATE clientes SET atendimentosMes = 0 WHERE tenant_id = :tenantId planos_id IS NOT NULL AND DAY(cliente_data_renovacao) = :dia")
+    @NativeQuery("UPDATE clientes SET atendimentosMes = 0 WHERE tenant_id = :tenantId AND planos_id IS NOT NULL AND DAY(cliente_data_renovacao) = :dia")
     void resetarAtendimentosMes(@Param("dia") int dia, @Param("tenantId") String tenantId);
 
     @Modifying
