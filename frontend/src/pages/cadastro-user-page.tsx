@@ -3,6 +3,7 @@ import { Input } from "../components/ui/input";
 import { Toaster } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { formatarCPF } from "@/utils/formatter";
 
 export default function CadastroUserPage() {
   const [form, setForm] = useState({
@@ -65,8 +66,8 @@ export default function CadastroUserPage() {
         </div>
 
         <div className="bg-gradient-to-r from-white/5 to-white/3 backdrop-blur-md border border-white/10 rounded-2xl p-8 shadow-xl">
-          <h1 className="text-2xl font-extrabold text-white mb-2">Cadastro — Informações do Usuário</h1>
-          <p className="text-sm text-gray-300 mb-6">Informe seus dados pessoais</p>
+          <h1 className="text-2xl font-extrabold text-orange-600">Cadastro</h1>
+          <h1 className="text-xl font-extrabold text-white mb-5">Informações do Usuário</h1>
 
           <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
             <div>
@@ -75,8 +76,8 @@ export default function CadastroUserPage() {
             </div>
 
             <div>
-              <label className="block mb-2 text-sm font-medium text-gray-300">Seu e-mail</label>
-              <Input type="email" placeholder="E-mail" className="text-white bg-transparent border border-white/10 rounded-md px-3 py-2" value={form.email} onChange={(event) => setField('email', event.target.value)} />
+              <label className="block mb-2 text-sm font-medium text-gray-300">E-mail</label>
+              <Input type="email" placeholder="exemplo@exemplo.com" className="text-white bg-transparent border border-white/10 rounded-md px-3 py-2" value={form.email} onChange={(event) => setField('email', event.target.value)} />
             </div>
 
             <div>
@@ -86,7 +87,7 @@ export default function CadastroUserPage() {
 
             <div>
               <label className="block mb-2 text-sm font-medium text-gray-300">CPF</label>
-              <Input type="text" placeholder="000.000.000-00" className="text-white bg-transparent border border-white/10 rounded-md px-3 py-2" value={form.cpf} onChange={(event) => setField('cpf', event.target.value)} />
+              <Input type="text" placeholder="000.000.000-00" className="text-white bg-transparent border border-white/10 rounded-md px-3 py-2" value={form.cpf} onChange={(event) => setField('cpf', formatarCPF(event.target.value))} />
             </div>
 
             <div className="flex gap-4">

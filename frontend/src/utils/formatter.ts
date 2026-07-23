@@ -12,6 +12,21 @@ export function limparCPF(cpf: string): string {
     return cpf.replace(/\D/g, '')
 }
 
+// Formata CNPJ: 12345678000199 → 12.345.678/0001-99
+export function formatarCNPJ(cnpj: string): string {
+    const limpo = cnpj.replace(/\D/g, '').slice(0, 14)
+    return limpo
+        .replace(/(\d{2})(\d)/, '$1.$2')
+        .replace(/(\d{3})(\d)/, '$1.$2')
+        .replace(/(\d{3})(\d)/, '$1/$2')
+        .replace(/(\d{4})(\d{1,2})$/, '$1-$2')
+}
+
+// Remove formatação: 12.345.678/0001-99 → 12345678000199
+export function limparCNPJ(cnpj: string): string {
+    return cnpj.replace(/\D/g, '')
+}
+
 // Formata telefone
 export const formatarTelefone = (tel: string) => {
     if (!tel) return "—"

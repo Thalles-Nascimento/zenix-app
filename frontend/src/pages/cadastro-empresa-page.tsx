@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useCadastro } from "@/hooks/use-cadastro";
 import { useNavigate } from "react-router-dom";
 import type { CadastroRequest } from "@/types/cadastro";
+import { formatarCNPJ, limparCNPJ, limparCPF } from "@/utils/formatter";
 
 export default function CadastroEmpresaPage() {
   const [form, setForm] = useState({
@@ -54,9 +55,9 @@ export default function CadastroEmpresaPage() {
         nomeAdmin: user.nomeAdmin || "",
         email: user.email || "",
         senha: user.senha || "",
-        cpf: user.cpf || "",
+        cpf: limparCPF(user.cpf || ""),
         nomeEmpresa: form.nomeEmpresa,
-        cnpj: form.cnpj,
+        cnpj: limparCNPJ(form.cnpj),
         nomeUnidade: form.nomeUnidade,
         enderecoUnidade: form.enderecoUnidade,
       };
@@ -83,8 +84,8 @@ export default function CadastroEmpresaPage() {
         </div>
 
         <div className="bg-gradient-to-r from-white/5 to-white/3 backdrop-blur-md border border-white/10 rounded-2xl p-8 shadow-xl">
-          <h1 className="text-2xl font-extrabold text-white mb-2">Cadastro — Informações da Empresa</h1>
-          <p className="text-sm text-gray-300 mb-6">Agora informe os dados da sua empresa</p>
+          <h1 className="text-2xl font-extrabold text-orange-600">Cadastro</h1>
+          <h1 className="text-xl font-extrabold text-white mb-5">Informações do Empresa</h1>
 
           <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
             <div>
@@ -94,7 +95,7 @@ export default function CadastroEmpresaPage() {
 
             <div>
               <label className="block mb-2 text-sm font-medium text-gray-300">CNPJ</label>
-              <Input type="text" placeholder="00.000.000/0000-00" className="text-white bg-transparent border border-white/10 rounded-md px-3 py-2" value={form.cnpj} onChange={(event) => setField('cnpj', event.target.value)} />
+              <Input type="text" placeholder="00.000.000/0000-00" className="text-white bg-transparent border border-white/10 rounded-md px-3 py-2" value={form.cnpj} onChange={(event) => setField('cnpj', formatarCNPJ(event.target.value))} />
             </div>
 
             <div>
@@ -121,3 +122,4 @@ export default function CadastroEmpresaPage() {
     </section>
   );
 }
+
