@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../components/ui/dialog"
 import { Label } from "../../components/ui/label"
-import type { DadosProps, AtendimentoFormProps } from "../../types/atendimento"
+import type { AtendimentoProps, AtendimentoFormProps } from "../../types/atendimento"
 import { Botao } from "../../components/common/botao"
 import { ServicosMultiSelect } from "../../components/common/servicos-multiselect-component"
 import { Input } from "@/components/ui/input"
@@ -10,12 +10,12 @@ import { useServicos } from "../../hooks/use-servicos"
 import { PagamentoSelect } from "@/components/common/pagamento-select"
 
 interface Props {
-    atendimento: DadosProps | null
+    atendimento: AtendimentoProps | null
     open: boolean
     onFechar: () => void
-    onConfirmar: (id: number, form: AtendimentoFormProps) => void
-    onDeletar: (id: number) => void
-    onReativar?: (id: number) => void
+    onConfirmar: (id: string, form: AtendimentoFormProps) => void
+    onDeletar: (id: string) => void
+    onReativar?: (id: string) => void
 }
 
 export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirmar, onDeletar, onReativar }: Props) {

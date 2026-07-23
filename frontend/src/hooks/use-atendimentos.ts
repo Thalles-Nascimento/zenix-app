@@ -1,20 +1,20 @@
 import { useEffect, useState } from "react"
 import {
-    atendimentoService,
+    listarAtendimentosHoje,
     criarAtendimentoService,
     atualizarAtendimentoAdminService,
     deletarAtendimentoService,
     ativarAtendimentoService,
     listarHistorico
 } from "../services/atendimento-service"
-import type { DadosProps, AtendimentoFormProps } from "../types/atendimento"
+import type { AtendimentoProps, AtendimentoFormProps } from "../types/atendimento"
 import { toast } from "sonner"
 
 type Periodo = 'hoje' | 'historico'
 
 export function useAtendimentos() {
-    const [dadosHoje, setDadosHoje] = useState<DadosProps[]>([])
-    const [dadosHistorico, setDadosHistorico] = useState<DadosProps[]>([])
+    const [dadosHoje, setDadosHoje] = useState<AtendimentoProps[]>([])
+    const [dadosHistorico, setDadosHistorico] = useState<AtendimentoProps[]>([])
     const [carregando, setCarregando] = useState(true)
     const [periodo, setPeriodo] = useState<Periodo>('hoje')
 
@@ -22,7 +22,7 @@ export function useAtendimentos() {
         try {
             setCarregando(true)
             const [hojeData, historicoData] = await Promise.all([
-                atendimentoService(),
+                listarAtendimentosHoje(),
                 listarHistorico()
             ])
             setDadosHoje(hojeData)
@@ -49,7 +49,7 @@ export function useAtendimentos() {
     }
     
     // Atualiza qualquer atendimento — exclusivo ADMIN
-    const atualizarAtendimentoAdmin = async (id: number, form: AtendimentoFormProps) => {
+    const atualizarAtendimentoAdmin = async (id: string, form: AtendimentoFormProps) => {
         try {
             await atualizarAtendimentoAdminService(id, form)
             toast.success("Atendimento atualizado com sucesso!")
@@ -59,7 +59,7 @@ export function useAtendimentos() {
         }
     }
 
-    const deletarAtendimento = async (id: number) => {
+    const deletarAtendimento = async (id: string) => {
         try {
             await deletarAtendimentoService(id)
             toast.success("Atendimento deletado com sucesso!")
@@ -69,7 +69,7 @@ export function useAtendimentos() {
         }
     }
 
-    const ativarAtendimento = async (id: number) => {
+    const ativarAtendimento = async (id: string) => {
         try {
             await ativarAtendimentoService(id)
             toast.success("Atendimento reativado com sucesso!")

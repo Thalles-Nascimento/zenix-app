@@ -1,7 +1,7 @@
 import api_url from "../enviroments/enviroments";
 import type { AtendimentoFormProps } from "../types/atendimento";
 
-export async function atendimentoService() {
+export async function listarAtendimentosHoje() {
     const response = await api_url.get('/atendimentos');
     return response.data
 }
@@ -11,17 +11,17 @@ export async function criarAtendimentoService(dados: AtendimentoFormProps) {
     return response.data
 }
 
-export async function atualizarAtendimentoAdminService(id: number, dados: AtendimentoFormProps) {
+export async function atualizarAtendimentoAdminService(id: string, dados: AtendimentoFormProps) {
     const response = await api_url.put(`/atendimentos/${id}`, dados)
     return response.data
 }
 
-export async function deletarAtendimentoService(id: number) {
+export async function deletarAtendimentoService(id: string) {
     const response = await api_url.delete(`/atendimentos/${id}`)
     return response.data
 }
 
-export async function ativarAtendimentoService(id: number) {
+export async function ativarAtendimentoService(id: string) {
     const response = await api_url.patch(`/atendimentos/${id}`)
     return response.data
 }

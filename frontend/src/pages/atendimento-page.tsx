@@ -2,7 +2,7 @@ import { useAtendimentos } from "../hooks/use-atendimentos"
 import { Spinner } from "../components/ui/spinner"
 import { Badge } from "../components/ui/badge"
 import { useState } from "react"
-import type { DadosProps } from "../types/atendimento"
+import type { AtendimentoProps } from "../types/atendimento"
 import { Toaster } from "sonner"
 import { ModalNovoAtendimento } from "./modals/atendimento-novo-modal"
 import { ModalEditarAtendimento } from "./modals/atendimento-editar-modal"
@@ -13,7 +13,7 @@ import { MessageSquareWarning } from "lucide-react"
 
 export default function Atendimentos() {
     const { dados, carregando, periodo, setPeriodo, criarAtendimento, atualizarAtendimentoAdmin, deletarAtendimento, ativarAtendimento } = useAtendimentos()
-    const [atendimentoSelecionado, setAtendimentoSelecionado] = useState<DadosProps | null>(null)
+    const [atendimentoSelecionado, setAtendimentoSelecionado] = useState<AtendimentoProps | null>(null)
     const { itensPagina, paginaAtual, totalPaginas, totalItens, setPaginaAtual } = usePaginacao(dados, 7)
     const { permissao } = useAuth()
 
@@ -53,7 +53,7 @@ export default function Atendimentos() {
 
             {/* Tabela */}
             <div className="overflow-x-auto rounded-xl border border-gray-700 notranslate">
-                <table className="w-full text-sm text-left text-gray-300 min-w-[600px]">
+                <table className="w-full text-sm text-left text-gray-300 min-w-150">
                     <thead className="text-xs text-white uppercase bg-gray-800 border-b border-gray-700">
                         <tr>
                             <th className="px-4 py-3 notranslate">CLIENTE</th>
