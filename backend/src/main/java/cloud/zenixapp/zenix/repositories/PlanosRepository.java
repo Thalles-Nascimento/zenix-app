@@ -15,7 +15,7 @@ public interface PlanosRepository extends JpaRepository<Planos, String> {
             value = "SELECT " +
                     "p.id AS id, " +
                     "p.planos_descricao AS descricao, " +
-                    "p.planos_servico AS servico," +
+                    "p.planos_servico AS servicoRaw," +
                     "p.planos_valor AS valor, " +
                     "p.planos_limite AS atendimentos " +
                     "FROM planos p " +
@@ -26,7 +26,7 @@ public interface PlanosRepository extends JpaRepository<Planos, String> {
             value = "SELECT " +
                     "p.id AS id, " +
                     "p.planos_descricao AS descricao, " +
-                    "p.planos_servico AS servico," +
+                    "p.planos_servico AS servicoRaw," +
                     "p.planos_valor AS valor, " +
                     "p.planos_limite AS atendimentos," +
                     "p.updated_at AS updatedAt " +

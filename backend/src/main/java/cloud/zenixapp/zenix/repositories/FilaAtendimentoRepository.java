@@ -33,7 +33,7 @@ public interface FilaAtendimentoRepository extends JpaRepository<Fila, String> {
             value = "SELECT " +
                     "f.id AS id," +
                     "f.fila_client AS nomeCliente," +
-                    "f.fila_servico AS servico," +
+                    "f.fila_servico AS servicoRaw," +
                     "f.fila_pagamento AS formaPagamento," +
                     "f.fila_horario AS horario," +
                     "f.fila_status AS status," +

@@ -26,7 +26,7 @@ public interface AtendimentoRepository extends JpaRepository<Atendimento, String
             value = "SELECT " +
                     "a.id AS id, " +
                     "a.atendimento_descricao AS descricao," +
-                    "a.atendimento_servico AS servico," +
+                    "a.atendimento_servico AS servicoRaw," +
                     "a.atendimento_valor AS valor," +
                     "a.atendimento_pagamento AS formaPagamento," +
                     "a.atendimento_data AS data," +
@@ -42,7 +42,7 @@ public interface AtendimentoRepository extends JpaRepository<Atendimento, String
             value = "SELECT " +
                     "a.id AS id, " +
                     "a.atendimento_descricao AS descricao," +
-                    "a.atendimento_servico AS servico," +
+                    "a.atendimento_servico AS servicoRaw," +
                     "a.atendimento_valor AS valor," +
                     "a.atendimento_pagamento AS formaPagamento," +
                     "a.atendimento_data AS data," +
@@ -58,7 +58,7 @@ public interface AtendimentoRepository extends JpaRepository<Atendimento, String
             value = "SELECT " +
                     "a.id AS id, " +
                     "a.atendimento_descricao AS descricao," +
-                    "a.atendimento_servico AS servico," +
+                    "a.atendimento_servico AS servicoRaw," +
                     "a.atendimento_valor AS valor," +
                     "a.atendimento_pagamento AS formaPagamento," +
                     "a.atendimento_data AS data," +
@@ -82,7 +82,7 @@ public interface AtendimentoRepository extends JpaRepository<Atendimento, String
             value = "SELECT " +
                     "a.id AS id, " +
                     "a.atendimento_descricao AS descricao," +
-                    "a.atendimento_servico AS servico," +
+                    "a.atendimento_servico AS servicoRaw," +
                     "a.atendimento_valor AS valor," +
                     "a.atendimento_pagamento AS formaPagamento," +
                     "a.atendimento_data AS data," +
@@ -98,7 +98,7 @@ public interface AtendimentoRepository extends JpaRepository<Atendimento, String
             value = "SELECT " +
                     "a.id AS id, " +
                     "a.atendimento_descricao AS descricao," +
-                    "a.atendimento_servico AS servico," +
+                    "a.atendimento_servico AS servicoRaw," +
                     "a.atendimento_valor AS valor," +
                     "a.atendimento_pagamento AS formaPagamento," +
                     "a.atendimento_data AS data," +
