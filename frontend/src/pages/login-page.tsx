@@ -3,52 +3,55 @@ import { Input } from "../components/ui/input";
 import { useLogin } from '../hooks/use-login'
 import { Toaster } from "sonner";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
 
     const [email, setEmail] = useState<string>("");
     const [senha, setSenha] = useState<string>("");
+    const navigate = useNavigate();
     const { logar, erro } = useLogin()
 
     return (
         <section
-            className="bg-black flex flex-col items-center justify-center px-6 notranslate"
-            style={{
-                minHeight: "100dvh",
-                paddingTop: "max(2rem, env(safe-area-inset-top))",
-                paddingBottom: "max(2rem, env(safe-area-inset-bottom))",
-            }}
+            className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#213458] via-[#0b1220] to-[#08101a] px-6 notranslate"
+            style={{ paddingTop: "max(2rem, env(safe-area-inset-top))", paddingBottom: "max(2rem, env(safe-area-inset-bottom))" }}
         >
             <Toaster richColors position="top-center" />
-            <div className=" items-center mb-9 text-4xl font-semibold notranslate">
-                <img className="w-88" src="/assets/imagens/logo.png" alt="logo" />
-            </div>
-            <div className="w-full bg-gray-900 rounded-xl shadow border md:mt-0 sm:max-w-md xl:p-0 border-gray-500 notranslate">
-                <div className="p-6 space-y-4 md:space-y-6 sm:p-8 notranslate">
-                    <h1 className="text-xl font-bold leading-tight tracking-tight text-white md:text-2xl">
-                        Faça login na sua conta.
-                    </h1>
-                    <form className="space-y-4 md:space-y-6" onSubmit={(event) => event.preventDefault()}>
+
+            <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div className="hidden md:flex items-center justify-center">
+                    <img src="/assets/imagens/logo.png" alt="logo" className="w-56 -ml-8" />
+                </div>
+
+                <div className="bg-gradient-to-r from-white/5 to-white/3 backdrop-blur-md border border-white/10 rounded-2xl p-8 shadow-xl">
+                    <h1 className="text-2xl font-extrabold text-white mb-2">Bem vindo de volta</h1>
+                    <p className="text-sm text-gray-300 mb-6">Entre na sua conta para continuar</p>
+
+                    <form className="space-y-4" onSubmit={(event) => event.preventDefault()}>
                         <div>
-                            <label className="block mb-2 text-sm font-medium text-white">Seu e-mail</label>
-                            <Input type="email" placeholder="E-mail" className="text-white bg-gray-900" onChange={(event) => setEmail(event.target.value)} />
+                            <label className="block mb-2 text-sm font-medium text-gray-300">Seu e-mail</label>
+                            <Input type="email" placeholder="E-mail" className="text-white bg-transparent border border-white/10 rounded-md px-3 py-2" onChange={(event) => setEmail(event.target.value)} />
                         </div>
                         <div>
-                            <label className="block mb-2 text-sm font-medium text-white">Senha</label>
-                            <Input type="password" placeholder="********" className="text-white bg-gray-900" onChange={(event) => setSenha(event.target.value)} />
+                            <label className="block mb-2 text-sm font-medium text-gray-300">Senha</label>
+                            <Input type="password" placeholder="********" className="text-white bg-transparent border border-white/10 rounded-md px-3 py-2" onChange={(event) => setSenha(event.target.value)} />
                         </div>
 
                         {erro && (
-                            <p className="text-red-500 text-sm">{erro}</p>
+                            <p className="text-red-400 text-sm">{erro}</p>
                         )}
 
                         <Button
+                            type="button"
                             variant="default"
-                            className="w-full text-white font-bold rounded-xl notranslate"
+                            className="w-full text-white font-bold rounded-xl mt-2"
                             onClick={() => logar(email, senha)}
                         >
                             Login
                         </Button>
+
+                        <Button type="button" variant="secondary" onClick={() => {navigate('/cadastro'); }} className="text-black w-full rounded-xl">Cria Conta</Button>
                     </form>
                 </div>
             </div>
