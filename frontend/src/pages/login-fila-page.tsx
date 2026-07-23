@@ -116,17 +116,22 @@ export default function LoginClient() {
     }
 
     return (
-        <section className="min-h-screen bg-black notranslate">
+        <section
+            className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#213458] via-[#0b1220] to-[#08101a] px-6 notranslate"
+            style={{ paddingTop: "max(2rem, env(safe-area-inset-top))", paddingBottom: "max(2rem, env(safe-area-inset-bottom))" }}
+        >
             <Toaster richColors position="top-center" />
-            <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0 notranslate">
-                <div className=" items-center mb-2 text-4xl font-semibold notranslate">
-                    <img className="w-88" src="/assets/imagens/logo.png" alt="logo" />
+
+            <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div className="flex items-center justify-center">
+                    <img className="w-40 md:w-56 md:-ml-8" src="/assets/imagens/logo.png" alt="logo" />
                 </div>
-                <div className="w-full bg-black rounded-xl shadow border md:mt-0 sm:max-w-md xl:p-0 border-gray-500 notranslate">
-                    <div className="p-6 space-y-4 md:space-y-6 sm:p-8 notranslate">
-                        <h1 className="text-xl font-bold leading-tight tracking-tight text-white md:text-2xl">
-                            Entre na Fila de Atendimento
-                        </h1>
+
+                <div className="bg-gradient-to-r from-white/5 to-white/3 backdrop-blur-md border border-white/10 rounded-2xl p-8 shadow-xl">
+                    <h1 className="text-2xl font-extrabold text-orange-600 mb-2">Entre na Fila de Atendimento</h1>
+                    <p className="text-white mb-6">Preencha seus dados para entrar na fila</p>
+
+                    <div className="p-0 space-y-4">
                         <form className="space-y-4 md:space-y-6" onSubmit={(e) => e.preventDefault()}>
 
                             <div className="notranslate">

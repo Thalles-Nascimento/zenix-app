@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
-import { Menu, Scissors, Users, DollarSign, LogOutIcon, ChartBarStacked, UserPlus, Building2, Wrench, WalletCards, Settings, ChevronDown, UsersRound, Crown } from "lucide-react"
+import { Menu, Scissors, Users, DollarSign, LogOutIcon, ChartBarStacked, UserPlus, Building2, Wrench, WalletCards, Settings, ChevronDown, UsersRound, Crown, X } from "lucide-react"
 import { useAuth } from "../contexts/auth-context"
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet"
 import { Button } from "./ui/button"
 import { usePerfil } from "../hooks/use-perfil"
-import { KeyRound, X } from "lucide-react"
+import { KeyRound } from "lucide-react"
 import { toast } from "sonner"
 
 interface LayoutProps {
     children: React.ReactNode
 }
 
-function SidebarContent({ onClose }: { onClose?: () => void }) {
+function SidebarContent({ onClose, collapsed }: { onClose?: () => void, collapsed?: boolean }) {
     const { logout, permissao } = useAuth()
     const navigate = useNavigate()
     const location = useLocation()
@@ -51,11 +51,11 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
     const isClientesAtivo = clientesPaths.includes(location.pathname)
 
     return (
-        <div className="flex flex-col h-full bg-black text-white">
-            <div className="flex items-center justify-center gap-3 px-6 py-4">
-                <img className="w-88" src="/assets/imagens/logo.png" alt="logo" />
+        <div className={`flex flex-col h-full text-white bg-black ${collapsed ? 'items-center' : ''}`}>
+            <div className="flex items-center justify-center gap-3 px-4 py-4">
+                <img className={`${collapsed ? '30' : 'w-50'} object-contain`} src="/assets/imagens/logo.png" alt="logo" />
             </div>
-            <nav className="flex flex-col gap-1 p-4 flex-1 bg-black">
+            <nav className={`flex flex-col gap-1 p-2 flex-1 ${collapsed ? 'items-center' : 'pl-4'}`}>
                 {menuItems
                     .filter(item => item.roles.includes(permissao ?? ""))
                     .map(item => (
@@ -63,37 +63,41 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
                             key={item.path}
                             to={item.path}
                             onClick={onClose}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors
+                            className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors w-full
                                 ${location.pathname === item.path
                                     ? "bg-orange-600 text-white"
                                     : "text-gray-400 hover:bg-gray-900 hover:text-white"
                                 }`}
                         >
-                            {item.icon}
-                            {item.label}
+                            <div className="flex items-center justify-center w-6">
+                                {item.icon}
+                            </div>
+                            {!collapsed && <span className="ml-1">{item.label}</span>}
                         </Link>
                     ))}
 
                 {/* Dropdown Clientes — apenas ADMIN */}
                 {permissao === "ADMIN" && (
-                    <div>
+                    <div className={`${collapsed ? 'w-full' : ''}`}>
                         <button
                             onClick={() => setClientesAberto(prev => !prev)}
-                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors
+                            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
                                 ${isClientesAtivo
                                     ? "bg-orange-600 text-white"
                                     : "text-gray-400 hover:bg-gray-900 hover:text-white"
                                 }`}
                         >
                             <Crown size={18} />
-                            <span className="flex-1 text-left">Clientes e Planos</span>
-                            <ChevronDown
-                                size={16}
-                                className={`transition-transform ${clientesAberto ? "rotate-180" : ""}`}
-                            />
+                            {!collapsed && <span className="flex-1 text-left">Clientes e Planos</span>}
+                            {!collapsed && (
+                                <ChevronDown
+                                    size={16}
+                                    className={`transition-transform ${clientesAberto ? "rotate-180" : ""}`}
+                                />
+                            )}
                         </button>
 
-                        {clientesAberto && (
+                        {clientesAberto && !collapsed && (
                             <div className="ml-4 mt-1 flex flex-col gap-1 border-l border-gray-700 pl-3">
                                 {clientesItems.map(item => (
                                     <Link
@@ -117,24 +121,26 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
 
                 {/* Dropdown Configurações — apenas ADMIN */}
                 {permissao === "ADMIN" && (
-                    <div>
+                    <div className={`${collapsed ? 'w-full' : ''}`}>
                         <button
                             onClick={() => setConfigAberto(prev => !prev)}
-                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors
+                            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
                                 ${isConfigAtivo
                                     ? "bg-orange-600 text-white"
                                     : "text-gray-400 hover:bg-gray-900 hover:text-white"
                                 }`}
                         >
                             <Settings size={18} />
-                            <span className="flex-1 text-left">Configurações</span>
-                            <ChevronDown
-                                size={16}
-                                className={`transition-transform ${configAberto ? "rotate-180" : ""}`}
-                            />
+                            {!collapsed && <span className="flex-1 text-left">Configurações</span>}
+                            {!collapsed && (
+                                <ChevronDown
+                                    size={16}
+                                    className={`transition-transform ${configAberto ? "rotate-180" : ""}`}
+                                />
+                            )}
                         </button>
 
-                        {configAberto && (
+                        {configAberto && !collapsed && (
                             <div className="ml-4 mt-1 flex flex-col gap-1 border-l border-gray-700 pl-3">
                                 {configItems.map(item => (
                                     <Link
@@ -156,14 +162,16 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
                     </div>
                 )}
             </nav>
-            <div className="p-4">
+            <div className={`p-3 ${collapsed ? 'w-full flex justify-center' : ''}`}>
                 <Button variant="ghost" size="sm" onClick={clickButtonLogout}>
-                    <LogOutIcon className="mr-2" /> Logout
+                    <LogOutIcon className="mr-2" /> {!collapsed && 'Logout'}
                 </Button>
             </div>
-            <div className="px-6 py-4 border-t border-gray-500 text-xs font-bold text-white">
-                Zenix © {new Date().getFullYear()}
-            </div>
+            {!collapsed && (
+                <div className="px-6 py-4 border-t border-gray-700 text-xs font-bold text-white">
+                    Zenix © {new Date().getFullYear()}
+                </div>
+            )}
         </div>
     )
 }
@@ -177,6 +185,7 @@ export default function Layout({ children }: LayoutProps) {
     const [modalSenhaOpen, setModalSenhaOpen] = useState(false)
     const [novaSenha, setNovaSenha] = useState("")
     const [confirmarSenha, setConfirmarSenha] = useState("")
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
 
     const handleTrocarSenha = async () => {
         if (novaSenha !== confirmarSenha) {
@@ -195,11 +204,11 @@ export default function Layout({ children }: LayoutProps) {
 
     return (
         <div className="flex overflow-x-hidden bg-black text-white" style={{ minHeight: "100dvh" }}>
-            <aside className="hidden md:flex w-64 flex-col fixed inset-y-0 left-0 border-r border-gray-700 z-30">
-                <SidebarContent />
+            <aside className={`${sidebarCollapsed ? 'hidden md:flex md:w-20' : 'hidden md:flex w-64'} flex-col fixed inset-y-0 left-0 border-r border-gray-700 z-30 transition-all duration-200`}>
+                <SidebarContent collapsed={sidebarCollapsed} />
             </aside>
 
-            <div className="flex flex-col flex-1 min-w-0 md:ml-64">
+            <div className={`flex flex-col flex-1 min-w-0 ${sidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}`}>
                 <header
                     className="sticky top-0 z-40 flex items-center justify-between px-4 bg-black border-b border-gray-700"
                     style={{
@@ -207,14 +216,26 @@ export default function Layout({ children }: LayoutProps) {
                         paddingBottom: "0.75rem"
                     }}
                 >
-                    <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-                        <SheetTrigger className="md:hidden text-gray-400 hover:text-white">
-                            <Menu size={24} />
-                        </SheetTrigger>
-                        <SheetContent side="left" className="p-0 w-64 bg-gray-900 border-gray-700">
-                            <SidebarContent onClose={() => setMobileOpen(false)} />
-                        </SheetContent>
-                    </Sheet>
+                    <div className="flex items-center gap-2">
+                        {/* Mobile menu button */}
+                        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+                            <SheetTrigger className="md:hidden text-gray-400 hover:text-white">
+                                <Menu size={24} />
+                            </SheetTrigger>
+                            <SheetContent side="left" className="p-0 w-64 bg-gray-900 border-gray-700">
+                                <SidebarContent onClose={() => setMobileOpen(false)} />
+                            </SheetContent>
+                        </Sheet>
+
+                        {/* Collapse toggle (desktop) */}
+                        <button
+                            onClick={() => setSidebarCollapsed(prev => !prev)}
+                            className="hidden md:inline-flex items-center justify-center w-10 h-10 rounded-md bg-gray-900 hover:bg-gray-800 text-gray-200"
+                            aria-label={sidebarCollapsed ? "Abrir menu" : "Fechar menu"}
+                        >
+                            {sidebarCollapsed ? <Menu size={18} /> : <X size={18} />}
+                        </button>
+                    </div>
 
                     <div className="ml-auto flex items-center justify-center gap-3 relative">
                         <span className="text-sm text-white hidden sm:block">{grupo}</span>
