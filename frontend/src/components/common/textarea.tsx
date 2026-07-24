@@ -10,7 +10,6 @@ export function TextareaField({ value, onChange }: Props) {
     return (
         <Field>
             <FieldLabel htmlFor="textarea-message" className="text-white font-bold text-md">Observação</FieldLabel>
-            <FieldDescription>Escreva uma observação abaixo sobre o atendimento.</FieldDescription>
             <Textarea
                 id="textarea-message"
                 placeholder="Insira sua anotação aqui"

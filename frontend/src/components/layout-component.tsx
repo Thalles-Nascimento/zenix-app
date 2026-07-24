@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
-import { Menu, Scissors, Users, DollarSign, LogOutIcon, ChartBarStacked, UserPlus, Building2, Wrench, WalletCards, Settings, ChevronDown, UsersRound, Crown, X } from "lucide-react"
+import { Menu, Scissors, Users, DollarSign, LogOutIcon, ChartBarStacked, UserPlus, Building2, Wrench, WalletCards, Settings, ChevronDown, UsersRound, Crown, X, PanelLeftClose, PanelLeftOpen } from "lucide-react"
 import { useAuth } from "../contexts/auth-context"
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet"
 import { Button } from "./ui/button"
@@ -13,8 +13,7 @@ interface LayoutProps {
 }
 
 function SidebarContent({ onClose, collapsed }: { onClose?: () => void, collapsed?: boolean }) {
-    const { logout, permissao } = useAuth()
-    const navigate = useNavigate()
+    const { permissao } = useAuth()
     const location = useLocation()
 
     const configPaths = ["/servicos", "/pagamentos", "/unidades"]
@@ -42,10 +41,6 @@ function SidebarContent({ onClose, collapsed }: { onClose?: () => void, collapse
         { label: "Planos",   path: "/planos",   icon: <Crown size={16} /> },
     ]
 
-    const clickButtonLogout = () => {
-        logout()
-        navigate("/login")
-    }
 
     const isConfigAtivo = configPaths.includes(location.pathname)
     const isClientesAtivo = clientesPaths.includes(location.pathname)
@@ -162,11 +157,7 @@ function SidebarContent({ onClose, collapsed }: { onClose?: () => void, collapse
                     </div>
                 )}
             </nav>
-            <div className={`p-3 ${collapsed ? 'w-full flex justify-center' : ''}`}>
-                <Button variant="ghost" size="sm" onClick={clickButtonLogout}>
-                    <LogOutIcon className="mr-2" /> {!collapsed && 'Logout'}
-                </Button>
-            </div>
+            
             {!collapsed && (
                 <div className="px-6 py-4 border-t border-gray-700 text-xs font-bold text-white">
                     Zenix © {new Date().getFullYear()}
@@ -177,7 +168,7 @@ function SidebarContent({ onClose, collapsed }: { onClose?: () => void, collapse
 }
 
 export default function Layout({ children }: LayoutProps) {
-    const { userName, permissao } = useAuth()
+    const { userName, permissao, logout } = useAuth()
     const [mobileOpen, setMobileOpen] = useState(false)
     const [grupo, setGrupo] = useState(permissao)
     const { trocarSenha } = usePerfil()
@@ -186,6 +177,7 @@ export default function Layout({ children }: LayoutProps) {
     const [novaSenha, setNovaSenha] = useState("")
     const [confirmarSenha, setConfirmarSenha] = useState("")
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+    const navigate = useNavigate()
 
     const handleTrocarSenha = async () => {
         if (novaSenha !== confirmarSenha) {
@@ -196,6 +188,11 @@ export default function Layout({ children }: LayoutProps) {
         setModalSenhaOpen(false)
         setNovaSenha("")
         setConfirmarSenha("")
+    }
+
+    const clickButtonLogout = () => {
+        logout()
+        navigate("/login")
     }
 
     useEffect(() => {
@@ -230,10 +227,10 @@ export default function Layout({ children }: LayoutProps) {
                         {/* Collapse toggle (desktop) */}
                         <button
                             onClick={() => setSidebarCollapsed(prev => !prev)}
-                            className="hidden md:inline-flex items-center justify-center w-10 h-10 rounded-md bg-gray-900 hover:bg-gray-800 text-gray-200"
+                            className="hidden md:inline-flex items-center justify-center w-10 h-10 rounded-md bg-black hover:bg-gray-800 text-gray-200"
                             aria-label={sidebarCollapsed ? "Abrir menu" : "Fechar menu"}
                         >
-                            {sidebarCollapsed ? <Menu size={18} /> : <X size={18} />}
+                            {sidebarCollapsed ? <PanelLeftOpen size={18}/> : <PanelLeftClose size={18}/>}
                         </button>
                     </div>
 
@@ -261,6 +258,12 @@ export default function Layout({ children }: LayoutProps) {
                                         <KeyRound size={14} />
                                         Trocar senha
                                     </button>
+                                        <button className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
+                                         onClick={clickButtonLogout}
+                                         >
+                                            <LogOutIcon size={14}/>
+                                            Logout
+                                        </button>
                                 </div>
                             </>
                         )}
