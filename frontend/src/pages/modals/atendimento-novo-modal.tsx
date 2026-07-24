@@ -12,6 +12,7 @@ import { buscarClientesPorNomeService } from "../../services/cliente-service"
 import type { ClienteDTO } from "../../types/cliente"
 import { useCliente } from "@/hooks/use-cliente"
 import { TextareaField } from "@/components/common/textarea"
+import { UserPlus } from "lucide-react"
 
 interface Props {
     onConfirmar: (form: AtendimentoFormProps) => void
@@ -108,22 +109,26 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="default">NOVO ATENDIMENTO</Button>
+                <Button variant="default"><UserPlus /></Button>
             </DialogTrigger>
-            <DialogContent className="bg-black border-gray-700 text-white w-[calc(100vw-2rem)] max-w-md">
-                <DialogHeader>
-                    <DialogTitle className="text-white">Novo Atendimento</DialogTitle>
-                </DialogHeader>
-                <div className="flex flex-col gap-4 mt-2 max-h-[75vh] overflow-y-auto pr-1">
+            <DialogContent className="notranslate bg-black border border-gray-700 text-white w-[calc(100vw-2rem)] max-w-md max-h-[70vh] overflow-y-auto rounded-lg shadow-sm">
+                <div className="px-4 py-3 border-b border-gray-800">
+                    <DialogHeader>
+                        <DialogTitle className="text-white notranslate text-lg font-semibold">
+                            Novo Atendimento
+                        </DialogTitle>
+                    </DialogHeader>
+                </div>
+                <div className="p-4 flex flex-col gap-3 notranslate">
 
                     {/* Campo cliente com sugestões */}
                     <div ref={dropdownRef} className="relative">
-                        <Label className="text-gray-300">
+                        <Label className="text-white">
                             Cliente
                             {buscando && <span className="ml-2 text-gray-500 text-xs">Buscando...</span>}
                         </Label>
                         <Input
-                            className="mt-2 bg-gray-900 border-gray-700 text-white"
+                            className="mt-2 w-full bg-gray-900 border border-gray-700 text-white rounded-md px-3 py-2"
                             placeholder="Digite o nome do cliente"
                             value={form.descricao}
                             onChange={(e) => handleNomeChange(e.target.value)}
@@ -154,41 +159,51 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
                     </div>
 
                     <div>
-                        <Label className="text-gray-300 mb-2">
-                            Serviços
+                        <div className="flex items-center justify-between">
+                            <Label className="text-white">Serviços</Label>
                             {form.servico.length > 0 && (
-                                <span className="ml-2 text-orange-500 text-xs">
-                                    {form.servico.length} selecionado(s)
-                                </span>
+                                <span className="text-orange-500 text-xs">{form.servico.length} selecionado(s)</span>
                             )}
-                        </Label>
-                        <ServicosMultiSelect
-                            selecionados={form.servico}
-                            onChange={handleServicosChange}
-                        />
+                        </div>
+                        <div className="mt-2">
+                            <ServicosMultiSelect
+                                selecionados={form.servico}
+                                onChange={handleServicosChange}
+                            />
+                        </div>
                     </div>
+
+                    <div className="mt-2 flex items-end justify-between gap-4">
+                        <div>
+                            <Label className="text-white text-sm">Valor</Label>
+                            <Input
+                                disabled
+                                className="mt-1 w-28 bg-gray-600 border border-gray-600 text-orange-400 font-semibold cursor-not-allowed rounded-md px-2 py-1.5 text-sm"
+                                value={form.servico.length === 0 ? "" : `R$ ${form.valor.toFixed(2).replace(".", ",")}`}
+                                placeholder="R$ 0,00"
+                            />
+                        </div>
+                        <div className="text-right">
+                            <Label className="text-white text-sm">Forma de Pagamento</Label>
+                            <div className="mt-2 w-48">
+                                <PagamentoSelect
+                                    value={form.formaPagamento}
+                                    onValueChange={(v) => setForm({ ...form, formaPagamento: v })}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
                     <div>
-                        <Label className="text-gray-300">Valor Total</Label>
-                        <Input
-                            disabled
-                            className="mt-2 bg-gray-600 border-gray-600 text-orange-400 font-semibold cursor-not-allowed"
-                            value={form.servico.length === 0 ? "R$ 0,00" : `R$ ${form.valor.toFixed(2).replace(".", ",")}`}
+                        <TextareaField
+                            value={form.observacao ?? ""}
+                            onChange={(e) => setForm({ ...form, observacao: e.target.value })}
                         />
                     </div>
-                    <div>
-                        <Label className="text-gray-300 notranslate">Forma de Pagamento</Label>
-                        <PagamentoSelect
-                            value={form.formaPagamento}
-                            onValueChange={(v) => setForm({ ...form, formaPagamento: v })}
-                        />
-                    </div>
-                    <TextareaField
-                        value={form.observacao ?? ""}
-                        onChange={(e) => setForm({ ...form, observacao: e.target.value })}
-                    />
-                    <div className="flex gap-3 mt-2">
-                        <Botao color="primary" texto="Confirmar" click={handleConfirmar} />
-                        <Botao color="secondary" texto="Cancelar" click={() => setOpen(false)} />
+
+                    <div className="flex items-center justify-center gap-6 mt-6">
+                        <Botao texto="Salvar" color="sucess" click={handleConfirmar} />
+                        <Botao texto="Cancelar" color="cancel" click={() => setOpen(false)} />
                     </div>
                 </div>
             </DialogContent>

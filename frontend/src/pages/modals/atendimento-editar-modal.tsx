@@ -71,73 +71,84 @@ export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirma
 
     return (
         <Dialog open={open} onOpenChange={onFechar}>
-            <DialogContent className="notranslate bg-black border-gray-700 text-white w-[calc(100vw-2rem)] max-w-md max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                    <DialogTitle className="text-white notranslate">
-                        Editar Atendimento
-                        {deletado && (
-                            <span className="ml-2 text-xs text-gray-500 font-bold">— Excluído</span>
-                        )}
-                    </DialogTitle>
-                </DialogHeader>
-                <div className="flex flex-col gap-4 mt-2 notranslate">
+            <DialogContent className="notranslate bg-black border border-gray-700 text-white w-[calc(100vw-2rem)] max-w-md max-h-[70vh] overflow-y-auto rounded-lg shadow-sm">
+                <div className="px-4 py-3 border-b border-gray-800">
+                    <DialogHeader>
+                        <DialogTitle className="text-white notranslate text-lg font-semibold">
+                            Editar Atendimento {deletado && (<span className="ml-2 text-red-400 font-bold">— Deletado</span>)}
+                        </DialogTitle>
+                    </DialogHeader>
+                </div>
+                <div className="p-4 flex flex-col gap-3 notranslate">
                     <div>
-                        <Label className="text-gray-300">Cliente</Label>
+                        <Label className="text-white">Cliente</Label>
                         <Input
-                            className="mt-1 bg-gray-900 border-gray-700 text-white"
+                            className="mt-2 w-full bg-gray-900 border border-gray-700 text-white rounded-md px-3 py-2"
                             value={form.descricao}
                             onChange={(e) => setForm({ ...form, descricao: e.target.value })}
                         />
                     </div>
+
                     <div>
-                        <Label className="text-gray-300">
-                            Serviços
+                        <div className="flex items-center justify-between">
+                            <Label className="text-white">Serviços</Label>
                             {form.servico.length > 0 && (
-                                <span className="ml-2 text-orange-500 text-xs">
-                                    {form.servico.length} selecionado(s)
-                                </span>
+                                <span className="text-orange-500 text-xs">{form.servico.length} selecionado(s)</span>
                             )}
-                        </Label>
-                        <ServicosMultiSelect
-                            selecionados={form.servico}
-                            onChange={handleServicosChange}
-                        />
+                        </div>
+                        <div className="mt-2">
+                            <ServicosMultiSelect
+                                selecionados={form.servico}
+                                onChange={handleServicosChange}
+                            />
+                        </div>
                     </div>
+
+                    <div className="mt-2 flex items-end justify-between gap-4">
+                        <div>
+                            <Label className="text-white text-sm">Valor</Label>
+                            <Input
+                                className="mt-1 w-28 bg-gray-900 border border-gray-600 text-orange-400 font-semibold rounded-md px-2 py-1.5 text-sm"
+                                value={form.valor === 0 ? "" : String(form.valor)}
+                                placeholder="R$ 0,00"
+                                type="text"
+                                onChange={(e) => setForm({ ...form, valor: parseFloat(e.target.value) || 0 })}
+                            />
+                        </div>
+                        <div className="text-right">
+                            <Label className="text-white text-sm">Forma de Pagamento</Label>
+                            <div className="mt-2 w-48">
+                                <PagamentoSelect
+                                    value={form.formaPagamento}
+                                    onValueChange={(v) => setForm({ ...form, formaPagamento: v })}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
                     <div>
-                        <Label className="text-gray-300">Valor Total</Label>
-                        <Input
-                            className="mt-1 bg-gray-900 border-gray-600 text-orange-400 font-semibold"
-                            value={form.valor === 0 ? "" : form.valor}
-                            placeholder="R$ 0,00"
-                            type="number"
-                            onChange={(e) => setForm({ ...form, valor: parseFloat(e.target.value) || 0 })}
+                        <TextareaField
+                            value={form.observacao ?? ""}
+                            onChange={(e) => setForm({ ...form, observacao: e.target.value })}
                         />
                     </div>
-                    <div>
-                        <Label className="text-gray-300">Forma de Pagamento</Label>
-                        <PagamentoSelect
-                            value={form.formaPagamento}
-                            onValueChange={(v) => setForm({ ...form, formaPagamento: v })}
-                        />
-                    </div>
-                    <TextareaField
-                        value={form.observacao ?? ""}
-                        onChange={(e) => setForm({ ...form, observacao: e.target.value })}
-                    />
-                    <div className="flex flex-col gap-2 mt-2">
-                        {!deletado && (
+
+                    <div className="flex items-center justify-center gap-6 mt-6">
+                        {deletado ? (
                             <>
-                                <Botao texto="Salvar Alterações" color="sucess" click={handleConfirmar} />
-                                <Botao texto="Deletar" color="delete" click={handleDeletar} />
+                                {onReativar && <Botao texto="Reativar" color="sucess" click={handleReativar} />}
+                                <Botao texto="Fechar" color="cancel" click={onFechar} />
+                            </>
+                        ) : (
+                            <>
+                                <div className="flex items-center gap-4">
+                                    <Botao texto="Salvar Atendimento" color="sucess" click={handleConfirmar} />
+                                    <Botao texto="Deletar Atendimento" color="secondary" click={handleDeletar} />
+                                </div>
                             </>
                         )}
-                        {deletado && onReativar && (
-                            <Botao texto="Reativar Atendimento" color="sucess" click={handleReativar} />
-                        )}
-                        <Botao texto="Cancelar" color="cancel" click={onFechar} />
                     </div>
                 </div>
             </DialogContent>
-        </Dialog>
-    )
-}
+        </Dialog>          
+    )}

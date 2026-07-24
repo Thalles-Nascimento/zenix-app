@@ -58,10 +58,10 @@ function SidebarContent({ onClose, collapsed }: { onClose?: () => void, collapse
                             key={item.path}
                             to={item.path}
                             onClick={onClose}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors w-full
+                            className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors w-full
                                 ${location.pathname === item.path
-                                    ? "bg-orange-600 text-white"
-                                    : "text-gray-400 hover:bg-gray-900 hover:text-white"
+                                    ? "bg-orange-500 text-white"
+                                    : "text-white hover:bg-gray-900 hover:text-gray-400"
                                 }`}
                         >
                             <div className="flex items-center justify-center w-6">
@@ -78,8 +78,8 @@ function SidebarContent({ onClose, collapsed }: { onClose?: () => void, collapse
                             onClick={() => setClientesAberto(prev => !prev)}
                             className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
                                 ${isClientesAtivo
-                                    ? "bg-orange-600 text-white"
-                                    : "text-gray-400 hover:bg-gray-900 hover:text-white"
+                                    ? "bg-orange-500 text-white"
+                                    : "text-white hover:bg-gray-900 hover:text-gray-400"
                                 }`}
                         >
                             <Crown size={18} />
@@ -101,8 +101,8 @@ function SidebarContent({ onClose, collapsed }: { onClose?: () => void, collapse
                                         onClick={onClose}
                                         className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
                                             ${location.pathname === item.path
-                                                ? "bg-orange-600 text-white"
-                                                : "text-gray-400 hover:bg-gray-900 hover:text-white"
+                                                ? "bg-orange-500 text-white"
+                                                : "text-white hover:bg-gray-900 hover:text-gray-400"
                                             }`}
                                     >
                                         {item.icon}
@@ -121,8 +121,8 @@ function SidebarContent({ onClose, collapsed }: { onClose?: () => void, collapse
                             onClick={() => setConfigAberto(prev => !prev)}
                             className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
                                 ${isConfigAtivo
-                                    ? "bg-orange-600 text-white"
-                                    : "text-gray-400 hover:bg-gray-900 hover:text-white"
+                                    ? "bg-orange-500 text-white"
+                                    : "text-white hover:bg-gray-900 hover:text-gray-400"
                                 }`}
                         >
                             <Settings size={18} />
@@ -144,8 +144,8 @@ function SidebarContent({ onClose, collapsed }: { onClose?: () => void, collapse
                                         onClick={onClose}
                                         className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
                                             ${location.pathname === item.path
-                                                ? "bg-orange-600 text-white"
-                                                : "text-gray-400 hover:bg-gray-900 hover:text-white"
+                                                ? "bg-orange-500 text-white"
+                                                : "text-white hover:bg-gray-900 hover:text-gray-400"
                                             }`}
                                     >
                                         {item.icon}
@@ -235,7 +235,7 @@ export default function Layout({ children }: LayoutProps) {
                     </div>
 
                     <div className="ml-auto flex items-center justify-center gap-3 relative">
-                        <span className="text-sm text-white hidden sm:block">{grupo}</span>
+                        <span className="text-sm text-white hidden sm:block">{userName}</span>
                         <button
                             onClick={() => setDropdownOpen(!dropdownOpen)}
                             className="w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center font-bold hover:bg-orange-500 transition-colors notranslate"
