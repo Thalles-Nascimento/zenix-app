@@ -148,7 +148,7 @@ public class ClienteService {
         String tenantId = TenantContext.getTenantId();
         return clienteRepository.findById(id, tenantId)
                 .map(clientesView -> {
-                    if(clientesView.getPlanosId() != null){
+                    if(clientesView.getPlanoId() != null){
                         throw new ClientePossuePlanoException("Cliente possui um plano ativo");
                     }
 
@@ -274,12 +274,12 @@ public class ClienteService {
     public void atualizarAtendimentosMes(String nome, String tenantId){
         Optional<ClientesProjectionView> clienteView = clienteRepository.findByName(nome, tenantId);
 
-        if (clienteView.isEmpty() || clienteView.get().getPlanosId() == null) return;
+        if (clienteView.isEmpty() || clienteView.get().getPlanoId() == null) return;
 
         Clientes cliente = clienteMapper.toClientes(clienteView.get());
         cliente.setAtendimentosMes(clienteView.get().getAtendimentoMes() + 1);
 
-        Planos plano = planosService.buscarPlanoPorId(clienteView.get().getPlanosId());
+        Planos plano = planosService.buscarPlanoPorId(clienteView.get().getPlanoId());
         cliente.setPlanos(plano);
 
         clienteRepository.save(cliente);

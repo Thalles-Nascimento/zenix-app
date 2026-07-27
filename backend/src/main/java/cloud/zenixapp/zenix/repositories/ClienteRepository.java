@@ -25,10 +25,15 @@ public interface ClienteRepository extends JpaRepository<Clientes, String> {
                     "c.cliente_atendimentos_mes AS atendimentoMes," +
                     "c.cliente_retorno AS retorno," +
                     "c.updated_at AS updatedAt," +
-                    "c.planos_id AS planosId," +
-                    "c.cliente_status AS status " +
+                    "c.cliente_status AS status," +
+                    "p.id AS planoId," +
+                    "p.planos_descricao AS planoDescricao," +
+                    "p.planos_valor AS planoValor," +
+                    "p.planos_limite AS planoAtendimentos, " +
+                    "p.planos_servico AS planoServicoRaw " +
                     "FROM clientes c " +
                     "LEFT JOIN telefones_clientes tc ON c.telefone_id = tc.id " +
+                    "LEFT JOIN planos p ON c.planos_id = p.id " +
                     "WHERE c.cliente_nome = :nome AND c.tenant_id = :tenantId AND c.cliente_status = 1")
     Optional<ClientesProjectionView> findByName(@Param("nome") String nome, @Param("tenantId") String tenantId);
 
@@ -41,15 +46,20 @@ public interface ClienteRepository extends JpaRepository<Clientes, String> {
                     "c.cliente_atendimentos_mes AS atendimentoMes," +
                     "c.cliente_retorno AS retorno," +
                     "c.updated_at AS updatedAt," +
-                    "c.planos_id AS planosId," +
-                    "c.cliente_status AS status " +
+                    "c.cliente_status AS status," +
+                    "p.id AS planoId," +
+                    "p.planos_descricao AS planoDescricao," +
+                    "p.planos_valor AS planoValor," +
+                    "p.planos_servico AS planoServicoRaw," +
+                    "p.planos_limite AS planoAtendimentos " +
                     "FROM clientes c " +
                     "LEFT JOIN telefones_clientes tc ON c.telefone_id = tc.id " +
+                    "LEFT JOIN planos p ON c.planos_id = p.id " +
                     "WHERE c.cliente_nome LIKE %:nome% AND c.tenant_id = :tenantId AND c.cliente_status = 1")
     List<ClientesProjectionView> findByNameContaining(@Param("nome") String nome, @Param("tenantId") String tenantId);
 
     @Modifying
-    @NativeQuery("UPDATE clientes SET atendimentosMes = 0 WHERE tenant_id = :tenantId AND planos_id IS NOT NULL AND DAY(cliente_data_renovacao) = :dia")
+    @NativeQuery("UPDATE clientes SET cliente_atendimentos_mes = 0 WHERE tenant_id = :tenantId AND planos_id IS NOT NULL AND DAY(cliente_data_renovacao) = :dia")
     void resetarAtendimentosMes(@Param("dia") int dia, @Param("tenantId") String tenantId);
 
     @Modifying
@@ -81,9 +91,15 @@ public interface ClienteRepository extends JpaRepository<Clientes, String> {
                     "c.cliente_atendimentos_mes AS atendimentoMes," +
                     "c.cliente_retorno AS retorno," +
                     "c.updated_at AS updatedAt," +
-                    "c.cliente_status AS status " +
+                    "c.cliente_status AS status," +
+                    "p.id AS planoId," +
+                    "p.planos_descricao AS planoDescricao," +
+                    "p.planos_valor AS planoValor," +
+                    "p.planos_limite AS planoAtendimentos, " +
+                    "p.planos_servico AS planoServicoRaw " +
                     "FROM clientes c " +
                     "INNER JOIN telefones_clientes tc ON c.telefone_id = tc.id " +
+                    "LEFT JOIN planos p ON c.planos_id = p.id " +
                     "WHERE tc.telefone_cliente = :telefone AND c.tenant_id = :tenantId")
     List<ClientesProjectionView> findClientByNumber(@Param("telefone") String telefone, @Param("tenantId") String tenantId);
 
@@ -96,10 +112,15 @@ public interface ClienteRepository extends JpaRepository<Clientes, String> {
                     "c.cliente_atendimentos_mes AS atendimentoMes," +
                     "c.cliente_retorno AS retorno," +
                     "c.updated_at AS updatedAt," +
-                    "c.planos_id AS planosId," +
-                    "c.cliente_status AS status " +
+                    "c.cliente_status AS status," +
+                    "p.id AS planoId," +
+                    "p.planos_descricao AS planoDescricao," +
+                    "p.planos_valor AS planoValor," +
+                    "p.planos_limite AS planoAtendimentos, " +
+                    "p.planos_servico AS planoServicoRaw " +
                     "FROM clientes c " +
                     "LEFT JOIN telefones_clientes tc ON c.telefone_id = tc.id " +
+                    "LEFT JOIN planos p ON c.planos_id = p.id " +
                     "WHERE c.tenant_id = :tenantId")
     List<ClientesProjectionView> findAll(@Param("tenantId") String tenantId);
 
@@ -112,10 +133,15 @@ public interface ClienteRepository extends JpaRepository<Clientes, String> {
                     "c.cliente_atendimentos_mes AS atendimentoMes," +
                     "c.cliente_retorno AS retorno," +
                     "c.updated_at AS updatedAt," +
-                    "c.planos_id AS planosId," +
-                    "c.cliente_status AS status " +
+                    "c.cliente_status AS status," +
+                    "p.id AS planoId," +
+                    "p.planos_descricao AS planoDescricao," +
+                    "p.planos_valor AS planoValor," +
+                    "p.planos_limite AS planoAtendimentos, " +
+                    "p.planos_servico AS planoServicoRaw " +
                     "FROM clientes c " +
                     "LEFT JOIN telefones_clientes tc ON c.telefone_id = tc.id " +
+                    "LEFT JOIN planos p ON c.planos_id = p.id " +
                     "WHERE c.id = :id AND c.tenant_id = :tenantId AND c.cliente_status = 1")
     Optional<ClientesProjectionView> findById(@Param("id") String id, @Param("tenantId") String tenantId);
 
