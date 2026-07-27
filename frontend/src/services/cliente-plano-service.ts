@@ -11,25 +11,25 @@ export async function criarClienteAdminService(nomeCliente: string, telefoneClie
     await api_url.post('/clientes', { nomeCliente, telefoneCliente })
 }
 
-export async function atualizarClienteService(id: number, nomeCliente: string, telefoneCliente: string): Promise<void> {
+export async function atualizarClienteService(id: string, nomeCliente: string, telefoneCliente: string): Promise<void> {
     await api_url.put(`/clientes/${id}`, { nomeCliente, telefoneCliente })
 }
 
-export async function deletarClienteService(id: number): Promise<void> {
+export async function deletarClienteService(id: string): Promise<void> {
     await api_url.delete(`/clientes/${id}`)
 }
 
-export async function vincularPlanoService(idCliente: number, idPlano: number): Promise<void> {
-    await api_url.patch(`/clientes/planos/${idCliente}`, idPlano, {
+export async function vincularPlanoService(idCliente: string, idPlano: string): Promise<void> {
+    await api_url.patch(`/clientes/planos/${idCliente}`, {idPlano}, {
         headers: { "Content-Type": "application/json" }
     })
 }
 
-export async function desvincularPlanoService(idCliente: number): Promise<void> {
+export async function desvincularPlanoService(idCliente: string): Promise<void> {
     await api_url.delete(`/clientes/planos/${idCliente}`)
 }
 
-export async function ativarClienteService(id: number): Promise<void> {
+export async function ativarClienteService(id: string): Promise<void> {
     await api_url.patch(`/clientes/ativar/${id}`)
 }
 
@@ -48,7 +48,7 @@ export async function criarPlanoService(dados: {
     await api_url.post('/planos', dados)
 }
  
-export async function atualizarPlanoService(id: number, dados: {
+export async function atualizarPlanoService(id: string, dados: {
     planoDescricao: string
     valor: number
     servico: string[]
@@ -57,6 +57,6 @@ export async function atualizarPlanoService(id: number, dados: {
     await api_url.put(`/planos/${id}`, dados)
 }
  
-export async function deletarPlanoService(id: number): Promise<void> {
+export async function deletarPlanoService(id: string): Promise<void> {
     await api_url.delete(`/planos/${id}`)
 }

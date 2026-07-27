@@ -1,4 +1,4 @@
-import { useState } from "react"
+﻿import { useState } from "react"
 import { useClientes } from "../hooks/use-cliente-admin"
 import { usePlanos } from "../hooks/use-planos"
 import { Badge } from "../components/ui/badge"
@@ -13,7 +13,7 @@ import { InputTelefone } from "../components/common/input-telefone"
 import type { ClienteDTO } from "../types/cliente"
 import { usePaginacao } from "../hooks/use-pagination"
 import { Paginacao } from "../components/pagination"
-import { formatarTelefone, formatarTelefoneCliente } from "@/utils/formatter"
+import { formatarTelefoneCliente } from "@/utils/formatter"
 import { ModalConfirmacao } from "@/components/common/modal-confirmacao-component"
 import { parseDataBrazil } from "@/utils/date"
 
@@ -39,8 +39,10 @@ export default function ClientesPage() {
 
     const { itensPagina, paginaAtual, totalPaginas, totalItens, setPaginaAtual } = usePaginacao(clientesFiltrados, 4)
 
-    const formatBRL = (valor: number) =>
-        valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
+    const formatBRL = (valor?: number | null) => {
+        const v = typeof valor === "number" && !isNaN(valor) ? valor : 0
+        return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
+    }
 
     const abrirNovo = () => {
         setFormNome("")
@@ -57,7 +59,7 @@ export default function ClientesPage() {
 
     const abrirPlano = (cliente: ClienteDTO) => {
         setClienteSelecionado(cliente)
-        setPlanoSelecionado(cliente.planoId ? String(cliente.planoId.id) : "")
+        setPlanoSelecionado(cliente.planoId ? String(cliente.planoId) : "")
         setModalTipo("plano")
     }
 
@@ -101,7 +103,7 @@ export default function ClientesPage() {
         if (!clienteSelecionado) return
         try {
             await deletarCliente(clienteSelecionado.id)
-            toast.success("Cliente excluído!")
+            toast.success("Cliente excluÃ­do!")
             setConfirmacaoAberta(false)
             fecharModal()
         } catch {
@@ -112,11 +114,11 @@ export default function ClientesPage() {
     const handleVincular = async () => {
         if (!clienteSelecionado || !planoSelecionado) return
         try {
-            await vincularPlano(clienteSelecionado.id, Number(planoSelecionado))
+            await vincularPlano(clienteSelecionado.id, planoSelecionado)
             toast.success("Plano vinculado!")
             fecharModal()
         } catch {
-            toast.error("Cliente já possui um plano")
+            toast.error("Cliente jÃ¡ possui um plano")
         }
     }
 
@@ -133,8 +135,8 @@ export default function ClientesPage() {
 
     const getAlerta = (cliente: ClienteDTO) => {
         if (!cliente.planoId) return null
-        const percentual = cliente.atendimentoMes / cliente.planoId.atendimentos
-        if (cliente.atendimentoMes >= cliente.planoId.atendimentos) return "limite"
+        const percentual = cliente.atendimentoMes / cliente.planoAtendimentos
+        if (cliente.atendimentoMes >= cliente.planoAtendimentos) return "limite"
         if (percentual >= 0.8) return "aviso"
         return null
     }
@@ -188,9 +190,9 @@ export default function ClientesPage() {
             {/* Alerta de clientes no limite */}
             {clientes.some(c => getAlerta(c) === "limite") && (
                 <div className="bg-red-900/30 border border-red-700 rounded-xl px-4 py-3 flex items-center gap-2">
-                    <span className="text-red-400 font-bold text-sm">⚠ Atenção:</span>
+                    <span className="text-red-400 font-bold text-sm">âš  AtenÃ§Ã£o:</span>
                     <span className="text-red-300 text-sm">
-                        {clientes.filter(c => getAlerta(c) === "limite").length} cliente(s) atingiram o limite do plano este mês!
+                        {clientes.filter(c => getAlerta(c) === "limite").length} cliente(s) atingiram o limite do plano este mÃªs!
                     </span>
                 </div>
             )}
@@ -235,7 +237,7 @@ export default function ClientesPage() {
                                             <td className="px-4 py-4 notranslate">
                                                 {cliente.planoId ? (
                                                     <span className="bg-orange-500/20 text-orange-400 text-xs font-semibold px-2 py-1 rounded-full border border-orange-500/30">
-                                                        {cliente.planoId.descricao}
+                                                        {cliente.planoDescricao}
                                                     </span>
                                                 ) : (
                                                     <span className="text-gray-500 text-xs">Avulso</span>
@@ -251,7 +253,7 @@ export default function ClientesPage() {
                                                                     alerta === "aviso" ? "bg-yellow-500" :
                                                                     "bg-green-500"
                                                                 }`}
-                                                                style={{ width: `${Math.min((cliente.atendimentoMes / cliente.planoId.atendimentos) * 100, 100)}%` }}
+                                                                style={{ width: `${Math.min((cliente.atendimentoMes / cliente.planoAtendimentos ) * 100, 100)}%` }}
                                                             />
                                                         </div>
                                                         <span className={`text-xs font-medium ${
@@ -259,7 +261,7 @@ export default function ClientesPage() {
                                                             alerta === "aviso" ? "text-yellow-400" :
                                                             "text-gray-400"
                                                         }`}>
-                                                            {cliente.atendimentoMes}/{cliente.planoId.atendimentos}
+                                                            {cliente.atendimentoMes}/{cliente.planoAtendimentos}
                                                             {alerta === "limite" && " ⚠"}
                                                         </span>
                                                     </div>
@@ -271,7 +273,7 @@ export default function ClientesPage() {
                                                 {cliente.retorno}
                                             </td>
                                             <td className="px-4 py-4 notranslate">
-                                                {cliente.planoId ? (
+                                                {cliente.planoId  ? (
                                                     <span className="bg-orange-500/20 text-orange-400 text-xs font-semibold px-2 py-1 rounded-full border border-orange-500/30">
                                                         {parseDataBrazil(cliente.dataRenovacao)}
                                                     </span>
@@ -390,7 +392,7 @@ export default function ClientesPage() {
                                     getAlerta(clienteSelecionado) === "aviso" ? "text-yellow-400" :
                                     "text-green-400"
                                 }`}>
-                                    {clienteSelecionado.atendimentoMes}/{clienteSelecionado.planoId.atendimentos}
+                                    {clienteSelecionado.atendimentoMes}/{clienteSelecionado.planoAtendimentos}
                                     {getAlerta(clienteSelecionado) === "limite" && " — LIMITE ⚠"}
                                 </p>
                             </div>
@@ -401,12 +403,12 @@ export default function ClientesPage() {
                                         getAlerta(clienteSelecionado) === "aviso" ? "bg-yellow-500" :
                                         "bg-green-500"
                                     }`}
-                                    style={{ width: `${Math.min((clienteSelecionado.atendimentoMes / clienteSelecionado.planoId.atendimentos) * 100, 100)}%` }}
+                                    style={{ width: `${Math.min((clienteSelecionado.atendimentoMes / clienteSelecionado.planoAtendimentos) * 100, 100)}%` }}
                                 />
                             </div>
                             <div className="flex justify-between mb-2">
                                 <p className="text-gray-400 text-xs mt-2">
-                                    Plano atual: <span className="text-orange-400 font-semibold">{clienteSelecionado.planoId.descricao}</span> — {formatBRL(clienteSelecionado.planoId.valor)}/mês
+                                    Plano atual: <span className="text-orange-400 font-semibold">{clienteSelecionado.planoDescricao}</span> — {formatBRL(clienteSelecionado.planoValor)}/mês
                                 </p>
                                 <p className="text-gray-400 text-xs mt-2">
                                     Renovação: <span className="text-orange-400 font-semibold">{clienteSelecionado.dataRenovacao}</span>
@@ -425,8 +427,8 @@ export default function ClientesPage() {
                             </SelectTrigger>
                             <SelectContent className="bg-black border-gray-700 text-white notranslate">
                                 {planos.map(p => (
-                                    <SelectItem key={p.id} value={String(p.id)} className="notranslate">
-                                        {p.descricao} — {formatBRL(p.valor)} ({p.atendimentos} atend./mês)
+                                    <SelectItem key={p.planoId} value={String(p.planoId)} className="notranslate">
+                                        {p.planoDescricao} — {formatBRL(p.planoValor)} ({p.planoAtendimentos} atend./Mês)
                                     </SelectItem>
                                 ))}
                             </SelectContent>
@@ -447,7 +449,7 @@ export default function ClientesPage() {
                 open={confirmacaoAberta}
                 titulo="Excluir Cliente"
                 mensagem={`Deseja excluir o cliente "${clienteSelecionado?.nome}"? Esta ação não pode ser desfeita.`}
-                onConfirmar={handleDeletar}
+                    onConfirmar={handleDeletar}
                 onCancelar={() => setConfirmacaoAberta(false)}
             />
         </div>

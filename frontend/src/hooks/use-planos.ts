@@ -27,12 +27,12 @@ export function usePlanos() {
         await buscar()
     }
 
-    const atualizarPlano = async (id: number, planoDescricao: string, valor: number, servico: string[], limiteAtendimentos: number) => {
+    const atualizarPlano = async (id: string, planoDescricao: string, valor: number, servico: string[], limiteAtendimentos: number) => {
         await atualizarPlanoService(id, { planoDescricao, valor, servico, limiteAtendimentos })
         await buscar()
     }
 
-    const deletarPlano = async (id: number) => {
+    const deletarPlano = async (id: string) => {
         await deletarPlanoService(id)
         await buscar()
     }

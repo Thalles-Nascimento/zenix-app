@@ -31,7 +31,7 @@ export function useClientes() {
         buscar()
     }, [])
 
-    const ativarCliente = async (id: number) => {
+    const ativarCliente = async (id: string) => {
         await ativarClienteService(id)
         await buscar()
     }
@@ -45,22 +45,22 @@ export function useClientes() {
         await buscar()
     }
 
-    const atualizarCliente = async (id: number, nomeCliente: string, telefoneCliente: string) => {
+    const atualizarCliente = async (id: string, nomeCliente: string, telefoneCliente: string) => {
         await atualizarClienteService(id, nomeCliente, telefoneCliente)
         await buscar()
     }
 
-    const deletarCliente = async (id: number) => {
+    const deletarCliente = async (id: string) => {
         await deletarClienteService(id)
         await buscar()
     }
 
-    const vincularPlano = async (idCliente: number, idPlano: number) => {
+    const vincularPlano = async (idCliente: string, idPlano: string) => {
         await vincularPlanoService(idCliente, idPlano)
         await buscar()
     }
 
-    const desvincularPlano = async (idCliente: number) => {
+    const desvincularPlano = async (idCliente: string) => {
         await desvincularPlanoService(idCliente)
         await buscar()
     }

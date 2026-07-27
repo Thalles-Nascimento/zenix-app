@@ -29,7 +29,7 @@ export function useCliente() {
         await criarClienteService(nomeCliente, telefoneCliente.replace(/\D/g, ""))
     }
 
-    const atualizarRetorno = async (id: number) => {
+    const atualizarRetorno = async (id: string) => {
         await atualizarRetornoService(id)
     }
 
