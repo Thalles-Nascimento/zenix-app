@@ -7,8 +7,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PlanosView {
-    String getId();
-    String getDescricao();
+    String getPlanoId();
+    String getPlanoDescricao();
     @JsonIgnore
     String getServicoRaw();
 
@@ -16,6 +16,6 @@ public interface PlanosView {
         return ServicoJsonUtils.parse(getServicoRaw());
     }
     LocalDateTime getUpdatedAt();
-    Double getValor();
-    int getAtendimentos();
+    Double getPlanoValor();
+    int getPlanoAtendimentos();
 }

@@ -21,10 +21,11 @@ public interface ClientesProjectionView {
     String getPlanoId();
     String getPlanoDescricao();
     Double getPlanoValor();
-    String getPlanoServicoRaw();
-    int getPlanoAtendimentos();
 
     @JsonIgnore
+    String getPlanoServicoRaw();
+    Integer getPlanoAtendimentos();
+
     default List<String> getPlanoServico() {
         return ServicoJsonUtils.parse(getPlanoServicoRaw());
     }

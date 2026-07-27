@@ -13,22 +13,22 @@ public interface PlanosRepository extends JpaRepository<Planos, String> {
 
     @NativeQuery(
             value = "SELECT " +
-                    "p.id AS id, " +
-                    "p.planos_descricao AS descricao, " +
+                    "p.id AS planoId, " +
+                    "p.planos_descricao AS planoDescricao, " +
                     "p.planos_servico AS servicoRaw," +
-                    "p.planos_valor AS valor, " +
-                    "p.planos_limite AS atendimentos " +
+                    "p.planos_valor AS planoValor, " +
+                    "p.planos_limite AS planoAtendimentos " +
                     "FROM planos p " +
                     "WHERE p.tenant_id = :tenantId")
     List<PlanosView> findAll(@Param("tenantId") String tenantId);
 
     @NativeQuery(
             value = "SELECT " +
-                    "p.id AS id, " +
-                    "p.planos_descricao AS descricao, " +
+                    "p.id AS planoId, " +
+                    "p.planos_descricao AS planoDescricao, " +
                     "p.planos_servico AS servicoRaw," +
-                    "p.planos_valor AS valor, " +
-                    "p.planos_limite AS atendimentos," +
+                    "p.planos_valor AS planoValor, " +
+                    "p.planos_limite AS planoAtendimentos," +
                     "p.updated_at AS updatedAt " +
                     "FROM planos p " +
                     "WHERE p.id = :id AND p.tenant_id = :tenantId")

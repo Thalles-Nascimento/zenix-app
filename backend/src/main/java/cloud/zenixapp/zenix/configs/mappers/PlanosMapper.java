@@ -33,8 +33,9 @@ public interface PlanosMapper {
     @Mapping(target = "createdAt", ignore = true)
     void atualizarPlano(@MappingTarget Planos planos, PlanosRequestDTO planosRequestDTO);
 
-    @Mapping(target = "planoDescricao", source = "descricao")
-    @Mapping(target = "limiteAtendimentos", source = "atendimentos")
+    @Mapping(target = "valor", source = "planoValor")
+    @Mapping(target = "planoDescricao", source = "planoDescricao")
+    @Mapping(target = "limiteAtendimentos", source = "planoAtendimentos")
     @Mapping(target = "clientes", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "id", ignore = true)
