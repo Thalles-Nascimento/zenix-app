@@ -294,8 +294,8 @@ export default function ClientesPage() {
             {/* Modal Novo Cliente */}
 
             <Dialog open={modalTipo === "novo"} onOpenChange={fecharModal}>
-                <DialogContent className="notranslate bg-black border border-gray-700 text-white w-full max-w-[92vw] sm:max-w-md mx-2 sm:mx-auto max-h-[80vh] sm:max-h-[70vh] overflow-y-auto overflow-x-hidden rounded-lg shadow-sm px-3">
-                    <div className="px-3 py-3 border-b border-gray-800">
+                <DialogContent className="notranslate bg-black border border-gray-700 text-white w-[50vh] max-w-sm mx-auto max-h-[80vh] sm:max-h-[70vh] overflow-y-auto overflow-x-hidden rounded-lg shadow-sm">
+                    <div className="px-3 py-3 border-b justify-center flex border-gray-800">
                         <DialogHeader>
                             <DialogTitle className="text-white notranslate text-lg font-semibold">Novo Cliente</DialogTitle>
                         </DialogHeader>
@@ -309,11 +309,11 @@ export default function ClientesPage() {
                             <Label className="text-gray-300">Telefone</Label>
                             <InputTelefone value={formTelefone} onChange={setFormTelefone} />
                         </div>
-                        <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-center gap-3">
-                            <div className="w-full sm:w-auto">
+                        <div className="mt-4 flex flex-row sm:items-center justify-center gap-4">
+                            <div className="sm:w-auto">
                                 <Botao texto="Salvar" color="sucess" click={handleCriar} />
                             </div>
-                            <div className="w-full sm:w-auto">
+                            <div className="sm:w-auto">
                                 <Botao texto="Cancelar" color="cancel" click={fecharModal} />
                             </div>
                         </div>

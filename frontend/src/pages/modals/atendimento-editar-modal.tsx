@@ -71,7 +71,7 @@ export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirma
 
     return (
         <Dialog open={open} onOpenChange={onFechar}>
-            <DialogContent className="notranslate bg-black border border-gray-700 text-white w-full max-w-[92vw] sm:max-w-md sm:mx-auto max-h-[80vh] sm:max-h-[70vh] overflow-y-auto overflow-x-hidden rounded-lg shadow-sm px-3">
+            <DialogContent className="notranslate bg-black border border-gray-700 text-white w-[90vw] max-w-sm mx-auto max-h-[80vh] sm:max-h-[70vh] overflow-y-auto overflow-x-hidden rounded-lg shadow-sm">
                 <div className="px-3 py-3 border-b border-gray-800">
                     <DialogHeader>
                         <DialogTitle className="text-white notranslate text-lg font-semibold">

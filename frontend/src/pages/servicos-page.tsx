@@ -173,7 +173,7 @@ export default function ServicosPage() {
 
                 {/* Modal criar/editar - responsive widths and responsive buttons layout */}
                 <Dialog open={modalAberto} onOpenChange={fecharModal}>
-                    <DialogContent className="bg-black border-gray-700 text-white w-[calc(100vw-2rem)] sm:max-w-md md:max-w-lg lg:max-w-xl">
+                    <DialogContent className="bg-black border-gray-700 text-white w-[40vh] max-w-sm mx-auto max-h-[80vh] sm:max-h-[70vh] overflow-y-auto overflow-x-hidden">
                         <DialogHeader>
                             <DialogTitle className="text-white notranslate">
                                 {editando ? "Editar Serviço" : "Novo Serviço"}
@@ -201,12 +201,9 @@ export default function ServicosPage() {
                             </div>
 
                             {/* Buttons: on small screens stack vertically, on md+ show inline */}
-                            <div className="flex flex-row justify-around gap-2 mt-2">
+                            <div className="flex flex-row justify-center gap-2 mt-2">
                                 <div>
                                     <Botao compact texto="Salvar" color="sucess" click={handleSalvar} />
-                                </div>
-                                <div>
-                                    <Botao compact texto="Cancelar" color="cancel" click={fecharModal} />
                                 </div>
                                 {editando && servicoSelecionado && (
                                     <div>
@@ -214,6 +211,11 @@ export default function ServicosPage() {
                                         
                                     </div>
                                 )}
+
+                                <div>
+                                    <Botao compact texto="Cancelar" color="cancel" click={fecharModal} />
+                                </div>
+                                
                             </div>
 
                         </div>
