@@ -23,7 +23,7 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
     const [form, setForm] = useState<AtendimentoFormProps>({
         descricao: "", servico: [], valor: 0, formaPagamento: "", observacao: ""
     })
-    const [idCliente, setIdCliente] = useState(0)
+    const [idCliente, setIdCliente] = useState("")
     const { atualizarRetorno } = useCliente()
 
     const [sugestoes, setSugestoes] = useState<ClienteDTO[]>([])
@@ -76,9 +76,9 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
     }
 
     const selecionarCliente = (cliente: ClienteDTO) => {
-        const servicosPlano = cliente.planoId?.servico ?? []
-        const valorPlano = cliente.planoId?.valor ?? 0
-        const limitePlano = cliente.planoId?.atendimentos ?? 0
+        const servicosPlano = cliente.planoServico ?? []
+        const valorPlano = cliente.planoValor ?? 0
+        const limitePlano = cliente.planoAtendimentos ?? 0
         const totalPlano = valorPlano/limitePlano
         setIdCliente(cliente.id)
 
@@ -111,7 +111,7 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
             <DialogTrigger asChild>
                 <Button variant="default"><UserPlus /></Button>
             </DialogTrigger>
-            <DialogContent className="notranslate bg-black border border-gray-700 text-white w-[calc(100vw-2rem)] max-w-md max-h-[70vh] overflow-y-auto rounded-lg shadow-sm">
+            <DialogContent className="notranslate bg-black border border-gray-700 text-white w-[90vw] max-w-sm mx-auto max-h-[80vh] sm:max-h-[70vh] overflow-y-auto overflow-x-hidden rounded-lg shadow-sm">
                 <div className="px-4 py-3 border-b border-gray-800">
                     <DialogHeader>
                         <DialogTitle className="text-white notranslate text-lg font-semibold">
@@ -147,7 +147,7 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
                                             <span className="text-white font-medium">{cliente.nome}</span>
                                             {cliente.planoId && (
                                                 <span className="text-orange-400 text-xs">
-                                                    {cliente.planoId.descricao}
+                                                    {cliente.planoDescricao}
                                                 </span>
                                             )}
                                         </div>
@@ -173,19 +173,19 @@ export function ModalNovoAtendimento({ onConfirmar }: Props) {
                         </div>
                     </div>
 
-                    <div className="mt-2 flex items-end justify-between gap-4">
-                        <div>
+                    <div className="mt-2 flex flex-col sm:flex-row items-end sm:justify-between gap-4">
+                        <div className="w-full sm:w-auto">
                             <Label className="text-white text-sm">Valor</Label>
                             <Input
                                 disabled
-                                className="mt-1 w-28 bg-gray-600 border border-gray-600 text-orange-400 font-semibold cursor-not-allowed rounded-md px-2 py-1.5 text-sm"
+                                className="mt-1 w-full sm:w-28 bg-gray-600 border border-gray-600 text-orange-400 font-semibold cursor-not-allowed rounded-md px-2 py-1.5 text-sm"
                                 value={form.servico.length === 0 ? "" : `R$ ${form.valor.toFixed(2).replace(".", ",")}`}
                                 placeholder="R$ 0,00"
                             />
                         </div>
-                        <div className="text-right">
+                        <div className="text-right w-full sm:w-48">
                             <Label className="text-white text-sm">Forma de Pagamento</Label>
-                            <div className="mt-2 w-48">
+                            <div className="mt-2 w-full">
                                 <PagamentoSelect
                                     value={form.formaPagamento}
                                     onValueChange={(v) => setForm({ ...form, formaPagamento: v })}

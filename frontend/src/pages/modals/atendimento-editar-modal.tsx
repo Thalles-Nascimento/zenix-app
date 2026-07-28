@@ -71,8 +71,8 @@ export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirma
 
     return (
         <Dialog open={open} onOpenChange={onFechar}>
-            <DialogContent className="notranslate bg-black border border-gray-700 text-white w-[calc(100vw-2rem)] max-w-md max-h-[70vh] overflow-y-auto rounded-lg shadow-sm">
-                <div className="px-4 py-3 border-b border-gray-800">
+            <DialogContent className="notranslate bg-black border border-gray-700 text-white w-full max-w-[92vw] sm:max-w-md sm:mx-auto max-h-[80vh] sm:max-h-[70vh] overflow-y-auto overflow-x-hidden rounded-lg shadow-sm px-3">
+                <div className="px-3 py-3 border-b border-gray-800">
                     <DialogHeader>
                         <DialogTitle className="text-white notranslate text-lg font-semibold">
                             Editar Atendimento {deletado && (<span className="ml-2 text-red-400 font-bold">— Deletado</span>)}
@@ -104,20 +104,20 @@ export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirma
                         </div>
                     </div>
 
-                    <div className="mt-2 flex items-end justify-between gap-4">
-                        <div>
+                    <div className="mt-2 flex flex-col sm:flex-row items-end sm:justify-between gap-4">
+                        <div className="w-full sm:w-auto">
                             <Label className="text-white text-sm">Valor</Label>
                             <Input
-                                className="mt-1 w-28 bg-gray-900 border border-gray-600 text-orange-400 font-semibold rounded-md px-2 py-1.5 text-sm"
+                                className="mt-1 w-full sm:w-28 bg-gray-900 border border-gray-600 text-orange-400 font-semibold rounded-md px-2 py-1.5 text-sm"
                                 value={form.valor === 0 ? "" : String(form.valor)}
                                 placeholder="R$ 0,00"
                                 type="text"
                                 onChange={(e) => setForm({ ...form, valor: parseFloat(e.target.value) || 0 })}
                             />
                         </div>
-                        <div className="text-right">
+                        <div className="text-right w-full sm:w-48">
                             <Label className="text-white text-sm">Forma de Pagamento</Label>
-                            <div className="mt-2 w-48">
+                            <div className="mt-2 w-full">
                                 <PagamentoSelect
                                     value={form.formaPagamento}
                                     onValueChange={(v) => setForm({ ...form, formaPagamento: v })}
@@ -142,8 +142,8 @@ export function ModalEditarAtendimento({ atendimento, open, onFechar, onConfirma
                         ) : (
                             <>
                                 <div className="flex items-center gap-4">
-                                    <Botao texto="Salvar Atendimento" color="sucess" click={handleConfirmar} />
-                                    <Botao texto="Deletar Atendimento" color="secondary" click={handleDeletar} />
+                                    <Botao texto="Salvar" color="sucess" click={handleConfirmar} />
+                                    <Botao texto="Deletar" color="secondary" click={handleDeletar} />
                                 </div>
                             </>
                         )}
