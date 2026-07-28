@@ -9,6 +9,10 @@ import { Input } from "../components/ui/input"
 import { Botao } from "../components/common/botao"
 import { ModalConfirmacao } from "@/components/common/modal-confirmacao-component"
 import type { ServicoDTO } from "@/types/servico"
+import TableLayout from "@/components/common/TableLayout"
+import CardItem from "@/components/common/CardItem"
+import { usePaginacao } from "../hooks/use-pagination"
+import { LayersPlus } from "lucide-react"
 
 interface FormServico {
     servico: string
@@ -21,28 +25,29 @@ export default function ServicosPage() {
     const [modalAberto, setModalAberto] = useState(false)
     const [editando, setEditando] = useState<{ id: number } | null>(null)
     const [form, setForm] = useState<FormServico>({ servico: "", valor: "" })
-    const [servicoSelecionado, setServicoSelecionado] = useState<ServicoDTO>()
+    const [servicoSelecionado, setServicoSelecionado] = useState<ServicoDTO | null>(null)
     const [confirmacaoAberta, setConfirmacaoAberta] = useState(false)
 
     const formatBRL = (valor: number) =>
         valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
 
+    const { itensPagina, paginaAtual, totalPaginas, totalItens, setPaginaAtual } = usePaginacao(servicos, 7)
+
     const abrirNovo = () => {
         setEditando(null)
+        setServicoSelecionado(null)
         setForm({ servico: "", valor: "" })
         setModalAberto(true)
     }
 
-    const abrirEdicao = (id: number, nome: string, valor: number) => {
-        setEditando({ id })
-        setForm({ servico: nome, valor: String(valor) })
+    // now receives the full item so we can keep a reference for deletion inside modal
+    const abrirEdicao = (item: ServicoDTO) => {
+        setEditando({ id: item.id })
+        setServicoSelecionado(item)
+        setForm({ servico: item.servico, valor: String(item.valor) })
         setModalAberto(true)
     }
 
-    const abrirDeletar = (servico: ServicoDTO) => {
-        setServicoSelecionado(servico)
-        setConfirmacaoAberta(true)
-    }
 
     const fecharModal = () => {
         setModalAberto(false)
@@ -81,6 +86,10 @@ export default function ServicosPage() {
             await deletarServico(id)
             toast.success("Serviço excluído!")
             setConfirmacaoAberta(false)
+            // close edit modal if it was open for this service
+            if (editando && editando.id === id) {
+                fecharModal()
+            }
         } catch {
             toast.error("Erro ao excluir serviço.")
         }
@@ -88,119 +97,142 @@ export default function ServicosPage() {
 
     if (carregando) {
         return (
-            <div className="w-full flex items-center justify-center py-20">
+            <div className="w-full bg-black flex items-center justify-center py-20">
                 <Badge variant="secondary"><Spinner />Carregando...</Badge>
             </div>
         )
     }
 
     return (
-        <div className="flex flex-col gap-6 notranslate">
+        <div className="notranslate">
             <Toaster richColors position="top-center" />
 
-            <div className="flex items-center justify-between">
-                <h1 className="text-white text-xl font-bold">Serviços</h1>
-                <button
-                    onClick={abrirNovo}
-                    className="bg-orange-600 hover:bg-orange-500 text-white text-sm font-bold px-4 py-2 rounded-lg transition-colors"
-                >
-                    + Novo Serviço
-                </button>
-            </div>
+            <div className="max-w-[1100px] mx-auto px-4 sm:px-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                    <div>
+                        <h1 className="text-white text-2xl font-bold">Serviços</h1>
+                    </div>
 
-            {/* Tabela */}
-            <div className="bg-black rounded-xl border border-gray-700 notranslate">
-                <div className="overflow-x-auto rounded-xl notranslate">
-                    <table className="w-full text-sm text-left text-gray-300 min-w-[400px] notranslate">
-                        <thead className="text-xs text-white uppercase bg-gray-800 border-b border-gray-700 notranslate">
-                            <tr>
-                                <th className="px-4 py-3 notranslate">SERVIÇO</th>
-                                <th className="px-4 py-3 notranslate">VALOR</th>
-                                <th className="px-4 py-3 notranslate">AÇÕES</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {servicos.length === 0 ? (
-                                <tr>
-                                    <td colSpan={3} className="px-6 py-8 text-center text-gray-500 notranslate">
-                                        Nenhum serviço cadastrado
-                                    </td>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={abrirNovo}
+                            className="bg-orange-600 hover:bg-orange-500 text-white text-sm font-bold px-4 py-2 rounded-lg transition-colors"
+                        >
+                            <LayersPlus size={18}/>
+                        </button>
+                    </div>
+                </div>
+
+                <TableLayout
+                    table={(
+                        <table className="w-full text-sm text-left text-white min-w-150 table-fixed md:table">
+                            <thead className="uppercase bg-gray-850 border-b border-gray-700">
+                                <tr className="text-gray-300">
+                                    <th scope="col" className="px-4 py-3">SERVIÇO</th>
+                                    <th scope="col" className="px-4 py-3">VALOR</th>
                                 </tr>
-                            ) : (
-                                servicos.map(item => (
-                                    <tr
-                                        key={item.id}
-                                        className="bg-black border-b border-gray-700 notranslate"
-                                    >
-                                        <td className="px-4 py-4 notranslate font-medium text-white">{item.servico}</td>
-                                        <td className="px-4 py-4 notranslate text-orange-500 font-bold">{formatBRL(item.valor)}</td>
-                                        <td className="px-4 py-4 notranslate">
-                                            <div className="flex gap-2">
-                                                <button
-                                                    onClick={() => abrirEdicao(item.id, item.servico, item.valor)}
-                                                    className="bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
-                                                >
-                                                    Editar
-                                                </button>
-                                                <button
-                                                    onClick={() => abrirDeletar(item)}
-                                                    className="bg-red-700 hover:bg-red-800 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
-                                                >
-                                                    Excluir
-                                                </button>
-                                            </div>
-                                        </td>
+                            </thead>
+                            <tbody>
+                                {servicos.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={2} className="px-6 py-12 text-center text-gray-500 align-middle">Nenhum serviço cadastrado.</td>
                                     </tr>
+                                ) : (
+                                    itensPagina.map(item => (
+                                        <tr
+                                            key={item.id}
+                                            className={`bg-black border-b border-gray-800 hover:bg-gray-900 transition-colors cursor-pointer`}
+                                            onClick={() => abrirEdicao(item)}
+                                        >
+                                            <td className="px-4 py-4 text-gray-300 truncate max-w-[420px]">{item.servico}</td>
+                                            <td className="px-4 py-4 text-orange-500 font-bold">{formatBRL(item.valor)}</td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
+                    )}
+                    cards={(
+                        <>
+                            {servicos.length === 0 ? (
+                                <div className="px-6 py-12 text-center text-gray-500">Nenhum serviço cadastrado.</div>
+                            ) : (
+                                itensPagina.map(item => (
+                                    <CardItem
+                                        key={item.id}
+                                        title={item.servico}
+                                        rightBottom={<span className="text-sm text-orange-500 font-bold">{formatBRL(item.valor)}</span>}
+                                        onClick={() => abrirEdicao(item)}
+                                    />
                                 ))
                             )}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                        </>
+                    )}
+                    pagination={{ paginaAtual, totalPaginas, totalItens, itensPorPagina: 7, onPaginaChange: setPaginaAtual }}
+                />
 
-            {/* Modal criar/editar */}
-            <Dialog open={modalAberto} onOpenChange={fecharModal}>
-                <DialogContent className="bg-black border-gray-700 text-white w-[calc(100vw-2rem)] max-w-md notranslate">
-                    <DialogHeader>
-                        <DialogTitle className="text-white notranslate">
-                            {editando ? "Editar Serviço" : "Novo Serviço"}
-                        </DialogTitle>
-                    </DialogHeader>
-                    <div className="flex flex-col gap-4 mt-2 notranslate">
-                        <div>
-                            <Label className="text-gray-300">Nome do Serviço</Label>
-                            <Input
-                                className="mt-1 bg-gray-900 border-gray-700 text-white"
-                                placeholder="Ex: Corte"
-                                value={form.servico}
-                                onChange={(e) => setForm({ ...form, servico: e.target.value })}
-                            />
+                {/* Modal criar/editar - responsive widths and responsive buttons layout */}
+                <Dialog open={modalAberto} onOpenChange={fecharModal}>
+                    <DialogContent className="bg-black border-gray-700 text-white w-[calc(100vw-2rem)] sm:max-w-md md:max-w-lg lg:max-w-xl">
+                        <DialogHeader>
+                            <DialogTitle className="text-white notranslate">
+                                {editando ? "Editar Serviço" : "Novo Serviço"}
+                            </DialogTitle>
+                        </DialogHeader>
+
+                        <div className="flex flex-col gap-4 mt-2 notranslate">
+                            <div>
+                                <Label className="text-gray-300">Nome do Serviço</Label>
+                                <Input
+                                    className="mt-1 bg-gray-900 border-gray-700 text-white"
+                                    placeholder="Ex: Corte"
+                                    value={form.servico}
+                                    onChange={(e) => setForm({ ...form, servico: e.target.value })}
+                                />
+                            </div>
+                            <div>
+                                <Label className="text-gray-300">Valor (R$)</Label>
+                                <Input
+                                    className="mt-1 bg-gray-900 border-gray-700 text-orange-400 font-semibold"
+                                    placeholder="Ex: 35.00"
+                                    value={form.valor}
+                                    onChange={(e) => setForm({ ...form, valor: e.target.value })}
+                                />
+                            </div>
+
+                            {/* Buttons: on small screens stack vertically, on md+ show inline */}
+                            <div className="flex flex-row justify-around gap-2 mt-2">
+                                <div>
+                                    <Botao compact texto="Salvar" color="sucess" click={handleSalvar} />
+                                </div>
+                                <div>
+                                    <Botao compact texto="Cancelar" color="cancel" click={fecharModal} />
+                                </div>
+                                {editando && servicoSelecionado && (
+                                    <div>
+                                        <Botao compact texto="Deletar" color="delete" click={() => setConfirmacaoAberta(true)} />
+                                        
+                                    </div>
+                                )}
+                            </div>
+
                         </div>
-                        <div>
-                            <Label className="text-gray-300">Valor (R$)</Label>
-                            <Input
-                                className="mt-1 bg-gray-900 border-gray-700 text-orange-400 font-semibold"
-                                placeholder="Ex: 35.00"
-                                value={form.valor}
-                                onChange={(e) => setForm({ ...form, valor: e.target.value })}
-                            />
-                        </div>
-                        <div className="flex flex-col gap-2 mt-2">
-                            <Botao texto="Salvar" color="sucess" click={handleSalvar} />
-                            <Botao texto="Cancelar" color="cancel" click={fecharModal} />
-                        </div>
-                    </div>
-                </DialogContent>
-            </Dialog>
-            <ModalConfirmacao
-                open={confirmacaoAberta}
-                titulo="Excluir Serviço"
-                mensagem={`Deseja excluir o serviço "${servicoSelecionado?.servico}"? Esta ação não pode ser desfeita.`}
-                onConfirmar={() => {
-                    if (!servicoSelecionado) return
-                    handleDeletar(servicoSelecionado?.id)}}
-                onCancelar={() => setConfirmacaoAberta(false)}
-            />
+                    </DialogContent>
+                </Dialog>
+
+                {/* Confirmation modal reused for delete confirmation */}
+                <ModalConfirmacao
+                    open={confirmacaoAberta}
+                    titulo="Excluir Serviço"
+                    mensagem={`Deseja excluir o serviço "${servicoSelecionado?.servico}"? Esta ação não pode ser desfeita.`}
+                    onConfirmar={() => {
+                        if (!servicoSelecionado) return
+                        handleDeletar(servicoSelecionado?.id as number)
+                    }}
+                    onCancelar={() => setConfirmacaoAberta(false)}
+                />
+
+            </div>
         </div>
     )
 }

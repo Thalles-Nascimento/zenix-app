@@ -79,7 +79,7 @@ export default function Atendimentos() {
                 {/* Lista responsiva: cards em mobile, tabela em desktop - refatorado para TableLayout */}
                 <TableLayout
                     table={(
-                        <table className="w-full text-sm text-left text-gray-300 min-w-150 table-fixed md:table">
+                        <table className="w-full text-sm text-left text-white min-w-150 table-fixed md:table">
                             <thead className="text-xs uppercase bg-gray-850 border-b border-gray-700">
                                 <tr className="text-gray-300">
                                     <th scope="col" className="px-4 py-3">CLIENTE</th>
@@ -104,7 +104,7 @@ export default function Atendimentos() {
                                         >
                                             <td className="px-4 py-4 font-medium text-white">
                                                 <div className="flex flex-col">
-                                                    <span className="text-sm font-semibold text-white truncate max-w-[220px]">{items.descricao}</span>
+                                                    <span className="text-sm font-semibold text-gray-300 truncate max-w-[220px]">{items.descricao}</span>
                                                     {items.observacao && (
                                                         <span className="text-xs text-orange-300 flex items-center gap-1" title={items.observacao}><MessageSquareWarning size={14} /></span>
                                                     )}
@@ -137,7 +137,7 @@ export default function Atendimentos() {
                                         key={items.id}
                                         title={items.descricao}
                                         subtitle={Array.isArray(items.servico) ? items.servico.join(" + ") : items.servico}
-                                        rightTop={<span className="text-orange-500 font-bold">{items.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>}
+                                        rightTop={<span className="text-orange-500 font-bold text-sm">{items.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>}
                                         rightBottom={items.data}
                                         status={items.status === 1 ? 'finalizado' : 'inactive'}
                                         footerRight={<span className="text-sm text-gray-300">{items.formaPagamento}</span>}

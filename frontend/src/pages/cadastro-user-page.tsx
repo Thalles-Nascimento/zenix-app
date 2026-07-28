@@ -61,8 +61,8 @@ export default function CadastroUserPage() {
       <Toaster richColors position="top-center" />
 
       <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-        <div className="hidden md:flex items-center justify-center">
-          <img src="/assets/imagens/logo.png" alt="logo" className="w-56 -ml-8" />
+        <div className="flex items-center justify-center">
+          <img src="/assets/imagens/logo.png" alt="logo" className="w-60 md:w-56 md:-ml-8" />
         </div>
 
         <div className="bg-gradient-to-r from-white/5 to-white/3 backdrop-blur-md border border-white/10 rounded-2xl p-8 shadow-xl">
