@@ -1,4 +1,3 @@
 
--- Alterando nulo da coluna cliente_atendimentos_mes de clientes
-ALTER TABLE `clientes`
-    MODIFY COLUMN `cliente_atendimentos_mes` INT NULL DEFAULT NULL;
+-- Criando um full text index na tabela `clientes` para as colunas `cliente_nome`
+create fulltext index search_idx on clientes (cliente_nome);
