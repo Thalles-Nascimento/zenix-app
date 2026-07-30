@@ -33,8 +33,8 @@ public class Clientes extends BaseEntity {
     @JoinColumn(name = "planos_id")
     private Planos planos;
 
-    @Column(name = "cliente_atendimentos_mes", nullable = false, columnDefinition = "INT DEFAULT 0")
-    private Integer atendimentosMes;
+    @Column(name = "cliente_atendimentos_mes")
+    private Integer atendimentosMes = 0;
 
     @Column(name = "cliente_data_renovacao")
     private LocalDate dataRenovacao;

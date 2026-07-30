@@ -1,7 +1,4 @@
 
--- Alterando Foreign Key de clientes
+-- Alterando nulo da coluna cliente_atendimentos_mes de clientes
 ALTER TABLE `clientes`
-    ADD CONSTRAINT `fk_planos_id`
-        FOREIGN KEY (`planos_id`) REFERENCES planos (id)
-            ON UPDATE CASCADE
-            ON DELETE SET NULL;
+    MODIFY COLUMN `cliente_atendimentos_mes` INT NULL;
