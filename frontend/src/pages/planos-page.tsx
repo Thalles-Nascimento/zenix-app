@@ -23,7 +23,7 @@ export default function PlanosPage() {
 
     const [modalAberto, setModalAberto] = useState(false)
     const [planoSelecionado, setPlanoSelecionado] = useState<PlanoDTO | null>(null)
-    const [editando, setEditando] = useState<{ id: number } | null>(null)
+    const [editando, setEditando] = useState<{ id: string } | null>(null)
     const [form, setForm] = useState<FormPlano>({ descricao: "", valor: "", servico: [], atendimentos: "" })
     const [confirmacaoAberta, setConfirmacaoAberta] = useState(false)
 
@@ -36,7 +36,7 @@ export default function PlanosPage() {
         setModalAberto(true)
     }
 
-    const abrirEdicao = (id: number, descricao: string, valor: number, servico: string[], atendimentos: number) => {
+    const abrirEdicao = (id: string, descricao: string, valor: number, servico: string[], atendimentos: number) => {
         setEditando({ id })
         setForm({ descricao, valor: String(valor), servico: servico ?? [], atendimentos: String(atendimentos) })
         setModalAberto(true)
@@ -83,7 +83,7 @@ export default function PlanosPage() {
         }
     }
 
-    const handleDeletar = async (id: number) => {
+    const handleDeletar = async (id: string) => {
         try {
             await deletarPlano(id)
             toast.success("Plano excluído!")
@@ -136,20 +136,20 @@ export default function PlanosPage() {
                                 </tr>
                             ) : (
                                 planos.map(item => (
-                                    <tr key={item.id} className="bg-black border-b border-gray-700 notranslate">
-                                        <td className="px-4 py-4 notranslate font-medium text-white">{item.descricao}</td>
+                                    <tr key={item.planoId} className="bg-black border-b border-gray-700 notranslate">
+                                        <td className="px-4 py-4 notranslate font-medium text-white">{item.planoDescricao}</td>
                                         <td className="px-4 py-4 font-medium text-white notranslate">
-                                            {item.servico?.length > 0
-                                                ? item.servico.join(" + ")
+                                            {item.planoServico?.length > 0
+                                                ? item.planoServico.join(" + ")
                                                 : <span className="text-gray-500">—</span>
                                             }
                                         </td>
-                                        <td className="px-4 py-4 notranslate text-orange-500 font-bold">{formatBRL(item.valor)}</td>
-                                        <td className="px-4 py-4 notranslate text-gray-300">{item.atendimentos} atend./mês</td>
+                                        <td className="px-4 py-4 notranslate text-orange-500 font-bold">{formatBRL(item.planoValor)}</td>
+                                        <td className="px-4 py-4 notranslate text-gray-300">{item.planoAtendimentos} atend./mês</td>
                                         <td className="px-4 py-4 notranslate">
                                             <div className="flex gap-2">
                                                 <button
-                                                    onClick={() => abrirEdicao(item.id, item.descricao, item.valor, item.servico ?? [], item.atendimentos)}
+                                                    onClick={() => abrirEdicao(item.planoId, item.planoDescricao, item.planoValor, item.planoServico ?? [], item.planoAtendimentos)}
                                                     className="bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
                                                 >
                                                     Editar
@@ -230,10 +230,10 @@ export default function PlanosPage() {
             <ModalConfirmacao
                 open={confirmacaoAberta}
                 titulo="Excluir Plano"
-                mensagem={`Deseja excluir o plano "${planoSelecionado?.descricao}"? Esta ação não pode ser desfeita.`}
+                mensagem={`Deseja excluir o plano "${planoSelecionado?.planoDescricao}"? Esta ação não pode ser desfeita.`}
                 onConfirmar={() => {
                     if (!planoSelecionado) return
-                    handleDeletar(planoSelecionado?.id)}}
+                    handleDeletar(planoSelecionado?.planoId)}}
                 onCancelar={() => setConfirmacaoAberta(false)}
             />
         </div>

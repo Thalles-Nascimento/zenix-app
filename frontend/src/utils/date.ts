@@ -25,6 +25,6 @@ export function inicioSemana(): string {
 
 // Converte "yyyy-MM-dd" para "dd/MM/yyyy"
 export function parseDataBrazil(dateStr: string): string {
-    const [dia, mes, ano] = dateStr.split("-")
+    const [ano, mes, dia] = dateStr.split("-")
     return `${dia}/${mes}/${ano}`
 }

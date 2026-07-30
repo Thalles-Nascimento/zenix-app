@@ -269,16 +269,18 @@ export default function ClientesPage() {
                                     key={cliente.id}
                                     title={cliente.nome}
                                     subtitle={formatarTelefoneCliente(cliente.telefone ?? "")}
-                                    rightTop={cliente.planoId ? cliente.planoDescricao : "Sem plano"}
+                                    rightTop={cliente.planoId ? <span className="text-orange-500 text-sm font-bold">{cliente.planoDescricao}</span> : "Sem plano"}
                                     rightBottom={cliente.planoId ? parseDataBrazil(cliente.dataRenovacao) : "—"}
                                     onClick={() => abrirEditar(cliente)}
+                                    status={cliente.status === -1 ? "inactive" : "active"}
+                                    inactive={cliente.status === -1 ? true : false}
                                 >
                                     {cliente.planoId ? (
                                         <div className="mt-2 flex items-center gap-2">
                                             <div className="w-20 bg-gray-700 rounded-full h-1.5">
                                                 <div className={`h-1.5 rounded-full ${getAlerta(cliente) === "limite" ? "bg-red-500" : getAlerta(cliente) === "aviso" ? "bg-yellow-500" : "bg-green-500"}`} style={{ width: `${Math.min((cliente.atendimentoMes / cliente.planoAtendimentos) * 100, 100)}%` }} />
                                             </div>
-                                            <span className="text-xs font-medium text-gray-300">{cliente.atendimentoMes}/{cliente.planoAtendimentos}</span>
+                                            <span className="text-xs font-medium text-orange-500">{cliente.atendimentoMes}/{cliente.planoAtendimentos}</span>
                                         </div>
                                     ) : (
                                         <div className="mt-2"><span className="text-xs text-gray-400">Sem plano</span></div>
