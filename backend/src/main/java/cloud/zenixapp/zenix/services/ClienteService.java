@@ -83,6 +83,10 @@ public class ClienteService {
         );
     }
 
+    public Optional<ClientesProjectionView> clientePorNome(String nome){
+        return clienteRepository.findByName(nome, TenantContext.getTenantId());
+    }
+
     public List<ClientesProjectionView> clientesByTelefone(String numero) {
         return clienteRepository.findClientByNumber(numero, TenantContext.getTenantId());
     }
@@ -92,15 +96,8 @@ public class ClienteService {
         String tenantId = TenantContext.getTenantId();
         return clienteRepository.findById(id, tenantId)
                 .map(clienteView -> {
-                    int count = clienteView.getRetorno();
-                    count = count + 1;
-                    Clientes cliente = clienteMapper.toClientes(clienteView);
 
-                    cliente.setTotalRetornos(count);
-                    clienteRepository.findByNumber(clienteView.getTelefone(), tenantId)
-                            .ifPresent(cliente::setTelefoneCliente);
-
-                    clienteRepository.save(cliente);
+                    clienteRepository.atualizarRetorno(clienteView.getId(), tenantId);
 
                     return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
@@ -113,20 +110,9 @@ public class ClienteService {
 
     @Transactional
     public String retiraRetornoCliente(String nome, String tenantId) {
-        Optional<ClientesProjectionView> clienteView = clienteRepository.findByName(nome, tenantId);
 
-        Clientes cliente = clienteMapper.toClientes(clienteView.get());
-
-        int count = clienteView.get().getRetorno();
-        if (count == 0){
-            return "Cliente retirado";
-        }
-        count = count - 1;
-        cliente.setTotalRetornos(count);
-        clienteRepository.findByNumber(clienteView.get().getTelefone(), tenantId)
-                .ifPresent(cliente::setTelefoneCliente);
-
-        clienteRepository.save(cliente);
+        clienteRepository.findByName(nome, tenantId)
+                .ifPresent(clientesProjectionView -> clienteRepository.retirarRetorno(clientesProjectionView.getId(), tenantId));
 
         return "Cliente retirado";
 
@@ -271,18 +257,14 @@ public class ClienteService {
                 .orElseThrow(() -> new NotFoundException("Cliente não encontrado!"));
     }
 
+//  TODO Criar método para retirar atendimento do mês caso o atendimento que foi feito com plano seja excluído
     public void atualizarAtendimentosMes(String nome, String tenantId){
         Optional<ClientesProjectionView> clienteView = clienteRepository.findByName(nome, tenantId);
 
         if (clienteView.isEmpty() || clienteView.get().getPlanoId() == null) return;
 
-        Clientes cliente = clienteMapper.toClientes(clienteView.get());
-        cliente.setAtendimentosMes(clienteView.get().getAtendimentoMes() + 1);
+        clienteRepository.atualizarAtendimentosMes(clienteView.get().getId(), tenantId);
 
-        Planos plano = planosService.buscarPlanoPorId(clienteView.get().getPlanoId());
-        cliente.setPlanos(plano);
-
-        clienteRepository.save(cliente);
     }
 
     public List<ClientesProjectionView> buscarClientePorNome(String nome){
