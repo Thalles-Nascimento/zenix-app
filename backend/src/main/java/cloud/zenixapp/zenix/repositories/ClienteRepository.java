@@ -65,6 +65,27 @@ public interface ClienteRepository extends JpaRepository<Clientes, String> {
     @Modifying
     @NativeQuery(
             value = "UPDATE clientes c " +
+                    "SET c.cliente_atendimentos_mes = c.cliente_atendimentos_mes + 1 " +
+                    "WHERE c.tenant_id = :tenantId AND c.planos_id IS NOT NULL AND c.id = :id")
+    void atualizarAtendimentosMes(@Param("id") String id, @Param("tenantId") String tenantId);
+
+    @Modifying
+    @NativeQuery(
+            value = "UPDATE clientes c " +
+                    "SET c.cliente_retorno = c.cliente_retorno + 1 " +
+                    "WHERE c.id = :id AND c.tenant_id = :tenantId")
+    void atualizarRetorno(@Param("id") String id, @Param("tenantId") String tenantId);
+
+    @Modifying
+    @NativeQuery(
+            value = "UPDATE clientes c " +
+                    "SET c.cliente_retorno = c.cliente_retorno - 1 " +
+                    "WHERE c.id = :id AND c.tenant_id = :tenantId")
+    void retirarRetorno(@Param("id") String id, @Param("tenantId") String tenantId);
+
+    @Modifying
+    @NativeQuery(
+            value = "UPDATE clientes c " +
                     "SET c.cliente_status = -1, c.deleted_at = :deleteTime " +
                     "WHERE c.id = :id AND c.tenant_id = :tenantId")
     void deleteLogico(@Param("id") String id, @Param("deleteTime") LocalDateTime deleteTime, @Param("tenantId") String tenantId);
