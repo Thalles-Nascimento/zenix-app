@@ -11,6 +11,7 @@ import cloud.zenixapp.zenix.models.entities.Tenants;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.models.interfaces.AtendimentoAndUsuarioProjectionView;
 import cloud.zenixapp.zenix.models.interfaces.AtendimentoProjectionView;
+import cloud.zenixapp.zenix.models.interfaces.ClientesProjectionView;
 import cloud.zenixapp.zenix.repositories.AtendimentoRepository;
 import cloud.zenixapp.zenix.repositories.TenantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AtendimentoService {
@@ -163,6 +165,9 @@ public class AtendimentoService {
                     if(atendimento.getStatus() != -1){
                         throw new AtendimentoExcluidoException("Atendimento já está ativo!");
                     }
+
+                    clienteService.clientePorNome(atendimento.getDescricao())
+                            .ifPresent(clientesProjectionView -> clienteService.atualizarRetornoCliente(clientesProjectionView.getId()));
 
                     atendimentoRepository.ativarAtendimento(atendimento.getId(), tenantId);
 
