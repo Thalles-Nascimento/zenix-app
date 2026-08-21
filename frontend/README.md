@@ -16,21 +16,49 @@ Este é o frontend do Zenix App: uma SPA em React/TypeScript que serve de interf
 
 ## Arquitetura
 
-```mermaid
-flowchart LR
-    subgraph Protegido["Rotas protegidas"]
-        Guard["RotaProtegida / RotaAdmin"] --> Page["Página"]
-        Page --> Hook["Hook"]
-        Hook --> Service["Service"]
-    end
+Cada página delega o acesso a dados a um hook próprio do domínio (ex: `use-atendimentos`, `use-fila`), que por sua vez chama um `service` (camada fina sobre o axios). Não há estado global além da sessão (`AuthContext`) — o estado de cada tela é local.
 
-    Auth["AuthContext\n(AuthProvider)"] -->|"GET /users/me ao montar"| API
-    Guard -->|"consulta userName / permissao"| Auth
-    Service --> Axios["axios\n(baseURL /api/v1, withCredentials)"]
-    Axios -->|"cookie httpOnly auth_token"| API["API Zenix\n(backend)"]
+```mermaid
+flowchart TD
+    Guard["RotaProtegida / RotaAdmin"]
+    Auth["AuthContext<br/>AuthProvider"]
+    Page["Página"]
+    Hook["Hook de domínio"]
+    Service["Service"]
+    Axios["axios<br/>baseURL /api/v1<br/>withCredentials: true"]
+    API["API Zenix<br/>backend"]
+
+    Guard -->|"userName / permissao"| Auth
+    Guard --> Page
+    Page --> Hook
+    Hook --> Service
+    Service --> Axios
+    Axios -->|"cookie httpOnly auth_token"| API
+    Auth -.->|"GET /users/me ao montar"| API
 ```
 
-Cada página delega o acesso a dados a um hook próprio do domínio (ex: `use-atendimentos`, `use-fila`), que por sua vez chama um `service` (camada fina sobre o axios). Não há estado global além da sessão (`AuthContext`) — o estado de cada tela é local.
+<details>
+<summary>Ver o fluxo em texto</summary>
+
+```text
+RotaProtegida / RotaAdmin
+   |  consulta userName / permissao
+   +--> AuthContext (AuthProvider)
+   |         '--> GET /users/me ao montar --> API Zenix
+   v
+Página
+   v
+Hook de domínio        (use-atendimentos, use-fila, ...)
+   v
+Service                (um arquivo por recurso REST)
+   v
+axios                  (baseURL /api/v1, withCredentials: true)
+   |  cookie httpOnly auth_token
+   v
+API Zenix (backend)
+```
+
+</details>
 
 ## Stack tecnológica
 
@@ -116,7 +144,7 @@ npm install
 npm run dev
 ```
 
-A aplicação sobe por padrão em `http://localhost:5173`. Para as chamadas à API funcionarem localmente, veja a nota sobre o proxy de desenvolvimento em "Comunicação com a API" abaixo.
+A aplicação sobe por padrão em `http://localhost:5173`. Para as chamadas à API funcionarem localmente, veja a nota sobre o proxy de desenvolvimento em [Comunicação com a API](#comunicação-com-a-api).
 
 Outros scripts disponíveis: `npm run build` (build de produção), `npm run lint` (ESLint), `npm run preview` (preview do build).
 
