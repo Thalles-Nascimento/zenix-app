@@ -20,15 +20,44 @@ Este é o backend do Zenix App: uma API REST em Java/Spring Boot responsável pe
 A API segue uma arquitetura em camadas simples e pragmática: `Controller → Service → Repository → Entity`, com DTOs de request/response mapeados a partir das entidades via MapStruct/ModelMapper.
 
 ```mermaid
-flowchart LR
-    Client["Cliente HTTP\n(SPA / Swagger)"] -->|"requisição + cookie auth_token"| Filter["SecurityFilter\n(valida JWT)"]
-    Filter --> Controller["Controller\n(@RestController)"]
-    Controller --> Service["Service\n(regras de negócio)"]
-    Service --> Repository["Repository\n(Spring Data JPA)"]
-    Repository --> DB[("MySQL")]
-    Service -->|"DTO de resposta"| Controller
-    Controller -->|"JSON"| Client
+flowchart TD
+    Client["Cliente HTTP<br/>SPA / Swagger"]
+    Filter["SecurityFilter<br/>valida o JWT"]
+    Controller["Controller<br/>@RestController"]
+    Service["Service<br/>regras de negócio"]
+    Repository["Repository<br/>Spring Data JPA"]
+    DB[("MySQL")]
+
+    Client -->|"cookie auth_token"| Filter
+    Filter --> Controller
+    Controller --> Service
+    Service --> Repository
+    Repository --> DB
+    Controller -.->|"JSON de resposta"| Client
 ```
+
+<details>
+<summary>Ver o fluxo em texto</summary>
+
+```text
+Cliente HTTP (SPA / Swagger)
+        |  requisição + cookie auth_token
+        v
+SecurityFilter        -> valida o JWT
+        v
+Controller            -> @RestController
+        v
+Service               -> regras de negócio
+        v
+Repository            -> Spring Data JPA
+        v
+MySQL
+
+A resposta volta pelo caminho inverso, convertida em DTO
+pelo Service e serializada em JSON pelo Controller.
+```
+
+</details>
 
 ## Modelo de domínio
 
@@ -42,45 +71,49 @@ erDiagram
 
     UNIDADES {
         string nome
-        string endereco
     }
     USUARIOS {
         string nome
-        string email
         string grupo
     }
     CLIENTES {
         string nomeCliente
         int totalRetornos
-        int atendimentosMes
-        date dataRenovacao
     }
     TELEFONE_CLIENTE {
         string numero
     }
     ATENDIMENTO {
-        string descricao
         decimal valor
         string data
     }
     FILA {
         string nomeCliente
         string status
-        boolean semPreferencia
     }
     PLANOS {
-        string descricao
         decimal valor
         int limiteAtendimentos
     }
-    SERVICOS {
-        string descricao
-        decimal valor
-    }
-    FORMA_PAGAMENTO {
-        string descricao
-    }
 ```
+
+<details>
+<summary>Ver os relacionamentos em texto</summary>
+
+```text
+UNIDADES          1 --- N  USUARIOS      (uma unidade possui vários usuários)
+USUARIOS          1 --- N  ATENDIMENTO   (um barbeiro registra vários atendimentos)
+USUARIOS          1 --- N  FILA          (um barbeiro atende várias entradas da fila)
+TELEFONE_CLIENTE  1 --- N  CLIENTES      (o telefone identifica o cliente)
+PLANOS            1 --- N  CLIENTES      (um plano é assinado por vários clientes)
+
+SERVICOS e FORMA_PAGAMENTO são catálogos independentes,
+sem chave estrangeira formal.
+```
+
+</details>
+
+Campos completos de cada entidade estão nas classes em `models/entities/` e nos schemas do Swagger UI.
 
 | Entidade | Representa |
 |---|---|
