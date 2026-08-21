@@ -37,23 +37,50 @@ Barbeiros registram os atendimentos realizados e sabem exatamente quanto estão 
 
 O projeto é dividido em dois módulos independentes — uma API REST em Java/Spring Boot e uma SPA em React — que se comunicam via HTTP, com autenticação baseada em cookie.
 
+O fluxo, em resumo:
+
+1. A **SPA React** faz as requisições para a API por HTTPS, enviando o cookie `auth_token`.
+2. A **API REST** valida o token no **Spring Security** antes de liberar o recurso.
+3. Os dados são persistidos no **MySQL** via **Spring Data JPA**.
+
 ```mermaid
-flowchart LR
-    subgraph Navegador
-        SPA["SPA React\n(Vite + TypeScript)"]
-    end
-
-    subgraph Backend["Backend (Spring Boot)"]
-        API["API REST\n/api/v1"]
-        Sec["Spring Security\n+ JWT (cookie httpOnly)"]
-    end
-
+flowchart TD
+    SPA["SPA React<br/>Vite + TypeScript"]
+    API["API REST<br/>/api/v1"]
+    SEC["Spring Security<br/>JWT em cookie httpOnly"]
     DB[("MySQL")]
 
-    SPA -- "HTTPS + cookie auth_token" --> API
-    API --- Sec
-    API -- "Spring Data JPA" --> DB
+    SPA -->|"HTTPS + cookie"| API
+    API --> SEC
+    API -->|"Spring Data JPA"| DB
 ```
+
+<details>
+<summary>Ver o diagrama em texto (para leitores que não renderizam Mermaid)</summary>
+
+```text
+  Navegador
+  +---------------------------+
+  |  SPA React                |
+  |  Vite + TypeScript        |
+  +---------------------------+
+               |
+               |  HTTPS + cookie auth_token
+               v
+  Backend (Spring Boot)
+  +---------------------------+
+  |  API REST  /api/v1        |
+  |  Spring Security + JWT    |
+  +---------------------------+
+               |
+               |  Spring Data JPA
+               v
+  +---------------------------+
+  |  MySQL                    |
+  +---------------------------+
+```
+
+</details>
 
 ## Stack tecnológica
 
