@@ -1,0 +1,204 @@
+# Zenix App — Backend
+
+<p>
+  <img src="https://img.shields.io/badge/Java-21-orange?logo=openjdk&logoColor=white" alt="Java 21" />
+  <img src="https://img.shields.io/badge/Spring%20Boot-4.0.3-6DB33F?logo=springboot&logoColor=white" alt="Spring Boot 4.0.3" />
+  <img src="https://img.shields.io/badge/MySQL-8-4479A1?logo=mysql&logoColor=white" alt="MySQL 8" />
+  <img src="https://img.shields.io/badge/Auth-JWT-000000?logo=jsonwebtokens&logoColor=white" alt="JWT" />
+  <img src="https://img.shields.io/badge/Build-Maven-C71A36?logo=apachemaven&logoColor=white" alt="Maven" />
+  <img src="https://img.shields.io/badge/Docs-Swagger%2FOpenAPI-85EA2D?logo=swagger&logoColor=black" alt="Swagger/OpenAPI" />
+</p>
+
+> Para contexto do produto como um todo (domínio, funcionalidades, roadmap), veja o [README raiz](../README.md).
+
+## Sobre este módulo
+
+Este é o backend do Zenix App: uma API REST em Java/Spring Boot responsável pelas regras de negócio, persistência e autenticação do sistema de gestão de barbearias. É consumida pela SPA em [`frontend/`](../frontend).
+
+## Arquitetura
+
+A API segue uma arquitetura em camadas simples e pragmática: `Controller → Service → Repository → Entity`, com DTOs de request/response mapeados a partir das entidades via MapStruct/ModelMapper.
+
+```mermaid
+flowchart LR
+    Client["Cliente HTTP\n(SPA / Swagger)"] -->|"requisição + cookie auth_token"| Filter["SecurityFilter\n(valida JWT)"]
+    Filter --> Controller["Controller\n(@RestController)"]
+    Controller --> Service["Service\n(regras de negócio)"]
+    Service --> Repository["Repository\n(Spring Data JPA)"]
+    Repository --> DB[("MySQL")]
+    Service -->|"DTO de resposta"| Controller
+    Controller -->|"JSON"| Client
+```
+
+## Modelo de domínio
+
+```mermaid
+erDiagram
+    UNIDADES ||--o{ USUARIOS : possui
+    USUARIOS ||--o{ ATENDIMENTO : registra
+    USUARIOS ||--o{ FILA : atende
+    TELEFONE_CLIENTE ||--o{ CLIENTES : identifica
+    PLANOS ||--o{ CLIENTES : assina
+
+    UNIDADES {
+        string nome
+        string endereco
+    }
+    USUARIOS {
+        string nome
+        string email
+        string grupo
+    }
+    CLIENTES {
+        string nomeCliente
+        int totalRetornos
+        int atendimentosMes
+        date dataRenovacao
+    }
+    TELEFONE_CLIENTE {
+        string numero
+    }
+    ATENDIMENTO {
+        string descricao
+        decimal valor
+        string data
+    }
+    FILA {
+        string nomeCliente
+        string status
+        boolean semPreferencia
+    }
+    PLANOS {
+        string descricao
+        decimal valor
+        int limiteAtendimentos
+    }
+    SERVICOS {
+        string descricao
+        decimal valor
+    }
+    FORMA_PAGAMENTO {
+        string descricao
+    }
+```
+
+| Entidade | Representa |
+|---|---|
+| `Unidades` | Uma barbearia/filial; agrupa usuários, fila e atendimentos. |
+| `Usuarios` | Barbeiro ou administrador, com papel (`grupo`) `ADMIN`/`USER`. |
+| `Clientes` | Cliente da barbearia, com contador de retornos e uso do plano no mês. |
+| `TelefoneCliente` | Telefone único usado para localizar clientes entre atendimentos. |
+| `Atendimento` | Serviço registrado por um barbeiro (valor, forma de pagamento, data). |
+| `Fila` | Entrada de um cliente na fila de espera de uma unidade. |
+| `Planos` | Plano de assinatura mensal com limite de atendimentos. |
+| `Servicos` | Catálogo de serviços oferecidos (nome, valor). |
+| `FormaPagamento` | Catálogo de formas de pagamento aceitas. |
+
+`Servicos` e `FormaPagamento` são catálogos consultados pelas demais entidades, sem chave estrangeira formal — a maioria das entidades usa exclusão lógica (`status = 1` ativo / `-1` excluído) em vez de remoção física.
+
+## Stack tecnológica
+
+| Tecnologia | Versão | Uso |
+|---|---|---|
+| Java | 21 | Linguagem principal |
+| Spring Boot | 4.0.3 | Framework da API (`web`, `data-jpa`, `security`, `validation`) |
+| Spring Data JPA | — | Persistência e acesso ao banco de dados |
+| Spring Security | — | Autenticação e autorização |
+| java-jwt (Auth0) | 4.5.0 | Geração e validação de tokens JWT |
+| MySQL Connector/J | — | Driver de acesso ao MySQL |
+| MapStruct | 1.6.3 | Mapeamento entre entidades e DTOs |
+| ModelMapper | 3.1.0 | Mapeamento auxiliar entre entidades e DTOs |
+| springdoc-openapi | 2.4.0 | Documentação interativa da API (Swagger UI) |
+| Lombok | — | Redução de boilerplate (getters/setters/construtores) |
+| H2 | — | Banco em memória usado nos testes |
+| Maven | — | Build e gerenciamento de dependências |
+
+## Estrutura de pastas
+
+```
+backend/src/main/java/cloud/zenixapp/zenix/
+├── configs/
+│   ├── exceptions/   # Exceções de domínio customizadas
+│   ├── handlers/     # GlobalExceptionHandler, BindingHandler
+│   ├── mappers/      # Mappers MapStruct entre Entity e DTO
+│   └── security/     # SecurityConfig, SecurityFilter
+├── controllers/      # 8 REST controllers, um por recurso
+├── models/
+│   ├── entities/         # Entidades JPA
+│   ├── dtos/requests/     # DTOs de entrada
+│   ├── dtos/responses/    # DTOs de saída
+│   └── enums/             # StatusFilaEnum, UsuariosRoleEnum
+├── repositories/      # Interfaces Spring Data JPA
+└── services/
+    └── security/       # TokenService, AuthorizationService
+```
+
+## Autenticação e autorização
+
+- Login (`POST /api/v1/users/login`) gera um JWT assinado com HMAC256 (segredo `SECURITY_KEY`), válido por 2 horas, e o entrega em um **cookie httpOnly** chamado `auth_token` (não é retornado no corpo da resposta).
+- A cada requisição, o `SecurityFilter` lê esse cookie, valida o token e popula o `SecurityContextHolder` com o usuário autenticado.
+- Autorização é feita por papel: `ADMIN` recebe `ROLE_ADMIN` + `ROLE_USER`; `USER` (barbeiro) recebe apenas `ROLE_USER`. Rotas administrativas exigem `hasRole("ADMIN")`.
+- Sessão é **stateless** (sem sessão no servidor) — o próprio JWT no cookie é a fonte da verdade a cada requisição.
+- CORS liberado para os domínios do frontend: `http://localhost:5173`, `https://app.zenixapp.cloud`, `https://barber.zenixapp.cloud`.
+
+## Endpoints da API
+
+| Recurso | Base path | Descrição | Acesso |
+|---|---|---|---|
+| Atendimentos | `/api/v1/atendimentos` | CRUD de atendimentos registrados por barbeiro (hoje, histórico, visão admin) | Autenticado |
+| Clientes | `/api/v1/clientes` | Cadastro, busca por telefone/nome, registro de retorno e vínculo com planos | Público (check-in) + ADMIN (gestão) |
+| Fila | `/api/v1/fila` | Entrada na fila, chamada, finalização e remoção | Público (entrar) + Autenticado (operar) |
+| Pagamentos | `/api/v1/pagamentos` | Catálogo de formas de pagamento | Público (leitura) + Autenticado (escrita) |
+| Planos | `/api/v1/planos` | Catálogo de planos de assinatura mensal | ADMIN |
+| Serviços | `/api/v1/servicos` | Catálogo de serviços oferecidos | Público (leitura) + Autenticado (escrita) |
+| Unidades | `/api/v1/unidades` | Gestão de unidades/filiais | ADMIN |
+| Usuários | `/api/v1/users` | Login, sessão (`/me`), registro e gestão de usuários/barbeiros | Público (login/register) + Autenticado/ADMIN (demais) |
+
+Com a aplicação rodando, o detalhe completo de cada rota (parâmetros, schemas de request/response) está disponível no Swagger UI: `http://localhost:9090/swagger-ui/index.html`.
+
+## Como executar localmente
+
+### Pré-requisitos
+
+- Java 21
+- Maven (ou o wrapper `./mvnw` já incluso)
+- MySQL 8 acessível (local ou remoto)
+
+### Variáveis de ambiente
+
+| Variável | Descrição |
+|---|---|
+| `DB_URL` | URL de conexão JDBC com o MySQL |
+| `DB_USER` | Usuário do banco de dados |
+| `DB_PASSWORD` | Senha do banco de dados |
+| `SECURITY_KEY` | Segredo usado para assinar os tokens JWT |
+
+### Subindo a API
+
+```bash
+cd backend
+./mvnw spring-boot:run
+```
+
+A API sobe por padrão em `http://localhost:9090/api/v1`.
+
+### Docker
+
+O `Dockerfile` empacota o jar (`mvn clean package`) em uma imagem `eclipse-temurin:21-jre-jammy`, expondo a porta 8080. Sobre subir via `docker compose`, veja a nota em "Issues conhecidas" no [README raiz](../README.md#issues-conhecidas).
+
+## Testes automatizados
+
+```bash
+cd backend
+./mvnw test
+```
+
+Os testes rodam contra um banco H2 em memória (sem depender de um MySQL real). Suíte existente:
+
+- `AtendimentoServiceTests`
+- `FilaServiceTest`
+- `UnidadeServiceTest`
+- `UsuarioServiceTests`
+- `ZenixApplicationTests` (smoke test do contexto Spring)
+
+Ainda **não há testes** para `ClienteService`, `PlanosService`, `ServicoService` e `PagamentoService`.
