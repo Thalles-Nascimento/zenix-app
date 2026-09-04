@@ -52,12 +52,10 @@ public class ClienteService {
     @Transactional
     public SuccessResponseDTO save(ClienteRequestDTO clienteDTO){
         String tenantId = TenantContext.getTenantId();
-        Tenants tenant = tenantRepository.findById(tenantId)
-                .orElseThrow(() -> new NotFoundException("Tenant não encontrado"));
 
         Clientes cliente = new Clientes();
         cliente.setNomeCliente(clienteDTO.nomeCliente());
-        cliente.setTenant(tenant);
+        cliente.setTenant(tenantId);
 
         Optional<TelefoneCliente> telefone = clienteRepository.findByNumber(clienteDTO.telefoneCliente(), tenantId);
 
@@ -72,7 +70,7 @@ public class ClienteService {
         }
         TelefoneCliente telefoneNovo = new TelefoneCliente();
         telefoneNovo.setTelefoneCliente(clienteDTO.telefoneCliente());
-        telefoneNovo.setTenant(tenant);
+        telefoneNovo.setTenant(tenantId);
 
         cliente.setTelefoneCliente(telefoneRepository.save(telefoneNovo));
         clienteRepository.save(cliente);
@@ -204,7 +202,7 @@ public class ClienteService {
                         TelefoneCliente telefone = clienteRepository.findByNumber(numero, tenantId)
                                 .orElseGet(() -> {
                                     TelefoneCliente telefoneNovo = new TelefoneCliente(numero);
-                                    telefoneNovo.setTenant(tenantRepository.findById(tenantId).get());
+                                    telefoneNovo.setTenant(tenantId);
                                     return telefoneRepository.save(telefoneNovo);
                                 });
 

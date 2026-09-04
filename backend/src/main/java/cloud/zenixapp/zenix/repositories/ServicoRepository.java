@@ -12,9 +12,9 @@ import java.util.Optional;
 
 public interface ServicoRepository extends JpaRepository<Servicos, String> {
 
-    boolean existsServicoByServicoAndTenantId(String servico, String tenantId);
+    boolean existsServicoByServicoAndTenant(String servico, String tenant);
 
-    void deleteByIdAndTenantId(String id, String tenantId);
+    void deleteByIdAndTenant(String id, String tenant);
 
     @NativeQuery(
             value = "SELECT " +

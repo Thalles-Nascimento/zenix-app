@@ -33,11 +33,7 @@ public class PagamentoService {
     public SuccessResponseDTO inserirPagamento(PagamentoRequestDTO pagamentoRequestDTO){
         FormaPagamento formaPagamento = new FormaPagamento();
         formaPagamento.setFormaPagamento(pagamentoRequestDTO.descricao().toUpperCase());
-
-        Tenants tenant = tenantRepository.findById(TenantContext.getTenantId())
-                .orElseThrow(() -> new NotFoundException("Tenant não encontrado"));
-
-        formaPagamento.setTenant(tenant);
+        formaPagamento.setTenant(TenantContext.getTenantId());
 
         pagamentoRepository.save(formaPagamento);
 

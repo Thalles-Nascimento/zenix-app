@@ -71,6 +71,7 @@ public class UsuarioService {
             var auth = authenticationManager.authenticate(usernamePassword);
 
             Usuarios usuario = (Usuarios) auth.getPrincipal();
+            assert usuario != null;
             access.put("token", tokenService.generateToken(usuario));
             access.put("nome", usuario.getNome());
             access.put("grupo", usuario.getGrupo().toString());
@@ -96,8 +97,6 @@ public class UsuarioService {
         }
 
         String tenantId = TenantContext.getTenantId();
-        Tenants tenant = tenantRepository.findById(tenantId)
-                .orElseThrow(() -> new NotFoundException("Tenant não encontrado!"));
 
         String encryptPassword = new BCryptPasswordEncoder().encode(userRegister.senha());
         Usuarios newUser;
@@ -111,7 +110,7 @@ public class UsuarioService {
             newUser = new Usuarios(userRegister.nome(), userRegister.email(), unidade, encryptPassword, userRegister.cpf(), userRegister.grupo());
         }
 
-        newUser.setTenant(tenant);
+        newUser.setTenant(tenantId);
 
         usuarioMapper.usuarioResponseDTO(usuarioRepository.save(newUser));
 

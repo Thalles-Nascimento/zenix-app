@@ -1,5 +1,6 @@
 package cloud.zenixapp.zenix.services;
 
+import cloud.zenixapp.zenix.configs.TenantContext;
 import cloud.zenixapp.zenix.configs.exceptions.ExistsException;
 import cloud.zenixapp.zenix.models.dtos.requests.CadastroRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.CadastroResponseDTO;
@@ -51,11 +52,13 @@ public class CadastroService {
         tenant.setCnpj(cadastroRequestDTO.cnpj());
         tenantsRepository.save(tenant);
 
+        String tenantId = tenantsRepository.findIdByCnpj(cadastroRequestDTO.cnpj());
         // 3. Cria a Unidade vinculada ao Tenant
+        System.out.println(tenantId);
         Unidades unidade = new Unidades();
         unidade.setNomeUnidade(cadastroRequestDTO.nomeUnidade());
         unidade.setEndereco(cadastroRequestDTO.enderecoUnidade());
-        unidade.setTenant(tenant);
+        unidade.setTenant(tenantId);
         unidadeRepository.save(unidade);
 
         // 4. Cria o Usuário ADMIN
@@ -66,7 +69,7 @@ public class CadastroService {
         usuario.setCpf(cadastroRequestDTO.cpf());
         usuario.setGrupo(UsuariosRoleEnum.ADMIN);
         usuario.setUnidade(unidade);
-        usuario.setTenant(tenant);
+        usuario.setTenant(tenantId);
         usuarioRepository.save(usuario);
 
         return new CadastroResponseDTO(

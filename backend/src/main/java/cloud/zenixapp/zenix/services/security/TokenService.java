@@ -28,7 +28,7 @@ public class TokenService {
             return JWT.create()
                     .withIssuer("zenixapp")
                     .withSubject(user.getEmail())
-                    .withClaim("tenantId", user.getTenant().getId())
+                    .withClaim("tenantId", user.getTenant())
                     .withExpiresAt(this.expiratedToken())
                     .sign(algorithm);
         }

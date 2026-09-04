@@ -37,16 +37,13 @@ public class ServicoService {
     @Transactional
     public SuccessResponseDTO inserirServico(ServicoRequestDTO servicoRequestDTO){
         String tenantId = TenantContext.getTenantId();
-        if (servicoRepository.existsServicoByServicoAndTenantId(servicoRequestDTO.servico(), tenantId)){
+        if (servicoRepository.existsServicoByServicoAndTenant(servicoRequestDTO.servico(), tenantId)){
             throw new ExistsException("Serviço já existe!");
 
         }
 
         Servicos servico = servicoMapper.toServicos(servicoRequestDTO);
-        Tenants tenant = tenantRepository.findById(tenantId)
-                .orElseThrow(() -> new NotFoundException("Tenant não encontrado!"));
-
-        servico.setTenant(tenant);
+        servico.setTenant(tenantId);
 
         servicoRepository.save(servico);
 
@@ -90,7 +87,7 @@ public class ServicoService {
         return servicoRepository.findById(id, tenantId)
                 .map(servicoView -> {
 
-                    servicoRepository.deleteByIdAndTenantId(id, tenantId);
+                    servicoRepository.deleteByIdAndTenant(id, tenantId);
 
                     return new SuccessResponseDTO(
                             HttpStatus.OK.value(),

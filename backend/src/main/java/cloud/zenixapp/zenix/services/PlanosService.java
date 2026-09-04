@@ -35,8 +35,7 @@ public class PlanosService {
     public SuccessResponseDTO inserirPlano(PlanosRequestDTO planosRequestDTO){
         Planos plano = planosMapper.toPlanos(planosRequestDTO);
 
-        Tenants tenant = tenantRepository.findById(TenantContext.getTenantId())
-                        .orElseThrow(() -> new NotFoundException("Tenant não encontrado"));
+        String tenant = TenantContext.getTenantId();
 
         plano.setTenant(tenant);
         planosRepository.save(plano);

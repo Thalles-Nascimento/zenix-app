@@ -40,15 +40,12 @@ public class UnidadeService {
     public SuccessResponseDTO inserirUnidade(UnidadeRequestDTO unidadeDTO){
         String tenantId = TenantContext.getTenantId();
 
-        if (unidadeRepository.existsByNomeUnidadeAndTenantId(unidadeDTO.nomeUnidade(), tenantId)){
+        if (unidadeRepository.existsByNomeUnidadeAndTenant(unidadeDTO.nomeUnidade(), tenantId)){
             throw new ExistsException("Unidade " + unidadeDTO.nomeUnidade() + " já cadastrada");
         }
 
-        Tenants tenant = tenantRepository.findById(tenantId)
-                .orElseThrow(() -> new NotFoundException("Empresa não encontrada"));
-
         Unidades unidade = unidadeMapper.toUnidade(unidadeDTO);
-        unidade.setTenant(tenant);
+        unidade.setTenant(tenantId);
 
         unidadeRepository.save(unidade);
 

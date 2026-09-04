@@ -20,7 +20,7 @@ public interface UnidadeRepository extends JpaRepository<Unidades, String> {
     @NativeQuery(value = "UPDATE unidades SET unidade_status = 1 WHERE id = :id AND tenant_id = :tenantId")
     void ativarUnidade(@Param("id") String id, @Param("tenantId")String tenantId);
 
-    boolean existsByNomeUnidadeAndTenantId(String nomeUnidade, String tenantId);
+    boolean existsByNomeUnidadeAndTenant(String nomeUnidade, String tenant);
 
     @NativeQuery(
             value = "SELECT un.id AS id," +

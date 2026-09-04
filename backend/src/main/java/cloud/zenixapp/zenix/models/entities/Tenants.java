@@ -36,7 +36,7 @@ public class Tenants implements Serializable {
     @Column(name = "tenant_active", columnDefinition = "BIT")
     private int active = 1;
 
-    @Column(name = "tenant_cnpj", length = 16)
+    @Column(name = "tenant_cnpj", length = 16, unique = true)
     private String cnpj;
 
     @Column(name = "created_at", updatable = false)
@@ -47,42 +47,6 @@ public class Tenants implements Serializable {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
-
-    @OneToMany(mappedBy = "tenant")
-    @JsonIgnore
-    private List<Atendimento> atendimentos;
-
-    @OneToMany(mappedBy = "tenant")
-    @JsonIgnore
-    private List<Clientes> clientes;
-
-    @OneToMany(mappedBy = "tenant")
-    @JsonIgnore
-    private List<Fila> filas;
-
-    @OneToMany(mappedBy = "tenant")
-    @JsonIgnore
-    private List<FormaPagamento> formaPagamentos;
-
-    @OneToMany(mappedBy = "tenant")
-    @JsonIgnore
-    private List<Planos> planos;
-
-    @OneToMany(mappedBy = "tenant")
-    @JsonIgnore
-    private List<Servicos> servicos;
-
-    @OneToMany(mappedBy = "tenant")
-    @JsonIgnore
-    private List<TelefoneCliente> telefoneClientes;
-
-    @OneToMany(mappedBy = "tenant")
-    @JsonIgnore
-    private List<Unidades> unidades;
-
-    @OneToMany(mappedBy = "tenant")
-    @JsonIgnore
-    private List<Usuarios> usuarios;
 
     @PrePersist
     protected void prePersist() {

@@ -47,8 +47,7 @@ public class FilaService {
     @Transactional
     public SuccessFilaResponseDTO inserirAtendimentoFila(FilaRequestDTO filaDTO) {
 
-        Tenants tenant = tenantRepository.findById(TenantContext.getTenantId())
-                .orElseThrow(() -> new NotFoundException("Tenant não encontrado"));
+        String tenant = TenantContext.getTenantId();
 
         Fila fila = new Fila(); // Verificar a existência do atendimento na fila!
 
