@@ -38,6 +38,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(HttpMethod.GET, "/" + api_url + "/health").permitAll()
                         .requestMatchers(HttpMethod.POST, "/" + api_url + "/users/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/" + api_url + "/cadastro").permitAll()
                         .requestMatchers(HttpMethod.POST, "/" + api_url + "/fila").permitAll()

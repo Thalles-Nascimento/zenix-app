@@ -129,6 +129,9 @@ Campos completos de cada entidade estão nas classes em `models/entities/` e nos
 
 `Servicos` e `FormaPagamento` são catálogos consultados pelas demais entidades, sem chave estrangeira formal — a maioria das entidades usa exclusão lógica (`status = 1` ativo / `-1` excluído) em vez de remoção física.
 
+## Endpoint Health Check
+- Execute `http://localhost:9090/api/v2/health` para checar a saúde da aplicação
+
 ## Stack tecnológica
 
 | Tecnologia | Versão | Uso |
@@ -176,16 +179,17 @@ backend/src/main/java/cloud/zenixapp/zenix/
 
 ## Endpoints da API
 
-| Recurso | Base path | Descrição | Acesso |
-|---|---|---|---|
-| Atendimentos | `/api/v1/atendimentos` | CRUD de atendimentos registrados por barbeiro (hoje, histórico, visão admin) | Autenticado |
-| Clientes | `/api/v1/clientes` | Cadastro, busca por telefone/nome, registro de retorno e vínculo com planos | Público (check-in) + ADMIN (gestão) |
-| Fila | `/api/v1/fila` | Entrada na fila, chamada, finalização e remoção | Público (entrar) + Autenticado (operar) |
-| Pagamentos | `/api/v1/pagamentos` | Catálogo de formas de pagamento | Público (leitura) + Autenticado (escrita) |
-| Planos | `/api/v1/planos` | Catálogo de planos de assinatura mensal | ADMIN |
-| Serviços | `/api/v1/servicos` | Catálogo de serviços oferecidos | Público (leitura) + Autenticado (escrita) |
-| Unidades | `/api/v1/unidades` | Gestão de unidades/filiais | ADMIN |
-| Usuários | `/api/v1/users` | Login, sessão (`/me`), registro e gestão de usuários/barbeiros | Público (login/register) + Autenticado/ADMIN (demais) |
+| Recurso      | Base path              | Descrição                                                                    | Acesso                                                |
+|--------------|------------------------|------------------------------------------------------------------------------|-------------------------------------------------------|
+| Health Check | `/api/v2/health`       | Checagem da saúde da aplicação                                               | Público                                               |
+| Atendimentos | `/api/v2/atendimentos` | CRUD de atendimentos registrados por barbeiro (hoje, histórico, visão admin) | Autenticado                                           |
+| Clientes     | `/api/v2/clientes`     | Cadastro, busca por telefone/nome, registro de retorno e vínculo com planos  | Público (check-in) + ADMIN (gestão)                   |
+| Fila         | `/api/v2/fila`         | Entrada na fila, chamada, finalização e remoção                              | Público (entrar) + Autenticado (operar)               |
+| Pagamentos   | `/api/v2/pagamentos`   | Catálogo de formas de pagamento                                              | Público (leitura) + Autenticado (escrita)             |
+| Planos       | `/api/v2/planos`       | Catálogo de planos de assinatura mensal                                      | ADMIN                                                 |
+| Serviços     | `/api/v2/servicos`     | Catálogo de serviços oferecidos                                              | Público (leitura) + Autenticado (escrita)             |
+| Unidades     | `/api/v2/unidades`     | Gestão de unidades/filiais                                                   | ADMIN                                                 |
+| Usuários     | `/api/v2/users`        | Login, sessão (`/me`), registro e gestão de usuários/barbeiros               | Público (login/register) + Autenticado/ADMIN (demais) |
 
 Com a aplicação rodando, o detalhe completo de cada rota (parâmetros, schemas de request/response) está disponível no Swagger UI: `http://localhost:9090/swagger-ui/index.html`.
 
