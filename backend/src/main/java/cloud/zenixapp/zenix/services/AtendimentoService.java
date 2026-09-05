@@ -112,9 +112,9 @@ public class AtendimentoService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public SuccessResponseDTO atualizarAtendimento(String id, AtendimentoRequestDTO atendimentoRequestDTO){
-        return atendimentoRepository.findById(id)
+        return atendimentoRepository.findById(id, TenantContext.getTenantId())
                 .map(atendimento -> {
-                    if(atendimento.getStatus() == -1 || !Objects.equals(atendimento.getTenant(), TenantContext.getTenantId())){
+                    if(atendimento.getStatus() == -1){
                         throw new NotFoundException("Não é possível atualizar o atendimento!");
                     }
 

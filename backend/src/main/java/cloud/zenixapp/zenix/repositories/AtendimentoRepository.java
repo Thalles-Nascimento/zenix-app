@@ -7,6 +7,7 @@ import cloud.zenixapp.zenix.models.entities.Usuarios;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.NativeQuery;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
@@ -42,5 +43,8 @@ public interface AtendimentoRepository extends JpaRepository<Atendimento, String
 
 //  Lista um atendimento por ID e Tenant
     Optional<AtendimentoResponseWriteDTO> findByIdAndTenant(String id, String tenant);
+
+    @Query(value = "SELECT a FROM Atendimento WHERE a.id = :id AND a.tenant = :tenant")
+    Optional<Atendimento> findById(@Param("id") String id, @Param("tenant") String tenant);
 
 }
