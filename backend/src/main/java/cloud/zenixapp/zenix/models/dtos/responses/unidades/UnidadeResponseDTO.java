@@ -1,4 +1,4 @@
-package cloud.zenixapp.zenix.models.dtos.responses;
+package cloud.zenixapp.zenix.models.dtos.responses.unidades;
 
 public record UnidadeResponseDTO(
         String id,

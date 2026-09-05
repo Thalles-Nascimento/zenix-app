@@ -35,7 +35,7 @@ public class Atendimento extends BaseEntity {
     @Column(name = "atendimento_observacao", length = 500)
     private String observacao;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id")
     private Usuarios usuarios;
 

@@ -1,4 +1,6 @@
-package cloud.zenixapp.zenix.models.dtos.responses;
+package cloud.zenixapp.zenix.models.dtos.responses.unidades;
+
+import cloud.zenixapp.zenix.models.dtos.responses.usuarios.UsuarioSimplesResponseDTO;
 
 import java.util.List;
 

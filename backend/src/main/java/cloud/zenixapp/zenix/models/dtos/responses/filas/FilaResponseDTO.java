@@ -1,4 +1,4 @@
-package cloud.zenixapp.zenix.models.dtos.responses;
+package cloud.zenixapp.zenix.models.dtos.responses.filas;
 
 import cloud.zenixapp.zenix.models.enums.StatusFilaEnum;
 

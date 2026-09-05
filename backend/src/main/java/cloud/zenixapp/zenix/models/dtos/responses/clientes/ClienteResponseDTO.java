@@ -1,4 +1,5 @@
-package cloud.zenixapp.zenix.models.dtos.responses;
+package cloud.zenixapp.zenix.models.dtos.responses.clientes;
+import cloud.zenixapp.zenix.models.dtos.responses.planos.PlanosResponseDTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDate;

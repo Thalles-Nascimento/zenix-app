@@ -1,4 +1,4 @@
-package cloud.zenixapp.zenix.models.dtos.responses;
+package cloud.zenixapp.zenix.models.dtos.responses.pagamentos;
 
 public record PagamentoResponseDTO(
         String id,

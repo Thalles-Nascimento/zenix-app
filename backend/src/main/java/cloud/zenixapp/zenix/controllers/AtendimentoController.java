@@ -2,11 +2,10 @@ package cloud.zenixapp.zenix.controllers;
 
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.handlers.BindingHandler;
-import cloud.zenixapp.zenix.configs.mappers.AtendimentoMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.AtendimentoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
-import cloud.zenixapp.zenix.models.interfaces.AtendimentoAndUsuarioProjectionView;
-import cloud.zenixapp.zenix.models.interfaces.AtendimentoProjectionView;
+import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.atendimentos.AtendimentoResponseDTO;
 import cloud.zenixapp.zenix.services.AtendimentoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -31,8 +30,6 @@ public class AtendimentoController {
     @Autowired
     private AtendimentoService atendimentoService;
 
-    @Autowired
-    private AtendimentoMapper atendimentoMapper;
 
     /*
     *Endpoint para inserção de um atendimento no Banco de Dados
@@ -44,7 +41,7 @@ public class AtendimentoController {
             @ApiResponse(responseCode = "400", description = "Campos com nulos ou fora do padrão")
     })
     @Operation(summary = "Adicionar atendimento", description = "Endpoint para adiciona um novo atendimento")
-    public ResponseEntity<?> save(@RequestBody @Valid AtendimentoRequestDTO atendimentoDTO, BindingResult result){
+    public ResponseEntity<Object> save(@RequestBody @Valid AtendimentoRequestDTO atendimentoDTO, BindingResult result){
         if (result.hasErrors()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(BindingHandler.insertError(result));
@@ -55,7 +52,7 @@ public class AtendimentoController {
     }
 
     @GetMapping("/historico")
-    public ResponseEntity<List<AtendimentoProjectionView>> findHistorico(){
+    public ResponseEntity<List<AtendimentoResponseDTO>> findHistorico(){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.listarHistorico());
     }
@@ -69,7 +66,7 @@ public class AtendimentoController {
             @ApiResponse(responseCode = "200", description = "Atendimento encontrado")
     })
     @Operation(summary = "Listar atendimentos do dia", description = "Endpoint para listar todos os atendimentos do dia")
-    public ResponseEntity<List<AtendimentoProjectionView>> findAllTodayByUser(){
+    public ResponseEntity<List<AtendimentoResponseDTO>> findAllTodayByUser(){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.listarAtendimentosHoje());
     }
@@ -80,7 +77,7 @@ public class AtendimentoController {
      */
     @GetMapping("/admin")
     @Operation(summary = "Listar todos os atendimentos", description = "Endpoint para ADMIN listar todos os atendimentos do dia")
-    public ResponseEntity<List<AtendimentoAndUsuarioProjectionView>> findAllAdmin(){
+    public ResponseEntity<List<AtendimentoResponseDTO>> findAllAdmin(){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.listarTodosAtendimentos());
     }
@@ -95,26 +92,12 @@ public class AtendimentoController {
             @ApiResponse(responseCode = "404", description = "Atendimento não encontrado")
     })
     @Operation(summary = "Deletar atendimento", description = "Endpoint para deletar um atendimento")
-    public ResponseEntity<?> deleteAtendimento(@PathVariable String id) {
+    public ResponseEntity<SuccessResponseDTO> deleteAtendimento(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.deletarAtendimento(id));
 
     }
 
-    /*
-     * Endpoint para buscar um atendimento do Banco de Dados pelo ID
-     *
-     */
-    @GetMapping(value = "/{idAtendimento}")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Atendimento encontrado"),
-            @ApiResponse(responseCode = "404", description = "Atendimento não encontrado")
-    })
-    @Operation(summary = "Listar atendimento por ID", description = "Endpoint para lista um atendimento por ID")
-    public ResponseEntity<AtendimentoProjectionView> findById(@PathVariable String idAtendimento) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(atendimentoService.listarAtendimentoPorId(idAtendimento));
-    }
 
     /*
      * Endpoint para atualizar um atendimento do Banco de Dados pelo ID
@@ -127,7 +110,7 @@ public class AtendimentoController {
             @ApiResponse(responseCode = "400", description = "Campos com nulos ou fora do padrão")
     })
     @Operation(summary = "Atualizar atendimento por ID", description = "Endpoint para atualiza um atendimento por ID")
-    public ResponseEntity<?> updateByAtendimento(@PathVariable String id, @RequestBody @Valid AtendimentoRequestDTO atendimentoRequestDTO, BindingResult result) throws NotFoundException {
+    public ResponseEntity<Object> updateByAtendimento(@PathVariable String id, @RequestBody @Valid AtendimentoRequestDTO atendimentoRequestDTO, BindingResult result) throws NotFoundException {
         if(result.hasErrors()){
             if (BindingHandler.isErrorNull(result)){
                 return ResponseEntity.status(HttpStatus.OK)
@@ -149,7 +132,7 @@ public class AtendimentoController {
 
     @PatchMapping("/{id}")
     @Operation(summary = "Ativar atendimento", description = "Endpoint para ativar um atendimento do sistema")
-    public ResponseEntity<?> ativarAtendimento(@PathVariable String id) {
+    public ResponseEntity<SuccessResponseDTO> ativarAtendimento(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.ativarAtendimento(id));
     }
