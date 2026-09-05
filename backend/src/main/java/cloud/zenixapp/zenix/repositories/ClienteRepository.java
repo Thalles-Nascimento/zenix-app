@@ -1,6 +1,7 @@
 package cloud.zenixapp.zenix.repositories;
 
 import cloud.zenixapp.zenix.models.dtos.responses.clientes.ClientePlanosResumoResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.clientes.ClienteSimplesResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Clientes;
 import cloud.zenixapp.zenix.models.entities.TelefoneCliente;
 import cloud.zenixapp.zenix.models.interfaces.ClientesProjectionView;
@@ -23,7 +24,9 @@ public interface ClienteRepository extends JpaRepository<Clientes, String> {
                 ClientePlanosResumoResponseDTO(
                     c.id,
                     c.nomeCliente,
-                    new cloud.zenixapp.zenix.models.dtos.responses.telefones.TelefoneClienteResponseDTO(tc.telefoneCliente),
+                    new cloud.zenixapp.zenix.models.dtos.responses.telefones.TelefoneClienteResponseDTO(
+                        tc.telefoneCliente
+                    ),
                     c.dataRenovacao,
                     c.atendimentosMes,
                     c.totalRetornos,
@@ -105,26 +108,25 @@ public interface ClienteRepository extends JpaRepository<Clientes, String> {
                     "WHERE tc.telefoneCliente = :telefoneCliente AND tc.tenant = :tenant")
     Optional<TelefoneCliente> findByTelefone_ClienteAndTenant(String telefoneCliente, String tenant);
 
-    @NativeQuery(
-            value = "SELECT " +
-                    "c.id AS id," +
-                    "c.cliente_nome AS nome," +
-                    "tc.telefone_cliente AS telefone," +
-                    "c.cliente_data_renovacao AS dataRenovacao," +
-                    "c.cliente_atendimentos_mes AS atendimentoMes," +
-                    "c.cliente_retorno AS retorno," +
-                    "c.updated_at AS updatedAt," +
-                    "c.cliente_status AS status," +
-                    "p.id AS planoId," +
-                    "p.planos_descricao AS planoDescricao," +
-                    "p.planos_valor AS planoValor," +
-                    "p.planos_limite AS planoAtendimentos, " +
-                    "p.planos_servico AS planoServicoRaw " +
-                    "FROM clientes c " +
-                    "INNER JOIN telefones_clientes tc ON c.telefone_id = tc.id " +
-                    "LEFT JOIN planos p ON c.planos_id = p.id " +
-                    "WHERE tc.telefone_cliente = :telefone AND c.tenant_id = :tenantId")
-    List<ClientesProjectionView> findClientByNumber(@Param("telefone") String telefone, @Param("tenantId") String tenantId);
+    @Query("""
+        SELECT new cloud.zenixapp.zenix.models.dtos.responses.clientes.
+                ClienteSimplesResponseDTO(
+                    c.id,
+                    c.nomeCliente,
+                    new cloud.zenixapp.zenix.models.dtos.responses.telefones.TelefoneClienteResponseDTO(
+                        tc.telefoneCliente
+                    ),
+                    c.status,
+                    new cloud.zenixapp.zenix.models.dtos.responses.planos.PlanosClienteResumoResponseDTO(
+                        p.id, p.planoDescricao
+                    )
+                )
+                FROM Clientes c
+                LEFT JOIN c.telefoneCliente tc
+                LEFT JOIN c.planos p
+                WHERE tc.telefoneCliente = :telefone AND c.tenant = :tenantId
+        """)
+    List<ClienteSimplesResponseDTO> findClientByNumber(@Param("telefone") String telefone, @Param("tenantId") String tenantId);
 
     @NativeQuery(
             value = "SELECT " +

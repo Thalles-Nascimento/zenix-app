@@ -7,6 +7,7 @@ import cloud.zenixapp.zenix.models.dtos.requests.ClienteRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteUpdateRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.clientes.ClientePlanosResumoResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.clientes.ClienteSimplesResponseDTO;
 import cloud.zenixapp.zenix.models.interfaces.ClientesProjectionView;
 import cloud.zenixapp.zenix.services.ClienteService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/${api-url}/clientes")
@@ -46,7 +46,7 @@ public class ClienteController {
 
     // TODO Verificar endpoint
     @GetMapping("/telefone/{numero}")
-    public ResponseEntity<?> buscarClientesPorTelefone(@PathVariable String numero) {
+    public ResponseEntity<List<ClienteSimplesResponseDTO>> buscarClientesPorTelefone(@PathVariable String numero) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(clienteService.clientesByTelefone(numero));
     }
@@ -134,7 +134,7 @@ public class ClienteController {
     }
 
     @GetMapping("/nome")
-    public ResponseEntity<Optional<ClientePlanosResumoResponseDTO>> buscarClientesPorNome(@RequestParam String nome) {
+    public ResponseEntity<ClientePlanosResumoResponseDTO> buscarClientesPorNome(@RequestParam String nome) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(clienteService.clientePorNome(nome));
     }

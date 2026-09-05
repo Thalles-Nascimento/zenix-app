@@ -10,6 +10,7 @@ import cloud.zenixapp.zenix.models.dtos.requests.ClienteRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteUpdateRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.clientes.ClientePlanosResumoResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.clientes.ClienteSimplesResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Clientes;
 import cloud.zenixapp.zenix.models.entities.Planos;
 import cloud.zenixapp.zenix.models.entities.TelefoneCliente;
@@ -44,7 +45,6 @@ public class ClienteService {
     @Autowired
     private PlanosService planosService;
 
-
     @Transactional
     public SuccessResponseDTO save(ClienteRequestDTO clienteDTO){
         String tenantId = TenantContext.getTenantId();
@@ -78,11 +78,13 @@ public class ClienteService {
     }
 
 //  Lista os clientes pelo nome
-    public Optional<ClientePlanosResumoResponseDTO> clientePorNome(String nome){
-        return clienteRepository.findByName(nome, TenantContext.getTenantId());
+    public ClientePlanosResumoResponseDTO clientePorNome(String nome){
+        return clienteRepository.findByName(nome, TenantContext.getTenantId())
+                .orElseThrow(() -> new NotFoundException("Cliente não encontrado"));
     }
 
-    public List<ClientesProjectionView> clientesByTelefone(String numero) {
+
+    public List<ClienteSimplesResponseDTO> clientesByTelefone(String numero) {
         return clienteRepository.findClientByNumber(numero, TenantContext.getTenantId());
     }
 
