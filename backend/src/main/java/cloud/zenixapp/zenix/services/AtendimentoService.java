@@ -31,9 +31,6 @@ public class AtendimentoService {
     private final DateTimeFormatter current_date = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     @Autowired
-    private UsuarioService usuarioService;
-
-    @Autowired
     private AtendimentoMapper atendimentoMapper;
 
     @Autowired
@@ -43,23 +40,15 @@ public class AtendimentoService {
     public SuccessResponseDTO inserirAtendimento(AtendimentoRequestDTO atendimentoDTO){
         String tenantId = TenantContext.getTenantId();
 
+        // Atualiza o atendimento usado como referência para o Plano e o retorno do cliente
+        clienteService.atualizarRetornoDoCliente(atendimentoDTO.descricao(), tenantId);
+
         Usuarios userAuth = (Usuarios) Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
+        Atendimento atendimento = atendimentoMapper.inserirAtendimento(atendimentoDTO);
 
-        Atendimento atendimento = new Atendimento();
-
-        atendimento.setDescricao(atendimentoDTO.descricao());
-        atendimento.setServico(atendimentoDTO.servico());
-        atendimento.setValor(atendimentoDTO.valor());
-        atendimento.setFormaPagamento(atendimentoDTO.formaPagamento());
-        atendimento.setObservacao(atendimentoDTO.observacao());
         atendimento.setDate(LocalDateTime.now().format(current_date));
-        assert userAuth != null;
-        atendimento.setUsuarios(usuarioService.getUsuarioById(userAuth.getId()));
+        atendimento.setUsuarios(userAuth);
         atendimento.setTenant(tenantId);
-
-        if (!clienteService.buscarClientePorNome(atendimento.getDescricao()).isEmpty()){
-            clienteService.atualizarAtendimentosMes(atendimentoDTO.descricao(), tenantId);
-        }
 
 
         atendimentoRepository.save(atendimento);
@@ -95,9 +84,8 @@ public class AtendimentoService {
                         throw new AtendimentoExcluidoException("Atendimento já foi excluído!");
 
                     }
-                    if (!clienteService.buscarClientePorNome(atendimento.descricao()).isEmpty()){
-                        clienteService.retiraRetornoCliente(atendimento.descricao(), tenantId);
-                    }
+
+                    clienteService.retiraRetornoCliente(atendimento.descricao(), tenantId);
 
                     atendimentoRepository.deleteLogico(atendimento.id(), LocalDateTime.now(), tenantId);
 
@@ -141,8 +129,7 @@ public class AtendimentoService {
                         throw new AtendimentoExcluidoException("Atendimento já está ativo!");
                     }
 
-                    clienteService.clientePorNome(atendimento.descricao())
-                            .ifPresent(clientesProjectionView -> clienteService.atualizarRetornoCliente(clientesProjectionView.getId()));
+                    clienteService.atualizarRetornoDoCliente(atendimento.descricao(), tenantId);
 
                     atendimentoRepository.ativarAtendimento(atendimento.id(), tenantId);
 

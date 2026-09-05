@@ -5,11 +5,9 @@ import cloud.zenixapp.zenix.configs.exceptions.FilaException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.mappers.FilaMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.FilaRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.FilaResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.SuccessFilaResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.filas.SuccessFilaResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Fila;
-import cloud.zenixapp.zenix.models.entities.Tenants;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.models.interfaces.FilaProjectionView;
 import cloud.zenixapp.zenix.repositories.FilaAtendimentoRepository;
@@ -22,9 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
 import java.util.List;
-
-import static cloud.zenixapp.zenix.models.enums.StatusFilaEnum.AGUARDANDO;
-import static cloud.zenixapp.zenix.models.enums.StatusFilaEnum.EM_ATENDIMENTO;
 
 @Service
 public class FilaService {
@@ -129,7 +124,7 @@ public class FilaService {
                     }
                     filaRepository.finalizarAtendimentoFila(atendimentoFila.getId(), tenantId, LocalTime.now());
 
-                    clienteService.atualizarAtendimentosMes(atendimentoFila.getNomeCliente(), tenantId);
+                    clienteService.atualizarRetornoDoCliente(atendimentoFila.getNomeCliente(), tenantId);
 
                     return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
@@ -148,13 +143,13 @@ public class FilaService {
                         throw new FilaException("Cliente está em atendimento");
                     }
 
-                    String statusMsg = clienteService.retiraRetornoCliente(atendimentoFila.getNomeCliente(), tenantId);
+                    clienteService.retiraRetornoCliente(atendimentoFila.getNomeCliente(), tenantId);
 
                     filaRepository.deleteById(atendimentoFila.getId());
 
                     return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
-                            statusMsg
+                            "Cliente retirado da Fila"
                     );
 
 

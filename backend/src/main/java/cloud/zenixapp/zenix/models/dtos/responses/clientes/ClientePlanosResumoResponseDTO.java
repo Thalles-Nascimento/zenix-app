@@ -1,5 +1,6 @@
 package cloud.zenixapp.zenix.models.dtos.responses.clientes;
-import cloud.zenixapp.zenix.models.dtos.responses.planos.PlanosResponseDTO;
+
+import cloud.zenixapp.zenix.models.dtos.responses.planos.PlanosClienteResumoResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.telefones.TelefoneClienteResponseDTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -14,6 +15,6 @@ public record ClientePlanosResumoResponseDTO(
         int atendimentosMes,
         int vezesRetorno,
         int status,
-        PlanosResponseDTO plano
+        PlanosClienteResumoResponseDTO plano
 ) {
 }

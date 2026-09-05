@@ -5,8 +5,8 @@ import cloud.zenixapp.zenix.configs.handlers.BindingHandler;
 import cloud.zenixapp.zenix.models.dtos.requests.ClientePlanoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteUpdateRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.ClienteResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.clientes.ClientePlanosResumoResponseDTO;
 import cloud.zenixapp.zenix.models.interfaces.ClientesProjectionView;
 import cloud.zenixapp.zenix.services.ClienteService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/${api-url}/clientes")
@@ -50,11 +51,6 @@ public class ClienteController {
                 .body(clienteService.clientesByTelefone(numero));
     }
 
-    @PatchMapping("/retorno/{id}")
-    public ResponseEntity<?> atualizarClienteRetorno(@PathVariable String id){
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(clienteService.atualizarRetornoCliente(id));
-    }
 
     /*
      * Endpoint para buscar todos os clientes do Banco de Dados
@@ -138,9 +134,9 @@ public class ClienteController {
     }
 
     @GetMapping("/nome")
-    public ResponseEntity<?> buscarClientesPorNome(@RequestParam String nome) {
+    public ResponseEntity<Optional<ClientePlanosResumoResponseDTO>> buscarClientesPorNome(@RequestParam String nome) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(clienteService.buscarClientePorNome(nome));
+                .body(clienteService.clientePorNome(nome));
     }
 
 }

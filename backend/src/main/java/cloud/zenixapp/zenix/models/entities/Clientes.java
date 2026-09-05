@@ -19,7 +19,7 @@ public class Clientes extends BaseEntity {
     @Column(name = "cliente_nome", length = 120, unique = true)
     private String nomeCliente;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "telefone_id")
     private TelefoneCliente telefoneCliente;
 
@@ -29,7 +29,7 @@ public class Clientes extends BaseEntity {
     @Column(name = "cliente_status", nullable = false, columnDefinition = "INT DEFAULT 1")
     private int status = 1;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "planos_id")
     private Planos planos;
 

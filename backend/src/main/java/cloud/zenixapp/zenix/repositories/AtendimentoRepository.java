@@ -44,7 +44,7 @@ public interface AtendimentoRepository extends JpaRepository<Atendimento, String
 //  Lista um atendimento por ID e Tenant
     Optional<AtendimentoResponseWriteDTO> findByIdAndTenant(String id, String tenant);
 
-    @Query(value = "SELECT a FROM Atendimento WHERE a.id = :id AND a.tenant = :tenant")
+    @Query(value = "SELECT a FROM Atendimento a WHERE a.id = :id AND a.tenant = :tenant")
     Optional<Atendimento> findById(@Param("id") String id, @Param("tenant") String tenant);
 
 }

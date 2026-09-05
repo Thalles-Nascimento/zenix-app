@@ -8,16 +8,14 @@ import cloud.zenixapp.zenix.configs.mappers.ClienteMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.ClientePlanoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteUpdateRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.ClienteResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.clientes.ClientePlanosResumoResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Clientes;
 import cloud.zenixapp.zenix.models.entities.Planos;
 import cloud.zenixapp.zenix.models.entities.TelefoneCliente;
-import cloud.zenixapp.zenix.models.entities.Tenants;
 import cloud.zenixapp.zenix.models.interfaces.ClientesProjectionView;
 import cloud.zenixapp.zenix.repositories.ClienteRepository;
 import cloud.zenixapp.zenix.repositories.TelefoneRepository;
-import cloud.zenixapp.zenix.repositories.TenantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -46,8 +44,6 @@ public class ClienteService {
     @Autowired
     private PlanosService planosService;
 
-    @Autowired
-    private TenantRepository tenantRepository;
 
     @Transactional
     public SuccessResponseDTO save(ClienteRequestDTO clienteDTO){
@@ -57,7 +53,7 @@ public class ClienteService {
         cliente.setNomeCliente(clienteDTO.nomeCliente());
         cliente.setTenant(tenantId);
 
-        Optional<TelefoneCliente> telefone = clienteRepository.findByNumber(clienteDTO.telefoneCliente(), tenantId);
+        Optional<TelefoneCliente> telefone = clienteRepository.findByTelefone_ClienteAndTenant(clienteDTO.telefoneCliente(), tenantId);
 
         if (telefone.isPresent()){
             cliente.setTelefoneCliente(telefone.get());
@@ -81,7 +77,8 @@ public class ClienteService {
         );
     }
 
-    public Optional<ClientesProjectionView> clientePorNome(String nome){
+//  Lista os clientes pelo nome
+    public Optional<ClientePlanosResumoResponseDTO> clientePorNome(String nome){
         return clienteRepository.findByName(nome, TenantContext.getTenantId());
     }
 
@@ -89,31 +86,14 @@ public class ClienteService {
         return clienteRepository.findClientByNumber(numero, TenantContext.getTenantId());
     }
 
-    @Transactional
-    public SuccessResponseDTO atualizarRetornoCliente(String id) {
-        String tenantId = TenantContext.getTenantId();
-        return clienteRepository.findById(id, tenantId)
-                .map(clienteView -> {
-
-                    clienteRepository.atualizarRetorno(clienteView.getId(), tenantId);
-
-                    return new SuccessResponseDTO(
-                            HttpStatus.OK.value(),
-                            "Obrigado pelo retorno!"
-                    );
-
-                })
-                .orElseThrow(() -> new NotFoundException("Cliente não encontrado!"));
-    }
 
     @Transactional
-    public String retiraRetornoCliente(String nome, String tenantId) {
-
+    public void retiraRetornoCliente(String nome, String tenantId) {
         clienteRepository.findByName(nome, tenantId)
-                .ifPresent(clientesProjectionView -> clienteRepository.retirarRetorno(clientesProjectionView.getId(), tenantId));
-
-        return "Cliente retirado";
-
+                .ifPresent(clientesDto -> {
+                    if (clientesDto.status() != 1) throw new ClienteExcluidoException("Cliente foi excluído");
+                    clienteRepository.retirarRetorno(clientesDto.id(), tenantId);
+                });
     }
 
     @Scheduled(cron = "0 0 0 * * *")
@@ -139,7 +119,7 @@ public class ClienteService {
                     Planos plano = planosService.buscarPlanoPorId(requestDTO.idPlano());
                     Clientes cliente = clienteMapper.toClientes(clientesView);
 
-                    clienteRepository.findByNumber(clientesView.getTelefone(), tenantId)
+                    clienteRepository.findByTelefone_ClienteAndTenant(clientesView.getTelefone(), tenantId)
                             .ifPresent(cliente::setTelefoneCliente);
 
                     cliente.setPlanos(plano);
@@ -165,7 +145,7 @@ public class ClienteService {
 
                     Clientes cliente = clienteMapper.toClientes(clienteView);
 
-                    clienteRepository.findByNumber(clienteView.getTelefone(), tenantId)
+                    clienteRepository.findByTelefone_ClienteAndTenant(clienteView.getTelefone(), tenantId)
                             .ifPresent(cliente::setTelefoneCliente);
 
                     cliente.setPlanos(null);
@@ -192,14 +172,14 @@ public class ClienteService {
 
                     Clientes cliente = clienteMapper.toClienteSimples(clienteView);
 
-                    clienteRepository.findByNumber(clienteView.getTelefone(), tenantId)
+                    clienteRepository.findByTelefone_ClienteAndTenant(clienteView.getTelefone(), tenantId)
                             .ifPresent(cliente::setTelefoneCliente);
 
                     clienteMapper.atualizarCliente(cliente, clienteUpdateDTO);
 
                     if (clienteUpdateDTO.telefoneCliente() != null && !clienteUpdateDTO.telefoneCliente().isBlank()) {
                         String numero = clienteUpdateDTO.telefoneCliente().replaceAll("\\D", "");
-                        TelefoneCliente telefone = clienteRepository.findByNumber(numero, tenantId)
+                        TelefoneCliente telefone = clienteRepository.findByTelefone_ClienteAndTenant(numero, tenantId)
                                 .orElseGet(() -> {
                                     TelefoneCliente telefoneNovo = new TelefoneCliente(numero);
                                     telefoneNovo.setTenant(tenantId);
@@ -256,17 +236,20 @@ public class ClienteService {
     }
 
 //  TODO Criar método para retirar atendimento do mês caso o atendimento que foi feito com plano seja excluído
-    public void atualizarAtendimentosMes(String nome, String tenantId){
-        Optional<ClientesProjectionView> clienteView = clienteRepository.findByName(nome, tenantId);
+    @Transactional
+    public void atualizarRetornoDoCliente(String nome, String tenantId){
+        clienteRepository.findByName(nome, tenantId)
+                .ifPresent(clienteDTO -> {
+                    if (clienteDTO.status() != 1) throw new ClienteExcluidoException("Cliente foi excluído");
+                    if (clienteDTO.plano().id() != null) {
+                        // Atendimento por plano
+                        clienteRepository.atualizarAtendimentosMes(clienteDTO.id(), tenantId);
 
-        if (clienteView.isEmpty() || clienteView.get().getPlanoId() == null) return;
+                    }
 
-        clienteRepository.atualizarAtendimentosMes(clienteView.get().getId(), tenantId);
-
-    }
-
-    public List<ClientesProjectionView> buscarClientePorNome(String nome){
-        return clienteRepository.findByNameContaining(nome, TenantContext.getTenantId());
+                    // Retorno do cliente para fins de relatório
+                    clienteRepository.atualizarRetorno(clienteDTO.id(), tenantId);
+                });
     }
 
 }

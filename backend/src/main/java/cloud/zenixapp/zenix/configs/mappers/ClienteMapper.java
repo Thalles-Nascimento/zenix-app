@@ -1,7 +1,7 @@
 package cloud.zenixapp.zenix.configs.mappers;
 
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteUpdateRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.ClienteResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.clientes.ClienteResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Clientes;
 import cloud.zenixapp.zenix.models.interfaces.ClientesProjectionView;
 import cloud.zenixapp.zenix.models.interfaces.ClientesSimplesProjectionView;

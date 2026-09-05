@@ -1,4 +1,4 @@
 package cloud.zenixapp.zenix.models.dtos.responses.telefones;
 
-public record TelefoneClienteResponseDTO() {
+public record TelefoneClienteResponseDTO(String telefoneCliente) {
 }
