@@ -112,19 +112,13 @@ public class ClienteService {
     @Transactional
     public SuccessResponseDTO inserirPlano(String id, ClientePlanoRequestDTO requestDTO) throws NotFoundException {
         String tenantId = TenantContext.getTenantId();
-        return clienteRepository.findById(id, tenantId)
-                .map(clientesView -> {
-                    if(clientesView.getPlanoId() != null){
+        return clienteRepository.findByIdAndTenant(id, tenantId)
+                .map(cliente -> {
+                    if(cliente.getPlanos() != null){
                         throw new ClientePossuePlanoException("Cliente possui um plano ativo");
                     }
 
-                    Planos plano = planosService.buscarPlanoPorId(requestDTO.idPlano());
-                    Clientes cliente = clienteMapper.toClientes(clientesView);
-
-                    clienteRepository.findByTelefone_ClienteAndTenant(clientesView.getTelefone(), tenantId)
-                            .ifPresent(cliente::setTelefoneCliente);
-
-                    cliente.setPlanos(plano);
+                    cliente.setPlanos(planosService.buscarPlanoPorId(requestDTO.idPlano()));
                     cliente.setDataRenovacao(LocalDate.now().plusMonths(1));
 
 
@@ -142,19 +136,15 @@ public class ClienteService {
     @Transactional
     public SuccessResponseDTO retirarPlano(String id){
         String tenantId = TenantContext.getTenantId();
-        return clienteRepository.findById(id, tenantId)
-                .map(clienteView -> {
-
-                    Clientes cliente = clienteMapper.toClientes(clienteView);
-
-                    clienteRepository.findByTelefone_ClienteAndTenant(clienteView.getTelefone(), tenantId)
-                            .ifPresent(cliente::setTelefoneCliente);
+        return clienteRepository.findByIdAndTenant(id, tenantId)
+                .map(cliente -> {
 
                     cliente.setPlanos(null);
                     cliente.setAtendimentosMes(0);
                     cliente.setDataRenovacao(null);
 
                     clienteRepository.save(cliente);
+
                     return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
                             "Plano retirado com sucesso"

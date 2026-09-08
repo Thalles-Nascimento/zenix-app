@@ -151,26 +151,8 @@ public interface ClienteRepository extends JpaRepository<Clientes, String> {
         """)
     List<ClientePlanosResumoResponseDTO> findAll(@Param("tenantId") String tenantId);
 
-    @NativeQuery(
-            value = "SELECT " +
-                    "c.id AS id," +
-                    "c.cliente_nome AS nome," +
-                    "tc.telefone_cliente AS telefone," +
-                    "c.cliente_data_renovacao AS dataRenovacao," +
-                    "c.cliente_atendimentos_mes AS atendimentoMes," +
-                    "c.cliente_retorno AS retorno," +
-                    "c.updated_at AS updatedAt," +
-                    "c.cliente_status AS status," +
-                    "p.id AS planoId," +
-                    "p.planos_descricao AS planoDescricao," +
-                    "p.planos_valor AS planoValor," +
-                    "p.planos_limite AS planoAtendimentos, " +
-                    "p.planos_servico AS planoServicoRaw " +
-                    "FROM clientes c " +
-                    "LEFT JOIN telefones_clientes tc ON c.telefone_id = tc.id " +
-                    "LEFT JOIN planos p ON c.planos_id = p.id " +
-                    "WHERE c.id = :id AND c.tenant_id = :tenantId AND c.cliente_status = 1")
-    Optional<ClientesProjectionView> findById(@Param("id") String id, @Param("tenantId") String tenantId);
+
+    Optional<Clientes> findByIdAndTenant(String id, String tenant);
 
     @NativeQuery(
             value = "SELECT " +
