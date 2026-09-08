@@ -237,7 +237,7 @@ cd backend
 docker compose up
 ```
 
-A API sobe por padrão em `http://localhost:8080/api/v1`.
+A API sobe por padrão em `http://localhost:8080/api/v2`.
 
 [//]: # (## Testes automatizados)
 
