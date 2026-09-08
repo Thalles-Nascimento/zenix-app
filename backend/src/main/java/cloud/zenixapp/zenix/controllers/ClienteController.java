@@ -61,7 +61,7 @@ public class ClienteController {
             @ApiResponse(responseCode = "200", description = "Clientes encontrados")
     })
     @Operation(summary = "Listar clientes", description = "Endpoint para listar todos os clientes")
-    public ResponseEntity<List<ClientesProjectionView>> findAllClientes(){
+    public ResponseEntity<List<ClientePlanosResumoResponseDTO>> findAllClientes(){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(clienteService.buscarTodosClientes());
     }

@@ -14,7 +14,6 @@ import cloud.zenixapp.zenix.models.dtos.responses.clientes.ClienteSimplesRespons
 import cloud.zenixapp.zenix.models.entities.Clientes;
 import cloud.zenixapp.zenix.models.entities.Planos;
 import cloud.zenixapp.zenix.models.entities.TelefoneCliente;
-import cloud.zenixapp.zenix.models.interfaces.ClientesProjectionView;
 import cloud.zenixapp.zenix.repositories.ClienteRepository;
 import cloud.zenixapp.zenix.repositories.TelefoneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +82,7 @@ public class ClienteService {
                 .orElseThrow(() -> new NotFoundException("Cliente não encontrado"));
     }
 
-
+//  Lista os clientes por telefone - Endpoint para Fila
     public List<ClienteSimplesResponseDTO> clientesByTelefone(String numero) {
         return clienteRepository.findClientByNumber(numero, TenantContext.getTenantId());
     }
@@ -105,7 +104,8 @@ public class ClienteService {
         clienteRepository.resetarAtendimentosMes(diaHoje, TenantContext.getTenantId());
     }
 
-    public List<ClientesProjectionView> buscarTodosClientes() {
+//  Listar todos os clientes
+    public List<ClientePlanosResumoResponseDTO> buscarTodosClientes() {
         return clienteRepository.findAll(TenantContext.getTenantId());
     }
 
