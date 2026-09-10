@@ -40,28 +40,7 @@ public interface ClienteRepository extends JpaRepository<Clientes, String> {
                 WHERE c.nomeCliente = :nome AND c.tenant = :tenantId
         """)
     Optional<ClientePlanosResumoResponseDTO> findByName(@Param("nome") String nome, @Param("tenantId") String tenantId);
-
-    @NativeQuery(
-            value = "SELECT " +
-                    "c.id AS id," +
-                    "c.cliente_nome AS nome," +
-                    "tc.telefone_cliente AS telefone," +
-                    "c.cliente_data_renovacao AS dataRenovacao," +
-                    "c.cliente_atendimentos_mes AS atendimentoMes," +
-                    "c.cliente_retorno AS retorno," +
-                    "c.updated_at AS updatedAt," +
-                    "c.cliente_status AS status," +
-                    "p.id AS planoId," +
-                    "p.planos_descricao AS planoDescricao," +
-                    "p.planos_valor AS planoValor," +
-                    "p.planos_servico AS planoServicoRaw," +
-                    "p.planos_limite AS planoAtendimentos " +
-                    "FROM clientes c " +
-                    "LEFT JOIN telefones_clientes tc ON c.telefone_id = tc.id " +
-                    "LEFT JOIN planos p ON c.planos_id = p.id " +
-                    "WHERE c.cliente_nome LIKE %:nome% AND c.tenant_id = :tenantId AND c.cliente_status = 1")
-    List<ClientesProjectionView> findByNameContaining(@Param("nome") String nome, @Param("tenantId") String tenantId);
-
+    
     @Modifying
     @NativeQuery("UPDATE clientes SET cliente_atendimentos_mes = 0 WHERE tenant_id = :tenantId AND planos_id IS NOT NULL AND DAY(cliente_data_renovacao) = :dia")
     void resetarAtendimentosMes(@Param("dia") int dia, @Param("tenantId") String tenantId);
