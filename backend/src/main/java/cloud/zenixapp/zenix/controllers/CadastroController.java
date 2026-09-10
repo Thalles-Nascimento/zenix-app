@@ -1,14 +1,8 @@
 package cloud.zenixapp.zenix.controllers;
 
-import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.handlers.BindingHandler;
 import cloud.zenixapp.zenix.models.dtos.requests.CadastroRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.requests.UnidadeRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.UnidadeResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.UnidadeUserResponseDTO;
 import cloud.zenixapp.zenix.services.CadastroService;
-import cloud.zenixapp.zenix.services.UnidadeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -19,10 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/${api-url}/cadastro")
