@@ -4,7 +4,6 @@ import cloud.zenixapp.zenix.models.dtos.responses.clientes.ClientePlanosResumoRe
 import cloud.zenixapp.zenix.models.dtos.responses.clientes.ClienteSimplesPlanosResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Clientes;
 import cloud.zenixapp.zenix.models.entities.TelefoneCliente;
-import cloud.zenixapp.zenix.models.interfaces.ClientesProjectionView;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.NativeQuery;
@@ -40,7 +39,7 @@ public interface ClienteRepository extends JpaRepository<Clientes, String> {
                 WHERE c.nomeCliente = :nome AND c.tenant = :tenantId
         """)
     Optional<ClientePlanosResumoResponseDTO> findByName(@Param("nome") String nome, @Param("tenantId") String tenantId);
-    
+
     @Modifying
     @NativeQuery("UPDATE clientes SET cliente_atendimentos_mes = 0 WHERE tenant_id = :tenantId AND planos_id IS NOT NULL AND DAY(cliente_data_renovacao) = :dia")
     void resetarAtendimentosMes(@Param("dia") int dia, @Param("tenantId") String tenantId);
