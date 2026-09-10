@@ -2,7 +2,6 @@ package cloud.zenixapp.zenix.repositories;
 
 import cloud.zenixapp.zenix.models.dtos.responses.clientes.ClientePlanosResumoResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.clientes.ClienteSimplesPlanosResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.clientes.ClienteSimplesResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Clientes;
 import cloud.zenixapp.zenix.models.entities.TelefoneCliente;
 import cloud.zenixapp.zenix.models.interfaces.ClientesProjectionView;
