@@ -1,13 +1,11 @@
 package cloud.zenixapp.zenix.configs.mappers;
 
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteUpdateRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.clientes.ClienteResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Clientes;
-import cloud.zenixapp.zenix.models.interfaces.ClientesProjectionView;
-import cloud.zenixapp.zenix.models.interfaces.ClientesSimplesProjectionView;
-import org.mapstruct.*;
-
-import java.util.List;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface ClienteMapper {
