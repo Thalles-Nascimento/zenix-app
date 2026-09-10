@@ -1,11 +1,11 @@
 package cloud.zenixapp.zenix.repositories;
 
 import cloud.zenixapp.zenix.models.dtos.responses.clientes.ClientePlanosResumoResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.clientes.ClienteSimplesPlanosResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.clientes.ClienteSimplesResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Clientes;
 import cloud.zenixapp.zenix.models.entities.TelefoneCliente;
 import cloud.zenixapp.zenix.models.interfaces.ClientesProjectionView;
-import cloud.zenixapp.zenix.models.interfaces.ClientesSimplesProjectionView;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.NativeQuery;
@@ -92,15 +92,15 @@ public interface ClienteRepository extends JpaRepository<Clientes, String> {
     @NativeQuery(
             value = "UPDATE clientes c " +
                     "SET c.cliente_status = -1, c.deleted_at = :deleteTime " +
-                    "WHERE c.id = :id AND c.tenant_id = :tenantId")
-    void deleteLogico(@Param("id") String id, @Param("deleteTime") LocalDateTime deleteTime, @Param("tenantId") String tenantId);
+                    "WHERE c.deleted_at IS NULL AND c.cliente_status != -1 AND c.id = :id AND c.tenant_id = :tenantId ")
+    int deleteLogico(@Param("id") String id, @Param("deleteTime") LocalDateTime deleteTime, @Param("tenantId") String tenantId);
 
     @Modifying
     @NativeQuery(
             value = "UPDATE clientes c " +
                     "SET c.cliente_status = 1, c.deleted_at = null " +
-                    "WHERE c.id = :id AND c.tenant_id = :tenantId")
-    void ativarCliente(@Param("id") String id, @Param("tenantId") String tenantId);
+                    "WHERE c.deleted_at IS NOT NULL AND c.cliente_status != 1 AND c.id = :id AND c.tenant_id = :tenantId ")
+    int ativarCliente(@Param("id") String id, @Param("tenantId") String tenantId);
 
     @Query(
             value = "SELECT tc " +
@@ -110,7 +110,7 @@ public interface ClienteRepository extends JpaRepository<Clientes, String> {
 
     @Query("""
         SELECT new cloud.zenixapp.zenix.models.dtos.responses.clientes.
-                ClienteSimplesResponseDTO(
+                ClienteSimplesPlanosResponseDTO(
                     c.id,
                     c.nomeCliente,
                     new cloud.zenixapp.zenix.models.dtos.responses.telefones.TelefoneClienteResponseDTO(
@@ -126,7 +126,7 @@ public interface ClienteRepository extends JpaRepository<Clientes, String> {
                 LEFT JOIN c.planos p
                 WHERE tc.telefoneCliente = :telefone AND c.tenant = :tenantId
         """)
-    List<ClienteSimplesResponseDTO> findClientByNumber(@Param("telefone") String telefone, @Param("tenantId") String tenantId);
+    List<ClienteSimplesPlanosResponseDTO> findClientByNumber(@Param("telefone") String telefone, @Param("tenantId") String tenantId);
 
     @Query("""
         SELECT new cloud.zenixapp.zenix.models.dtos.responses.clientes.
@@ -154,19 +154,5 @@ public interface ClienteRepository extends JpaRepository<Clientes, String> {
 
     Optional<Clientes> findByIdAndTenant(String id, String tenant);
 
-    @NativeQuery(
-            value = "SELECT " +
-                    "c.id AS id," +
-                    "c.cliente_nome AS nome," +
-                    "tc.telefone_cliente AS telefone," +
-                    "c.cliente_data_renovacao AS dataRenovacao," +
-                    "c.cliente_atendimentos_mes AS atendimentoMes," +
-                    "c.cliente_retorno AS retorno," +
-                    "c.updated_at AS updatedAt," +
-                    "c.cliente_status AS status " +
-                    "FROM clientes c " +
-                    "LEFT JOIN telefones_clientes tc ON c.telefone_id = tc.id " +
-                    "WHERE c.id = :id AND c.tenant_id = :tenantId")
-    Optional<ClientesSimplesProjectionView> findByIdSimples(@Param("id") String id, @Param("tenantId") String tenantId);
 
 }

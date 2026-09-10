@@ -7,8 +7,7 @@ import cloud.zenixapp.zenix.models.dtos.requests.ClienteRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteUpdateRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.clientes.ClientePlanosResumoResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.clientes.ClienteSimplesResponseDTO;
-import cloud.zenixapp.zenix.models.interfaces.ClientesProjectionView;
+import cloud.zenixapp.zenix.models.dtos.responses.clientes.ClienteSimplesPlanosResponseDTO;
 import cloud.zenixapp.zenix.services.ClienteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -46,7 +45,7 @@ public class ClienteController {
 
     // TODO Verificar endpoint
     @GetMapping("/telefone/{numero}")
-    public ResponseEntity<List<ClienteSimplesResponseDTO>> buscarClientesPorTelefone(@PathVariable String numero) {
+    public ResponseEntity<List<ClienteSimplesPlanosResponseDTO>> buscarClientesPorTelefone(@PathVariable String numero) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(clienteService.clientesByTelefone(numero));
     }

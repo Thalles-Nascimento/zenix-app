@@ -4,15 +4,15 @@ import cloud.zenixapp.zenix.configs.TenantContext;
 import cloud.zenixapp.zenix.configs.exceptions.ClienteExcluidoException;
 import cloud.zenixapp.zenix.configs.exceptions.ClientePossuePlanoException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
+import cloud.zenixapp.zenix.configs.exceptions.UpdateErrorException;
 import cloud.zenixapp.zenix.configs.mappers.ClienteMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.ClientePlanoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteUpdateRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.clientes.ClientePlanosResumoResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.clientes.ClienteSimplesResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.clientes.ClienteSimplesPlanosResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Clientes;
-import cloud.zenixapp.zenix.models.entities.Planos;
 import cloud.zenixapp.zenix.models.entities.TelefoneCliente;
 import cloud.zenixapp.zenix.repositories.ClienteRepository;
 import cloud.zenixapp.zenix.repositories.TelefoneRepository;
@@ -83,7 +83,7 @@ public class ClienteService {
     }
 
 //  Lista os clientes por telefone - Endpoint para Fila
-    public List<ClienteSimplesResponseDTO> clientesByTelefone(String numero) {
+    public List<ClienteSimplesPlanosResponseDTO> clientesByTelefone(String numero) {
         return clienteRepository.findClientByNumber(numero, TenantContext.getTenantId());
     }
 
@@ -156,16 +156,12 @@ public class ClienteService {
     @Transactional
     public SuccessResponseDTO atualizarCliente(String id, ClienteUpdateRequestDTO clienteUpdateDTO){
         String tenantId = TenantContext.getTenantId();
-        return clienteRepository.findByIdSimples(id, tenantId)
-                .map(clienteView -> {
-                    if(clienteView.getStatus() == -1) {
-                        throw new ClienteExcluidoException("Cliente já foi excluído!");
+        return clienteRepository.findByIdAndTenant(id, tenantId)
+                .map(cliente -> {
+                    if(cliente.getStatus() == -1) {
+                        throw new ClienteExcluidoException("Cliente foi excluído!");
                     }
 
-                    Clientes cliente = clienteMapper.toClienteSimples(clienteView);
-
-                    clienteRepository.findByTelefone_ClienteAndTenant(clienteView.getTelefone(), tenantId)
-                            .ifPresent(cliente::setTelefoneCliente);
 
                     clienteMapper.atualizarCliente(cliente, clienteUpdateDTO);
 
@@ -194,37 +190,26 @@ public class ClienteService {
     @Transactional
     public SuccessResponseDTO deletarCliente(String id){
         String tenantId = TenantContext.getTenantId();
-        return clienteRepository.findByIdSimples(id, tenantId)
-                .map(cliente -> {
-                    if(cliente.getStatus() == -1) {
-                        throw new ClienteExcluidoException("Cliente já foi excluído!");
-                    }
-                    clienteRepository.deleteLogico(cliente.getId(), LocalDateTime.now(),tenantId);
+        int rowsAffected = clienteRepository.deleteLogico(id, LocalDateTime.now(), tenantId);
+        if (rowsAffected == 1){
+            return new SuccessResponseDTO(
+                    HttpStatus.OK.value(),
+                    "Cliente deletado com sucesso"
+            );
+        } else throw new UpdateErrorException("Não foi possível deletar!");
 
-                    return new SuccessResponseDTO(
-                            HttpStatus.OK.value(),
-                            "Cliente deletado com sucesso"
-                    );
-                })
-                .orElseThrow(() -> new NotFoundException("Cliente não encontrado!"));
     }
 
     @Transactional
     public SuccessResponseDTO ativarCliente(String id){
         String tenantId = TenantContext.getTenantId();
-        return clienteRepository.findByIdSimples(id, tenantId)
-                .map(cliente -> {
-                    if (cliente.getStatus() != -1){
-                        throw new RuntimeException("Cliente já está ativo");
-                    }
-
-                    clienteRepository.ativarCliente(cliente.getId(), tenantId);
-                    return new SuccessResponseDTO(
-                            HttpStatus.OK.value(),
-                            "Cliente ativado com sucesso"
-                    );
-                })
-                .orElseThrow(() -> new NotFoundException("Cliente não encontrado!"));
+        int rowsAffected = clienteRepository.ativarCliente(id, tenantId);
+        if (rowsAffected == 1){
+            return new SuccessResponseDTO(
+                    HttpStatus.OK.value(),
+                    "Cliente ativado com sucesso"
+            );
+        } else throw new UpdateErrorException("Não foi possível ativar!");
     }
 
 //  TODO Criar método para retirar atendimento do mês caso o atendimento que foi feito com plano seja excluído
