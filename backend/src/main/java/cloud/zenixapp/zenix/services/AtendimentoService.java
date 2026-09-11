@@ -10,7 +10,6 @@ import cloud.zenixapp.zenix.models.dtos.responses.atendimentos.AtendimentoRespon
 import cloud.zenixapp.zenix.models.entities.Atendimento;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.repositories.AtendimentoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -18,6 +17,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
@@ -25,16 +25,22 @@ import java.util.Objects;
 @Service
 public class AtendimentoService {
 
-    @Autowired
-    private AtendimentoRepository atendimentoRepository;
+    private static final String MESSAGE_EXCEPTION = "Atendimento não encontrado!";
+    private static final ZoneId TIME_ZONE = ZoneId.of("America/Sao_Paulo");
+    private final DateTimeFormatter currentDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    private final DateTimeFormatter current_date = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private final AtendimentoRepository atendimentoRepository;
 
-    @Autowired
-    private AtendimentoMapper atendimentoMapper;
 
-    @Autowired
-    private ClienteService clienteService;
+    private final AtendimentoMapper atendimentoMapper;
+
+    private final ClienteService clienteService;
+
+    public AtendimentoService(AtendimentoRepository atendimentoRepository, AtendimentoMapper atendimentoMapper, ClienteService clienteService) {
+        this.atendimentoRepository = atendimentoRepository;
+        this.atendimentoMapper = atendimentoMapper;
+        this.clienteService = clienteService;
+    }
 
     @Transactional(propagation = Propagation.REQUIRED)
     public SuccessResponseDTO inserirAtendimento(AtendimentoRequestDTO atendimentoDTO){
@@ -46,7 +52,7 @@ public class AtendimentoService {
         Usuarios userAuth = (Usuarios) Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
         Atendimento atendimento = atendimentoMapper.inserirAtendimento(atendimentoDTO);
 
-        atendimento.setDate(LocalDateTime.now().format(current_date));
+        atendimento.setDate(LocalDateTime.now(TIME_ZONE).format(currentDate));
         atendimento.setUsuarios(userAuth);
         atendimento.setTenant(tenantId);
 
@@ -61,10 +67,9 @@ public class AtendimentoService {
 
     public List<AtendimentoResponseDTO> listarAtendimentosHoje(){
         Usuarios user = (Usuarios) Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
-        return atendimentoRepository.findByUsuariosAndDateAndTenant(user, LocalDateTime.now().format(current_date), TenantContext.getTenantId());
+        return atendimentoRepository.findByUsuariosAndDateAndTenant(user, LocalDateTime.now(TIME_ZONE).format(currentDate), TenantContext.getTenantId());
     }
 
-//    TODO Criar uma tela no frontend para visualizar esses atendimentos abaixo
     public List<AtendimentoResponseDTO> listarTodosAtendimentos(){
         return atendimentoRepository.findAllByTenant(TenantContext.getTenantId());
     }
@@ -87,7 +92,7 @@ public class AtendimentoService {
 
                     clienteService.retiraRetornoCliente(atendimento.descricao(), tenantId);
 
-                    atendimentoRepository.deleteLogico(atendimento.id(), LocalDateTime.now(), tenantId);
+                    atendimentoRepository.deleteLogico(atendimento.id(), LocalDateTime.now(TIME_ZONE), tenantId);
 
                     return new SuccessResponseDTO(
                             HttpStatus.OK.value(),
@@ -95,7 +100,7 @@ public class AtendimentoService {
                     );
 
                 })
-                .orElseThrow(() -> new NotFoundException("Atendimento não encontrado!"));
+                .orElseThrow(() -> new NotFoundException(MESSAGE_EXCEPTION));
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -116,10 +121,9 @@ public class AtendimentoService {
                     );
 
                 })
-                .orElseThrow(() -> new NotFoundException("Atendimento não encontrado!"));
+                .orElseThrow(() -> new NotFoundException(MESSAGE_EXCEPTION));
     }
 
-    //    TODO Restringir a ativação apenas ao administrador
     @Transactional
     public SuccessResponseDTO ativarAtendimento(String id){
         String tenantId = TenantContext.getTenantId();
@@ -138,7 +142,7 @@ public class AtendimentoService {
                             "Atendimento ativado com sucesso"
                     );
                 })
-                .orElseThrow(() -> new NotFoundException("Atendimento não encontrado!"));
+                .orElseThrow(() -> new NotFoundException(MESSAGE_EXCEPTION));
     }
 
 }
