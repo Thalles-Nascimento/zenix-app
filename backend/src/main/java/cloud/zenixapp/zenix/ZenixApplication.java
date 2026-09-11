@@ -10,6 +10,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class ZenixApplication {
 
 	public static void main(String[] args) {
+
+		System.setProperty("log4j2.contextSelector", "org.apache.logging.log4j.core.async.AsyncLoggerContextSelector");
 		SpringApplication.run(ZenixApplication.class, args);
 	}
 

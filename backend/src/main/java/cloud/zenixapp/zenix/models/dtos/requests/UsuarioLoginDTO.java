@@ -14,4 +14,12 @@ public record UsuarioLoginDTO(
         String senha
 ) {
 
+        @Override
+        public @NotNull String toString() {
+                return "UsuarioLoginDTO{" +
+                        "email='" + (email != null ? email.replaceAll("(?<=.).(?=[^@]*?.@)", "*") : null) + '\'' +
+                        ", senha='" + "*********" + '\'' +
+                        '}';
+        }
+
 }
