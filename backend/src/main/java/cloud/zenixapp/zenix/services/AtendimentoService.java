@@ -30,8 +30,7 @@ public class AtendimentoService {
     private final DateTimeFormatter currentDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     private final AtendimentoRepository atendimentoRepository;
-
-
+    
     private final AtendimentoMapper atendimentoMapper;
 
     private final ClienteService clienteService;
