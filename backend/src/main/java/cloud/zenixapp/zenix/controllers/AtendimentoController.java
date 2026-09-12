@@ -1,6 +1,5 @@
 package cloud.zenixapp.zenix.controllers;
 
-import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.handlers.BindingHandler;
 import cloud.zenixapp.zenix.models.dtos.requests.AtendimentoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
@@ -12,13 +11,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.List;
 
@@ -27,14 +26,16 @@ import java.util.List;
 @Tag(name = "Atendimento", description = "Endpoints do serviço de Atendimento")
 public class AtendimentoController {
 
-    @Autowired
-    private AtendimentoService atendimentoService;
 
+    private final AtendimentoService atendimentoService;
 
-    /*
-    *Endpoint para inserção de um atendimento no Banco de Dados
-    *
-    */
+    public AtendimentoController(AtendimentoService atendimentoService) {
+        this.atendimentoService = atendimentoService;
+    }
+
+    /*=====================================================================================
+     * Endpoint para inserir um novo atendimento.
+     *======================================================================================*/
     @PostMapping
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Atendimento inserido no banco"),
@@ -51,16 +52,18 @@ public class AtendimentoController {
                 .body(atendimentoService.inserirAtendimento(atendimentoDTO));
     }
 
+    /*=====================================================================================
+     * Endpoint para listar o histórico de atendimentos do usuário.
+     *======================================================================================*/
     @GetMapping("/historico")
     public ResponseEntity<List<AtendimentoResponseDTO>> findHistorico(){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.listarHistorico());
     }
 
-    /*
-    * Endpoint para buscar todos os atendimentos do Banco de Dados
-    *
-    */
+    /*=====================================================================================
+     * Endpoint para listar os atendimentos de hoje.
+     *======================================================================================*/
     @GetMapping
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Atendimento encontrado")
@@ -71,10 +74,9 @@ public class AtendimentoController {
                 .body(atendimentoService.listarAtendimentosHoje());
     }
 
-    /*
-     * Endpoint para buscar um atendimento do Banco de Dados para a visualização de relatórios do ADMIN
-     *
-     */
+    /*=====================================================================================
+     * Endpoint para listar todos os atendimentos do usuário.
+     *======================================================================================*/
     @GetMapping("/admin")
     @Operation(summary = "Listar todos os atendimentos", description = "Endpoint para ADMIN listar todos os atendimentos do dia")
     public ResponseEntity<List<AtendimentoResponseDTO>> findAllAdmin(){
@@ -82,10 +84,9 @@ public class AtendimentoController {
                 .body(atendimentoService.listarTodosAtendimentos());
     }
 
-    /*
-     * Endpoint para deletar um atendimento do Banco de Dados pelo ID
-     *
-     */
+    /*=====================================================================================
+     * Endpoint para deletar um atendimento pelo ID.
+     *======================================================================================*/
     @DeleteMapping(value = "/{id}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Atendimento excluído do banco"),
@@ -99,10 +100,9 @@ public class AtendimentoController {
     }
 
 
-    /*
-     * Endpoint para atualizar um atendimento do Banco de Dados pelo ID
-     *
-     */
+    /*=====================================================================================
+     * Endpoint para atualizar um atendimento pelo ID.
+     *======================================================================================*/
     @PutMapping(value = "/{id}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Atendimento atualizado"),
@@ -110,7 +110,7 @@ public class AtendimentoController {
             @ApiResponse(responseCode = "400", description = "Campos com nulos ou fora do padrão")
     })
     @Operation(summary = "Atualizar atendimento por ID", description = "Endpoint para atualiza um atendimento por ID")
-    public ResponseEntity<Object> updateByAtendimento(@PathVariable String id, @RequestBody @Valid AtendimentoRequestDTO atendimentoRequestDTO, BindingResult result) throws NotFoundException {
+    public ResponseEntity<Object> updateByAtendimento(@PathVariable String id, @RequestBody @Valid AtendimentoRequestDTO atendimentoRequestDTO, BindingResult result) {
         if(result.hasErrors()){
             if (BindingHandler.isErrorNull(result)){
                 return ResponseEntity.status(HttpStatus.OK)
@@ -121,7 +121,7 @@ public class AtendimentoController {
                     .body(new ErrorResponseDTO(
                             HttpStatus.BAD_REQUEST.value(),
                             "Alguns campos estão fora do padrão",
-                            LocalDateTime.now().toInstant(ZoneOffset.of("-03:00")))
+                            LocalDateTime.now(ZoneId.of("America/Sao_Paulo")).toInstant(ZoneOffset.of("-03:00")))
                     );
         }
 
@@ -130,6 +130,9 @@ public class AtendimentoController {
 
     }
 
+    /*=====================================================================================
+     * Endpoint para ativar um atendimento pelo ID.
+     *======================================================================================*/
     @PatchMapping("/{id}")
     @Operation(summary = "Ativar atendimento", description = "Endpoint para ativar um atendimento do sistema")
     public ResponseEntity<SuccessResponseDTO> ativarAtendimento(@PathVariable String id) {
