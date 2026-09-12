@@ -2,147 +2,91 @@ package cloud.zenixapp.zenix.configs.handlers;
 
 import cloud.zenixapp.zenix.configs.exceptions.*;
 import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 
+@Log4j2
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final ZoneOffset ZONE_OFFSET = ZoneOffset.of("-03:00");
+    private static final ZoneId TIME_ZONE = ZoneId.of("America/Sao_Paulo");
+
+    /*=====================================================================================
+     * Handler para exceções em que a entidade não foi encontrada.
+     *======================================================================================*/
     @ExceptionHandler(value = {NotFoundException.class})
-    public ResponseEntity<ErrorResponseDTO> handleException(Exception ex) {
+    public ResponseEntity<ErrorResponseDTO> handleNotFoundException(Exception ex) {
         ErrorResponseDTO errorResponse = new ErrorResponseDTO(
                 HttpStatus.NOT_FOUND.value(),
                 ex.getMessage(),
-                LocalDateTime.now().toInstant(ZoneOffset.of("-03:00"))
+                LocalDateTime.now(TIME_ZONE).toInstant(ZONE_OFFSET)
         );
+        log.error("Problemas para encontrar o objeto: [Status: {}] => [Message: {}]", errorResponse.status(), errorResponse.message());
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
+    /*=====================================================================================
+     * Handler para exceções em que há erro na criação do 'token'.
+     *======================================================================================*/
     @ExceptionHandler(value = {TokenCreateException.class})
     public ResponseEntity<ErrorResponseDTO> handleTokenCreateException(Exception ex) {
         ErrorResponseDTO errorResponse = new ErrorResponseDTO(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 ex.getMessage(),
-                LocalDateTime.now().toInstant(ZoneOffset.of("-03:00"))
+                LocalDateTime.now(TIME_ZONE).toInstant(ZONE_OFFSET)
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(value = {AtendimentoExcluidoException.class})
-    public ResponseEntity<ErrorResponseDTO> handleAtendimentoExcluidoException(Exception ex) {
+    /*=====================================================================================
+    * Handler para exceções em que a entidade já foi excluída - status = −1
+    *======================================================================================*/
+    @ExceptionHandler(value = {ExcluidoException.class})
+    public ResponseEntity<ErrorResponseDTO> handleExcluidoException(Exception ex) {
         ErrorResponseDTO errorResponse = new ErrorResponseDTO(
                 HttpStatus.GONE.value(),
                 ex.getMessage(),
-                LocalDateTime.now().toInstant(ZoneOffset.of("-03:00"))
+                LocalDateTime.now(TIME_ZONE).toInstant(ZONE_OFFSET)
         );
+        log.error("Problemas para fazer a exclusão: [Status: {}] => [Message: {}]", errorResponse.status(), errorResponse.message());
         return new ResponseEntity<>(errorResponse, HttpStatus.GONE);
+
     }
 
-    @ExceptionHandler(value = {UsuarioExcluidoException.class})
-    public ResponseEntity<ErrorResponseDTO> handleUsuarioExcluidoException(Exception ex) {
+    /*=====================================================================================
+     * Handler para exceções em que a entidade já está ativada - status = 1.
+     *======================================================================================*/
+    @ExceptionHandler(value = {AtivoException.class})
+    public ResponseEntity<ErrorResponseDTO> handleAtivoException(Exception ex) {
         ErrorResponseDTO errorResponse = new ErrorResponseDTO(
                 HttpStatus.GONE.value(),
                 ex.getMessage(),
-                LocalDateTime.now().toInstant(ZoneOffset.of("-03:00"))
+                LocalDateTime.now(TIME_ZONE).toInstant(ZONE_OFFSET)
         );
+        log.error("Problemas para fazer a ativação: [Status: {}] => [Message: {}]", errorResponse.status(), errorResponse.message());
         return new ResponseEntity<>(errorResponse, HttpStatus.GONE);
+
     }
 
-    @ExceptionHandler(value = {FilaException.class})
-    public ResponseEntity<ErrorResponseDTO> handleFilaException(Exception ex){
-        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(
-                HttpStatus.CONFLICT.value(),
-                ex.getMessage(),
-                LocalDateTime.now().toInstant(ZoneOffset.of("-03:00"))
-        );
-
-        return new ResponseEntity<>(errorResponseDTO, HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(value = {UnidadeExcluidoException.class})
-    public ResponseEntity<ErrorResponseDTO> handlerUnidadeExcluidoException(Exception ex) {
-        ErrorResponseDTO errorResponse = new ErrorResponseDTO(
-                HttpStatus.GONE.value(),
-                ex.getMessage(),
-                LocalDateTime.now().toInstant(ZoneOffset.of("-03:00"))
-        );
-        return new ResponseEntity<>(errorResponse, HttpStatus.GONE);
-    }
-
-    @ExceptionHandler(value = {SQLIntegrityConstraintViolationException.class})
-    public ResponseEntity<ErrorResponseDTO> handlerSQLException(Exception ex) {
+    /*=====================================================================================
+     * Handler para exceções em que há conflito.
+     *======================================================================================*/
+    @ExceptionHandler(value = {ConflictException.class})
+    public ResponseEntity<ErrorResponseDTO> handleConflictException(Exception ex) {
         ErrorResponseDTO errorResponse = new ErrorResponseDTO(
                 HttpStatus.CONFLICT.value(),
                 ex.getMessage(),
-                LocalDateTime.now().toInstant(ZoneOffset.of("-03:00"))
+                LocalDateTime.now(TIME_ZONE).toInstant(ZONE_OFFSET)
         );
-        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(value = {UnidadeAtivaException.class})
-    public ResponseEntity<ErrorResponseDTO> handlerUnidadeAtivaException(Exception ex) {
-        ErrorResponseDTO errorResponse = new ErrorResponseDTO(
-                HttpStatus.CONFLICT.value(),
-                ex.getMessage(),
-                LocalDateTime.now().toInstant(ZoneOffset.of("-03:00"))
-        );
-        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(value = {ServicoExcluidoException.class})
-    public ResponseEntity<ErrorResponseDTO> handleServicoExcluidoException(Exception ex) {
-        ErrorResponseDTO errorResponse = new ErrorResponseDTO(
-                HttpStatus.GONE.value(),
-                ex.getMessage(),
-                LocalDateTime.now().toInstant(ZoneOffset.of("-03:00"))
-        );
-        return new ResponseEntity<>(errorResponse, HttpStatus.GONE);
-    }
-
-    @ExceptionHandler(value = {ClienteExcluidoException.class})
-    public ResponseEntity<ErrorResponseDTO> handleClienteExcluidoException(Exception ex) {
-        ErrorResponseDTO errorResponse = new ErrorResponseDTO(
-                HttpStatus.GONE.value(),
-                ex.getMessage(),
-                LocalDateTime.now().toInstant(ZoneOffset.of("-03:00"))
-        );
-        return new ResponseEntity<>(errorResponse, HttpStatus.GONE);
-    }
-
-    @ExceptionHandler(value = {ClientePossuePlanoException.class})
-    public ResponseEntity<ErrorResponseDTO> handleClientePossuePlanoException(Exception ex) {
-        ErrorResponseDTO errorResponse = new ErrorResponseDTO(
-                HttpStatus.CONFLICT.value(),
-                ex.getMessage(),
-                LocalDateTime.now().toInstant(ZoneOffset.of("-03:00"))
-        );
-        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(value = {ExistsException.class})
-    public ResponseEntity<ErrorResponseDTO> handleExistsException(Exception ex){
-        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(
-                HttpStatus.CONFLICT.value(),
-                ex.getMessage(),
-                LocalDateTime.now().toInstant(ZoneOffset.of("-03:00"))
-        );
-
-        return new ResponseEntity<>(errorResponseDTO, HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(value = {OptimisticException.class})
-    public ResponseEntity<ErrorResponseDTO> handlerOptimisticException(Exception ex) {
-        ErrorResponseDTO errorResponse = new ErrorResponseDTO(
-                HttpStatus.CONFLICT.value(),
-                ex.getMessage(),
-                LocalDateTime.now().toInstant(ZoneOffset.of("-03:00"))
-        );
+        log.error("Problemas de conflito: [Status: {}] => [Message: {}]", errorResponse.status(), errorResponse.message());
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
