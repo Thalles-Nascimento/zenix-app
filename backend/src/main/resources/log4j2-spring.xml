@@ -8,7 +8,7 @@
         <Console name="ConsoleAppender" target="SYSTEM_OUT">
             <PatternLayout
                     disableAnsi="false"
-                    pattern="%n%style{%d{yyyy-MM-dd HH:mm:ss.SSS}}{magenta dim} [%t] %highlight{%-5level} %style{%logger{36}}{cyan bold}: %msg%n%style{%ex{5}}{yellow}"
+                    pattern="%n%style{%d{yyyy-MM-dd HH:mm:ss.SSS}}{magenta dim} [%t] %highlight{%-5level}{TRACE=white bold} %style{%logger{36}}{cyan bold}: %msg%n%style{%ex{5}}{yellow}"
             />
         </Console>
         <RollingFile name="FileAppender"
@@ -17,7 +17,8 @@
 
             <PatternLayout
                     disableAnsi="false"
-                    pattern="%style{%d{yyyy-MM-dd HH:mm:ss.SSS}}{magenta dim} Thread: [%t] Level: %highlight{%-5level}  %style{%logger{36}}{cyan bold}: %msg%n%style{%ex{5}}{yellow}"/>
+                    pattern="%style{%d{yyyy-MM-dd HH:mm:ss.SSS}}{magenta dim} Level: %highlight{%-5level}{TRACE=white bold} %style{%logger{36}}{cyan bold}: %msg%n%style{%ex{5}}{yellow}"
+            />
 
             <Policies>
                 <!-- Tamanho máximo dos arquivos de log - gatilho para rotatividade -->
