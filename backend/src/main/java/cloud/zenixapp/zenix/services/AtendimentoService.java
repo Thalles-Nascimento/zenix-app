@@ -50,7 +50,7 @@ public class AtendimentoService {
      *======================================================================================*/
     @Transactional(propagation = Propagation.REQUIRED)
     public SuccessResponseDTO inserirAtendimento(AtendimentoRequestDTO atendimentoDTO){
-        log.info("Classe e Método: AtendimentoService.inserirAtendimento(Linha: 49)");
+        log.info("[SERVICE] Classe e Método: AtendimentoService.inserirAtendimento(Linha: 49)");
         String tenantId = TenantContext.getTenantId();
 
         // Atualiza o atendimento usado como referência para o Plano e o retorno do cliente
@@ -79,7 +79,7 @@ public class AtendimentoService {
      * Regra para listar os atendimentos de hoje.
      *======================================================================================*/
     public List<AtendimentoResponseDTO> listarAtendimentosHoje(){
-        log.info("Classe e Método: AtendimentoService.listarAtendimentosHoje(Linha: 73)");
+        log.info("[SERVICE] Classe e Método: AtendimentoService.listarAtendimentosHoje(Linha: 73)");
         Usuarios user = (Usuarios) Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
         List<AtendimentoResponseDTO> atendimentoResponseDTOList = atendimentoRepository.findByUsuariosAndDateAndTenant(user, LocalDateTime.now(TIME_ZONE).format(currentDate), TenantContext.getTenantId());
         log.info("Atendimento encontrados de hoje: {}", atendimentoResponseDTOList.size());
@@ -90,7 +90,7 @@ public class AtendimentoService {
      * Regra para listar todos os atendimentos do usuário.
      *======================================================================================*/
     public List<AtendimentoResponseDTO> listarTodosAtendimentos(){
-        log.info("Classe e Método: AtendimentoService.listarTodosAtendimentos(Linha: 78)");
+        log.info("[SERVICE] Classe e Método: AtendimentoService.listarTodosAtendimentos(Linha: 78)");
         List<AtendimentoResponseDTO> atendimentoResponseDTOList = atendimentoRepository.findAllByTenant(TenantContext.getTenantId());
         log.info("Atendimento encontrados: {}", atendimentoResponseDTOList.size());
         return atendimentoResponseDTOList;
@@ -100,7 +100,7 @@ public class AtendimentoService {
      * Regra para listar o histórico de atendimentos do usuário.
      *======================================================================================*/
     public List<AtendimentoResponseDTO> listarHistorico(){
-        log.info("Classe e Método: AtendimentoService.listarHistorico(Linha: 83)");
+        log.info("[SERVICE] Classe e Método: AtendimentoService.listarHistorico(Linha: 83)");
         Usuarios user = (Usuarios) Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
         List<AtendimentoResponseDTO> atendimentoResponseDTOList = atendimentoRepository.findByUsuariosAndTenant(user, TenantContext.getTenantId());
         log.info("Atendimento encontrados no histórico: {}", atendimentoResponseDTOList.size());
@@ -112,7 +112,7 @@ public class AtendimentoService {
      *======================================================================================*/
     @Transactional(propagation = Propagation.REQUIRED)
     public SuccessResponseDTO deletarAtendimento(String id) {
-        log.info("Classe e Método: AtendimentoService.deletarAtendimento(Linha: 89)");
+        log.info("[SERVICE] Classe e Método: AtendimentoService.deletarAtendimento(Linha: 89)");
         String tenantId = TenantContext.getTenantId();
         return atendimentoRepository.findByIdAndTenant(id, tenantId)
                 .map(atendimento -> {
@@ -144,7 +144,7 @@ public class AtendimentoService {
      *======================================================================================*/
     @Transactional(propagation = Propagation.REQUIRED)
     public SuccessResponseDTO atualizarAtendimento(String id, AtendimentoRequestDTO atendimentoRequestDTO){
-        log.info("Classe e Método: AtendimentoService.atualizarAtendimento(Linha: 114)");
+        log.info("[SERVICE] Classe e Método: AtendimentoService.atualizarAtendimento(Linha: 114)");
         return atendimentoRepository.findById(id, TenantContext.getTenantId())
                 .map(atendimento -> {
                     if(atendimento.getStatus() == -1){
@@ -175,7 +175,7 @@ public class AtendimentoService {
      *======================================================================================*/
     @Transactional
     public SuccessResponseDTO ativarAtendimento(String id){
-        log.info("Classe e Método: AtendimentoService.ativarAtendimento(Linha: 139)");
+        log.info("[SERVICE] Classe e Método: AtendimentoService.ativarAtendimento(Linha: 139)");
         String tenantId = TenantContext.getTenantId();
         return atendimentoRepository.findByIdAndTenant(id, tenantId)
                 .map(atendimento -> {
