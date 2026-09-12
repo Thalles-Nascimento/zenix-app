@@ -5,6 +5,7 @@ import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -88,6 +89,20 @@ public class GlobalExceptionHandler {
         );
         log.error("Problemas de conflito: [Status: {}] => [Message: {}]", errorResponse.status(), errorResponse.message());
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
+    /*=====================================================================================
+     * Handler para exceções em que o JSON está mal formatado na requisição.
+     *======================================================================================*/
+    @ExceptionHandler(value = {HttpMessageNotReadableException.class})
+    public ResponseEntity<ErrorResponseDTO> handleHttpMessageNotReadableExceptionException(Exception ex) {
+        ErrorResponseDTO errorResponse = new ErrorResponseDTO(
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage(),
+                LocalDateTime.now(TIME_ZONE).toInstant(ZONE_OFFSET)
+        );
+        log.error("Problemas na formatação do JSON: [Status: {}] => [Message: {}]", errorResponse.status(), errorResponse.message());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
 }
