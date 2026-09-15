@@ -5,6 +5,7 @@ import cloud.zenixapp.zenix.models.dtos.requests.AtendimentoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.atendimentos.AtendimentoResponseDTO;
+import cloud.zenixapp.zenix.models.entities.Atendimento;
 import cloud.zenixapp.zenix.services.AtendimentoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -24,31 +25,58 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ * <h2>
+ *     Controlador de requisições HTTP para o Domínio Atendimento, responsável por expor os endpoints deste.
+ * </h2>
+ * <p>
+ *     Este componente lida com as requisições HTTP mapeadas sob o caminho {@code /api/v2/atendimentos}
+ * </p>
+ *
+ * @version 1.0
+ * @author Thalles Nascimento
+ *
+*/
 @Log4j2
 @RestController
 @RequestMapping(value = "/${api-url}/atendimentos")
-@Tag(name = "Atendimento", description = "Endpoints do serviço de Atendimento")
+@Tag(name = "Atendimentos", description = "Endpoints do Domínio Atendimento")
 public class AtendimentoController {
 
     @Value("${api-url}")
     private String apiUrl;
     private final AtendimentoService atendimentoService;
 
+    /**
+     * <h2>
+     *     Construtor padrão para injeção de dependência automatizada pelo Spring.
+     * </h2>
+     *
+     * @param atendimentoService É o serviço que contêm as regras de negócios do Domínio Atendimento.
+     * @see AtendimentoService
+     */
     public AtendimentoController(AtendimentoService atendimentoService) {
         this.atendimentoService = atendimentoService;
     }
 
-    /*=====================================================================================
-     * Endpoint para inserir um novo atendimento.
-     *======================================================================================*/
+    /**
+     * <h2>
+     *     Endpoint para inserir um novo atendimento no sistema.
+     * </h2>
+     *
+     * @param atendimentoDTO DTO responsável pela exposição dos dados necessários para inserção do atendimento.
+     * @param result Captura os erros de validação. Esses erros são verificados pela anotação @Valid do pacote Jakarta Validation
+     * @return {@link ResponseEntity} com o {@link SuccessResponseDTO} e Status Code {@link HttpStatus#OK 200} e {@link HttpStatus#BAD_REQUEST 400}.
+     */
     @PostMapping
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Atendimento inserido no banco"),
+            @ApiResponse(responseCode = "201", description = "Para atendimentos inseridos com sucesso"),
             @ApiResponse(responseCode = "400", description = "Campos com nulos ou fora do padrão")
     })
-    @Operation(summary = "Adicionar atendimento", description = "Endpoint para adiciona um novo atendimento")
+    @Operation(summary = "Adicionar Atendimento", description = "Endpoint para adiciona um novo atendimento")
     public ResponseEntity<Object> save(@RequestBody @Valid AtendimentoRequestDTO atendimentoDTO, BindingResult result){
-        log.info("[CONTROLLER] Classe e Método: AtendimentoController.save(Linha: 47) => Endpoint: {POST: /{}/atendimentos}", apiUrl);
+        log.info("[CONTROLLER -> POST] : AtendimentoController.save(Linha: 47) => Endpoint: {POST: /{}/atendimentos}", apiUrl);
         if (result.hasErrors()){
             Map<String, String> errors = BindingHandler.insertError(result);
             log.error("Corpo da requisição apresentando erros: [{}]", errors);
@@ -62,55 +90,90 @@ public class AtendimentoController {
                 .body(atendimentoService.inserirAtendimento(atendimentoDTO));
     }
 
-    /*=====================================================================================
-     * Endpoint para listar o histórico de atendimentos do usuário.
-     *======================================================================================*/
+    /**
+     * <h2>
+     *     Endpoint para listar o histórico de atendimentos.
+     * </h2>
+     * <p>
+     *     No service é passado o 'ID' do usuário para a query no banco que realizou a requisição.
+     * </p>
+     * @return {@link ResponseEntity} com um List<{@link AtendimentoResponseDTO}> e Status Code {@link HttpStatus#OK 200}.
+     * Pode retornar uma lista vazia caso não tenham atendimentos no sistema.
+     *
+     */
     @GetMapping("/historico")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Atendimentos encontrados")
+    })
+    @Operation(summary = "Listar o histórico de atendimentos", description = "Endpoint para listar todos os atendimentos feitos pelo barbeiro")
     public ResponseEntity<List<AtendimentoResponseDTO>> findHistorico(){
-        log.info("[CONTROLLER] Classe e Método: AtendimentoController.findHistorico(Linha: 69) => Endpoint: {GET: /{}/atendimentos/historico}", apiUrl);
+        log.info("[CONTROLLER -> GET(/historico)] : AtendimentoController.findHistorico(Linha: 69) => Endpoint: {GET: /{}/atendimentos/historico}", apiUrl);
         log.info("Buscando o histórico de atendimentos do usuário...");
         return ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.listarHistorico());
     }
 
-    /*=====================================================================================
-     * Endpoint para listar os atendimentos de hoje.
-     *======================================================================================*/
+    /**
+     * <h2>
+     *     Endpoint para listar os atendimentos do dia.
+     * </h2>
+     * <p>
+     *     No service é passado o 'ID' do usuário para a query no banco que realizou a requisição.
+     * </p>
+     * @return {@link ResponseEntity} com um List<{@link AtendimentoResponseDTO}> e Status Code {@link HttpStatus#OK 200}. Pode retornar uma lista vazia caso não tenham atendimentos no sistema.
+     */
     @GetMapping
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Atendimento encontrado")
+            @ApiResponse(responseCode = "200", description = "Atendimentos encontrados")
     })
     @Operation(summary = "Listar atendimentos do dia", description = "Endpoint para listar todos os atendimentos do dia")
     public ResponseEntity<List<AtendimentoResponseDTO>> findAllTodayByUser(){
-        log.info("[CONTROLLER] Classe e Método: AtendimentoController.findAllTodayByUser(Linha: 84) => Endpoint: {GET: /{}/atendimentos}", apiUrl);
+        log.info("[CONTROLLER -> GET] : AtendimentoController.findAllTodayByUser(Linha: 84) => Endpoint: {GET: /{}/atendimentos}", apiUrl);
         log.info("Buscando atendimentos do dia...");
         return ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.listarAtendimentosHoje());
     }
 
-    /*=====================================================================================
-     * Endpoint para listar todos os atendimentos do usuário.
-     *======================================================================================*/
+    /**
+     * <h2>
+     *     Endpoint para o 'Usuário' de nível Administrador poder listar todos os atendimentos da sua barbearia
+     * </h2>
+     *
+     * @return {@link ResponseEntity} com um List<{@link AtendimentoResponseDTO}> e Status Code {@link HttpStatus#OK 200}. Pode retornar uma lista vazia caso não tenham atendimentos no sistema.
+     */
     @GetMapping("/admin")
-    @Operation(summary = "Listar todos os atendimentos", description = "Endpoint para ADMIN listar todos os atendimentos do dia")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Atendimentos encontrados")
+    })
+    @Operation(summary = "Listar todos os atendimentos by Administrador", description = "Endpoint para listar todos os atendimentos => Administrador")
     public ResponseEntity<List<AtendimentoResponseDTO>> findAllAdmin(){
-        log.info("[CONTROLLER] Classe e Método: AtendimentoController.findAllAdmin(Linha: 96) => Endpoint: {GET: /{}/atendimentos/admin}", apiUrl);
+        log.info("[CONTROLLER -> GET(/admin)] : AtendimentoController.findAllAdmin(Linha: 96) => Endpoint: {GET: /{}/atendimentos/admin}", apiUrl);
         log.info("Buscando todos os atendimentos...");
         return ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.listarTodosAtendimentos());
     }
 
-    /*=====================================================================================
-     * Endpoint para deletar um atendimento pelo ID.
-     *======================================================================================*/
+    /**
+     * <h2>
+     *     Endpoint para deletar um atendimento.
+     * </h2>
+     * <p>
+     *     O atendimento é deletado logicamente via coluna {@link Atendimento#getStatus() Status}.
+     * </p>
+     * @param id ID do atendimento que será excluído.
+     * @return {@link ResponseEntity} com o {@link SuccessResponseDTO} e Status Code {@link HttpStatus#OK 200}.
+     * @throws cloud.zenixapp.zenix.configs.exceptions.ConflictException Caso o atendimento já esteja excluído - {@link HttpStatus#CONFLICT 409}.
+     * @throws cloud.zenixapp.zenix.configs.exceptions.NotFoundException Caso o atendimento não seja encontrado - {@link HttpStatus#NOT_FOUND 404}.
+     */
     @DeleteMapping(value = "/{id}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Atendimento excluído do banco"),
+            @ApiResponse(responseCode = "410", description = "Atendimento já está excluído"),
             @ApiResponse(responseCode = "404", description = "Atendimento não encontrado")
     })
     @Operation(summary = "Deletar atendimento", description = "Endpoint para deletar um atendimento")
     public ResponseEntity<SuccessResponseDTO> deleteAtendimento(@PathVariable String id) {
-        log.info("[CONTROLLER] Classe e Método: AtendimentoController.deleteAtendimento(Linha: 112) => Endpoint: {DELETE: /{}/atendimentos/[id]}", apiUrl);
+        log.info("[CONTROLLER -> DELETE(/id)] : AtendimentoController.deleteAtendimento(Linha: 112) => Endpoint: {DELETE: /{}/atendimentos/[id]}", apiUrl);
         log.info("Deletando atendimento...");
         return ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.deletarAtendimento(id));
@@ -118,18 +181,32 @@ public class AtendimentoController {
     }
 
 
-    /*=====================================================================================
-     * Endpoint para atualizar um atendimento pelo ID.
-     *======================================================================================*/
+    /**
+     * <h2>
+     *     Endpoint para atualizar um atendimento.
+     * </h2>
+     *
+     * <h5>
+     *     Obs: há uma validação para os campos enviados via DTO e que eles forem nulos, podem passar sem tratamento de erros, pois numa atualização de entidade, podem existir campos nulos.
+     * </h5>
+     *
+     * @param id 'ID' do atendimento que será atualizado.
+     * @param atendimentoRequestDTO DTO responsável pela exposição dos dados necessários para atualização de um atendimento.
+     * @param result Captura os erros de validação. Esses erros são verificados pela anotação @Valid do pacote Jakarta Validation.
+     * @return {@link ResponseEntity} com o {@link SuccessResponseDTO} e Status Code {@link HttpStatus#OK 200} e {@link HttpStatus#BAD_REQUEST 400}.
+     * @throws cloud.zenixapp.zenix.configs.exceptions.ConflictException Caso o atendimento esteja excluído - {@link HttpStatus#CONFLICT 409}.
+     * @throws cloud.zenixapp.zenix.configs.exceptions.NotFoundException Caso o atendimento não seja encontrado - {@link HttpStatus#NOT_FOUND 404}.
+     */
     @PutMapping(value = "/{id}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Atendimento atualizado"),
             @ApiResponse(responseCode = "404", description = "Atendimento não encontrado"),
+            @ApiResponse(responseCode = "409", description = "Atendimento está excluído"),
             @ApiResponse(responseCode = "400", description = "Campos com nulos ou fora do padrão")
     })
     @Operation(summary = "Atualizar atendimento por ID", description = "Endpoint para atualiza um atendimento por ID")
     public ResponseEntity<Object> updateByAtendimento(@PathVariable String id, @RequestBody @Valid AtendimentoRequestDTO atendimentoRequestDTO, BindingResult result) {
-        log.info("[CONTROLLER] Classe e Método: AtendimentoController.updateByAtendimento(Linha: 131) => Endpoint: {PUT: /{}/atendimentos/[id]}", apiUrl);
+        log.info("[CONTROLLER -> PUT(/id)] : AtendimentoController.updateByAtendimento(Linha: 131) => Endpoint: {PUT: /{}/atendimentos/[id]}", apiUrl);
         if(result.hasErrors()){
             if (BindingHandler.isErrorNull(result)){
                 log.info("Atualizando atendimento...");
@@ -153,13 +230,25 @@ public class AtendimentoController {
 
     }
 
-    /*=====================================================================================
-     * Endpoint para ativar um atendimento pelo ID.
-     *======================================================================================*/
+    /**
+     * <h2>
+     *     Endpoint para ativar um atendimento excluído.
+     * </h2>
+     *
+     * @param id 'ID' do atendimento que será ativado.
+     * @return {@link ResponseEntity} com o {@link SuccessResponseDTO} e Status Code {@link HttpStatus#OK 200}.
+     * @throws cloud.zenixapp.zenix.configs.exceptions.ConflictException Caso o atendimento já esteja ativado - {@link HttpStatus#CONFLICT 409}.
+     * @throws cloud.zenixapp.zenix.configs.exceptions.NotFoundException Caso o atendimento não seja encontrado - {@link HttpStatus#NOT_FOUND 404}.
+     */
     @PatchMapping("/{id}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Atendimento ativado"),
+            @ApiResponse(responseCode = "404", description = "Atendimento não encontrado"),
+            @ApiResponse(responseCode = "409", description = "Atendimento não está excluído")
+    })
     @Operation(summary = "Ativar atendimento", description = "Endpoint para ativar um atendimento do sistema")
     public ResponseEntity<SuccessResponseDTO> ativarAtendimento(@PathVariable String id) {
-        log.info("[CONTROLLER] Classe e Método: AtendimentoController.ativarAtendimento(Linha: 161) => Endpoint: {PATCH: /{}/atendimentos/[id]}", apiUrl);
+        log.info("[CONTROLLER -> PATCH(/id)] : AtendimentoController.ativarAtendimento(Linha: 161) => Endpoint: {PATCH: /{}/atendimentos/[id]}", apiUrl);
         log.info("Ativando atendimento...");
         return ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.ativarAtendimento(id));
