@@ -10,25 +10,51 @@ import cloud.zenixapp.zenix.models.enums.UsuariosRoleEnum;
 import cloud.zenixapp.zenix.repositories.TenantRepository;
 import cloud.zenixapp.zenix.repositories.UnidadeRepository;
 import cloud.zenixapp.zenix.repositories.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * <h2>
+ *     Serviço que estabelece as regras de negócio para cadastrar uma conta no sistema.
+ * </h2>
+ * Métodos:
+ * {@link CadastroService#cadastrar(CadastroRequestDTO) Cadastrar}
+ * {@link CadastroService#gerarSlug(String) Gerar Slug}
+ *
+ * @version 1.0
+ * @author Thalles Nascimento
+ */
 @Service
 public class CadastroService {
 
-    @Autowired
-    private TenantRepository tenantsRepository;
+    private final TenantRepository tenantsRepository;
+    private final UnidadeRepository unidadeRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private UnidadeRepository unidadeRepository;
+    /**
+     * <h2>
+     *     Construtor padrão da classe CadastroService para automatizar a injeção de dependência gerenciada pelo Spring.
+     * </h2>
+     *
+     * @param tenantsRepository Repositório do domínio tenant utilizado para realizar consultas no banco de dados.
+     * @param unidadeRepository Repositório do domínio unidade utilizado para realizar consultas no banco de dados.
+     * @param usuarioRepository Repositório do domínio usuário utilizado para realizar consultas no banco de dados.
+     * @param passwordEncoder Classe responsável pela criptografia da senha.
+     * @see TenantRepository
+     * @see UnidadeRepository
+     * @see UsuarioRepository
+     * @see PasswordEncoder
+     * @see Tenants
+     */
+    public CadastroService(TenantRepository tenantsRepository, UnidadeRepository unidadeRepository, UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
+        this.tenantsRepository = tenantsRepository;
+        this.unidadeRepository = unidadeRepository;
+        this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @Transactional
     public CadastroResponseDTO cadastrar(CadastroRequestDTO cadastroRequestDTO) {
