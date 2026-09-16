@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CadastroService {
 
+    private static final String MESSAGE_EXCEPTION = "Exceção lançada pelo método: cloud.zenixapp.zenix.services.CadastroService.cadastrar(CadastroRequestDTO)";
     private final TenantRepository tenantsRepository;
     private final UnidadeRepository unidadeRepository;
     private final UsuarioRepository usuarioRepository;
@@ -78,15 +79,15 @@ public class CadastroService {
 
         // 1. Validações
         if (usuarioRepository.existsByEmail(cadastroRequestDTO.email())) {
-            log.error("Exceção lançada pelo método: cloud.zenixapp.zenix.services.CadastroService.cadastrar(CadastroRequestDTO)");
+            log.error(MESSAGE_EXCEPTION);
             throw new ConflictException("[Verificação de E-mail] E-mail já cadastrado!");
         }
         if (usuarioRepository.existsByCpf(cadastroRequestDTO.cpf())) {
-            log.error("Exceção lançada pelo método: cloud.zenixapp.zenix.services.CadastroService.cadastrar(CadastroRequestDTO)");
+            log.error(MESSAGE_EXCEPTION);
             throw new ConflictException("[Verificação de CPF] CPF já cadastrado!");
         }
         if (tenantsRepository.existsByNome(cadastroRequestDTO.nomeEmpresa()) || tenantsRepository.existsByCnpj(cadastroRequestDTO.cnpj())) {
-            log.error("Exceção lançada pelo método: cloud.zenixapp.zenix.services.CadastroService.cadastrar(CadastroRequestDTO)");
+            log.error(MESSAGE_EXCEPTION);
             throw new ConflictException("[Verificação de Empresa] Empresa já cadastrada");
         }
 
@@ -102,7 +103,7 @@ public class CadastroService {
         log.info("Buscando o tenantId...");
         String tenantId = tenantsRepository.findIdByCnpj(cadastroRequestDTO.cnpj());
         if (tenantId == null){
-            log.error("Exceção lançada pelo método: cloud.zenixapp.zenix.services.CadastroService.cadastrar(CadastroRequestDTO)");
+            log.error(MESSAGE_EXCEPTION);
             throw new NotFoundException("[Consulta TenantID] Não foi encontrada empresa com esse CNPJ.");
         }
         log.info("Empresa encontrada!");
