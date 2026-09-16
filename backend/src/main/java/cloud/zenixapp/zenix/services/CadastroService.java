@@ -60,6 +60,18 @@ public class CadastroService {
     }
 
 
+    /**
+     * <h2>
+     *     Método para cadastro.
+     * </h2>
+     * <p>
+     *     Este método cadastra um novo Cliente - barbearia - no sistema.
+     * </p>
+     * @param cadastroRequestDTO DTO responsável pela exposição dos dados necessários para cadastra-se no sistema.
+     * @return {@link SuccessResponseDTO}
+     * @see Transactional
+     * @see CadastroRequestDTO
+     */
     @Transactional
     public SuccessResponseDTO cadastrar(CadastroRequestDTO cadastroRequestDTO) {
         log.info("[SERVICE -> Cadastrar] : CadastroService.cadastrar(Linha: 62)");
@@ -128,6 +140,17 @@ public class CadastroService {
 
     }
 
+    /**
+     * <h2>
+     *     Método auxiliar para criar o Slug.
+     * </h2>
+     * <p>
+     *     Este método é responsável pela criação do Slug a partir do nome da empresa/Barbearia.
+     * </p>
+     *
+     * @param nome Nome da empresa/Barbearia
+     * @return {@code slugName}
+     */
     private String gerarSlug(String nome) {
         log.info("Gerando Slug de '{}'...", nome);
         String slugName = nome.toLowerCase()
