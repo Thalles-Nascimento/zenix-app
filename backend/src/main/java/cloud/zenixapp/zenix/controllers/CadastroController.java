@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 /**
  * <h2>
@@ -34,11 +38,14 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Thalles Nascimento
  *
  */
+@Log4j2
 @RestController
 @RequestMapping(value = "/${api-url}/cadastro")
 @Tag(name = "Cadastros", description = "Endpoints para realizar Cadastro")
 public class CadastroController {
 
+    @Value("${api-url}")
+    private String apiUrl;
     private final CadastroService cadastroService;
 
     /**
@@ -76,11 +83,15 @@ public class CadastroController {
     })
     @Operation(summary = "Cadastrar uma Barbearia", description = "Endpoint para cadastrar uma nova Barbearia")
     public ResponseEntity<Object> save(@RequestBody @Valid CadastroRequestDTO cadastroRequestDTO, BindingResult result){
+        log.info("[CONTROLLER -> POST] : CadastroController.save(Linha: 83) => Endpoint: {POST: /{}/cadastro}", apiUrl);
         if (result.hasErrors()){
+            Map<String, String> errors = BindingHandler.insertError(result);
+            log.error("Corpo da requisição apresentando erros: [{}]", errors);
+            log.info("[CADASTRO] Response -> {}", HttpStatus.BAD_REQUEST);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(BindingHandler.insertError(result));
+                    .body(errors);
         }
-
+        log.info("Cadastrando Barbearia...");
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(cadastroService.cadastrar(cadastroRequestDTO));
     }
