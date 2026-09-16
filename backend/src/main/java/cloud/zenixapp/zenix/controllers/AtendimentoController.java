@@ -34,6 +34,12 @@ import java.util.Map;
  *     Este componente lida com as requisições HTTP mapeadas sob o caminho {@code /api/v2/atendimentos}
  * </p>
  *
+ * Métodos HTTP suportados pelo controller:
+ * {@code POST}
+ * {@code GET}
+ * {@code DELETE}
+ * {@code PUT}
+ * {@code PATCH}
  * @version 1.0
  * @author Thalles Nascimento
  *
