@@ -79,6 +79,7 @@ public class AtendimentoController {
      * @see ResponseEntity
      * @see SuccessResponseDTO
      * @see HttpStatus
+     * @see BindingResult
      */
     @PostMapping
     @ApiResponses(value = {
@@ -224,6 +225,7 @@ public class AtendimentoController {
      * @see NotFoundException
      * @see ErrorResponseDTO
      * @see HttpStatus
+     * @see BindingResult
      */
     @PutMapping(value = "/{id}")
     @ApiResponses(value = {
