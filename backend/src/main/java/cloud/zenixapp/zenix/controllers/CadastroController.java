@@ -1,38 +1,81 @@
 package cloud.zenixapp.zenix.controllers;
 
+import cloud.zenixapp.zenix.configs.exceptions.ConflictException;
+import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.handlers.BindingHandler;
 import cloud.zenixapp.zenix.models.dtos.requests.CadastroRequestDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.services.CadastroService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * <h2>
+ *     Controlador de requisições HTTP para o cadastro de uma barbearia.
+ * </h2>
+ * <p>
+ *     Este componente lida com as requisições HTTP mapeadas sob o caminho {@code /api/v2/cadastro}
+ * </p>
+ *
+ * Métodos HTTP suportados pelo controller:
+ * {@code POST}
+
+ * @version 1.0
+ * @author Thalles Nascimento
+ *
+ */
 @RestController
 @RequestMapping(value = "/${api-url}/cadastro")
 @Tag(name = "Cadastros", description = "Endpoints para realizar Cadastro")
 public class CadastroController {
 
-    @Autowired
-    private CadastroService cadastroService;
+    private final CadastroService cadastroService;
 
-    /*
-    *Endpoint para inserção de uma unidade no Banco de Dados
-    *
-    */
+    /**
+     * <h2>
+     *     Construtor padrão para injeção de dependência automatizada pelo Spring.
+     * </h2>
+     * @param cadastroService Serviço responsável pelas regras de negócio do cadastro.
+     * @see CadastroService
+     */
+    public CadastroController(CadastroService cadastroService) {
+        this.cadastroService = cadastroService;
+    }
+
+
+    /**
+     * <h2>
+     *     Endpoint para inserir um novo cadastro no sistema.
+     * </h2>
+     * @param cadastroRequestDTO DTO responsável pela exposição dos dados necessários para cadastra-se no sistema.
+     * @param result Captura os erros de validação. Esses erros são verificados pela anotação @Valid do pacote Jakarta Validation.
+     * @return {@link ResponseEntity} com o {@link SuccessResponseDTO} e Status Code {@link HttpStatus#OK 201} e {@link HttpStatus#BAD_REQUEST 400}.
+     * @throws ConflictException Caso haja conflito no cadastro - {@link HttpStatus#CONFLICT 409}.
+     * @throws NotFoundException Caso o Tenant não seja encontrado - {@link HttpStatus#NOT_FOUND 404}.
+     * @see ResponseEntity
+     * @see SuccessResponseDTO
+     * @see HttpStatus
+     * @see BindingResult
+     */
     @PostMapping
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Unidade inserido no banco"),
-            @ApiResponse(responseCode = "400", description = "Campos com nulos ou fora do padrão")
+            @ApiResponse(responseCode = "201", description = "Cadastro realizado."),
+            @ApiResponse(responseCode = "400", description = "Campos com nulos ou fora do padrão."),
+            @ApiResponse(responseCode = "404", description = "Tenant não encontrado."),
+            @ApiResponse(responseCode = "409", description = "Conflito no cadastro.")
     })
-    @Operation(summary = "Adicionar Unidade", description = "Endpoint para adiciona uma nova unidade")
-    public ResponseEntity<?> save(@RequestBody @Valid CadastroRequestDTO cadastroRequestDTO, BindingResult result){
+    @Operation(summary = "Cadastrar uma Barbearia", description = "Endpoint para cadastrar uma nova Barbearia")
+    public ResponseEntity<Object> save(@RequestBody @Valid CadastroRequestDTO cadastroRequestDTO, BindingResult result){
         if (result.hasErrors()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(BindingHandler.insertError(result));
