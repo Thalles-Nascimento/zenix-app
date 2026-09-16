@@ -72,6 +72,8 @@ public class CadastroService {
      * @return {@link SuccessResponseDTO}
      * @see Transactional
      * @see CadastroRequestDTO
+     * @throws ConflictException Caso haja conflito no cadastro - {@link HttpStatus#CONFLICT 409}.
+     * @throws NotFoundException Caso o Tenant não seja encontrado - {@link HttpStatus#NOT_FOUND 404}.
      */
     @Transactional
     public SuccessResponseDTO cadastrar(CadastroRequestDTO cadastroRequestDTO) {
