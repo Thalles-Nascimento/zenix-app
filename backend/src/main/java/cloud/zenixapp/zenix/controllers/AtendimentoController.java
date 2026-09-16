@@ -75,7 +75,7 @@ public class AtendimentoController {
      *
      * @param atendimentoDTO DTO responsável pela exposição dos dados necessários para inserção do atendimento.
      * @param result Captura os erros de validação. Esses erros são verificados pela anotação @Valid do pacote Jakarta Validation
-     * @return {@link ResponseEntity} com o {@link SuccessResponseDTO} e Status Code {@link HttpStatus#OK 200} e {@link HttpStatus#BAD_REQUEST 400}.
+     * @return {@link ResponseEntity} com o {@link SuccessResponseDTO} e Status Code {@link HttpStatus#OK 201} e {@link HttpStatus#BAD_REQUEST 400}.
      * @see ResponseEntity
      * @see SuccessResponseDTO
      * @see HttpStatus
