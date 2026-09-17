@@ -16,7 +16,6 @@ import cloud.zenixapp.zenix.models.entities.Clientes;
 import cloud.zenixapp.zenix.models.entities.TelefoneCliente;
 import cloud.zenixapp.zenix.repositories.ClienteRepository;
 import cloud.zenixapp.zenix.repositories.TelefoneRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -24,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,18 +31,23 @@ import java.util.Optional;
 @Service
 public class ClienteService {
 
-    @Autowired
-    private ClienteRepository clienteRepository;
+    // Mensagem padrão para exceções onde o objeto não foi encontrado.
+    private static final String MESSAGE_EXCEPTION_NOT_FOUND = "Cliente não encontrado!";
 
-//   TODO Criar um service comum entre Telefone e Clientes
-    @Autowired
-    private TelefoneRepository telefoneRepository;
+    // TimeZone padrão para as funções de LocalDateTime.now().
+    private static final ZoneId TIME_ZONE = ZoneId.of("America/Sao_Paulo");
 
-    @Autowired
-    private ClienteMapper clienteMapper;
+    private final ClienteRepository clienteRepository;
+    private final TelefoneRepository telefoneRepository;
+    private final ClienteMapper clienteMapper;
+    private final PlanosService planosService;
 
-    @Autowired
-    private PlanosService planosService;
+    public ClienteService(ClienteRepository clienteRepository, TelefoneRepository telefoneRepository, ClienteMapper clienteMapper, PlanosService planosService) {
+        this.clienteRepository = clienteRepository;
+        this.telefoneRepository = telefoneRepository;
+        this.clienteMapper = clienteMapper;
+        this.planosService = planosService;
+    }
 
     @Transactional
     public SuccessResponseDTO save(ClienteRequestDTO clienteDTO){
@@ -100,7 +105,7 @@ public class ClienteService {
     @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void resetarContadoresMensais() {
-        int diaHoje = LocalDate.now().getDayOfMonth();
+        int diaHoje = LocalDate.now(TIME_ZONE).getDayOfMonth();
         clienteRepository.resetarAtendimentosMes(diaHoje, TenantContext.getTenantId());
     }
 
@@ -119,7 +124,7 @@ public class ClienteService {
                     }
 
                     cliente.setPlanos(planosService.buscarPlanoPorId(requestDTO.idPlano()));
-                    cliente.setDataRenovacao(LocalDate.now().plusMonths(1));
+                    cliente.setDataRenovacao(LocalDate.now(TIME_ZONE).plusMonths(1));
 
 
                     clienteRepository.save(cliente);
@@ -130,7 +135,7 @@ public class ClienteService {
                     );
 
                 })
-                .orElseThrow(() -> new NotFoundException("Cliente não encontrado!"));
+                .orElseThrow(() -> new NotFoundException(MESSAGE_EXCEPTION_NOT_FOUND));
     }
 
     @Transactional
@@ -150,7 +155,7 @@ public class ClienteService {
                             "Plano retirado com sucesso"
                     );
                 })
-                .orElseThrow(() -> new NotFoundException("Cliente não encontrado!"));
+                .orElseThrow(() -> new NotFoundException(MESSAGE_EXCEPTION_NOT_FOUND));
     }
 
     @Transactional
@@ -184,13 +189,13 @@ public class ClienteService {
                             "Cliente atualizado com sucesso"
                     );
                 })
-                .orElseThrow(() -> new NotFoundException("Cliente não encontrado!"));
+                .orElseThrow(() -> new NotFoundException(MESSAGE_EXCEPTION_NOT_FOUND));
     }
 
     @Transactional
     public SuccessResponseDTO deletarCliente(String id){
         String tenantId = TenantContext.getTenantId();
-        int rowsAffected = clienteRepository.deleteLogico(id, LocalDateTime.now(), tenantId);
+        int rowsAffected = clienteRepository.deleteLogico(id, LocalDateTime.now(TIME_ZONE), tenantId);
         if (rowsAffected == 1){
             return new SuccessResponseDTO(
                     HttpStatus.OK.value(),
@@ -212,7 +217,6 @@ public class ClienteService {
         } else throw new UpdateErrorException("Não foi possível ativar!");
     }
 
-//  TODO Criar método para retirar atendimento do mês caso o atendimento que foi feito com plano seja excluído
     @Transactional
     public void atualizarRetornoDoCliente(String nome, String tenantId){
         clienteRepository.findByName(nome, tenantId)
