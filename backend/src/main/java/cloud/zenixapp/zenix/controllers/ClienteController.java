@@ -6,6 +6,7 @@ import cloud.zenixapp.zenix.models.dtos.requests.ClientePlanoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteUpdateRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.clientes.ClientePlanosResumoResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.clientes.ClienteSimplesPlanosResponseDTO;
 import cloud.zenixapp.zenix.services.ClienteService;
@@ -14,13 +15,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.List;
 
@@ -29,11 +30,14 @@ import java.util.List;
 @Tag(name = "Cliente", description = "API do serviço de Cliente")
 public class ClienteController {
 
-    @Autowired
-    private ClienteService clienteService;
+    private final ClienteService clienteService;
+
+    public ClienteController(ClienteService clienteService) {
+        this.clienteService = clienteService;
+    }
 
     @PostMapping
-    public ResponseEntity<?> criarCliente(@RequestBody @Valid ClienteRequestDTO clienteDTO, BindingResult result){
+    public ResponseEntity<Object> criarCliente(@RequestBody @Valid ClienteRequestDTO clienteDTO, BindingResult result){
         if (result.hasErrors()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(BindingHandler.insertError(result));
@@ -43,7 +47,6 @@ public class ClienteController {
                 .body(clienteService.save(clienteDTO));
     }
 
-    // TODO Verificar endpoint
     @GetMapping("/telefone/{numero}")
     public ResponseEntity<List<ClienteSimplesPlanosResponseDTO>> buscarClientesPorTelefone(@PathVariable String numero) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -66,20 +69,20 @@ public class ClienteController {
     }
 
     @PatchMapping("/planos/{idCliente}")
-    public ResponseEntity<?> vincularPlano(@PathVariable String idCliente, @RequestBody ClientePlanoRequestDTO idPlano){
+    public ResponseEntity<SuccessResponseDTO> vincularPlano(@PathVariable String idCliente, @RequestBody ClientePlanoRequestDTO idPlano){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(clienteService.inserirPlano(idCliente, idPlano));
     }
 
     @DeleteMapping("/planos/{idCliente}")
-    public ResponseEntity<?> desvincularPlano(@PathVariable String idCliente){
+    public ResponseEntity<SuccessResponseDTO> desvincularPlano(@PathVariable String idCliente){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(clienteService.retirarPlano(idCliente));
     }
 
 
     /*
-     * Endpoint para deletar um cliente do Banco de Dados pelo ID
+     * Endpoint para deletar um cliente do Banco de Dados pelo 'ID'
      *
      */
     @DeleteMapping(value = "/{id}")
@@ -88,24 +91,24 @@ public class ClienteController {
             @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
     })
     @Operation(summary = "Deletar cliente", description = "Endpoint para deletar um cliente")
-    public ResponseEntity<?> deleteCliente(@PathVariable String id) {
+    public ResponseEntity<SuccessResponseDTO> deleteCliente(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(clienteService.deletarCliente(id));
 
     }
 
     /*
-     * Endpoint para atualizar um cliente do Banco de Dados pelo ID
+     * Endpoint para atualizar um cliente do Banco de Dados pelo 'ID'
      *
      */
     @PutMapping(value = "/{id}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Cliente atualizado"),
-            @ApiResponse(responseCode = "404", description = "CLiente não encontrado"),
+            @ApiResponse(responseCode = "404", description = "Cliente não encontrado"),
             @ApiResponse(responseCode = "400", description = "Campos com nulos ou fora do padrão")
     })
     @Operation(summary = "Atualizar cliente por ID", description = "Endpoint para atualiza um cliente por ID")
-    public ResponseEntity<?> update(@PathVariable String id, @RequestBody @Valid ClienteUpdateRequestDTO clienteUpdateRequestDTO, BindingResult result) throws NotFoundException {
+    public ResponseEntity<Object> update(@PathVariable String id, @RequestBody @Valid ClienteUpdateRequestDTO clienteUpdateRequestDTO, BindingResult result) throws NotFoundException {
         if(result.hasErrors()){
             if (BindingHandler.isErrorNull(result)){
                 return ResponseEntity.status(HttpStatus.OK)
@@ -116,7 +119,7 @@ public class ClienteController {
                     .body(new ErrorResponseDTO(
                             HttpStatus.BAD_REQUEST.value(),
                             "Alguns campos estão fora do padrão",
-                            LocalDateTime.now().toInstant(ZoneOffset.of("-03:00")))
+                            LocalDateTime.now(ZoneId.of("America/Sao_Paulo")).toInstant(ZoneOffset.of("-03:00")))
                     );
         }
 
@@ -127,7 +130,7 @@ public class ClienteController {
 
     @PatchMapping("/ativar/{id}")
     @Operation(summary = "Ativar cliente", description = "Endpoint para ativar um cliente do sistema")
-    public ResponseEntity<?> ativarCliente(@PathVariable String id) {
+    public ResponseEntity<SuccessResponseDTO> ativarCliente(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(clienteService.ativarCliente(id));
     }
