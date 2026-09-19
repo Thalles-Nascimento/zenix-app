@@ -3,6 +3,7 @@ package cloud.zenixapp.zenix.controllers;
 import cloud.zenixapp.zenix.configs.exceptions.ConflictException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.handlers.BindingHandler;
+import cloud.zenixapp.zenix.configs.utils.HelpersLogs;
 import cloud.zenixapp.zenix.models.dtos.requests.AtendimentoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
@@ -53,7 +54,20 @@ import java.util.Map;
 public class AtendimentoController {
 
     @Value("${api-url}")
-    private String apiUrl;
+    public String apiUrl;
+
+    // Classe padrão para 'log'
+    private static final String CLASS_NAME = "AtendimentoController";
+
+    // Camada padrão para 'log'
+    private static final String CAMADA = "CONTROLLER";
+
+    // Entidade padrão para 'log'
+    private static final String ENTITY_NAME = "Atendimento";
+
+    // Resposta padrão para 'log' de atendimentos encontrados
+    private static final String ATENDIMENTO_FOUND = "Atendimentos encontrados";
+
     private final AtendimentoService atendimentoService;
 
     /**
@@ -88,18 +102,25 @@ public class AtendimentoController {
     })
     @Operation(summary = "Adicionar Atendimento", description = "Endpoint para adiciona um novo atendimento")
     public ResponseEntity<Object> save(@RequestBody @Valid AtendimentoRequestDTO atendimentoDTO, BindingResult result){
-        log.info("[CONTROLLER -> POST] : AtendimentoController.save(Linha: 47) => Endpoint: {POST: /{}/atendimentos}", apiUrl);
+        HelpersLogs.logInfoController("POST", CLASS_NAME, "save", apiUrl);
+
         if (result.hasErrors()){
             Map<String, String> errors = BindingHandler.insertError(result);
-            log.error("Corpo da requisição apresentando erros: [{}]", errors);
-            log.info("[INSERIR ATENDIMENTO] Response -> {}", HttpStatus.BAD_REQUEST);
+            HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.BAD_REQUEST, "Não foi possível inserir o atendimento.");
+            log.debug("AtendimentoController.save => Erros = [{}]", errors);
+
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(errors);
+
         }
 
-        log.info("Inserindo atendimento...");
-        return ResponseEntity.status(HttpStatus.CREATED)
+        log.debug("Inserindo atendimento...");
+        ResponseEntity<Object> response = ResponseEntity.status(HttpStatus.CREATED)
                 .body(atendimentoService.inserirAtendimento(atendimentoDTO));
+
+        HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.CREATED, "Atendimento inserido.");
+        return response;
+
     }
 
     /**
@@ -117,14 +138,18 @@ public class AtendimentoController {
      */
     @GetMapping("/historico")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Atendimentos encontrados")
+            @ApiResponse(responseCode = "200", description = ATENDIMENTO_FOUND)
     })
     @Operation(summary = "Listar o histórico de atendimentos", description = "Endpoint para listar todos os atendimentos feitos pelo barbeiro")
     public ResponseEntity<List<AtendimentoResponseDTO>> findHistorico(){
-        log.info("[CONTROLLER -> GET(/historico)] : AtendimentoController.findHistorico(Linha: 69) => Endpoint: {GET: /{}/atendimentos/historico}", apiUrl);
-        log.info("Buscando o histórico de atendimentos do usuário...");
-        return ResponseEntity.status(HttpStatus.OK)
+        HelpersLogs.logInfoController("GET(/historico)", CLASS_NAME, "findHistorico", apiUrl);
+
+        log.debug("Buscando o histórico de atendimentos do usuário...");
+        ResponseEntity<List<AtendimentoResponseDTO>> response = ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.listarHistorico());
+
+        HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, ATENDIMENTO_FOUND);
+        return response;
     }
 
     /**
@@ -141,14 +166,19 @@ public class AtendimentoController {
      */
     @GetMapping
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Atendimentos encontrados")
+            @ApiResponse(responseCode = "200", description = ATENDIMENTO_FOUND)
     })
     @Operation(summary = "Listar atendimentos do dia", description = "Endpoint para listar todos os atendimentos do dia")
     public ResponseEntity<List<AtendimentoResponseDTO>> findAllTodayByUser(){
-        log.info("[CONTROLLER -> GET] : AtendimentoController.findAllTodayByUser(Linha: 84) => Endpoint: {GET: /{}/atendimentos}", apiUrl);
-        log.info("Buscando atendimentos do dia...");
-        return ResponseEntity.status(HttpStatus.OK)
+        HelpersLogs.logInfoController("GET", CLASS_NAME, "findAllTodayByUser", apiUrl);
+
+        log.debug("Buscando atendimentos do dia...");
+        ResponseEntity<List<AtendimentoResponseDTO>> response = ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.listarAtendimentosHojeByUsuario());
+
+        HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, ATENDIMENTO_FOUND);
+
+        return response;
     }
 
     /**
@@ -163,14 +193,19 @@ public class AtendimentoController {
      */
     @GetMapping("/admin")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Atendimentos encontrados")
+            @ApiResponse(responseCode = "200", description = ATENDIMENTO_FOUND)
     })
     @Operation(summary = "Listar todos os atendimentos by Administrador", description = "Endpoint para listar todos os atendimentos => Administrador")
     public ResponseEntity<List<AtendimentoResponseDTO>> findAllAdmin(){
-        log.info("[CONTROLLER -> GET(/admin)] : AtendimentoController.findAllAdmin(Linha: 96) => Endpoint: {GET: /{}/atendimentos/admin}", apiUrl);
-        log.info("Buscando todos os atendimentos...");
-        return ResponseEntity.status(HttpStatus.OK)
+        HelpersLogs.logInfoController("GET(/admin)", CLASS_NAME, "findAllAdmin", apiUrl);
+
+        log.debug("Buscando todos os atendimentos...");
+        ResponseEntity<List<AtendimentoResponseDTO>> response = ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.listarTodosAtendimentos());
+
+        HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, ATENDIMENTO_FOUND);
+
+        return response;
     }
 
     /**
@@ -197,10 +232,15 @@ public class AtendimentoController {
     })
     @Operation(summary = "Deletar atendimento", description = "Endpoint para deletar um atendimento")
     public ResponseEntity<SuccessResponseDTO> deleteAtendimento(@PathVariable String id) {
-        log.info("[CONTROLLER -> DELETE(/id)] : AtendimentoController.deleteAtendimento(Linha: 112) => Endpoint: {DELETE: /{}/atendimentos/[id]}", apiUrl);
-        log.info("Deletando atendimento...");
-        return ResponseEntity.status(HttpStatus.OK)
+        HelpersLogs.logInfoController("DELETE(/id)", CLASS_NAME, "deleteAtendimento", apiUrl);
+
+        log.debug("Deletando atendimento...");
+        ResponseEntity<SuccessResponseDTO> response = ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.deletarAtendimento(id));
+
+        HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, "Atendimento deletado.");
+
+        return response;
 
     }
 
@@ -236,27 +276,37 @@ public class AtendimentoController {
     })
     @Operation(summary = "Atualizar atendimento por ID", description = "Endpoint para atualiza um atendimento por ID")
     public ResponseEntity<Object> updateByAtendimento(@PathVariable String id, @RequestBody @Valid AtendimentoRequestDTO atendimentoRequestDTO, BindingResult result) {
-        log.info("[CONTROLLER -> PUT(/id)] : AtendimentoController.updateByAtendimento(Linha: 131) => Endpoint: {PUT: /{}/atendimentos/[id]}", apiUrl);
+        HelpersLogs.logInfoController("PUT(/id)", CLASS_NAME, "updateByAtendimento", apiUrl);
+
         if(result.hasErrors()){
             if (BindingHandler.isErrorNull(result)){
-                log.info("Atualizando atendimento...");
-                return ResponseEntity.status(HttpStatus.OK)
+                log.debug("Atualizando atendimento...");
+                ResponseEntity<Object> response = ResponseEntity.status(HttpStatus.OK)
                         .body(atendimentoService.atualizarAtendimento(id, atendimentoRequestDTO));
+
+                HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, "Atendimento atualizado.");
+                return response;
+
             }
             ErrorResponseDTO error = new ErrorResponseDTO(
                     HttpStatus.BAD_REQUEST.value(),
                     "Alguns campos estão fora do padrão",
                     LocalDateTime.now(ZoneId.of("America/Sao_Paulo")).toInstant(ZoneOffset.of("-03:00"))
             );
-            log.error("Erro ao tentar atualizar atendimento: [{}]", error);
-            log.info("[ATUALIZAR ATENDIMENTO] Response -> {}", HttpStatus.BAD_REQUEST);
+
+            HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.BAD_REQUEST, "Não foi possível atualizar o atendimento.");
+            log.debug("AtendimentoController.updateByAtendimento => Erros = [{}]", error);
+
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(error);
         }
 
-        log.info("Atualizando atendimento...");
-        return ResponseEntity.status(HttpStatus.OK)
+        log.debug("Atualizando atendimento...");
+        ResponseEntity<Object> response = ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.atualizarAtendimento(id, atendimentoRequestDTO));
+
+        HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, "Atendimento atualizado.");
+        return response;
 
     }
 
@@ -282,10 +332,15 @@ public class AtendimentoController {
     })
     @Operation(summary = "Ativar atendimento", description = "Endpoint para ativar um atendimento do sistema")
     public ResponseEntity<SuccessResponseDTO> ativarAtendimento(@PathVariable String id) {
-        log.info("[CONTROLLER -> PATCH(/id)] : AtendimentoController.ativarAtendimento(Linha: 161) => Endpoint: {PATCH: /{}/atendimentos/[id]}", apiUrl);
-        log.info("Ativando atendimento...");
-        return ResponseEntity.status(HttpStatus.OK)
+        HelpersLogs.logInfoController("PATCH(/id)", CLASS_NAME, "ativarAtendimento", apiUrl);
+
+        log.debug("Ativando atendimento...");
+        ResponseEntity<SuccessResponseDTO> response = ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.ativarAtendimento(id));
+
+        HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, "Atendimento ativado.");
+
+        return response;
     }
 
 }

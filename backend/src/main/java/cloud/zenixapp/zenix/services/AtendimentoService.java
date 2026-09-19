@@ -4,6 +4,7 @@ import cloud.zenixapp.zenix.configs.TenantContext;
 import cloud.zenixapp.zenix.configs.exceptions.ConflictException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.mappers.AtendimentoMapper;
+import cloud.zenixapp.zenix.configs.utils.HelpersLogs;
 import cloud.zenixapp.zenix.models.dtos.requests.AtendimentoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.atendimentos.AtendimentoResponseDTO;
@@ -12,6 +13,7 @@ import cloud.zenixapp.zenix.models.entities.Tenants;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.repositories.AtendimentoRepository;
 import lombok.extern.log4j.Log4j2;
+import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -54,6 +56,23 @@ public class AtendimentoService {
     // Mensagem padrão para exceções onde o objeto foi excluído.
     private static final String  MESSAGE_EXCEPTION_EXCLUIDO = "Atendimento está excluído!";
 
+    // Camada padrão para 'log'
+    private static final String CAMADA = "SERVICE";
+
+    // Resposta padrão para 'log' de atendimentos encontrados
+    private static final String ATENDIMENTO_FOUND = "Atendimentos encontrados";
+
+    // Package padrão para 'log'
+    private static final String LOGGER = "cloud.zenixapp.zenix.services.AtendimentoService";
+
+    // Entidade padrão para 'log'
+    private static final String ENTITY_NAME = "Atendimento";
+
+    private static final String RESPONSE_DEBUG = "%s: %d";
+
+    // Classe padrão para 'log'
+    private static final String CLASS_NAME = "AtendimentoService";
+
     // Formatador de data para o padrão brasileiro.
     private final DateTimeFormatter currentDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -94,8 +113,10 @@ public class AtendimentoService {
      * @see SuccessResponseDTO
      */
     @Transactional(propagation = Propagation.REQUIRED)
-    public SuccessResponseDTO inserirAtendimento(AtendimentoRequestDTO atendimentoDTO){
-        log.info("[SERVICE -> Inserir atendimento] : AtendimentoService.inserirAtendimento(Linha: 49)");
+    public SuccessResponseDTO inserirAtendimento(@NonNull AtendimentoRequestDTO atendimentoDTO){
+        long inicio = System.currentTimeMillis();
+        HelpersLogs.logInfoServices("Inserir atendimento", CLASS_NAME, "inserirAtendimento");
+
         String tenantId = TenantContext.getTenantId();
 
         // Atualiza o atendimento usado como referência para o Plano e o retorno do cliente
@@ -115,7 +136,9 @@ public class AtendimentoService {
                 HttpStatus.CREATED.value(),
                 "Atendimento inserido com sucesso!"
         );
-        log.info("Atendimento inserido: [Status: {}] => [Message: {}]", successResponseDTO.status(), successResponseDTO.message());
+
+        long fim = System.currentTimeMillis();
+        HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.CREATED, successResponseDTO.message(), inicio, fim);
 
         return successResponseDTO;
     }
@@ -131,10 +154,17 @@ public class AtendimentoService {
      * @see AtendimentoResponseDTO
      */
     public List<AtendimentoResponseDTO> listarAtendimentosHojeByUsuario(){
-        log.info("[SERVICE -> Listar atendimento de hoje] : AtendimentoService.listarAtendimentosHoje(Linha: 73)");
+        long inicio = System.currentTimeMillis();
+        HelpersLogs.logInfoServices("Listar atendimento de hoje", CLASS_NAME, "listarAtendimentosHoje");
+
         Usuarios user = (Usuarios) Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
         List<AtendimentoResponseDTO> atendimentoResponseDTOList = atendimentoRepository.findByUsuariosAndDateAndTenant(user, LocalDateTime.now(TIME_ZONE).format(currentDate), TenantContext.getTenantId());
-        log.info("Atendimento encontrados de hoje: {}", atendimentoResponseDTOList.size());
+        String mensagem = RESPONSE_DEBUG.formatted(ATENDIMENTO_FOUND, atendimentoResponseDTOList.size());
+        log.debug(mensagem);
+
+        long fim = System.currentTimeMillis();
+        HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, ATENDIMENTO_FOUND, inicio, fim);
+
         return atendimentoResponseDTOList;
     }
 
@@ -149,9 +179,16 @@ public class AtendimentoService {
      * @see AtendimentoResponseDTO
      */
     public List<AtendimentoResponseDTO> listarTodosAtendimentos(){
-        log.info("[SERVICE -> Listar todos os atendimentos] : AtendimentoService.listarTodosAtendimentos(Linha: 78)");
+        long inicio = System.currentTimeMillis();
+        HelpersLogs.logInfoServices("Listar todos os atendimentos", CLASS_NAME, "listarTodosAtendimentos");
+
         List<AtendimentoResponseDTO> atendimentoResponseDTOList = atendimentoRepository.findAllByTenant(TenantContext.getTenantId());
-        log.info("Atendimento encontrados: {}", atendimentoResponseDTOList.size());
+        String mensagem = RESPONSE_DEBUG.formatted(ATENDIMENTO_FOUND, atendimentoResponseDTOList.size());
+        log.debug(mensagem);
+
+        long fim = System.currentTimeMillis();
+        HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, ATENDIMENTO_FOUND, inicio, fim);
+
         return atendimentoResponseDTOList;
     }
 
@@ -166,10 +203,16 @@ public class AtendimentoService {
      * @see AtendimentoResponseDTO
      */
     public List<AtendimentoResponseDTO> listarHistorico(){
-        log.info("[SERVICE -> Listar histórico] : AtendimentoService.listarHistorico(Linha: 83)");
+        long inicio = System.currentTimeMillis();
+        HelpersLogs.logInfoServices("Listar histórico", CLASS_NAME, "listarHistorico");
+
         Usuarios user = (Usuarios) Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
         List<AtendimentoResponseDTO> atendimentoResponseDTOList = atendimentoRepository.findByUsuariosAndTenant(user, TenantContext.getTenantId());
-        log.info("Atendimento encontrados no histórico: {}", atendimentoResponseDTOList.size());
+        String mensagem = RESPONSE_DEBUG.formatted(ATENDIMENTO_FOUND, atendimentoResponseDTOList.size());
+        log.debug(mensagem);
+
+        long fim = System.currentTimeMillis();
+        HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, ATENDIMENTO_FOUND, inicio, fim);
         return atendimentoResponseDTOList;
     }
 
@@ -179,7 +222,7 @@ public class AtendimentoService {
      * </h2>
      * <h6>Apenas o administrador pode deletar um atendimento</h6>
      * <p>
-     *     Este método é utilizado para deletar um atendimento dado o ID. Ele realizará um delete lógico, sem excluir fisicamente do banco de dados.
+     *     Este método é utilizado para deletar um atendimento dado o 'ID'. Ele realizará um delete lógico, sem excluir fisicamente do banco de dados.
      *     Assim como inserir um atendimento atualiza o retorno de um cliente existente, o deletar atualiza o retorno também retirando o retorno do mesmo via
      *     {@link ClienteService#retiraRetornoCliente(String, String) ClienteService}
      * </p>
@@ -194,12 +237,14 @@ public class AtendimentoService {
      */
     @Transactional(propagation = Propagation.REQUIRED)
     public SuccessResponseDTO deletarAtendimento(String id) {
-        log.info("[SERVICE -> Deletar um atendimento] : AtendimentoService.deletarAtendimento(Linha: 89)");
+        long inicio = System.currentTimeMillis();
+        HelpersLogs.logInfoServices("Deletar um atendimento", CLASS_NAME, "deletarAtendimento");
+
         String tenantId = TenantContext.getTenantId();
         return atendimentoRepository.findByIdAndTenant(id, tenantId)
                 .map(atendimento -> {
                     if (atendimento.status() == -1) {
-                        log.error("Exceção lançada pelo método: cloud.zenixapp.zenix.services.AtendimentoService.deletarAtendimento(String)");
+                        HelpersLogs.logException(LOGGER, "deletarAtendimento(String)");
                         throw new ConflictException(MESSAGE_EXCEPTION_EXCLUIDO);
 
                     }
@@ -212,7 +257,8 @@ public class AtendimentoService {
                             "Atendimento deletado com sucesso!"
                     );
 
-                    log.info("Atendimento deletado: [Status: {}] => [Message: {}]", successResponseDTO.status(), successResponseDTO.message());
+                    long fim = System.currentTimeMillis();
+                    HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, successResponseDTO.message(), inicio, fim);
 
                     return successResponseDTO;
 
@@ -226,7 +272,7 @@ public class AtendimentoService {
      * </h2>
      * <h6>Apenas o administrador pode atualizar um atendimento.</h6>
      * <p>
-     *     Este método é utilizado para atualizar um atendimento dado um ID. Ele receberá o ID e também os campos, via DTO, que serão atualizados.
+     *     Este método é utilizado para atualizar um atendimento dado um 'ID'. Ele receberá o 'ID' e também os campos, via DTO, que serão atualizados.
      *     Esses campos são mapeados para entidade via {@link AtendimentoMapper#atualizarAtendimento(Atendimento, AtendimentoRequestDTO) Atendimento Mapper}.
      * </p>
      * @param id 'ID' do atendimento que será atualizado
@@ -241,11 +287,13 @@ public class AtendimentoService {
      */
     @Transactional(propagation = Propagation.REQUIRED)
     public SuccessResponseDTO atualizarAtendimento(String id, AtendimentoRequestDTO atendimentoRequestDTO){
-        log.info("[SERVICE -> Atualizar um atendimento] : AtendimentoService.atualizarAtendimento(Linha: 114)");
+        long inicio = System.currentTimeMillis();
+        HelpersLogs.logInfoServices("Atualizar um atendimento", CLASS_NAME, "atualizarAtendimento");
+
         return atendimentoRepository.findById(id, TenantContext.getTenantId())
                 .map(atendimento -> {
                     if(atendimento.getStatus() == -1){
-                        log.error("Exceção lançada pelo método: cloud.zenixapp.zenix.services.AtendimentoService.atualizarAtendimento(String, AtendimentoRequestDTO)");
+                        HelpersLogs.logException(LOGGER, "atualizarAtendimento(String)");
                         throw new ConflictException(MESSAGE_EXCEPTION_EXCLUIDO);
 
                     }
@@ -258,7 +306,8 @@ public class AtendimentoService {
                             "Atendimento atualizado com sucesso!"
                     );
 
-                    log.info("Atendimento atualizado: [Status: {}] => [Message: {}]", successResponseDTO.status(), successResponseDTO.message());
+                    long fim = System.currentTimeMillis();
+                    HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, successResponseDTO.message(), inicio, fim);
 
                     return successResponseDTO;
 
@@ -287,12 +336,14 @@ public class AtendimentoService {
      */
     @Transactional
     public SuccessResponseDTO ativarAtendimento(String id){
-        log.info("[SERVICE -> Ativar um atendimento] : AtendimentoService.ativarAtendimento(Linha: 139)");
+        long inicio = System.currentTimeMillis();
+        HelpersLogs.logInfoServices("Ativar um atendimento", CLASS_NAME, "ativarAtendimento");
+
         String tenantId = TenantContext.getTenantId();
         return atendimentoRepository.findByIdAndTenant(id, tenantId)
                 .map(atendimento -> {
                     if(atendimento.status() == 1){
-                        log.error("Exceção lançada pelo método: cloud.zenixapp.zenix.services.AtendimentoService.ativarAtendimento(String)");
+                        HelpersLogs.logException(LOGGER, "ativarAtendimento(String)");
                         throw new ConflictException("Atendimento já está ativo!");
 
                     }
@@ -306,7 +357,8 @@ public class AtendimentoService {
                             "Atendimento ativado com sucesso!"
                     );
 
-                    log.info("Atendimento ativado: [Status: {}] => [Message: {}]", successResponseDTO.status(), successResponseDTO.message());
+                    long fim = System.currentTimeMillis();
+                    HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, successResponseDTO.message(), inicio, fim);
 
                     return successResponseDTO;
 
