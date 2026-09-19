@@ -29,6 +29,4 @@ EXPOSE 8080
 
 ENTRYPOINT ["java"]
 
-# O parâmetro '--spring.config.import=file:.env[.properties]' indica um arquivo .env para ser
-# usado para inicializar as variáveis de ambiente da aplicação.
-CMD ["-jar", "zenixapp.jar", "--spring.config.import=file:.env[.properties]"]
+CMD ["-jar", "zenixapp.jar"]
