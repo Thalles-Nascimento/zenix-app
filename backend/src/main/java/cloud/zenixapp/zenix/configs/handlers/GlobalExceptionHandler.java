@@ -1,7 +1,6 @@
 package cloud.zenixapp.zenix.configs.handlers;
 
 import cloud.zenixapp.zenix.configs.exceptions.ConflictException;
-import cloud.zenixapp.zenix.configs.exceptions.ExcluidoException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.exceptions.TokenCreateException;
 import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
@@ -13,15 +12,16 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
+
+import static cloud.zenixapp.zenix.configs.utils.HelpersVar.TIME_ZONE;
 
 @Log4j2
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
     private static final ZoneOffset ZONE_OFFSET = ZoneOffset.of("-03:00");
-    private static final ZoneId TIME_ZONE = ZoneId.of("America/Sao_Paulo");
+
 
     /*=====================================================================================
      * Handler para exceções em que a entidade não foi encontrada.

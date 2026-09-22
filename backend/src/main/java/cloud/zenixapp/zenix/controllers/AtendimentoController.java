@@ -28,6 +28,7 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 
+import static cloud.zenixapp.zenix.configs.utils.HelpersVar.CAMADA_CONTROLLER;
 
 /**
  * <h2>
@@ -58,9 +59,6 @@ public class AtendimentoController {
 
     // Classe padrão para 'log'
     private static final String CLASS_NAME = "AtendimentoController";
-
-    // Camada padrão para 'log'
-    private static final String CAMADA = "CONTROLLER";
 
     // Entidade padrão para 'log'
     private static final String ENTITY_NAME = "Atendimento";
@@ -106,7 +104,7 @@ public class AtendimentoController {
 
         if (result.hasErrors()){
             Map<String, String> errors = BindingHandler.insertError(result);
-            HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.BAD_REQUEST, "Não foi possível inserir o atendimento.");
+            HelpersLogs.logResponse(CAMADA_CONTROLLER, ENTITY_NAME, HttpStatus.BAD_REQUEST, "Não foi possível inserir o atendimento.");
             log.debug("AtendimentoController.save => Erros = [{}]", errors);
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -118,7 +116,7 @@ public class AtendimentoController {
         ResponseEntity<Object> response = ResponseEntity.status(HttpStatus.CREATED)
                 .body(atendimentoService.inserirAtendimento(atendimentoDTO));
 
-        HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.CREATED, "Atendimento inserido.");
+        HelpersLogs.logResponse(CAMADA_CONTROLLER, ENTITY_NAME, HttpStatus.CREATED, "Atendimento inserido.");
         return response;
 
     }
@@ -148,7 +146,7 @@ public class AtendimentoController {
         ResponseEntity<List<AtendimentoResponseDTO>> response = ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.listarHistorico());
 
-        HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, ATENDIMENTO_FOUND);
+        HelpersLogs.logResponse(CAMADA_CONTROLLER, ENTITY_NAME, HttpStatus.OK, ATENDIMENTO_FOUND);
         return response;
     }
 
@@ -176,7 +174,7 @@ public class AtendimentoController {
         ResponseEntity<List<AtendimentoResponseDTO>> response = ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.listarAtendimentosHojeByUsuario());
 
-        HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, ATENDIMENTO_FOUND);
+        HelpersLogs.logResponse(CAMADA_CONTROLLER, ENTITY_NAME, HttpStatus.OK, ATENDIMENTO_FOUND);
 
         return response;
     }
@@ -203,7 +201,7 @@ public class AtendimentoController {
         ResponseEntity<List<AtendimentoResponseDTO>> response = ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.listarTodosAtendimentos());
 
-        HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, ATENDIMENTO_FOUND);
+        HelpersLogs.logResponse(CAMADA_CONTROLLER, ENTITY_NAME, HttpStatus.OK, ATENDIMENTO_FOUND);
 
         return response;
     }
@@ -238,7 +236,7 @@ public class AtendimentoController {
         ResponseEntity<SuccessResponseDTO> response = ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.deletarAtendimento(id));
 
-        HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, "Atendimento deletado.");
+        HelpersLogs.logResponse(CAMADA_CONTROLLER, ENTITY_NAME, HttpStatus.OK, "Atendimento deletado.");
 
         return response;
 
@@ -284,7 +282,7 @@ public class AtendimentoController {
                 ResponseEntity<Object> response = ResponseEntity.status(HttpStatus.OK)
                         .body(atendimentoService.atualizarAtendimento(id, atendimentoRequestDTO));
 
-                HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, "Atendimento atualizado.");
+                HelpersLogs.logResponse(CAMADA_CONTROLLER, ENTITY_NAME, HttpStatus.OK, "Atendimento atualizado.");
                 return response;
 
             }
@@ -294,7 +292,7 @@ public class AtendimentoController {
                     LocalDateTime.now(ZoneId.of("America/Sao_Paulo")).toInstant(ZoneOffset.of("-03:00"))
             );
 
-            HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.BAD_REQUEST, "Não foi possível atualizar o atendimento.");
+            HelpersLogs.logResponse(CAMADA_CONTROLLER, ENTITY_NAME, HttpStatus.BAD_REQUEST, "Não foi possível atualizar o atendimento.");
             log.debug("AtendimentoController.updateByAtendimento => Erros = [{}]", error);
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -305,7 +303,7 @@ public class AtendimentoController {
         ResponseEntity<Object> response = ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.atualizarAtendimento(id, atendimentoRequestDTO));
 
-        HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, "Atendimento atualizado.");
+        HelpersLogs.logResponse(CAMADA_CONTROLLER, ENTITY_NAME, HttpStatus.OK, "Atendimento atualizado.");
         return response;
 
     }
@@ -338,7 +336,7 @@ public class AtendimentoController {
         ResponseEntity<SuccessResponseDTO> response = ResponseEntity.status(HttpStatus.OK)
                 .body(atendimentoService.ativarAtendimento(id));
 
-        HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, "Atendimento ativado.");
+        HelpersLogs.logResponse(CAMADA_CONTROLLER, ENTITY_NAME, HttpStatus.OK, "Atendimento ativado.");
 
         return response;
     }

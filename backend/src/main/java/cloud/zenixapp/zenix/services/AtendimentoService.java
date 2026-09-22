@@ -21,10 +21,14 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
+
+import static cloud.zenixapp.zenix.configs.utils.HelpersVar.CAMADA_SERVICE;
+import static cloud.zenixapp.zenix.configs.utils.HelpersVar.TIME_ZONE;
+import static cloud.zenixapp.zenix.configs.utils.HelpersVar.MESSAGE_EXCEPTION_EXCLUIDO;
+import static cloud.zenixapp.zenix.configs.utils.HelpersVar.MESSAGE_EXCEPTION_NOT_FOUND;
 
 
 /**
@@ -47,18 +51,6 @@ import java.util.Objects;
 @Service
 public class AtendimentoService {
 
-    // Mensagem padrão para exceções onde o objeto não foi encontrado.
-    private static final String MESSAGE_EXCEPTION_NOT_FOUND = "Atendimento não encontrado!";
-
-    // TimeZone padrão para as funções de LocalDateTime.now().
-    private static final ZoneId TIME_ZONE = ZoneId.of("America/Sao_Paulo");
-
-    // Mensagem padrão para exceções onde o objeto foi excluído.
-    private static final String  MESSAGE_EXCEPTION_EXCLUIDO = "Atendimento está excluído!";
-
-    // Camada padrão para 'log'
-    private static final String CAMADA = "SERVICE";
-
     // Resposta padrão para 'log' de atendimentos encontrados
     private static final String ATENDIMENTO_FOUND = "Atendimentos encontrados";
 
@@ -67,8 +59,6 @@ public class AtendimentoService {
 
     // Entidade padrão para 'log'
     private static final String ENTITY_NAME = "Atendimento";
-
-    private static final String RESPONSE_DEBUG = "%s: %d";
 
     // Classe padrão para 'log'
     private static final String CLASS_NAME = "AtendimentoService";
@@ -138,7 +128,7 @@ public class AtendimentoService {
         );
 
         long fim = System.currentTimeMillis();
-        HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.CREATED, successResponseDTO.message(), inicio, fim);
+        HelpersLogs.logResponse(CAMADA_SERVICE, ENTITY_NAME, HttpStatus.CREATED, successResponseDTO.message(), inicio, fim);
 
         return successResponseDTO;
     }
@@ -159,11 +149,9 @@ public class AtendimentoService {
 
         Usuarios user = (Usuarios) Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
         List<AtendimentoResponseDTO> atendimentoResponseDTOList = atendimentoRepository.findByUsuariosAndDateAndTenant(user, LocalDateTime.now(TIME_ZONE).format(currentDate), TenantContext.getTenantId());
-        String mensagem = RESPONSE_DEBUG.formatted(ATENDIMENTO_FOUND, atendimentoResponseDTOList.size());
-        log.debug(mensagem);
 
         long fim = System.currentTimeMillis();
-        HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, ATENDIMENTO_FOUND, inicio, fim);
+        HelpersLogs.logResponse(CAMADA_SERVICE, ENTITY_NAME, HttpStatus.OK, ATENDIMENTO_FOUND, inicio, fim);
 
         return atendimentoResponseDTOList;
     }
@@ -183,11 +171,9 @@ public class AtendimentoService {
         HelpersLogs.logInfoServices("Listar todos os atendimentos", CLASS_NAME, "listarTodosAtendimentos");
 
         List<AtendimentoResponseDTO> atendimentoResponseDTOList = atendimentoRepository.findAllByTenant(TenantContext.getTenantId());
-        String mensagem = RESPONSE_DEBUG.formatted(ATENDIMENTO_FOUND, atendimentoResponseDTOList.size());
-        log.debug(mensagem);
 
         long fim = System.currentTimeMillis();
-        HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, ATENDIMENTO_FOUND, inicio, fim);
+        HelpersLogs.logResponse(CAMADA_SERVICE, ENTITY_NAME, HttpStatus.OK, ATENDIMENTO_FOUND, inicio, fim);
 
         return atendimentoResponseDTOList;
     }
@@ -208,11 +194,9 @@ public class AtendimentoService {
 
         Usuarios user = (Usuarios) Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
         List<AtendimentoResponseDTO> atendimentoResponseDTOList = atendimentoRepository.findByUsuariosAndTenant(user, TenantContext.getTenantId());
-        String mensagem = RESPONSE_DEBUG.formatted(ATENDIMENTO_FOUND, atendimentoResponseDTOList.size());
-        log.debug(mensagem);
 
         long fim = System.currentTimeMillis();
-        HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, ATENDIMENTO_FOUND, inicio, fim);
+        HelpersLogs.logResponse(CAMADA_SERVICE, ENTITY_NAME, HttpStatus.OK, ATENDIMENTO_FOUND, inicio, fim);
         return atendimentoResponseDTOList;
     }
 
@@ -258,7 +242,7 @@ public class AtendimentoService {
                     );
 
                     long fim = System.currentTimeMillis();
-                    HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, successResponseDTO.message(), inicio, fim);
+                    HelpersLogs.logResponse(CAMADA_SERVICE, ENTITY_NAME, HttpStatus.OK, successResponseDTO.message(), inicio, fim);
 
                     return successResponseDTO;
 
@@ -307,7 +291,7 @@ public class AtendimentoService {
                     );
 
                     long fim = System.currentTimeMillis();
-                    HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, successResponseDTO.message(), inicio, fim);
+                    HelpersLogs.logResponse(CAMADA_SERVICE, ENTITY_NAME, HttpStatus.OK, successResponseDTO.message(), inicio, fim);
 
                     return successResponseDTO;
 
@@ -358,7 +342,7 @@ public class AtendimentoService {
                     );
 
                     long fim = System.currentTimeMillis();
-                    HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, successResponseDTO.message(), inicio, fim);
+                    HelpersLogs.logResponse(CAMADA_SERVICE, ENTITY_NAME, HttpStatus.OK, successResponseDTO.message(), inicio, fim);
 
                     return successResponseDTO;
 
