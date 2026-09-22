@@ -4,7 +4,8 @@ package cloud.zenixapp.zenix.controllers;
 import cloud.zenixapp.zenix.configs.handlers.BindingHandler;
 import cloud.zenixapp.zenix.models.dtos.requests.UsuarioLoginDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.UsuarioRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.*;
+import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.services.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,11 +23,10 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/${api-url}/users")
 @Tag(name = "Usuário", description = "Endpoints do serviço de Usuário")
 public class UsuarioController {
 
@@ -83,7 +83,7 @@ public class UsuarioController {
                     .body(BindingHandler.insertError(result));
         }
 
-        SucessUsuarioResponseDTO userRegister = usuarioService.registerUser(usuarioRequestDTO);
+        SuccessResponseDTO userRegister = usuarioService.criarNovoUsuario(usuarioRequestDTO);
 
         if(userRegister == null){
             Map<String, String> error = new HashMap<>();
@@ -98,7 +98,7 @@ public class UsuarioController {
 
     @GetMapping
     @Operation(summary = "Listar usuários", description = "Endpoint para listar todos os usuários cadastrados no sistema")
-    public ResponseEntity<List<UsuarioResponseDTO>> listarUsuarios(){
+    public ResponseEntity<?> listarUsuarios(){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(usuarioService.buscarUsuarios());
     }
@@ -112,18 +112,18 @@ public class UsuarioController {
 
     @GetMapping("/barbeiros/{unidadeId}")
     @Operation(summary = "Listar barbeiros por unidade", description = "Endpoint público para listar barbeiros ativos de uma unidade")
-    public ResponseEntity<List<UsuarioResponseSimplesDTO>> listarBarbeirosPorUnidade(@PathVariable Long unidadeId){
+    public ResponseEntity<?> listarBarbeirosPorUnidade(@PathVariable String unidadeId){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(usuarioService.buscarBarbeirosPorUnidade(unidadeId));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Atualizar usuário", description = "Endpoint para atualizar as informações de um usuário existente")
-    public ResponseEntity<?> atualizarUsuarios(@PathVariable Long id, @RequestBody @Valid UsuarioRequestDTO user, BindingResult result) {
+    public ResponseEntity<?> atualizarUsuarios(@PathVariable String id, @RequestBody @Valid UsuarioRequestDTO userDTO, BindingResult result) {
         if (result.hasErrors()) {
             if (BindingHandler.isErrorNull(result)) {
                 return ResponseEntity.status(HttpStatus.OK)
-                        .body(usuarioService.atualizarUsuario(id, user));
+                        .body(usuarioService.atualizarUsuario(id, userDTO));
             }
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -135,19 +135,19 @@ public class UsuarioController {
         }
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(usuarioService.atualizarUsuario(id, user));
+                .body(usuarioService.atualizarUsuario(id, userDTO));
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Excluir usuário", description = "Endpoint para excluir um usuário do sistema")
-    public ResponseEntity<?> deletarUsuario(@PathVariable Long id) {
+    public ResponseEntity<?> deletarUsuario(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(usuarioService.deletarUsuario(id));
     }
 
     @PatchMapping("/{id}")
     @Operation(summary = "Ativar usuário", description = "Endpoint para ativar um usuário do sistema")
-    public ResponseEntity<?> ativarUsuario(@PathVariable Long id) {
+    public ResponseEntity<?> ativarUsuario(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(usuarioService.ativarUsuario(id));
     }

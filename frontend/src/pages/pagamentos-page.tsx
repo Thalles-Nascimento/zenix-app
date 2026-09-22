@@ -117,11 +117,11 @@ export default function PagamentosPage() {
                                         key={item.id}
                                         className="bg-black border-b border-gray-700 notranslate"
                                     >
-                                        <td className="px-4 py-4 notranslate font-medium text-white">{item.formaPagamento}</td>
+                                        <td className="px-4 py-4 notranslate font-medium text-white">{item.pagamento}</td>
                                         <td className="px-4 py-4 notranslate">
                                             <div className="flex gap-2">
                                                 <button
-                                                    onClick={() => abrirEdicao(item.id, item.formaPagamento)}
+                                                    onClick={() => abrirEdicao(item.id, item.pagamento)}
                                                     className="bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
                                                 >
                                                     Editar
@@ -170,7 +170,7 @@ export default function PagamentosPage() {
             <ModalConfirmacao
                 open={confirmacaoAberta}
                 titulo="Excluir Forma de pagamento"
-                mensagem={`Deseja excluir o forma de pagamento "${pagamentoSelecionado?.formaPagamento}"? Esta ação não pode ser desfeita.`}
+                mensagem={`Deseja excluir o forma de pagamento "${pagamentoSelecionado?.pagamento}"? Esta ação não pode ser desfeita.`}
                 onConfirmar={() => {
                     if (!pagamentoSelecionado) return
                     handleDeletar(pagamentoSelecionado?.id)}}

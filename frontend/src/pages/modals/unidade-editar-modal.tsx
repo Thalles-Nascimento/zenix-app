@@ -21,13 +21,13 @@ const grupoConfig: Record<string, { label: string; className: string }> = {
 }
 
 export function ModalEditarUnidade({ unidade, open, onFechar, onConfirmar, onDeletar, onReativar }: Props) {
-    const [form, setForm] = useState<UnidadeFormProps>({ nomeUnidade: "", endereco: "" })
+    const [form, setForm] = useState<UnidadeFormProps>({ nome: "", endereco: "" })
     const [detalhe, setDetalhe] = useState<UnidadeDetalheProps | null>(null)
     const [reativar, setReativar] = useState(false)
 
     useEffect(() => {
         if (unidade) {
-            setForm({ nomeUnidade: unidade.nomeUnidade, endereco: unidade.endereco })
+            setForm({ nome: unidade.nome, endereco: unidade.endereco })
             setReativar(false)
             buscarUnidadeDetalheService(unidade.id).then(setDetalhe).catch(console.error)
         }
@@ -59,8 +59,8 @@ export function ModalEditarUnidade({ unidade, open, onFechar, onConfirmar, onDel
                     <div>
                         <Label className="text-white">Nome da Unidade</Label>
                         <Input className="mt-1 bg-gray-900 border-gray-700 text-white"
-                            value={form.nomeUnidade}
-                            onChange={(e) => setForm({ ...form, nomeUnidade: e.target.value })} />
+                            value={form.nome}
+                            onChange={(e) => setForm({ ...form, nome: e.target.value })} />
                     </div>
                     <div>
                         <Label className="text-white">Endereço</Label>

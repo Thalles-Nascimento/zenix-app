@@ -7,6 +7,9 @@ target/
 .env.local
 src.zip
 ${project.build.directory}/
+logs/
+PROJECT_CONTEXT.md
+/.mvn/maven.config
 
 ### STS ###
 .apt_generated

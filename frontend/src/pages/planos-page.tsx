@@ -12,10 +12,10 @@ import type { PlanoDTO } from "@/types/cliente"
 import { ModalConfirmacao } from "@/components/common/modal-confirmacao-component"
 
 interface FormPlano {
-    planoDescricao: string
+    descricao: string
     valor: string
     servico: string[]
-    limiteAtendimentos: string
+    atendimentos: string
 }
 
 export default function PlanosPage() {
@@ -23,8 +23,8 @@ export default function PlanosPage() {
 
     const [modalAberto, setModalAberto] = useState(false)
     const [planoSelecionado, setPlanoSelecionado] = useState<PlanoDTO | null>(null)
-    const [editando, setEditando] = useState<{ id: number } | null>(null)
-    const [form, setForm] = useState<FormPlano>({ planoDescricao: "", valor: "", servico: [], limiteAtendimentos: "" })
+    const [editando, setEditando] = useState<{ id: string } | null>(null)
+    const [form, setForm] = useState<FormPlano>({ descricao: "", valor: "", servico: [], atendimentos: "" })
     const [confirmacaoAberta, setConfirmacaoAberta] = useState(false)
 
     const formatBRL = (valor: number) =>
@@ -32,13 +32,13 @@ export default function PlanosPage() {
 
     const abrirNovo = () => {
         setEditando(null)
-        setForm({ planoDescricao: "", valor: "", servico: [], limiteAtendimentos: "" })
+        setForm({ descricao: "", valor: "", servico: [], atendimentos: "" })
         setModalAberto(true)
     }
 
-    const abrirEdicao = (id: number, planoDescricao: string, valor: number, servico: string[], limiteAtendimentos: number) => {
+    const abrirEdicao = (id: string, descricao: string, valor: number, servico: string[], atendimentos: number) => {
         setEditando({ id })
-        setForm({ planoDescricao, valor: String(valor), servico: servico ?? [], limiteAtendimentos: String(limiteAtendimentos) })
+        setForm({ descricao, valor: String(valor), servico: servico ?? [], atendimentos: String(atendimentos) })
         setModalAberto(true)
     }
 
@@ -50,7 +50,7 @@ export default function PlanosPage() {
     const fecharModal = () => {
         setModalAberto(false)
         setEditando(null)
-        setForm({ planoDescricao: "", valor: "", servico: [], limiteAtendimentos: "" })
+        setForm({ descricao: "", valor: "", servico: [], atendimentos: "" })
     }
 
     const handleServicosChange = (servicos: string[]) => {
@@ -58,23 +58,23 @@ export default function PlanosPage() {
     }
 
     const handleSalvar = async () => {
-        if (!form.planoDescricao.trim() || !form.valor || !form.limiteAtendimentos) {
+        if (!form.descricao.trim() || !form.valor || !form.atendimentos) {
             toast.error("Preencha todos os campos!")
             return
         }
 
         const valor = parseFloat(form.valor.replace(",", "."))
-        const limite = parseInt(form.limiteAtendimentos)
+        const limite = parseInt(form.atendimentos)
 
         if (isNaN(valor) || valor <= 0) { toast.error("Valor inválido!"); return }
         if (isNaN(limite) || limite <= 0) { toast.error("Limite inválido!"); return }
 
         try {
             if (editando) {
-                await atualizarPlano(editando.id, form.planoDescricao.trim(), valor, form.servico, limite)
+                await atualizarPlano(editando.id, form.descricao.trim(), valor, form.servico, limite)
                 toast.success("Plano atualizado!")
             } else {
-                await criarPlano(form.planoDescricao.trim(), valor, form.servico, limite)
+                await criarPlano(form.descricao.trim(), valor, form.servico, limite)
                 toast.success("Plano criado!")
             }
             fecharModal()
@@ -83,7 +83,7 @@ export default function PlanosPage() {
         }
     }
 
-    const handleDeletar = async (id: number) => {
+    const handleDeletar = async (id: string) => {
         try {
             await deletarPlano(id)
             toast.success("Plano excluído!")
@@ -136,20 +136,20 @@ export default function PlanosPage() {
                                 </tr>
                             ) : (
                                 planos.map(item => (
-                                    <tr key={item.id} className="bg-black border-b border-gray-700 notranslate">
+                                    <tr key={item.planoId} className="bg-black border-b border-gray-700 notranslate">
                                         <td className="px-4 py-4 notranslate font-medium text-white">{item.planoDescricao}</td>
                                         <td className="px-4 py-4 font-medium text-white notranslate">
-                                            {item.servico?.length > 0
-                                                ? item.servico.join(" + ")
+                                            {item.planoServico?.length > 0
+                                                ? item.planoServico.join(" + ")
                                                 : <span className="text-gray-500">—</span>
                                             }
                                         </td>
-                                        <td className="px-4 py-4 notranslate text-orange-500 font-bold">{formatBRL(item.valor)}</td>
-                                        <td className="px-4 py-4 notranslate text-gray-300">{item.limiteAtendimentos} atend./mês</td>
+                                        <td className="px-4 py-4 notranslate text-orange-500 font-bold">{formatBRL(item.planoValor)}</td>
+                                        <td className="px-4 py-4 notranslate text-gray-300">{item.planoAtendimentos} atend./mês</td>
                                         <td className="px-4 py-4 notranslate">
                                             <div className="flex gap-2">
                                                 <button
-                                                    onClick={() => abrirEdicao(item.id, item.planoDescricao, item.valor, item.servico ?? [], item.limiteAtendimentos)}
+                                                    onClick={() => abrirEdicao(item.planoId, item.planoDescricao, item.planoValor, item.planoServico ?? [], item.planoAtendimentos)}
                                                     className="bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
                                                 >
                                                     Editar
@@ -183,8 +183,8 @@ export default function PlanosPage() {
                             <Input
                                 className="mt-1 bg-gray-900 border-gray-700 text-white"
                                 placeholder="Ex: Mensal Corte"
-                                value={form.planoDescricao}
-                                onChange={(e) => setForm({ ...form, planoDescricao: e.target.value })}
+                                value={form.descricao}
+                                onChange={(e) => setForm({ ...form, descricao: e.target.value })}
                             />
                         </div>
                         <div>
@@ -216,8 +216,8 @@ export default function PlanosPage() {
                                 className="mt-1 bg-gray-900 border-gray-700 text-white"
                                 placeholder="Ex: 4"
                                 type="number"
-                                value={form.limiteAtendimentos}
-                                onChange={(e) => setForm({ ...form, limiteAtendimentos: e.target.value })}
+                                value={form.atendimentos}
+                                onChange={(e) => setForm({ ...form, atendimentos: e.target.value })}
                             />
                         </div>
                         <div className="flex flex-col gap-2 mt-2">
@@ -233,7 +233,7 @@ export default function PlanosPage() {
                 mensagem={`Deseja excluir o plano "${planoSelecionado?.planoDescricao}"? Esta ação não pode ser desfeita.`}
                 onConfirmar={() => {
                     if (!planoSelecionado) return
-                    handleDeletar(planoSelecionado?.id)}}
+                    handleDeletar(planoSelecionado?.planoId)}}
                 onCancelar={() => setConfirmacaoAberta(false)}
             />
         </div>

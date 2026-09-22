@@ -16,11 +16,16 @@ import ServicosPage from './pages/servicos-page'
 import PagamentosPage from './pages/pagamentos-page'
 import ClientesPage from './pages/clientes-page'
 import PlanosPage from './pages/planos-page'
+import CadastroUserPage from './pages/cadastro-user-page'
+import CadastroEmpresaPage from './pages/cadastro-empresa-page'
+import RotaCadastro from './security/rota-cadastro'
 
 
 function App() {
   return (
     <Routes>
+      <Route path='/cadastro' element={<CadastroUserPage/>}/>
+      <Route path='/cadastro/empresa' element={<RotaCadastro><CadastroEmpresaPage/></RotaCadastro>} />
       <Route path='/login' element={<LoginPage/>}/>
       <Route path='/fila/:unidadeId' element={<LoginClient/>}/>
 

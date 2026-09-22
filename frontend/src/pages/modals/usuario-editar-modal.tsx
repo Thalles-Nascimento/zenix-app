@@ -115,7 +115,7 @@ export function ModalEditarUsuario({ usuario, open, onFechar, onConfirmar, onDel
                             </SelectTrigger>
                             <SelectContent className="notranslate bg-black border-gray-700 text-white">
                                 {unidades.map(u => (
-                                    <SelectItem key={u.id} value={String(u.id)}>{u.nomeUnidade}</SelectItem>
+                                    <SelectItem key={u.id} value={String(u.id)}>{u.unidadeNome}</SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>

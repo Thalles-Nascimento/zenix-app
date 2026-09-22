@@ -1,38 +1,135 @@
 package cloud.zenixapp.zenix.repositories;
 
+import cloud.zenixapp.zenix.models.dtos.responses.clientes.ClientePlanosResumoResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.clientes.ClienteSimplesPlanosResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Clientes;
 import cloud.zenixapp.zenix.models.entities.TelefoneCliente;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface ClienteRepository extends JpaRepository<Clientes, Long> {
+public interface ClienteRepository extends JpaRepository<Clientes, String> {
 
-//    TODO Melhorar esse retorno, deixando mais seguro -
-//     SELECT c.cliente_id, c.cliente_nome, c.cliente_retorno FROM clientes c WHERE c.telefone_id = :id
-    @Query(value = "SELECT * FROM clientes WHERE telefone_id = :id", nativeQuery = true)
-    List<Clientes> findClientByNumber(@Param("id") Long id);
-
-    @Query(value = "SELECT * FROM clientes WHERE cliente_nome = :nome", nativeQuery = true)
-    Clientes findByName(@Param("nome") String nome);
-
-    @Query(value = "SELECT * FROM clientes WHERE cliente_nome LIKE %:nome% AND cliente_status = 1", nativeQuery = true)
-    List<Clientes> findByNameContaining(@Param("nome") String nome);
+//  Listar clientes pelo Nome
+    @Query("""
+        SELECT new cloud.zenixapp.zenix.models.dtos.responses.clientes.
+                ClientePlanosResumoResponseDTO(
+                    c.id,
+                    c.nomeCliente,
+                    new cloud.zenixapp.zenix.models.dtos.responses.telefones.TelefoneClienteResponseDTO(
+                        tc.telefoneCliente
+                    ),
+                    c.dataRenovacao,
+                    c.atendimentosMes,
+                    c.totalRetornos,
+                    c.status,
+                    new cloud.zenixapp.zenix.models.dtos.responses.planos.PlanosClienteResumoResponseDTO(
+                        p.id, p.planoDescricao
+                    )
+                )
+                FROM Clientes c
+                LEFT JOIN c.telefoneCliente tc
+                LEFT JOIN c.planos p
+                WHERE c.nomeCliente = :nome AND c.tenant = :tenantId
+        """)
+    Optional<ClientePlanosResumoResponseDTO> findByName(@Param("nome") String nome, @Param("tenantId") String tenantId);
 
     @Modifying
-    @Query("UPDATE Clientes SET atendimentosMes = 0 WHERE planos IS NOT NULL AND DAY(dataRenovacao) = :dia")
-    void resetarAtendimentosMes(@Param("dia") int dia);
+    @NativeQuery("UPDATE clientes SET cliente_atendimentos_mes = 0 WHERE tenant_id = :tenantId AND planos_id IS NOT NULL AND DAY(cliente_data_renovacao) = :dia")
+    void resetarAtendimentosMes(@Param("dia") int dia, @Param("tenantId") String tenantId);
 
     @Modifying
-    @Query(value = "UPDATE Clientes SET status = -1 WHERE id = :id")
-    void deleteLogico(@Param("id") Long id);
+    @NativeQuery(
+            value = "UPDATE clientes c " +
+                    "SET c.cliente_atendimentos_mes = c.cliente_atendimentos_mes + 1 " +
+                    "WHERE c.tenant_id = :tenantId AND c.id = :id")
+    void atualizarAtendimentosMes(@Param("id") String id, @Param("tenantId") String tenantId);
 
     @Modifying
-    @Query(value = "UPDATE Clientes SET status = 1 WHERE id = :id")
-    void ativarCliente(@Param("id") Long id);
+    @NativeQuery(
+            value = "UPDATE clientes c " +
+                    "SET c.cliente_retorno = c.cliente_retorno + 1 " +
+                    "WHERE c.id = :id AND c.tenant_id = :tenantId")
+    void atualizarRetorno(@Param("id") String id, @Param("tenantId") String tenantId);
+
+    @Modifying
+    @NativeQuery(
+            value = "UPDATE clientes c " +
+                    "SET c.cliente_retorno = c.cliente_retorno - 1 " +
+                    "WHERE c.id = :id AND c.tenant_id = :tenantId")
+    void retirarRetorno(@Param("id") String id, @Param("tenantId") String tenantId);
+
+    @Modifying
+    @NativeQuery(
+            value = "UPDATE clientes c " +
+                    "SET c.cliente_status = -1, c.deleted_at = :deleteTime " +
+                    "WHERE c.deleted_at IS NULL AND c.cliente_status != -1 AND c.id = :id AND c.tenant_id = :tenantId ")
+    int deleteLogico(@Param("id") String id, @Param("deleteTime") LocalDateTime deleteTime, @Param("tenantId") String tenantId);
+
+    @Modifying
+    @NativeQuery(
+            value = "UPDATE clientes c " +
+                    "SET c.cliente_status = 1, c.deleted_at = null " +
+                    "WHERE c.deleted_at IS NOT NULL AND c.cliente_status != 1 AND c.id = :id AND c.tenant_id = :tenantId ")
+    int ativarCliente(@Param("id") String id, @Param("tenantId") String tenantId);
+
+    @Query(
+            value = "SELECT tc " +
+                    "FROM TelefoneCliente tc " +
+                    "WHERE tc.telefoneCliente = :telefoneCliente AND tc.tenant = :tenant")
+    Optional<TelefoneCliente> findByTelefone_ClienteAndTenant(String telefoneCliente, String tenant);
+
+    @Query("""
+        SELECT new cloud.zenixapp.zenix.models.dtos.responses.clientes.
+                ClienteSimplesPlanosResponseDTO(
+                    c.id,
+                    c.nomeCliente,
+                    new cloud.zenixapp.zenix.models.dtos.responses.telefones.TelefoneClienteResponseDTO(
+                        tc.telefoneCliente
+                    ),
+                    c.status,
+                    new cloud.zenixapp.zenix.models.dtos.responses.planos.PlanosClienteResumoResponseDTO(
+                        p.id, p.planoDescricao
+                    )
+                )
+                FROM Clientes c
+                LEFT JOIN c.telefoneCliente tc
+                LEFT JOIN c.planos p
+                WHERE tc.telefoneCliente = :telefone AND c.tenant = :tenantId
+        """)
+    List<ClienteSimplesPlanosResponseDTO> findClientByNumber(@Param("telefone") String telefone, @Param("tenantId") String tenantId);
+
+    @Query("""
+        SELECT new cloud.zenixapp.zenix.models.dtos.responses.clientes.
+                ClientePlanosResumoResponseDTO(
+                    c.id,
+                    c.nomeCliente,
+                    new cloud.zenixapp.zenix.models.dtos.responses.telefones.TelefoneClienteResponseDTO(
+                        tc.telefoneCliente
+                    ),
+                    c.dataRenovacao,
+                    c.atendimentosMes,
+                    c.totalRetornos,
+                    c.status,
+                    new cloud.zenixapp.zenix.models.dtos.responses.planos.PlanosClienteResumoResponseDTO(
+                        p.id, p.planoDescricao
+                    )
+                )
+                FROM Clientes c
+                LEFT JOIN c.telefoneCliente tc
+                LEFT JOIN c.planos p
+                WHERE c.tenant = :tenantId
+        """)
+    List<ClientePlanosResumoResponseDTO> findAll(@Param("tenantId") String tenantId);
+
+
+    Optional<Clientes> findByIdAndTenant(String id, String tenant);
+
 
 }

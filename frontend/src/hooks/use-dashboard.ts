@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { listarAtendimentosAdminService } from "../services/atendimento-service"
-import type { AtendimentoAdminProps } from "../types/dashboard"
+import type { AtendimentoAdminProps } from "../types/atendimento"
 import { parseData, hoje } from "../utils/date"
 import { toast } from "sonner"
 
@@ -27,7 +27,7 @@ export function useDashboard() {
     }, [])
 
     const atendimentos = todosAtendimentos.filter(a => {
-        const data = parseData(a.date)
+        const data = parseData(a.data)
         if (filtroInicio && data < filtroInicio) return false
         if (filtroFim && data > filtroFim) return false
         return true

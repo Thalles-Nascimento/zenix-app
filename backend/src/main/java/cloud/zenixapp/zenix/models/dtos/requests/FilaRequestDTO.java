@@ -28,10 +28,9 @@ public record FilaRequestDTO(
         )
         String formaPagamento,
 
-        Long idBarbeiro,
+        String idBarbeiro,
 
-        @NotNull(message = "Campo não pode ser nulo!")
-        Long idUnidade,
+        String idUnidade,
 
         boolean semPreferencia
 ) {

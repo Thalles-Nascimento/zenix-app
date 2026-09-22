@@ -53,7 +53,7 @@ export default function UnidadesPage() {
                                     className="bg-black border-b border-gray-700 hover:bg-gray-900 cursor-pointer notranslate"
                                     onClick={() => setUnidadeSelecionada(u)}
                                 >
-                                    <td className="px-4 py-4 notranslate font-medium text-white">{u.nomeUnidade}</td>
+                                    <td className="px-4 py-4 notranslate font-medium text-white">{u.nome}</td>
                                     <td className="px-4 py-4 notranslate">{u.endereco}</td>
                                     <td className="px-4 py-4 notranslate">
                                         <span className={u.status === 1 ? "text-orange-500 font-semibold" : "text-gray-500"}>

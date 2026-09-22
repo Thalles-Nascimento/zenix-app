@@ -1,17 +1,19 @@
 package cloud.zenixapp.zenix.services;
 
-import cloud.zenixapp.zenix.configs.exceptions.AtendimentoExcluidoException;
+import cloud.zenixapp.zenix.configs.TenantContext;
+import cloud.zenixapp.zenix.configs.exceptions.ConflictException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.mappers.AtendimentoMapper;
+import cloud.zenixapp.zenix.configs.utils.HelpersLogs;
 import cloud.zenixapp.zenix.models.dtos.requests.AtendimentoRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.AtendimentoAdminResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.AtendimentoResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.SucessAtendimentoResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.atendimentos.AtendimentoResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Atendimento;
+import cloud.zenixapp.zenix.models.entities.Tenants;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.repositories.AtendimentoRepository;
-import cloud.zenixapp.zenix.repositories.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.log4j.Log4j2;
+import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -22,159 +24,346 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 
+
+/**
+ * <h2>
+ *     Serviço que estabelece as regras de negócio do Domínio Atendimento.
+ * </h2>
+ * Métodos suportados:
+ * {@link AtendimentoService#inserirAtendimento(AtendimentoRequestDTO) Inserir Atendimento}
+ * {@link AtendimentoService#listarAtendimentosHojeByUsuario() Listar Atendimentos do Dia de um Usuário}
+ * {@link AtendimentoService#listarTodosAtendimentos() Listar Atendimentos}
+ * {@link AtendimentoService#listarHistorico() Listar Histórico de Atendimentos de um Usuário}
+ * {@link AtendimentoService#deletarAtendimento(String) Deletar Atendimento}
+ * {@link AtendimentoService#atualizarAtendimento(String, AtendimentoRequestDTO) Atualizar Atendimento}
+ * {@link AtendimentoService#ativarAtendimento(String) Ativar Atendimento}
+ *
+ * @version 1.0
+ * @author Thalles Nascimento
+ */
+@Log4j2
 @Service
 public class AtendimentoService {
 
-    @Autowired
-    private AtendimentoRepository atendimentoRepository;
+    // Mensagem padrão para exceções onde o objeto não foi encontrado.
+    private static final String MESSAGE_EXCEPTION_NOT_FOUND = "Atendimento não encontrado!";
 
-    private final DateTimeFormatter current_date = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    // TimeZone padrão para as funções de LocalDateTime.now().
+    private static final ZoneId TIME_ZONE = ZoneId.of("America/Sao_Paulo");
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    // Mensagem padrão para exceções onde o objeto foi excluído.
+    private static final String  MESSAGE_EXCEPTION_EXCLUIDO = "Atendimento está excluído!";
 
-    @Autowired
-    private AtendimentoMapper atendimentoMapper;
+    // Camada padrão para 'log'
+    private static final String CAMADA = "SERVICE";
 
-    @Autowired
-    private ClienteService clienteService;
+    // Resposta padrão para 'log' de atendimentos encontrados
+    private static final String ATENDIMENTO_FOUND = "Atendimentos encontrados";
 
+    // Package padrão para 'log'
+    private static final String LOGGER = "cloud.zenixapp.zenix.services.AtendimentoService";
+
+    // Entidade padrão para 'log'
+    private static final String ENTITY_NAME = "Atendimento";
+
+    private static final String RESPONSE_DEBUG = "%s: %d";
+
+    // Classe padrão para 'log'
+    private static final String CLASS_NAME = "AtendimentoService";
+
+    // Formatador de data para o padrão brasileiro.
+    private final DateTimeFormatter currentDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+    private final AtendimentoRepository atendimentoRepository;
+    private final AtendimentoMapper atendimentoMapper;
+    private final ClienteService clienteService;
+
+    /**
+     * <h2>
+     *     Construtor padrão da classe AtendimentoService para automatizar a injeção de dependência gerenciada pelo Spring.
+     * </h2>
+     *
+     * @param atendimentoRepository Repositório do domínio atendimento utilizado para realizar consultas no banco de dados.
+     * @param atendimentoMapper Mapeia uma entidade para um DTO e vice-versa.
+     * @param clienteService Classe responsável pelas regras de negócio do domínio cliente.
+     * @see AtendimentoRepository
+     * @see AtendimentoMapper
+     * @see ClienteService
+     * @see Tenants
+     */
+    public AtendimentoService(AtendimentoRepository atendimentoRepository, AtendimentoMapper atendimentoMapper, ClienteService clienteService) {
+        this.atendimentoRepository = atendimentoRepository;
+        this.atendimentoMapper = atendimentoMapper;
+        this.clienteService = clienteService;
+    }
+
+    /**
+     * <h2>
+     *     Método para inserir um atendimento.
+     * </h2>
+     * <p>
+     *     Este método é utilizado para inserção de um novo atendimento no sistema. Ele utiliza o método
+     *     {@link ClienteService#atualizarRetornoDoCliente(String, String) Atualizar Retorno Cliente} para atualizar o retorno do cliente naquela barbearia.
+     * </p>
+     * @param atendimentoDTO DTO responsável pela exposição dos dados necessários para inserção do atendimento.
+     * @return {@link SuccessResponseDTO}
+     * @see Transactional
+     * @see SuccessResponseDTO
+     */
     @Transactional(propagation = Propagation.REQUIRED)
-    public SucessAtendimentoResponseDTO inserirAtendimento(AtendimentoRequestDTO atendimentoDTO){
-        Usuarios userAuth = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Usuarios user = usuarioRepository.getReferenceById(userAuth.getId());
-        Atendimento atendimento = new Atendimento();
+    public SuccessResponseDTO inserirAtendimento(@NonNull AtendimentoRequestDTO atendimentoDTO){
+        long inicio = System.currentTimeMillis();
+        HelpersLogs.logInfoServices("Inserir atendimento", CLASS_NAME, "inserirAtendimento");
 
-        atendimento.setDescricao(atendimentoDTO.descricao());
-        atendimento.setServico(atendimentoDTO.servico());
-        atendimento.setValor(atendimentoDTO.valor());
-        atendimento.setFormaPagamento(atendimentoDTO.formaPagamento());
-        atendimento.setObservacao(atendimentoDTO.observacao());
-        atendimento.setDate(LocalDateTime.now().format(current_date));
-        atendimento.setUsuarios(user);
+        String tenantId = TenantContext.getTenantId();
 
-        if (!clienteService.buscarClientePorNome(atendimento.getDescricao()).isEmpty()){
-            clienteService.atualizarAtendimentosMes(atendimentoDTO.descricao());
-        }
+        // Atualiza o atendimento usado como referência para o Plano e o retorno do cliente
+        clienteService.atualizarRetornoDoCliente(atendimentoDTO.descricao(), tenantId);
+
+        Usuarios userAuth = (Usuarios) Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
+        Atendimento atendimento = atendimentoMapper.inserirAtendimento(atendimentoDTO);
+
+        atendimento.setDate(LocalDateTime.now(TIME_ZONE).format(currentDate));
+        atendimento.setUsuarios(userAuth);
+        atendimento.setTenant(tenantId);
 
 
         atendimentoRepository.save(atendimento);
 
-        return new SucessAtendimentoResponseDTO(
+        SuccessResponseDTO successResponseDTO = new SuccessResponseDTO(
                 HttpStatus.CREATED.value(),
                 "Atendimento inserido com sucesso!"
         );
+
+        long fim = System.currentTimeMillis();
+        HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.CREATED, successResponseDTO.message(), inicio, fim);
+
+        return successResponseDTO;
     }
 
-    public List<AtendimentoResponseDTO> listarAtendimentosHoje(){
-        Usuarios user = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return atendimentoMapper.listResponseDTO(atendimentoRepository.findByUserDate(user.getId(), LocalDateTime.now().format(current_date)));
+    /**
+     * <h2>
+     *     Método para listar os atendimentos do dia de um usuário.
+     * </h2>
+     * <p>
+     *     Os atendimentos do dia são mostrados para o usuário que realizou a requisição, ou seja, o que está no contexto de segurança do sistema.
+     * </p>
+     * @return List<{@link AtendimentoResponseDTO}> - Pode retornar uma lista vazia.
+     * @see AtendimentoResponseDTO
+     */
+    public List<AtendimentoResponseDTO> listarAtendimentosHojeByUsuario(){
+        long inicio = System.currentTimeMillis();
+        HelpersLogs.logInfoServices("Listar atendimento de hoje", CLASS_NAME, "listarAtendimentosHoje");
+
+        Usuarios user = (Usuarios) Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
+        List<AtendimentoResponseDTO> atendimentoResponseDTOList = atendimentoRepository.findByUsuariosAndDateAndTenant(user, LocalDateTime.now(TIME_ZONE).format(currentDate), TenantContext.getTenantId());
+        String mensagem = RESPONSE_DEBUG.formatted(ATENDIMENTO_FOUND, atendimentoResponseDTOList.size());
+        log.debug(mensagem);
+
+        long fim = System.currentTimeMillis();
+        HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, ATENDIMENTO_FOUND, inicio, fim);
+
+        return atendimentoResponseDTOList;
     }
 
-//    TODO Criar uma tela no frontend para visualizar esses atendimentos abaixo
-    public List<AtendimentoAdminResponseDTO> listarTodosAtendimentos(){
-        return atendimentoRepository
-                .findAll()
-                .stream()
-                .map(a -> new AtendimentoAdminResponseDTO(
-                        a.getId(),
-                        a.getDescricao(),
-                        a.getServico(),
-                        a.getValor(),
-                        a.getFormaPagamento(),
-                        a.getDate(),
-                        a.getStatus(),
-                        a.getObservacao(),
-                        a.getUsuarios().getNome()
-                ))
-                .toList();
+    /**
+     * <h2>
+     *     Método para listar todos os atendimentos.
+     * </h2>
+     * <p>
+     *     Este método é requisitado pelo administrador para listar todos os atendimentos da sua barbearia.
+     * </p>
+     * @return List<{@link AtendimentoResponseDTO}> - Pode retornar uma lista vazia.
+     * @see AtendimentoResponseDTO
+     */
+    public List<AtendimentoResponseDTO> listarTodosAtendimentos(){
+        long inicio = System.currentTimeMillis();
+        HelpersLogs.logInfoServices("Listar todos os atendimentos", CLASS_NAME, "listarTodosAtendimentos");
+
+        List<AtendimentoResponseDTO> atendimentoResponseDTOList = atendimentoRepository.findAllByTenant(TenantContext.getTenantId());
+        String mensagem = RESPONSE_DEBUG.formatted(ATENDIMENTO_FOUND, atendimentoResponseDTOList.size());
+        log.debug(mensagem);
+
+        long fim = System.currentTimeMillis();
+        HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, ATENDIMENTO_FOUND, inicio, fim);
+
+        return atendimentoResponseDTOList;
     }
 
-    public AtendimentoResponseDTO listarAtendimentoPorId(Long id){
-        Usuarios user = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return atendimentoRepository.findByUserById(user.getId(), id)
-                .map((atendimento -> {
-                    AtendimentoResponseDTO atendimentoResponseDTO = atendimentoMapper.responseDTO(atendimento);
-                    if(atendimentoResponseDTO.status() == -1){
-                        throw new NotFoundException("Atendimento foi excluído!");
-                    }
-                    return atendimentoResponseDTO;
-
-                }))
-                .orElseThrow(() -> new NotFoundException("Atendimento não encontrado!"));
-    }
-
+    /**
+     * <h2>
+     *     Método para listar todos os atendimentos de um usuário.
+     * </h2>
+     * <p>
+     *     Este método lista o histórico de atendimentos de um usuário.
+     * </p>
+     * @return List<{@link AtendimentoResponseDTO}> - Pode retornar uma lista vazia.
+     * @see AtendimentoResponseDTO
+     */
     public List<AtendimentoResponseDTO> listarHistorico(){
-        Usuarios user = (Usuarios) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
-        return atendimentoMapper.listResponseDTO(
-                atendimentoRepository.findByUser(user.getId())
-        );
+        long inicio = System.currentTimeMillis();
+        HelpersLogs.logInfoServices("Listar histórico", CLASS_NAME, "listarHistorico");
+
+        Usuarios user = (Usuarios) Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
+        List<AtendimentoResponseDTO> atendimentoResponseDTOList = atendimentoRepository.findByUsuariosAndTenant(user, TenantContext.getTenantId());
+        String mensagem = RESPONSE_DEBUG.formatted(ATENDIMENTO_FOUND, atendimentoResponseDTOList.size());
+        log.debug(mensagem);
+
+        long fim = System.currentTimeMillis();
+        HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, ATENDIMENTO_FOUND, inicio, fim);
+        return atendimentoResponseDTOList;
     }
 
+    /**
+     * <h2>
+     *     Método para deletar um atendimento.
+     * </h2>
+     * <h6>Apenas o administrador pode deletar um atendimento</h6>
+     * <p>
+     *     Este método é utilizado para deletar um atendimento dado o 'ID'. Ele realizará um delete lógico, sem excluir fisicamente do banco de dados.
+     *     Assim como inserir um atendimento atualiza o retorno de um cliente existente, o deletar atualiza o retorno também retirando o retorno do mesmo via
+     *     {@link ClienteService#retiraRetornoCliente(String, String) ClienteService}
+     * </p>
+     * @param id ID do atendimento que será excluído.
+     * @return {@link SuccessResponseDTO} e Status Code {@link HttpStatus#OK 200}.
+     * @throws cloud.zenixapp.zenix.configs.exceptions.ConflictException Caso o atendimento já esteja excluído - {@link HttpStatus#CONFLICT 409}.
+     * @throws cloud.zenixapp.zenix.configs.exceptions.NotFoundException Caso o atendimento não seja encontrado - {@link HttpStatus#NOT_FOUND 404}.
+     * @see Transactional
+     * @see SuccessResponseDTO
+     * @see ConflictException
+     * @see NotFoundException
+     */
     @Transactional(propagation = Propagation.REQUIRED)
-    public SucessAtendimentoResponseDTO deletarAtendimento(Long id) {
-        return atendimentoRepository.findById(id)
+    public SuccessResponseDTO deletarAtendimento(String id) {
+        long inicio = System.currentTimeMillis();
+        HelpersLogs.logInfoServices("Deletar um atendimento", CLASS_NAME, "deletarAtendimento");
+
+        String tenantId = TenantContext.getTenantId();
+        return atendimentoRepository.findByIdAndTenant(id, tenantId)
                 .map(atendimento -> {
-                    if (atendimento.getStatus() == -1) {
-                        throw new AtendimentoExcluidoException("Atendimento já foi excluído!");
+                    if (atendimento.status() == -1) {
+                        HelpersLogs.logException(LOGGER, "deletarAtendimento(String)");
+                        throw new ConflictException(MESSAGE_EXCEPTION_EXCLUIDO);
 
                     }
-                    if (!clienteService.buscarClientePorNome(atendimento.getDescricao()).isEmpty()){
-                        clienteService.retiraRetornoCliente(atendimento.getDescricao());
-                    }
-                    atendimento.setDelete_at(LocalDateTime.now());
-                    atendimentoRepository.deleteLogico(id);
+                    clienteService.retiraRetornoCliente(atendimento.descricao(), tenantId);
 
-                    return new SucessAtendimentoResponseDTO(
+                    atendimentoRepository.deleteLogico(atendimento.id(), LocalDateTime.now(TIME_ZONE), tenantId);
+
+                    SuccessResponseDTO successResponseDTO = new SuccessResponseDTO(
                             HttpStatus.OK.value(),
-                            "Atendimento excluído com sucesso!"
+                            "Atendimento deletado com sucesso!"
                     );
 
+                    long fim = System.currentTimeMillis();
+                    HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, successResponseDTO.message(), inicio, fim);
+
+                    return successResponseDTO;
+
                 })
-                .orElseThrow(() -> new NotFoundException("Atendimento não encontrado!"));
+                .orElseThrow(() -> new NotFoundException(MESSAGE_EXCEPTION_NOT_FOUND));
     }
 
-//    TODO Restringir a edição apenas ao administrador | Restringir a chamada no método atualizar por campos não alterados
+    /**
+     * <h2>
+     *     Método para atualizar um atendimento.
+     * </h2>
+     * <h6>Apenas o administrador pode atualizar um atendimento.</h6>
+     * <p>
+     *     Este método é utilizado para atualizar um atendimento dado um 'ID'. Ele receberá o 'ID' e também os campos, via DTO, que serão atualizados.
+     *     Esses campos são mapeados para entidade via {@link AtendimentoMapper#atualizarAtendimento(Atendimento, AtendimentoRequestDTO) Atendimento Mapper}.
+     * </p>
+     * @param id 'ID' do atendimento que será atualizado
+     * @param atendimentoRequestDTO DTO que expõe os campos que poderão ser atualizados
+     * @return {@link SuccessResponseDTO} e Status Code {@link HttpStatus#OK 200}.
+     * @throws cloud.zenixapp.zenix.configs.exceptions.ConflictException Caso o atendimento esteja excluído - {@link HttpStatus#CONFLICT 409}.
+     * @throws cloud.zenixapp.zenix.configs.exceptions.NotFoundException Caso o atendimento não seja encontrado - {@link HttpStatus#NOT_FOUND 404}.
+     * @see Transactional
+     * @see SuccessResponseDTO
+     * @see ConflictException
+     * @see NotFoundException
+     */
     @Transactional(propagation = Propagation.REQUIRED)
-    public SucessAtendimentoResponseDTO atualizarAtendimento(Long id, AtendimentoRequestDTO atendimentoRequestDTO) throws NotFoundException {
-        return atendimentoRepository.findByIdAtendimento(id)
+    public SuccessResponseDTO atualizarAtendimento(String id, AtendimentoRequestDTO atendimentoRequestDTO){
+        long inicio = System.currentTimeMillis();
+        HelpersLogs.logInfoServices("Atualizar um atendimento", CLASS_NAME, "atualizarAtendimento");
+
+        return atendimentoRepository.findById(id, TenantContext.getTenantId())
                 .map(atendimento -> {
                     if(atendimento.getStatus() == -1){
-                        throw new NotFoundException("Não é possível atualizar um atendimento excluído!");
-                    }
+                        HelpersLogs.logException(LOGGER, "atualizarAtendimento(String)");
+                        throw new ConflictException(MESSAGE_EXCEPTION_EXCLUIDO);
 
-                    atendimento.setUpdate_at(LocalDateTime.now());
+                    }
                     atendimentoMapper.atualizarAtendimento(atendimento, atendimentoRequestDTO);
 
-                    return new SucessAtendimentoResponseDTO(
+                    atendimentoRepository.save(atendimento);
+
+                    SuccessResponseDTO successResponseDTO = new SuccessResponseDTO(
                             HttpStatus.OK.value(),
                             "Atendimento atualizado com sucesso!"
                     );
 
+                    long fim = System.currentTimeMillis();
+                    HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, successResponseDTO.message(), inicio, fim);
+
+                    return successResponseDTO;
+
                 })
-                .orElseThrow(() -> new NotFoundException("Atendimento não encontrado!"));
+                .orElseThrow(() -> new NotFoundException(MESSAGE_EXCEPTION_NOT_FOUND));
     }
 
-    //    TODO Restringir a ativação apenas ao administrador
+    /**
+     * <h2>
+     *     Método para ativar um atendimento.
+     * </h2>
+     * <h6>Apenas o administrador pode ativar um atendimento.</h6>
+     * <p>
+     *     Este método é utilizado para ativar um atendimento excluído. Assim como inserir um atendimento atualiza o retorno de um cliente existente e o deletar retira o retorno do mesmo, este método atualiza o retorno do cliente
+     *     também.
+     *     {@link ClienteService#atualizarRetornoDoCliente(String, String) ClienteService}
+     * </p>
+     * @param id 'ID' do atendimento que será ativado
+     * @return {@link SuccessResponseDTO} e Status Code {@link HttpStatus#OK 200}.
+     * @throws cloud.zenixapp.zenix.configs.exceptions.ConflictException Caso o atendimento já esteja ativado - {@link HttpStatus#CONFLICT 409}.
+     * @throws cloud.zenixapp.zenix.configs.exceptions.NotFoundException Caso o atendimento não seja encontrado - {@link HttpStatus#NOT_FOUND 404}.
+     * @see Transactional
+     * @see SuccessResponseDTO
+     * @see ConflictException
+     * @see NotFoundException
+     */
     @Transactional
-    public SucessAtendimentoResponseDTO ativarAtendimento(Long id){
-        return atendimentoRepository.findById(id)
+    public SuccessResponseDTO ativarAtendimento(String id){
+        long inicio = System.currentTimeMillis();
+        HelpersLogs.logInfoServices("Ativar um atendimento", CLASS_NAME, "ativarAtendimento");
+
+        String tenantId = TenantContext.getTenantId();
+        return atendimentoRepository.findByIdAndTenant(id, tenantId)
                 .map(atendimento -> {
-                    if(atendimento.getStatus() != -1){
-                        throw new AtendimentoExcluidoException("Atendimento já está ativo!");
+                    if(atendimento.status() == 1){
+                        HelpersLogs.logException(LOGGER, "ativarAtendimento(String)");
+                        throw new ConflictException("Atendimento já está ativo!");
+
                     }
 
-                    atendimento.setDelete_at(null);
+                    clienteService.atualizarRetornoDoCliente(atendimento.descricao(), tenantId);
 
-                    atendimentoRepository.ativarAtendimento(id);
-                    return new SucessAtendimentoResponseDTO(
+                    atendimentoRepository.ativarAtendimento(atendimento.id(), tenantId);
+
+                    SuccessResponseDTO successResponseDTO = new SuccessResponseDTO(
                             HttpStatus.OK.value(),
-                            "Atendimento ativado com sucesso"
+                            "Atendimento ativado com sucesso!"
                     );
+
+                    long fim = System.currentTimeMillis();
+                    HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.OK, successResponseDTO.message(), inicio, fim);
+
+                    return successResponseDTO;
+
                 })
-                .orElseThrow(() -> new NotFoundException("Atendimento não encontrado!"));
+                .orElseThrow(() -> new NotFoundException(MESSAGE_EXCEPTION_NOT_FOUND));
     }
 
 }

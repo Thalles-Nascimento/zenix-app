@@ -16,6 +16,6 @@ public record PlanosRequestDTO(
         List<String> servico,
 
         @NotNull(message = "Campo não pode ser nulo!")
-        int limiteAtendimentos
+        Integer limiteAtendimentos
 ) {
 }

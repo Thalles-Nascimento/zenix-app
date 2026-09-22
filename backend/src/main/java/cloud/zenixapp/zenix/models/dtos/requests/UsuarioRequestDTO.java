@@ -18,7 +18,7 @@ public record UsuarioRequestDTO(
         @NotNull(message = "O campo não pode ser nulo")
         String cpf,
 
-        Long unidade,
+        String unidade,
 
         @NotNull(message = "O campo não pode ser nulo")
         String senha,

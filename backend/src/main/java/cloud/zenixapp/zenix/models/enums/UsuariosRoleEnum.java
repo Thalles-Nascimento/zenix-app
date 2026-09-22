@@ -1,5 +1,8 @@
 package cloud.zenixapp.zenix.models.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum UsuariosRoleEnum {
     
     ADMIN("admin"),
@@ -11,7 +14,4 @@ public enum UsuariosRoleEnum {
         this.grupo = grupo;
     }
 
-    public String getGrupo(){
-        return this.grupo;
-    }
 }

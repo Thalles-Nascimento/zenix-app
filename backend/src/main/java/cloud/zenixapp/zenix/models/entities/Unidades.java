@@ -1,31 +1,26 @@
 package cloud.zenixapp.zenix.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "unidades")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Unidades implements Serializable {
+public class Unidades extends BaseEntity{
 
-    @Serial
-    private static final long serialVersionUID = -6394858690665251519L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "unidade_id", nullable = false)
-    private Long id;
-
-    @Column(name = "unidade_nome", length = 100, unique = true)
+    @Column(name = "unidade_nome", length = 100)
     private String nomeUnidade;
 
     @Column(name = "unidade_endereco")
@@ -37,5 +32,4 @@ public class Unidades implements Serializable {
 
     @Column(name = "unidade_status", nullable = false)
     private Integer status = 1;
-    //  TODO Criar mais colunas - created_at, delete_at e update_at
 }

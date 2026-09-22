@@ -1,5 +1,5 @@
 export interface PagamentoDTO {
     id: number
-    formaPagamento: string
+    pagamento: string
     status: number
 }
