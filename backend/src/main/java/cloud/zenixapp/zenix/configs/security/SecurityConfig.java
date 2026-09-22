@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,7 +36,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(@NonNull HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         //HealthCheck
@@ -47,17 +48,15 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/" + api_url + "/atendimentos/admin").hasRole("ADMIN")
                         // Cadastro
                         .requestMatchers(HttpMethod.POST, "/" + api_url + "/cadastro").permitAll()
-                        // Clientes
-                        .requestMatchers(HttpMethod.GET, "/" + api_url + "/clientes/telefone/{numero}").permitAll()
-                        .requestMatchers(HttpMethod.PATCH, "/" + api_url + "/clientes/retorno/{id}").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/" + api_url + "/clientes").permitAll()
+                        // Clientes - Pensar sobre a criação do cliente na fila, checar via telefone e a atualização também
+//                        .requestMatchers(HttpMethod.GET, "/" + api_url + "/clientes/telefone/{numero}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/" + api_url + "/clientes").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/" + api_url + "/clientes/planos/{idCliente}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/" + api_url + "/clientes/ativar/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/" + api_url + "/clientes/planos/{idCliente}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/" + api_url + "/clientes/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/" + api_url + "/clientes/{id}").hasRole("ADMIN")
-                        // Fila de Atendimento
+                        // Fila de Atendimento - Vai deixar de ser PermitAll > Pensar sobre
                         .requestMatchers(HttpMethod.POST, "/" + api_url + "/fila").permitAll()
                         // Forma de Pagamento
                         .requestMatchers(HttpMethod.GET, "/" + api_url + "/pagamentos").permitAll()

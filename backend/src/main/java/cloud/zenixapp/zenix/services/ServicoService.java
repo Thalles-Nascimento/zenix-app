@@ -3,13 +3,10 @@ package cloud.zenixapp.zenix.services;
 import cloud.zenixapp.zenix.configs.TenantContext;
 import cloud.zenixapp.zenix.configs.exceptions.ExistsException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
-import cloud.zenixapp.zenix.configs.exceptions.ServicoExcluidoException;
 import cloud.zenixapp.zenix.configs.mappers.ServicoMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.ServicoRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.ServicoResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Servicos;
-import cloud.zenixapp.zenix.models.entities.Tenants;
 import cloud.zenixapp.zenix.models.interfaces.ServicosSimplesView;
 import cloud.zenixapp.zenix.models.interfaces.ServicosView;
 import cloud.zenixapp.zenix.repositories.ServicoRepository;
@@ -19,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service

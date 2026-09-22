@@ -6,6 +6,7 @@ import cloud.zenixapp.zenix.configs.exceptions.ClientePossuePlanoException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.exceptions.UpdateErrorException;
 import cloud.zenixapp.zenix.configs.mappers.ClienteMapper;
+import cloud.zenixapp.zenix.configs.utils.HelpersLogs;
 import cloud.zenixapp.zenix.models.dtos.requests.ClientePlanoRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.requests.ClienteUpdateRequestDTO;
@@ -16,6 +17,8 @@ import cloud.zenixapp.zenix.models.entities.Clientes;
 import cloud.zenixapp.zenix.models.entities.TelefoneCliente;
 import cloud.zenixapp.zenix.repositories.ClienteRepository;
 import cloud.zenixapp.zenix.repositories.TelefoneRepository;
+import lombok.extern.log4j.Log4j2;
+import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -28,11 +31,24 @@ import java.util.List;
 import java.util.Optional;
 
 
+@Log4j2
 @Service
 public class ClienteService {
 
     // Mensagem padrão para exceções onde o objeto não foi encontrado.
     private static final String MESSAGE_EXCEPTION_NOT_FOUND = "Cliente não encontrado!";
+
+    // Camada padrão para 'log'
+    private static final String CAMADA = "SERVICE";
+
+    // Entidade padrão para 'log'
+    private static final String ENTITY_NAME = "Cliente";
+
+    // Package padrão para 'log'
+    private static final String LOGGER = "cloud.zenixapp.zenix.services.ClienteService";
+
+    // Classe padrão para 'log'
+    private static final String CLASS_NAME = "ClienteService";
 
     // TimeZone padrão para as funções de LocalDateTime.now().
     private static final ZoneId TIME_ZONE = ZoneId.of("America/Sao_Paulo");
@@ -50,41 +66,69 @@ public class ClienteService {
     }
 
     @Transactional
-    public SuccessResponseDTO save(ClienteRequestDTO clienteDTO){
+    public SuccessResponseDTO save(@NonNull ClienteRequestDTO clienteDTO){
+        long inicio = System.currentTimeMillis();
+        HelpersLogs.logInfoServices("Inserir Cliente", CLASS_NAME, "save");
+
         String tenantId = TenantContext.getTenantId();
 
         Clientes cliente = new Clientes();
         cliente.setNomeCliente(clienteDTO.nomeCliente());
         cliente.setTenant(tenantId);
 
+        log.debug("Buscando telefone no banco de dados...");
         Optional<TelefoneCliente> telefone = clienteRepository.findByTelefone_ClienteAndTenant(clienteDTO.telefoneCliente(), tenantId);
+        log.debug("Telefone encontrado? {}", telefone.isPresent());
 
         if (telefone.isPresent()){
             cliente.setTelefoneCliente(telefone.get());
             clienteRepository.save(cliente);
 
-            return new SuccessResponseDTO(
+            SuccessResponseDTO successResponseDTO = new SuccessResponseDTO(
                     HttpStatus.CREATED.value(),
                     "Cliente inserido com Sucesso"
             );
+            long fim = System.currentTimeMillis();
+            HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.CREATED, successResponseDTO.message(), inicio, fim);
+
+            return successResponseDTO;
         }
+        log.debug("Criando Telefone...");
         TelefoneCliente telefoneNovo = new TelefoneCliente();
         telefoneNovo.setTelefoneCliente(clienteDTO.telefoneCliente());
         telefoneNovo.setTenant(tenantId);
 
         cliente.setTelefoneCliente(telefoneRepository.save(telefoneNovo));
+        log.debug("Telefone criado!");
         clienteRepository.save(cliente);
 
-        return new SuccessResponseDTO(
+        SuccessResponseDTO successResponseDTO = new SuccessResponseDTO(
                 HttpStatus.CREATED.value(),
                 "Cliente inserido com Sucesso"
         );
+        long fim = System.currentTimeMillis();
+        HelpersLogs.logResponse(CAMADA, ENTITY_NAME, HttpStatus.CREATED, successResponseDTO.message(), inicio, fim);
+
+        return successResponseDTO;
     }
 
 //  Lista os clientes pelo nome
     public ClientePlanosResumoResponseDTO clientePorNome(String nome){
-        return clienteRepository.findByName(nome, TenantContext.getTenantId())
-                .orElseThrow(() -> new NotFoundException("Cliente não encontrado"));
+        long inicio = System.currentTimeMillis();
+        HelpersLogs.logInfoServices("Listar Cliente Pelo Nome", CLASS_NAME, "clientePorNome");
+
+        Optional<ClientePlanosResumoResponseDTO> cliente = clienteRepository.findByName(nome, TenantContext.getTenantId());
+        if (cliente.isPresent()){
+            log.debug("Cliente encontrado: {}", true);
+
+            long fim = System.currentTimeMillis();
+            HelpersLogs.logResponse(CAMADA, "Cliente encontrado", HttpStatus.OK, "Cliente encontrado", inicio, fim);
+
+            return cliente.get();
+        }
+
+        HelpersLogs.logException(LOGGER, "clientePorNome(String)");
+        throw new NotFoundException(MESSAGE_EXCEPTION_NOT_FOUND);
     }
 
 //  Lista os clientes por telefone - Endpoint para Fila

@@ -4,7 +4,7 @@ import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.handlers.BindingHandler;
 import cloud.zenixapp.zenix.models.dtos.requests.UnidadeRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.UnidadeUserResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.unidades.UnidadeUserResponseDTO;
 import cloud.zenixapp.zenix.models.interfaces.UnidadeSimplesView;
 import cloud.zenixapp.zenix.services.UnidadeService;
 import io.swagger.v3.oas.annotations.Operation;

@@ -1,11 +1,9 @@
 package cloud.zenixapp.zenix.configs.mappers;
 
 import cloud.zenixapp.zenix.models.dtos.requests.ServicoRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.ServicoResponseDTO;
-import cloud.zenixapp.zenix.models.entities.Servicos;
+import cloud.zenixapp.zenix.models.dtos.responses.servicos.ServicoResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Servicos;
 import cloud.zenixapp.zenix.models.interfaces.ServicosView;
-import cloud.zenixapp.zenix.models.interfaces.UnidadeSimplesView;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;

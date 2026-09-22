@@ -1,8 +1,7 @@
 package cloud.zenixapp.zenix.configs.mappers;
 
 import cloud.zenixapp.zenix.models.dtos.requests.UnidadeRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.ClienteResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.UnidadeResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.unidades.UnidadeResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Unidades;
 import cloud.zenixapp.zenix.models.interfaces.UnidadeSimplesView;
 import org.mapstruct.*;

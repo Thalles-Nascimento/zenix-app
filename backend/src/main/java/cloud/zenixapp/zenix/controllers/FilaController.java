@@ -2,7 +2,6 @@ package cloud.zenixapp.zenix.controllers;
 
 import cloud.zenixapp.zenix.configs.handlers.BindingHandler;
 import cloud.zenixapp.zenix.models.dtos.requests.FilaRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.FilaResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.interfaces.FilaProjectionView;
 import cloud.zenixapp.zenix.services.FilaService;

@@ -1,6 +1,6 @@
 package cloud.zenixapp.zenix.configs.mappers;
 
-import cloud.zenixapp.zenix.models.dtos.responses.FilaResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.filas.FilaResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Fila;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;

@@ -1,7 +1,7 @@
 package cloud.zenixapp.zenix.configs.mappers;
 
 import cloud.zenixapp.zenix.models.dtos.requests.UsuarioRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.UsuarioResponseDTO;
+import cloud.zenixapp.zenix.models.dtos.responses.usuarios.UsuarioResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

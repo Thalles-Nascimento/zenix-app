@@ -3,7 +3,6 @@ package cloud.zenixapp.zenix.services;
 import cloud.zenixapp.zenix.configs.TenantContext;
 import cloud.zenixapp.zenix.configs.exceptions.FilaException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
-import cloud.zenixapp.zenix.configs.mappers.FilaMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.FilaRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.filas.SuccessFilaResponseDTO;
@@ -11,37 +10,39 @@ import cloud.zenixapp.zenix.models.entities.Fila;
 import cloud.zenixapp.zenix.models.entities.Usuarios;
 import cloud.zenixapp.zenix.models.interfaces.FilaProjectionView;
 import cloud.zenixapp.zenix.repositories.FilaAtendimentoRepository;
-import cloud.zenixapp.zenix.repositories.TenantRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
+@Log4j2
 @Service
 public class FilaService {
 
-    @Autowired
-    private FilaAtendimentoRepository filaRepository;
+    private static final String MESSAGE = "Atendimento não encontrado";
+    private static final ZoneId TIME_ZONE = ZoneId.of("America/Sao_Paulo");
 
-    @Autowired
-    private UsuarioService usuarioService;
+    private final FilaAtendimentoRepository filaRepository;
 
-    @Autowired
-    private ClienteService clienteService;
+    private final UsuarioService usuarioService;
 
-    @Autowired
-    private FilaMapper filaMapper;
+    private final ClienteService clienteService;
 
-    @Autowired
-    private TenantRepository tenantRepository;
+    public FilaService(FilaAtendimentoRepository filaRepository, UsuarioService usuarioService, ClienteService clienteService) {
+        this.filaRepository = filaRepository;
+        this.usuarioService = usuarioService;
+        this.clienteService = clienteService;
+    }
 
     @Transactional
     public SuccessFilaResponseDTO inserirAtendimentoFila(FilaRequestDTO filaDTO) {
-
         String tenant = TenantContext.getTenantId();
 
         Fila fila = new Fila(); // Verificar a existência do atendimento na fila!
@@ -86,8 +87,16 @@ public class FilaService {
     }
 
     public List<FilaProjectionView> getFilasByUser(){
-        Usuarios userAuth = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return filaRepository.findByUser(userAuth.getId(), TenantContext.getTenantId());
+        Usuarios userAuth = (Usuarios) Objects
+                .requireNonNull(SecurityContextHolder.getContext().getAuthentication())
+                .getPrincipal();
+        if (userAuth != null){
+            log.info("Usuário encontrado no contexto: {}", userAuth.getNome());
+            return filaRepository.findByUser(userAuth.getId(), TenantContext.getTenantId());
+
+        }
+        log.error("Usuário não encontrado no SecurityContext");
+        return Collections.emptyList();
     }
 
     @Transactional
@@ -99,7 +108,7 @@ public class FilaService {
                         throw new FilaException("Cliente está em atendimento ou já foi finalizado");
                     }
 
-                    filaRepository.paraAtendimento(atendimentoFila.getId(), tenantId, LocalTime.now());
+                    filaRepository.paraAtendimento(atendimentoFila.getId(), tenantId, LocalTime.now(TIME_ZONE));
 
                     if (atendimentoFila.getSemPreferencia()) {
                         Usuarios userAuth = (Usuarios) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -111,7 +120,7 @@ public class FilaService {
                             "Cliente chamado!"
                     );
                 })
-                .orElseThrow(() -> new NotFoundException("Atendimento não encontrado"));
+                .orElseThrow(() -> new NotFoundException(MESSAGE));
     }
 
     @Transactional
@@ -122,7 +131,7 @@ public class FilaService {
                     if (atendimentoFila.getStatus() != 1){
                         throw new FilaException("Clientes já Finalizado ou está Aguardando");
                     }
-                    filaRepository.finalizarAtendimentoFila(atendimentoFila.getId(), tenantId, LocalTime.now());
+                    filaRepository.finalizarAtendimentoFila(atendimentoFila.getId(), tenantId, LocalTime.now(TIME_ZONE));
 
                     clienteService.atualizarRetornoDoCliente(atendimentoFila.getNomeCliente(), tenantId);
 
@@ -131,7 +140,7 @@ public class FilaService {
                             "Atendimento finalizado!"
                     );
                 })
-                .orElseThrow(() -> new NotFoundException("Atendimento não encontrado"));
+                .orElseThrow(() -> new NotFoundException(MESSAGE));
     }
 
     @Transactional
@@ -143,8 +152,6 @@ public class FilaService {
                         throw new FilaException("Cliente está em atendimento");
                     }
 
-                    clienteService.retiraRetornoCliente(atendimentoFila.getNomeCliente(), tenantId);
-
                     filaRepository.deleteById(atendimentoFila.getId());
 
                     return new SuccessResponseDTO(
@@ -154,6 +161,6 @@ public class FilaService {
 
 
                 })
-                .orElseThrow(() -> new NotFoundException("Atendimento não encontrado"));
+                .orElseThrow(() -> new NotFoundException(MESSAGE));
     }
 }

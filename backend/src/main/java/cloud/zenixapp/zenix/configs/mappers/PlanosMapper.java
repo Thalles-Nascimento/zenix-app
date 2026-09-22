@@ -1,15 +1,12 @@
 package cloud.zenixapp.zenix.configs.mappers;
 
 import cloud.zenixapp.zenix.models.dtos.requests.PlanosRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.PlanosResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Planos;
 import cloud.zenixapp.zenix.models.interfaces.PlanosView;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
-
-import java.util.List;
 
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

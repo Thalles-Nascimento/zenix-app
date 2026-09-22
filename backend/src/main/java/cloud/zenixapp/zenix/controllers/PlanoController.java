@@ -5,7 +5,6 @@ import cloud.zenixapp.zenix.configs.handlers.BindingHandler;
 import cloud.zenixapp.zenix.configs.mappers.PlanosMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.PlanosRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.PlanosResponseDTO;
 import cloud.zenixapp.zenix.models.interfaces.PlanosView;
 import cloud.zenixapp.zenix.services.PlanosService;
 import io.swagger.v3.oas.annotations.Operation;

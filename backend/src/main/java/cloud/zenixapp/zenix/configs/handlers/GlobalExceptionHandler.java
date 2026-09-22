@@ -1,6 +1,9 @@
 package cloud.zenixapp.zenix.configs.handlers;
 
-import cloud.zenixapp.zenix.configs.exceptions.*;
+import cloud.zenixapp.zenix.configs.exceptions.ConflictException;
+import cloud.zenixapp.zenix.configs.exceptions.ExcluidoException;
+import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
+import cloud.zenixapp.zenix.configs.exceptions.TokenCreateException;
 import cloud.zenixapp.zenix.models.dtos.responses.ErrorResponseDTO;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -47,35 +50,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    /*=====================================================================================
-    * Handler para exceções em que a entidade já foi excluída - status = −1
-    *======================================================================================*/
-    @ExceptionHandler(value = {ExcluidoException.class})
-    public ResponseEntity<ErrorResponseDTO> handleExcluidoException(Exception ex) {
-        ErrorResponseDTO errorResponse = new ErrorResponseDTO(
-                HttpStatus.GONE.value(),
-                ex.getMessage(),
-                LocalDateTime.now(TIME_ZONE).toInstant(ZONE_OFFSET)
-        );
-        log.error("Problemas para fazer a exclusão: [Status: {}] => [Message: {}]", errorResponse.status(), errorResponse.message());
-        return new ResponseEntity<>(errorResponse, HttpStatus.GONE);
 
-    }
-
-    /*=====================================================================================
-     * Handler para exceções em que a entidade já está ativada - status = 1.
-     *======================================================================================*/
-    @ExceptionHandler(value = {AtivoException.class})
-    public ResponseEntity<ErrorResponseDTO> handleAtivoException(Exception ex) {
-        ErrorResponseDTO errorResponse = new ErrorResponseDTO(
-                HttpStatus.GONE.value(),
-                ex.getMessage(),
-                LocalDateTime.now(TIME_ZONE).toInstant(ZONE_OFFSET)
-        );
-        log.error("Problemas para fazer a ativação: [Status: {}] => [Message: {}]", errorResponse.status(), errorResponse.message());
-        return new ResponseEntity<>(errorResponse, HttpStatus.GONE);
-
-    }
 
     /*=====================================================================================
      * Handler para exceções em que há conflito.

@@ -4,10 +4,8 @@ import cloud.zenixapp.zenix.configs.TenantContext;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.mappers.PlanosMapper;
 import cloud.zenixapp.zenix.models.dtos.requests.PlanosRequestDTO;
-import cloud.zenixapp.zenix.models.dtos.responses.PlanosResponseDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Planos;
-import cloud.zenixapp.zenix.models.entities.Tenants;
 import cloud.zenixapp.zenix.models.interfaces.PlanosView;
 import cloud.zenixapp.zenix.repositories.PlanosRepository;
 import cloud.zenixapp.zenix.repositories.TenantRepository;
@@ -16,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
