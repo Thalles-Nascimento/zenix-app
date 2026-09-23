@@ -45,7 +45,7 @@
                 <AppenderRef ref="FileAppender" />
             </Root>
 
-            <Logger name="cloud.zenixapp.zenix" level="INFO" additivity="false">
+            <Logger name="cloud.zenixapp.zenix" level="DEBUG" additivity="false">
                 <AppenderRef ref="ConsoleAppender" />
                 <AppenderRef ref="FileAppender" />
             </Logger>
@@ -62,7 +62,7 @@
                 <AppenderRef ref="FileAppender" />
             </Root>
 
-            <Logger name="cloud.zenixapp.zenix" level="INFO" additivity="false">
+            <Logger name="cloud.zenixapp.zenix" level="DEBUG" additivity="false">
                 <AppenderRef ref="FileAppender" />
             </Logger>
 
