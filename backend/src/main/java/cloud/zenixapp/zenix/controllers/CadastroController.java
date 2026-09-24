@@ -3,6 +3,7 @@ package cloud.zenixapp.zenix.controllers;
 import cloud.zenixapp.zenix.configs.exceptions.ConflictException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
 import cloud.zenixapp.zenix.configs.handlers.BindingHandler;
+import cloud.zenixapp.zenix.configs.utils.HelpersLogs;
 import cloud.zenixapp.zenix.models.dtos.requests.CadastroRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.services.CadastroService;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -22,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
+
+import static cloud.zenixapp.zenix.configs.utils.HelpersVar.CAMADA_CONTROLLER;
 
 /**
  * <h2>
@@ -46,6 +50,13 @@ public class CadastroController {
 
     @Value("${api-url}")
     private String apiUrl;
+
+    // Classe padrão para 'log'
+    private static final String CLASS_NAME = "CadastroController";
+
+    // Entidade padrão para 'log'
+    private static final String ENTITY_NAME = "Cadastro";
+
     private final CadastroService cadastroService;
 
     /**
@@ -83,20 +94,25 @@ public class CadastroController {
     })
     @Operation(summary = "Cadastrar uma Barbearia", description = "Endpoint para cadastrar uma nova Barbearia")
     public ResponseEntity<Object> save(@RequestBody @Valid CadastroRequestDTO cadastroRequestDTO, BindingResult result){
-        log.info("[CONTROLLER -> POST] : CadastroController.save(Linha: 83) => Endpoint: {POST: /{}/cadastro}", apiUrl);
+        HelpersLogs.logInfoController(HttpMethod.POST.name(), CLASS_NAME, "save", apiUrl);
+
         if (result.hasErrors()){
             Map<String, String> errors = BindingHandler.insertError(result);
-            log.error("Corpo da requisição apresentando erros: [{}]", errors);
-            log.info("[CADASTRO] Response -> {}", HttpStatus.BAD_REQUEST);
+            HelpersLogs.logResponse(CAMADA_CONTROLLER, ENTITY_NAME, HttpStatus.BAD_REQUEST, "Não foi possível realizar o cadastro.");
+            log.debug("{}.save => Erros = [{}]", CLASS_NAME, errors);
+
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(errors);
+
         }
-        log.info("Cadastrando Barbearia...");
-        return ResponseEntity.status(HttpStatus.CREATED)
+
+        log.debug("Cadastrando Barbearia...");
+        ResponseEntity<Object> response = ResponseEntity.status(HttpStatus.CREATED)
                 .body(cadastroService.cadastrar(cadastroRequestDTO));
+
+        HelpersLogs.logResponse(CAMADA_CONTROLLER, ENTITY_NAME, HttpStatus.CREATED, "Cadastro realizado.");
+        return response;
+
     }
-
-
-
 
 }
