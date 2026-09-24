@@ -11,6 +11,7 @@ import cloud.zenixapp.zenix.models.dtos.responses.atendimentos.AtendimentoRespon
 import cloud.zenixapp.zenix.models.entities.Atendimento;
 import cloud.zenixapp.zenix.services.AtendimentoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -136,7 +137,7 @@ public class AtendimentoController {
      */
     @GetMapping("/historico")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = ATENDIMENTO_FOUND)
+            @ApiResponse(responseCode = "200", description = ATENDIMENTO_FOUND, useReturnTypeSchema = true)
     })
     @Operation(summary = "Listar o histórico de atendimentos", description = "Endpoint para listar todos os atendimentos feitos pelo barbeiro")
     public ResponseEntity<List<AtendimentoResponseDTO>> findHistorico(){
@@ -164,7 +165,7 @@ public class AtendimentoController {
      */
     @GetMapping
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = ATENDIMENTO_FOUND)
+            @ApiResponse(responseCode = "200", description = ATENDIMENTO_FOUND, useReturnTypeSchema = true)
     })
     @Operation(summary = "Listar atendimentos do dia", description = "Endpoint para listar todos os atendimentos do dia")
     public ResponseEntity<List<AtendimentoResponseDTO>> findAllTodayByUser(){
@@ -191,7 +192,7 @@ public class AtendimentoController {
      */
     @GetMapping("/admin")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = ATENDIMENTO_FOUND)
+            @ApiResponse(responseCode = "200", description = ATENDIMENTO_FOUND, useReturnTypeSchema = true)
     })
     @Operation(summary = "Listar todos os atendimentos by Administrador", description = "Endpoint para listar todos os atendimentos => Administrador")
     public ResponseEntity<List<AtendimentoResponseDTO>> findAllAdmin(){
@@ -224,9 +225,9 @@ public class AtendimentoController {
      */
     @DeleteMapping(value = "/{id}")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Atendimento excluído do banco"),
-            @ApiResponse(responseCode = "410", description = "Atendimento já está excluído"),
-            @ApiResponse(responseCode = "404", description = "Atendimento não encontrado")
+            @ApiResponse(responseCode = "200", description = "Atendimento excluído do banco", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "410", description = "Atendimento já está excluído", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "404", description = "Atendimento não encontrado", useReturnTypeSchema = true)
     })
     @Operation(summary = "Deletar atendimento", description = "Endpoint para deletar um atendimento")
     public ResponseEntity<SuccessResponseDTO> deleteAtendimento(@PathVariable String id) {
@@ -324,7 +325,7 @@ public class AtendimentoController {
      */
     @PatchMapping("/{id}")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Atendimento ativado"),
+            @ApiResponse(responseCode = "200", description = "Atendimento ativado", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "404", description = "Atendimento não encontrado"),
             @ApiResponse(responseCode = "409", description = "Atendimento não está excluído")
     })
