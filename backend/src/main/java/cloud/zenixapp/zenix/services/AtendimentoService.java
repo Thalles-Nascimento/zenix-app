@@ -25,10 +25,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 
-import static cloud.zenixapp.zenix.configs.utils.HelpersVar.CAMADA_SERVICE;
-import static cloud.zenixapp.zenix.configs.utils.HelpersVar.TIME_ZONE;
-import static cloud.zenixapp.zenix.configs.utils.HelpersVar.MESSAGE_EXCEPTION_EXCLUIDO;
-import static cloud.zenixapp.zenix.configs.utils.HelpersVar.MESSAGE_EXCEPTION_NOT_FOUND;
+import static cloud.zenixapp.zenix.configs.utils.HelpersVar.*;
 
 
 /**
@@ -228,7 +225,7 @@ public class AtendimentoService {
         return atendimentoRepository.findByIdAndTenant(id, tenantId)
                 .map(atendimento -> {
                     if (atendimento.status() == -1) {
-                        HelpersLogs.logException(LOGGER, "deletarAtendimento(String)");
+                        HelpersLogs.logException(LOGGER, "deletarAtendimento");
                         throw new ConflictException(MESSAGE_EXCEPTION_EXCLUIDO);
 
                     }
@@ -277,7 +274,7 @@ public class AtendimentoService {
         return atendimentoRepository.findById(id, TenantContext.getTenantId())
                 .map(atendimento -> {
                     if(atendimento.getStatus() == -1){
-                        HelpersLogs.logException(LOGGER, "atualizarAtendimento(String)");
+                        HelpersLogs.logException(LOGGER, "atualizarAtendimento");
                         throw new ConflictException(MESSAGE_EXCEPTION_EXCLUIDO);
 
                     }
@@ -327,7 +324,7 @@ public class AtendimentoService {
         return atendimentoRepository.findByIdAndTenant(id, tenantId)
                 .map(atendimento -> {
                     if(atendimento.status() == 1){
-                        HelpersLogs.logException(LOGGER, "ativarAtendimento(String)");
+                        HelpersLogs.logException(LOGGER, "ativarAtendimento");
                         throw new ConflictException("Atendimento já está ativo!");
 
                     }
