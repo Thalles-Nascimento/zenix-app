@@ -29,4 +29,4 @@ EXPOSE 8080
 
 ENTRYPOINT ["java"]
 
-CMD ["-jar", "zenixapp.jar"]
+CMD ["-Duser.timezone=GMT-03:00", "-jar", "zenixapp.jar"]
