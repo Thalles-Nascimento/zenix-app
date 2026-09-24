@@ -45,6 +45,8 @@ public class ClienteService {
     // Classe padrão para 'log'
     private static final String CLASS_NAME = "ClienteService";
 
+    private static final String ROWS_AFECTED = "Linhas afetadas: %s";
+
     private final ClienteRepository clienteRepository;
     private final TelefoneRepository telefoneRepository;
     private final ClienteMapper clienteMapper;
@@ -310,7 +312,8 @@ public class ClienteService {
         HelpersLogs.logInfoServices("Deletar um Cliente", CLASS_NAME, "deletarCliente");
 
         int rowsAffected = clienteRepository.deleteLogico(id, LocalDateTime.now(TIME_ZONE), TenantContext.getTenantId());
-        log.debug("Linhas afetadas: {}", rowsAffected);
+        String mensagem = ROWS_AFECTED.formatted(rowsAffected);
+        log.debug(mensagem);
 
         if (rowsAffected == 1){
             SuccessResponseDTO response = new SuccessResponseDTO(
@@ -337,7 +340,8 @@ public class ClienteService {
         HelpersLogs.logInfoServices("Ativar um Cliente", CLASS_NAME, "ativarCliente");
 
         int rowsAffected = clienteRepository.ativarCliente(id, TenantContext.getTenantId());
-        log.debug("Linhas afetadas: {}", rowsAffected);
+        String mensagem = ROWS_AFECTED.formatted(rowsAffected);
+        log.debug(mensagem);
 
         if (rowsAffected == 1){
             SuccessResponseDTO response = new SuccessResponseDTO(
