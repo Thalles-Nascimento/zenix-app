@@ -11,7 +11,6 @@ import cloud.zenixapp.zenix.models.dtos.responses.atendimentos.AtendimentoRespon
 import cloud.zenixapp.zenix.models.entities.Atendimento;
 import cloud.zenixapp.zenix.services.AtendimentoService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,12 +23,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 
 import static cloud.zenixapp.zenix.configs.utils.HelpersVar.CAMADA_CONTROLLER;
+import static cloud.zenixapp.zenix.configs.utils.HelpersVar.TIME_ZONE;
 
 /**
  * <h2>
@@ -226,7 +225,7 @@ public class AtendimentoController {
     @DeleteMapping(value = "/{id}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Atendimento excluído do banco", useReturnTypeSchema = true),
-            @ApiResponse(responseCode = "410", description = "Atendimento já está excluído", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "409", description = "Atendimento já está excluído", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "404", description = "Atendimento não encontrado", useReturnTypeSchema = true)
     })
     @Operation(summary = "Deletar atendimento", description = "Endpoint para deletar um atendimento")
@@ -290,7 +289,7 @@ public class AtendimentoController {
             ErrorResponseDTO error = new ErrorResponseDTO(
                     HttpStatus.BAD_REQUEST.value(),
                     "Alguns campos estão fora do padrão",
-                    LocalDateTime.now(ZoneId.of("America/Sao_Paulo")).toInstant(ZoneOffset.of("-03:00"))
+                    LocalDateTime.now(TIME_ZONE).toInstant(ZoneOffset.of("-03:00"))
             );
 
             HelpersLogs.logResponse(CAMADA_CONTROLLER, ENTITY_NAME, HttpStatus.BAD_REQUEST, "Não foi possível atualizar o atendimento.");
