@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -100,12 +101,12 @@ public class AtendimentoController {
     })
     @Operation(summary = "Adicionar Atendimento", description = "Endpoint para adiciona um novo atendimento")
     public ResponseEntity<Object> save(@RequestBody @Valid AtendimentoRequestDTO atendimentoDTO, BindingResult result){
-        HelpersLogs.logInfoController("POST", CLASS_NAME, "save", apiUrl);
+        HelpersLogs.logInfoController(HttpMethod.POST.name(), CLASS_NAME, "save", apiUrl);
 
         if (result.hasErrors()){
             Map<String, String> errors = BindingHandler.insertError(result);
             HelpersLogs.logResponse(CAMADA_CONTROLLER, ENTITY_NAME, HttpStatus.BAD_REQUEST, "Não foi possível inserir o atendimento.");
-            log.debug("AtendimentoController.save => Erros = [{}]", errors);
+            log.debug("{}.save => Erros = [{}]", CLASS_NAME, errors);
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(errors);
@@ -140,7 +141,7 @@ public class AtendimentoController {
     })
     @Operation(summary = "Listar o histórico de atendimentos", description = "Endpoint para listar todos os atendimentos feitos pelo barbeiro")
     public ResponseEntity<List<AtendimentoResponseDTO>> findHistorico(){
-        HelpersLogs.logInfoController("GET(/historico)", CLASS_NAME, "findHistorico", apiUrl);
+        HelpersLogs.logInfoController(HttpMethod.GET.name() + "(/historico)", CLASS_NAME, "findHistorico", apiUrl);
 
         log.debug("Buscando o histórico de atendimentos do usuário...");
         ResponseEntity<List<AtendimentoResponseDTO>> response = ResponseEntity.status(HttpStatus.OK)
@@ -148,6 +149,7 @@ public class AtendimentoController {
 
         HelpersLogs.logResponse(CAMADA_CONTROLLER, ENTITY_NAME, HttpStatus.OK, ATENDIMENTO_FOUND);
         return response;
+
     }
 
     /**
@@ -168,7 +170,7 @@ public class AtendimentoController {
     })
     @Operation(summary = "Listar atendimentos do dia", description = "Endpoint para listar todos os atendimentos do dia")
     public ResponseEntity<List<AtendimentoResponseDTO>> findAllTodayByUser(){
-        HelpersLogs.logInfoController("GET", CLASS_NAME, "findAllTodayByUser", apiUrl);
+        HelpersLogs.logInfoController(HttpMethod.GET.name(), CLASS_NAME, "findAllTodayByUser", apiUrl);
 
         log.debug("Buscando atendimentos do dia...");
         ResponseEntity<List<AtendimentoResponseDTO>> response = ResponseEntity.status(HttpStatus.OK)
@@ -177,6 +179,7 @@ public class AtendimentoController {
         HelpersLogs.logResponse(CAMADA_CONTROLLER, ENTITY_NAME, HttpStatus.OK, ATENDIMENTO_FOUND);
 
         return response;
+
     }
 
     /**
@@ -195,7 +198,7 @@ public class AtendimentoController {
     })
     @Operation(summary = "Listar todos os atendimentos by Administrador", description = "Endpoint para listar todos os atendimentos => Administrador")
     public ResponseEntity<List<AtendimentoResponseDTO>> findAllAdmin(){
-        HelpersLogs.logInfoController("GET(/admin)", CLASS_NAME, "findAllAdmin", apiUrl);
+        HelpersLogs.logInfoController(HttpMethod.GET.name() + "(/admin)", CLASS_NAME, "findAllAdmin", apiUrl);
 
         log.debug("Buscando todos os atendimentos...");
         ResponseEntity<List<AtendimentoResponseDTO>> response = ResponseEntity.status(HttpStatus.OK)
@@ -204,6 +207,7 @@ public class AtendimentoController {
         HelpersLogs.logResponse(CAMADA_CONTROLLER, ENTITY_NAME, HttpStatus.OK, ATENDIMENTO_FOUND);
 
         return response;
+
     }
 
     /**
@@ -230,7 +234,7 @@ public class AtendimentoController {
     })
     @Operation(summary = "Deletar atendimento", description = "Endpoint para deletar um atendimento")
     public ResponseEntity<SuccessResponseDTO> deleteAtendimento(@PathVariable String id) {
-        HelpersLogs.logInfoController("DELETE(/id)", CLASS_NAME, "deleteAtendimento", apiUrl);
+        HelpersLogs.logInfoController(HttpMethod.DELETE.name() + "(/[id])", CLASS_NAME, "deleteAtendimento", apiUrl);
 
         log.debug("Deletando atendimento...");
         ResponseEntity<SuccessResponseDTO> response = ResponseEntity.status(HttpStatus.OK)
@@ -274,7 +278,7 @@ public class AtendimentoController {
     })
     @Operation(summary = "Atualizar atendimento por ID", description = "Endpoint para atualiza um atendimento por ID")
     public ResponseEntity<Object> updateByAtendimento(@PathVariable String id, @RequestBody @Valid AtendimentoRequestDTO atendimentoRequestDTO, BindingResult result) {
-        HelpersLogs.logInfoController("PUT(/id)", CLASS_NAME, "updateByAtendimento", apiUrl);
+        HelpersLogs.logInfoController(HttpMethod.PUT.name() + "(/[id])", CLASS_NAME, "updateByAtendimento", apiUrl);
 
         if(result.hasErrors()){
             if (BindingHandler.isErrorNull(result)){
@@ -293,7 +297,7 @@ public class AtendimentoController {
             );
 
             HelpersLogs.logResponse(CAMADA_CONTROLLER, ENTITY_NAME, HttpStatus.BAD_REQUEST, "Não foi possível atualizar o atendimento.");
-            log.debug("AtendimentoController.updateByAtendimento => Erros = [{}]", error);
+            log.debug("{}.updateByAtendimento => Erros = [{}]", CLASS_NAME, error);
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(error);
@@ -330,7 +334,7 @@ public class AtendimentoController {
     })
     @Operation(summary = "Ativar atendimento", description = "Endpoint para ativar um atendimento do sistema")
     public ResponseEntity<SuccessResponseDTO> ativarAtendimento(@PathVariable String id) {
-        HelpersLogs.logInfoController("PATCH(/id)", CLASS_NAME, "ativarAtendimento", apiUrl);
+        HelpersLogs.logInfoController(HttpMethod.PATCH.name() + "(/[id])", CLASS_NAME, "ativarAtendimento", apiUrl);
 
         log.debug("Ativando atendimento...");
         ResponseEntity<SuccessResponseDTO> response = ResponseEntity.status(HttpStatus.OK)
