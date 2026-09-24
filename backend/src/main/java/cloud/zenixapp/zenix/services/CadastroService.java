@@ -2,6 +2,7 @@ package cloud.zenixapp.zenix.services;
 
 import cloud.zenixapp.zenix.configs.exceptions.ConflictException;
 import cloud.zenixapp.zenix.configs.exceptions.NotFoundException;
+import cloud.zenixapp.zenix.configs.utils.HelpersLogs;
 import cloud.zenixapp.zenix.models.dtos.requests.CadastroRequestDTO;
 import cloud.zenixapp.zenix.models.dtos.responses.SuccessResponseDTO;
 import cloud.zenixapp.zenix.models.entities.Tenants;
@@ -16,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static cloud.zenixapp.zenix.configs.utils.HelpersVar.CAMADA_SERVICE;
 
 /**
  * <h2>
@@ -32,11 +35,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CadastroService {
 
-    private static final String MESSAGE_EXCEPTION = "Exceção lançada pelo método: cloud.zenixapp.zenix.services.CadastroService.cadastrar(CadastroRequestDTO)";
+    private static final String MESSAGE_EXCEPTION = "cloud.zenixapp.zenix.services.CadastroService";
+
+    // Classe padrão para 'log'
+    private static final String CLASS_NAME = "CadastroService";
+
+    // Entidade padrão para 'log'
+    private static final String ENTITY_NAME = "Cadastro";
+
     private final TenantRepository tenantsRepository;
     private final UnidadeRepository unidadeRepository;
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
+
 
     /**
      * <h2>
@@ -77,50 +88,56 @@ public class CadastroService {
      */
     @Transactional
     public SuccessResponseDTO cadastrar(CadastroRequestDTO cadastroRequestDTO) {
-        log.info("[SERVICE -> Cadastrar] : CadastroService.cadastrar(Linha: 62)");
+        long inicio = System.currentTimeMillis();
+        HelpersLogs.logInfoServices("Cadastrar Barbearias", CLASS_NAME, "cadastrar");
 
         // 1. Validações
         if (usuarioRepository.existsByEmail(cadastroRequestDTO.email())) {
-            log.error(MESSAGE_EXCEPTION);
+            HelpersLogs.logException(MESSAGE_EXCEPTION, "cadastrar");
             throw new ConflictException("[Verificação de E-mail] E-mail já cadastrado!");
+
         }
+
         if (usuarioRepository.existsByCpf(cadastroRequestDTO.cpf())) {
-            log.error(MESSAGE_EXCEPTION);
+            HelpersLogs.logException(MESSAGE_EXCEPTION, "cadastrar");
             throw new ConflictException("[Verificação de CPF] CPF já cadastrado!");
+
         }
+
         if (tenantsRepository.existsByNome(cadastroRequestDTO.nomeEmpresa()) || tenantsRepository.existsByCnpj(cadastroRequestDTO.cnpj())) {
-            log.error(MESSAGE_EXCEPTION);
+            HelpersLogs.logException(MESSAGE_EXCEPTION, "cadastrar");
             throw new ConflictException("[Verificação de Empresa] Empresa já cadastrada");
+
         }
 
         // 2. Cria o Tenant
-        log.info("Criando o Tenant...");
+        log.debug("Criando o Tenant...");
         Tenants tenant = new Tenants();
         tenant.setNome(cadastroRequestDTO.nomeEmpresa());
         tenant.setSlug(gerarSlug(cadastroRequestDTO.nomeEmpresa()));
         tenant.setCnpj(cadastroRequestDTO.cnpj());
         tenantsRepository.save(tenant);
-        log.info("Tenant cadastrado!");
+        log.debug("Tenant cadastrado!");
 
-        log.info("Buscando o tenantId...");
+        log.debug("Buscando o tenantId...");
         String tenantId = tenantsRepository.findIdByCnpj(cadastroRequestDTO.cnpj());
         if (tenantId == null){
             log.error(MESSAGE_EXCEPTION);
             throw new NotFoundException("[Consulta TenantID] Não foi encontrada empresa com esse CNPJ.");
         }
-        log.info("Empresa encontrada!");
+        log.debug("Empresa encontrada!");
 
         // 3. Cria a Unidade vinculada ao Tenant
-        log.info("Criando Unidade...");
+        log.debug("Criando Unidade...");
         Unidades unidade = new Unidades();
         unidade.setNomeUnidade(cadastroRequestDTO.nomeUnidade());
         unidade.setEndereco(cadastroRequestDTO.enderecoUnidade());
         unidade.setTenant(tenantId);
         unidadeRepository.save(unidade);
-        log.info("Unidade cadastrada!");
+        log.debug("Unidade cadastrada!");
 
         // 4. Cria o Usuário ADMIN
-        log.info("Criando Usuário...");
+        log.debug("Criando Usuário...");
         Usuarios usuario = new Usuarios();
         usuario.setNome(cadastroRequestDTO.nomeAdmin());
         usuario.setEmail(cadastroRequestDTO.email());
@@ -130,14 +147,15 @@ public class CadastroService {
         usuario.setUnidade(unidade);
         usuario.setTenant(tenantId);
         usuarioRepository.save(usuario);
-        log.info("Usuário cadastrado!");
+        log.debug("Usuário cadastrado!");
 
         SuccessResponseDTO response = new SuccessResponseDTO(
                 HttpStatus.CREATED.value(),
                 "Cadastro realizado!"
         );
 
-        log.info("Response: [Status: {}] => [Message: {}]", response.status(), response.message());
+        long fim = System.currentTimeMillis();
+        HelpersLogs.logResponse(CAMADA_SERVICE, ENTITY_NAME, HttpStatus.OK, response.message(), inicio, fim);
 
         return response;
 
@@ -155,13 +173,13 @@ public class CadastroService {
      * @return {@code slugName}
      */
     private String gerarSlug(String nome) {
-        log.info("Gerando Slug de '{}'...", nome);
+        log.debug("Gerando Slug de '{}'...", nome);
         String slugName = nome.toLowerCase()
                 .replaceAll("[^a-z0-9\\s]", "")
                 .trim()
                 .replaceAll("\\s+", "-");
 
-        log.info("Slug criado! [Slug = '{}']", slugName);
+        log.debug("Slug criado! [Slug = '{}']", slugName);
         return slugName;
     }
 
