@@ -132,6 +132,12 @@ public class ClienteService {
 
         List<ClienteSimplesPlanosResponseDTO> response = clienteRepository.findClientByNumber(numero, TenantContext.getTenantId());
 
+        if(response.isEmpty()){
+            HelpersLogs.logException(LOGGER, "clientesByTelefone");
+            throw new NotFoundException(MESSAGE_EXCEPTION_NOT_FOUND);
+
+        }
+
         long fim = System.currentTimeMillis();
         HelpersLogs.logResponse(CAMADA_SERVICE, ENTITY_NAME, HttpStatus.OK, CLIENTE_FOUND, inicio, fim);
 
@@ -145,6 +151,12 @@ public class ClienteService {
         HelpersLogs.logInfoServices("Listar Todos os Clientes", CLASS_NAME, "buscarTodosClientes");
 
         List<ClientePlanosResumoResponseDTO> response = clienteRepository.findAll(TenantContext.getTenantId());
+
+        if(response.isEmpty()){
+            HelpersLogs.logException(LOGGER, "buscarTodosClientes");
+            throw new NotFoundException(MESSAGE_EXCEPTION_NOT_FOUND);
+
+        }
 
         long fim = System.currentTimeMillis();
         HelpersLogs.logResponse(CAMADA_SERVICE, ENTITY_NAME, HttpStatus.OK, CLIENTE_FOUND, inicio, fim);

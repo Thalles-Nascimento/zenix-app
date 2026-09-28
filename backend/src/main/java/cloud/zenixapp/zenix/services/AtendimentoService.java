@@ -147,6 +147,12 @@ public class AtendimentoService {
         Usuarios user = (Usuarios) Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
         List<AtendimentoResponseDTO> atendimentoResponseDTOList = atendimentoRepository.findByUsuariosAndDateAndTenant(user, LocalDateTime.now(TIME_ZONE).format(currentDate), TenantContext.getTenantId());
 
+        if(atendimentoResponseDTOList.isEmpty()){
+            HelpersLogs.logException(LOGGER, "listarAtendimentosHojeByUsuario");
+            throw new NotFoundException(MESSAGE_EXCEPTION_NOT_FOUND);
+
+        }
+
         long fim = System.currentTimeMillis();
         HelpersLogs.logResponse(CAMADA_SERVICE, ENTITY_NAME, HttpStatus.OK, ATENDIMENTO_FOUND, inicio, fim);
 
@@ -168,6 +174,12 @@ public class AtendimentoService {
         HelpersLogs.logInfoServices("Listar todos os atendimentos", CLASS_NAME, "listarTodosAtendimentos");
 
         List<AtendimentoResponseDTO> atendimentoResponseDTOList = atendimentoRepository.findAllByTenant(TenantContext.getTenantId());
+
+        if(atendimentoResponseDTOList.isEmpty()){
+            HelpersLogs.logException(LOGGER, "listarTodosAtendimentos");
+            throw new NotFoundException(MESSAGE_EXCEPTION_NOT_FOUND);
+
+        }
 
         long fim = System.currentTimeMillis();
         HelpersLogs.logResponse(CAMADA_SERVICE, ENTITY_NAME, HttpStatus.OK, ATENDIMENTO_FOUND, inicio, fim);
@@ -191,6 +203,12 @@ public class AtendimentoService {
 
         Usuarios user = (Usuarios) Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
         List<AtendimentoResponseDTO> atendimentoResponseDTOList = atendimentoRepository.findByUsuariosAndTenant(user, TenantContext.getTenantId());
+
+        if(atendimentoResponseDTOList.isEmpty()){
+            HelpersLogs.logException(LOGGER, "listarHistorico");
+            throw new NotFoundException(MESSAGE_EXCEPTION_NOT_FOUND);
+
+        }
 
         long fim = System.currentTimeMillis();
         HelpersLogs.logResponse(CAMADA_SERVICE, ENTITY_NAME, HttpStatus.OK, ATENDIMENTO_FOUND, inicio, fim);
