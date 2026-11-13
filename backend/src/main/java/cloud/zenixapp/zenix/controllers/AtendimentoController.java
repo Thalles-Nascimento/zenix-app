@@ -87,8 +87,9 @@ public class AtendimentoController {
      * </h2>
      *
      * @param atendimentoDTO DTO responsável pela exposição dos dados necessários para inserção do atendimento.
-     * @param result Captura os erros de validação. Esses erros são verificados pela anotação @Valid do pacote Jakarta Validation
-     * @return {@link ResponseEntity} com o {@link SuccessResponseDTO} e Status Code {@link HttpStatus#OK 201} e {@link HttpStatus#BAD_REQUEST 400}.
+     * @param result Captura os erros de validação. Esses erros são verificados pela anotação @Valid do pacote Jakarta Validation.
+     * @return {@link ResponseEntity} com o {@link SuccessResponseDTO} e Status Code {@link HttpStatus#OK 201} ou {@link HttpStatus#BAD_REQUEST 400}.
+     *
      * @see ResponseEntity
      * @see SuccessResponseDTO
      * @see HttpStatus
@@ -96,8 +97,8 @@ public class AtendimentoController {
      */
     @PostMapping
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Para atendimentos inseridos com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Campos com nulos ou fora do padrão")
+            @ApiResponse(responseCode = "201", description = "Para atendimentos inseridos com sucesso", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "Campos com nulos ou fora do padrão", useReturnTypeSchema = true)
     })
     @Operation(summary = "Adicionar Atendimento", description = "Endpoint para adiciona um novo atendimento")
     public ResponseEntity<Object> save(@RequestBody @Valid AtendimentoRequestDTO atendimentoDTO, BindingResult result){
@@ -130,14 +131,17 @@ public class AtendimentoController {
      *     No service é passado o 'ID' do usuário para a query no banco que realizou a requisição.
      * </p>
      * @return {@link ResponseEntity} com um List<{@link AtendimentoResponseDTO}> e Status Code {@link HttpStatus#OK 200}.
-     * Pode retornar uma lista vazia caso não tenham atendimentos no sistema.
+     *
+     * @throws cloud.zenixapp.zenix.configs.exceptions.NotFoundException Caso o atendimento não seja encontrado - {@link HttpStatus#NOT_FOUND 404}.
+     *
      * @see ResponseEntity
      * @see AtendimentoResponseDTO
      * @see HttpStatus
      */
     @GetMapping("/historico")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = ATENDIMENTO_FOUND, useReturnTypeSchema = true)
+            @ApiResponse(responseCode = "200", description = ATENDIMENTO_FOUND, useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "404", description = "Atendimentos não foram encontrados", useReturnTypeSchema = true)
     })
     @Operation(summary = "Listar o histórico de atendimentos", description = "Endpoint para listar todos os atendimentos feitos pelo barbeiro")
     public ResponseEntity<List<AtendimentoResponseDTO>> findHistorico(){
@@ -159,14 +163,18 @@ public class AtendimentoController {
      * <p>
      *     No service é passado o 'ID' do usuário para a query no banco que realizou a requisição.
      * </p>
-     * @return {@link ResponseEntity} com um List<{@link AtendimentoResponseDTO}> e Status Code {@link HttpStatus#OK 200}. Pode retornar uma lista vazia caso não tenham atendimentos no sistema.
+     * @return {@link ResponseEntity} com um List<{@link AtendimentoResponseDTO}> e Status Code {@link HttpStatus#OK 200} .
+     *
+     * @throws cloud.zenixapp.zenix.configs.exceptions.NotFoundException Caso o atendimento não seja encontrado - {@link HttpStatus#NOT_FOUND 404}.
+     *
      * @see ResponseEntity
      * @see AtendimentoResponseDTO
      * @see HttpStatus
      */
     @GetMapping
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = ATENDIMENTO_FOUND, useReturnTypeSchema = true)
+            @ApiResponse(responseCode = "200", description = ATENDIMENTO_FOUND, useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "404", description = "Atendimentos não foram encontrados", useReturnTypeSchema = true)
     })
     @Operation(summary = "Listar atendimentos do dia", description = "Endpoint para listar todos os atendimentos do dia")
     public ResponseEntity<List<AtendimentoResponseDTO>> findAllTodayByUser(){
@@ -187,14 +195,18 @@ public class AtendimentoController {
      *     Endpoint para o 'Usuário' de nível Administrador poder listar todos os atendimentos da sua barbearia
      * </h2>
      *
-     * @return {@link ResponseEntity} com um List<{@link AtendimentoResponseDTO}> e Status Code {@link HttpStatus#OK 200}. Pode retornar uma lista vazia caso não tenham atendimentos no sistema.
+     * @return {@link ResponseEntity} com um List<{@link AtendimentoResponseDTO}> e Status Code {@link HttpStatus#OK 200}.
+     *
+     * @throws cloud.zenixapp.zenix.configs.exceptions.NotFoundException Caso o atendimento não seja encontrado - {@link HttpStatus#NOT_FOUND 404}.
+     *
      * @see ResponseEntity
      * @see AtendimentoResponseDTO
      * @see HttpStatus
      */
     @GetMapping("/admin")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = ATENDIMENTO_FOUND, useReturnTypeSchema = true)
+            @ApiResponse(responseCode = "200", description = ATENDIMENTO_FOUND, useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "404", description = "Atendimentos não foram encontrados", useReturnTypeSchema = true)
     })
     @Operation(summary = "Listar todos os atendimentos by Administrador", description = "Endpoint para listar todos os atendimentos => Administrador")
     public ResponseEntity<List<AtendimentoResponseDTO>> findAllAdmin(){
@@ -219,8 +231,10 @@ public class AtendimentoController {
      * </p>
      * @param id ID do atendimento que será excluído.
      * @return {@link ResponseEntity} com o {@link SuccessResponseDTO} e Status Code {@link HttpStatus#OK 200}.
+     *
      * @throws cloud.zenixapp.zenix.configs.exceptions.ConflictException Caso o atendimento já esteja excluído - {@link HttpStatus#CONFLICT 409}.
      * @throws cloud.zenixapp.zenix.configs.exceptions.NotFoundException Caso o atendimento não seja encontrado - {@link HttpStatus#NOT_FOUND 404}.
+     *
      * @see SuccessResponseDTO
      * @see ConflictException
      * @see NotFoundException
@@ -260,8 +274,10 @@ public class AtendimentoController {
      * @param atendimentoRequestDTO DTO responsável pela exposição dos dados necessários para atualização de um atendimento.
      * @param result Captura os erros de validação. Esses erros são verificados pela anotação @Valid do pacote Jakarta Validation.
      * @return {@link ResponseEntity} com o {@link SuccessResponseDTO} e Status Code {@link HttpStatus#OK 200} e {@link HttpStatus#BAD_REQUEST 400} com {@link ErrorResponseDTO}.
+     *
      * @throws cloud.zenixapp.zenix.configs.exceptions.ConflictException Caso o atendimento esteja excluído - {@link HttpStatus#CONFLICT 409}.
      * @throws cloud.zenixapp.zenix.configs.exceptions.NotFoundException Caso o atendimento não seja encontrado - {@link HttpStatus#NOT_FOUND 404}.
+     *
      * @see SuccessResponseDTO
      * @see ConflictException
      * @see NotFoundException
@@ -271,10 +287,10 @@ public class AtendimentoController {
      */
     @PutMapping(value = "/{id}")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Atendimento atualizado"),
-            @ApiResponse(responseCode = "404", description = "Atendimento não encontrado"),
-            @ApiResponse(responseCode = "409", description = "Atendimento está excluído"),
-            @ApiResponse(responseCode = "400", description = "Campos com nulos ou fora do padrão")
+            @ApiResponse(responseCode = "200", description = "Atendimento atualizado", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "404", description = "Atendimento não encontrado", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "409", description = "Atendimento está excluído", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "Campos com nulos ou fora do padrão", useReturnTypeSchema = true)
     })
     @Operation(summary = "Atualizar atendimento por ID", description = "Endpoint para atualiza um atendimento por ID")
     public ResponseEntity<Object> updateByAtendimento(@PathVariable String id, @RequestBody @Valid AtendimentoRequestDTO atendimentoRequestDTO, BindingResult result) {
@@ -319,8 +335,10 @@ public class AtendimentoController {
      *
      * @param id 'ID' do atendimento que será ativado.
      * @return {@link ResponseEntity} com o {@link SuccessResponseDTO} e Status Code {@link HttpStatus#OK 200}.
+     *
      * @throws cloud.zenixapp.zenix.configs.exceptions.ConflictException Caso o atendimento já esteja ativado - {@link HttpStatus#CONFLICT 409}.
      * @throws cloud.zenixapp.zenix.configs.exceptions.NotFoundException Caso o atendimento não seja encontrado - {@link HttpStatus#NOT_FOUND 404}.
+     *
      * @see SuccessResponseDTO
      * @see ConflictException
      * @see NotFoundException
@@ -329,8 +347,8 @@ public class AtendimentoController {
     @PatchMapping("/{id}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Atendimento ativado", useReturnTypeSchema = true),
-            @ApiResponse(responseCode = "404", description = "Atendimento não encontrado"),
-            @ApiResponse(responseCode = "409", description = "Atendimento não está excluído")
+            @ApiResponse(responseCode = "404", description = "Atendimento não encontrado", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "409", description = "Atendimento não está excluído", useReturnTypeSchema = true)
     })
     @Operation(summary = "Ativar atendimento", description = "Endpoint para ativar um atendimento do sistema")
     public ResponseEntity<SuccessResponseDTO> ativarAtendimento(@PathVariable String id) {
