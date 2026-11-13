@@ -126,11 +126,11 @@ public class ClienteService {
     }
 
 //  Lista os clientes por telefone - Endpoint para Fila
-    public List<ClienteSimplesPlanosResponseDTO> clientesByTelefone(String numero) {
+    public List<ClienteSimplesPlanosResponseDTO> clientesByCelular(String celular) {
         long inicio = System.currentTimeMillis();
         HelpersLogs.logInfoServices("Listar Cliente Pelo Número de Telefone", CLASS_NAME, "clientesByTelefone");
 
-        List<ClienteSimplesPlanosResponseDTO> response = clienteRepository.findClientByNumber(numero, TenantContext.getTenantId());
+        List<ClienteSimplesPlanosResponseDTO> response = clienteRepository.findClientByNumber(celular, TenantContext.getTenantId());
 
         if(response.isEmpty()){
             HelpersLogs.logException(LOGGER, "clientesByTelefone");
