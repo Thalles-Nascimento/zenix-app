@@ -12,15 +12,13 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
 import static cloud.zenixapp.zenix.configs.utils.HelpersVar.TIME_ZONE;
+import static cloud.zenixapp.zenix.configs.utils.HelpersVar.ZONE_OFFSET;
 
 @Log4j2
 @ControllerAdvice
 public class GlobalExceptionHandler {
-
-    private static final ZoneOffset ZONE_OFFSET = ZoneOffset.of("-03:00");
 
 
     /*=====================================================================================
