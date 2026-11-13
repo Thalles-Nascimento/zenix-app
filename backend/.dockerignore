@@ -2,7 +2,7 @@
 .gitignore
 README.md
 .idea/
-example.env
+example_env.md
 .mvn/
 target/
 mvnw
